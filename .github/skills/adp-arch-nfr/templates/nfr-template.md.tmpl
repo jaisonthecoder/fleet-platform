@@ -1,0 +1,186 @@
+# Non-Functional Requirements Template
+
+Use with `adp-arch-nfr` when producing or updating: nfr.md.
+
+## Header
+
+- **Artifact owner:** `ai-solution-architect`
+- **Source request / ticket:**
+- **Upstream artifacts:**
+- **Backlog / story:**
+- **Target path:**
+- **Last updated:**
+- **Downstream role(s):** `ai-backend-dotnet`, `ai-frontend-react`, `ai-data-engineer`, `ai-platform-engineer`, `ai-security-engineer`
+
+## Artifact Readiness Gate
+
+Use this gate before treating the NFR artifact as review-ready, delivery-ready, production-ready, or approved. Link the target when it exists. If a target does not exist yet, list the missing target in Evidence or Assumptions, Risks, And Open Questions.
+
+| Gate Item | Required Evidence / Link | Status | Owner | Notes |
+|---|---|---|---|---|
+| Source request / ticket linked | Markdown link to source request, ticket, review finding, or change driver. | Missing / Linked | Artifact owner | Required before Review-ready. |
+| Upstream BRD/PRD/FR artifacts linked | Markdown links to upstream BRD, PRD, FRD, or product-scope artifacts. | Missing / Partial / Linked | `ai-product-manager` / `ai-business-analyst` | Required before Delivery-ready. |
+| Backlog/story linked | Markdown link to backlog item, story, or delivery scope record. | Missing / Linked | Product / delivery owner | Required before Delivery-ready. |
+| All referenced FR IDs verified | Every referenced FR ID exists in the linked source artifact. | Unverified / Verified | Artifact owner | Delivery-ready is forbidden while unresolved. |
+| Security/legal blockers resolved or marked production-blocking | Security, privacy, legal, regulatory, and data-residency blockers are closed, excepted, or marked `Production blocker`. | Open / Production blocker / Resolved | `ai-security-engineer` / legal owner | Production-ready is forbidden while open. |
+| Workload baselines available or draft-only | Workload baseline evidence exists, or all affected targets are marked `Draft target`. | Missing / Draft-only / Available | `ai-platform-engineer` / data owner | Required for final numeric targets. |
+| Validation/test evidence targets linked | Validation plan links expected test, dashboard, audit, security, or release evidence targets. | Missing / Partial / Linked | `ai-quality-engineer` / evidence owner | Required before Delivery-ready. |
+| Approval status | One of: Draft / Review-ready / Delivery-ready / Production-ready / Approved. | Draft | Artifact owner / approver | Status may advance only when preceding gate criteria are satisfied. |
+
+## Reference Integrity Check
+
+- Every BRD, PRD, FR, NFR, story, test, and evidence ID must be a Markdown link when the target exists.
+- No phantom IDs are allowed. For example, do not reference `FR-009` unless `FR-009` exists in a linked source artifact.
+- Missing links, missing source artifacts, unresolved IDs, and unverified references must be listed as evidence gaps.
+- Delivery-ready status is forbidden while source IDs are unresolved, unlinked, or unverified.
+
+## Purpose
+
+State why this artifact exists and what downstream decision, architecture, validation, release, or operational activity it enables.
+
+## Scope
+
+- **In scope:**
+- **Out of scope:**
+- **Assumptions:**
+- **Open questions / production blockers:** List unresolved target, security, privacy, availability, data, support, evidence, and ownership questions. Mark any item that blocks production explicitly as `Production blocker`; do not leave security/privacy controls as non-binding review follow-ups.
+
+## AD Ports Checks
+
+- **Tenant / terminal impact:**
+- **Arabic / RTL or accessibility impact:**
+- **UAE data residency / PDPL / NESA impact:**
+- **Operational window, vessel, customs, or maritime SLA impact:**
+- **SAP / Oracle / Port Community System integration impact:**
+
+## Security And Privacy Approval Gate
+
+Complete this gate for systems with personal, sensitive, regulated, operationally critical, evidence, export, integration, or security-relevant data. If not applicable, record `Not applicable` with rationale and approval owner.
+
+| Control Area | Required Decision / Evidence | Status | Approval Owner | Evidence Link |
+|---|---|---|---|---|
+| Data classification | Classification for personal, sensitive, regulated, operational, evidence, audit, export, and integration data. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / data owner | Link or gap |
+| Lawful basis | Lawful basis for processing personal or regulated data. | Unknown / Draft / Approved / Not applicable | Legal / privacy owner | Link or gap |
+| Consent / notice | User, employee, customer, vendor, or stakeholder notice and consent approach where applicable. | Unknown / Draft / Approved / Not applicable | Legal / product owner | Link or gap |
+| UAE data residency | Residency requirement, hosting region, transfer restriction, and exception decision. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / platform owner | Link or gap |
+| Retention / deletion / archive rule | Retention period, deletion trigger, archive policy, and evidence handling. | Unknown / Draft / Approved / Not applicable | Data owner / records owner | Link or gap |
+| Encryption | Encryption in transit, at rest, backup, evidence storage, and key ownership. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / platform owner | Link or gap |
+| Masking / redaction | UI, API, report, notification, integration, and support-view masking rules. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / product owner | Link or gap |
+| Export / log redaction | Export, report, telemetry, trace, audit, and application-log redaction rules. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / implementation owner | Link or gap |
+| Access roles | Role model, privileged access, segregation of duties, and exception handling. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / product owner | Link or gap |
+| Audit | Audit events, retention, access, review owner, and investigation evidence. | Unknown / Draft / Approved / Not applicable | `ai-security-engineer` / operations owner | Link or gap |
+
+## Template Use Notes
+
+- Ask the requester for missing values before generation when a `TBD` would affect a quality target, threshold, workload, data classification, availability target, evidence owner, or production gate.
+- No `TBD` may remain when status is `Approved` or `Ready for delivery` unless it is listed in Assumptions, Risks, And Open Questions with an owner, needed-by date, and blocker/exception status.
+- Classify data before applying privacy/security blockers. If the product has no personal, sensitive, regulated, operationally critical, or security-relevant data, record privacy controls as `Not applicable` with rationale instead of leaving a blocker.
+- Keep authoring instructions out of generated artifact rows. Replace example workflow names and placeholder thresholds with source-derived FR IDs, workload assumptions, and measurable targets.
+- Every draft numeric target must explicitly say `Draft target`.
+- Every final numeric target must have linked baseline evidence and named owner approval.
+- If baseline evidence is missing, the requirement readiness status must be `Draft` or `Conditional`, not `Ready`, `Production-ready`, or `Approved`.
+
+## Workload And Measurement Baseline
+
+Complete this table before finalizing performance, availability, capacity, scalability, report/export, evidence-storage, and retention NFRs. If baseline evidence is missing, mark affected numeric targets as `Draft target` and keep readiness status as `Draft` or `Conditional`.
+
+| Baseline Item | Value / Assumption | Source / Evidence | Owner |
+|---|---|---|---|
+| Daily volume | TBD | Link or evidence gap | Product / data owner |
+| Peak-hour volume | TBD | Link or evidence gap | Product / data owner |
+| Concurrent users | TBD | Link or evidence gap | Product / platform owner |
+| Operating window | TBD | Link or evidence gap | Operations / platform owner |
+| Data retention period | TBD | Link or evidence gap | Data / records owner |
+| Evidence storage volume | TBD | Link or evidence gap | Data / platform owner |
+| Report/export range | TBD | Link or evidence gap | Product / data owner |
+| Growth/headroom assumption | TBD | Link or evidence gap | `ai-platform-engineer` / data owner |
+
+## Quality Attribute Requirements
+
+| NFR ID | Category | Requirement | Target / Measure | Baseline / Assumption | Readiness Status | Blocking Dependency | Validation Method | Source / Driver | Approval Owner | Evidence Link |
+|---|---|---|---|---|---|---|---|---|---|---|
+| NFR-001 | Performance | Core workflow/API/report/batch actions shall respond within the operating tolerance for the product. | Draft target: p95 <= TBD seconds for interactive actions; Draft target: p95 <= TBD seconds/minutes for reports, imports, exports, batches, or integration processing. | Workload baseline required from Workload And Measurement Baseline. | Draft | Workload baseline and FR links unresolved. | Load/API/browser/batch timing evidence using representative users, data, and integration conditions. | Linked BRD/PRD/FRD/ADR ID(s) | Implementation owner / `ai-quality-engineer` | Link or evidence gap |
+| NFR-002 | Availability | The system shall meet the approved operating window, support model, and continuity expectation. | Draft target: monthly uptime target TBD. If 24/7 operations apply and target is below 99.9%, record rationale, planned maintenance handling, fallback approval, staffing, and fallback drill gate. | Operating window and support model required. | Draft | Support model, operating window, and fallback approval. | Availability monitoring, synthetic checks, planned-maintenance record, fallback/failover drill evidence. | Linked BRD/PRD/FRD/ADR ID(s) | `ai-platform-engineer` / operations owner | Link or evidence gap |
+| NFR-003 | Recovery | The service shall recover from interruption without losing committed business records or auditability. | Draft target: RPO <= TBD; Draft target: RTO <= TBD; fallback/manual records importable/reconcilable after restoration where fallback applies. | Data criticality, backup schedule, and manual fallback assumption required. | Draft | Data criticality, backup policy, restore evidence. | Backup/restore test, recovery drill, reconciliation/import validation. | Linked BRD/PRD/FRD/ADR ID(s) | `ai-platform-engineer`, data owner | Link or evidence gap |
+| NFR-004 | Security - Access Control | Protected data, actions, administration, reports, imports/exports, and audit logs shall enforce approved authorization. | 100% protected endpoints and UI actions enforce role/policy checks; unauthorized access returns denial without sensitive disclosure. | Role model and protected action inventory required. | Conditional | Security And Privacy Approval Gate access roles unresolved. | Authorization matrix tests and security review evidence. | Linked BRD/PRD/FRD/ADR ID(s) | `ai-security-engineer`, implementation owner | Link or evidence gap |
+| NFR-005 | Security - Local / Non-Federated Accounts | Include only when local, shared, service, vendor, or non-federated accounts apply. Such accounts shall be controlled before production use. | Production blocker when applicable until minimum controls are approved: unique identity, active/inactive enforcement, audited lifecycle actions, credential policy, lockout/rate limits, reset/recovery process, privileged administration, and explicit MFA/exception decision. No production release may enable applicable accounts with policy marked TBD. | Account type inventory required. | Conditional / Production blocker if applicable | Local/non-federated account decision unresolved. | Account lifecycle, credential/lockout, authorization, and audit tests; security approval evidence. | Linked BRD/PRD/FRD/ADR ID(s), or `Not applicable` rationale | `ai-security-engineer` | Link or evidence gap |
+| NFR-006 | Privacy / Sensitive Data | Data classification shall determine whether sensitive-data controls apply. Sensitive personal, operational, evidence, integration, export, and audit data shall be protected at rest, in transit, and in views when applicable. | Production blocker until data classification is complete. If sensitive or regulated data applies, controls must be approved for retention, masking/redaction, encryption at rest, least-privilege access, export/log redaction, deletion/archive handling, and data residency. If uploads/evidence files apply, also approve file types, size limits, malware scanning decision, storage class, and access model. If no sensitive data applies, record `Not applicable` rationale. | Data classification, lawful basis, retention, residency, and masking assumptions required. | Production blocker until classified | Security And Privacy Approval Gate unresolved. | Data classification record, security/privacy review when applicable, storage config evidence, retention/deletion evidence, role-based UI/API tests, export/log redaction tests, upload validation tests when applicable. | Linked BRD/PRD/FRD/ADR ID(s) | `ai-security-engineer`, data/platform owner | Link or evidence gap |
+| NFR-007 | Usability | Core user workflows identified by linked FR IDs shall be measurable and usable by trained target users. | Draft target: define p90 timed-task thresholds per workflow, for example `<workflow A> <= TBD`, `<workflow B> <= TBD`, and 0 critical task failures in UAT across supported form factors/channels. | User personas, workflow inventory, and supported channels required. | Draft | FR links and UX evidence unresolved. | Timed UAT observation, task failure log, viewport/device/channel checks, UX review. | Linked BRD/PRD/FRD ID(s) | `ai-ux-ui-designer`, frontend owner, `ai-quality-engineer` | Link or evidence gap |
+| NFR-008 | Observability | Operations shall detect service health, failures, security-relevant events, data/integration failures, and key operational trends. | Health checks, structured logs, metrics, traces/correlation, dashboards, and alert thresholds defined for critical workflows and dependencies. | Runtime topology, dependency list, support model, and alert ownership required. | Draft | Platform observability ownership unresolved. | Dashboard/log evidence, alert dry run, trace/log sample, operational review. | Linked BRD/PRD/FRD/ADR ID(s) | `ai-platform-engineer`, implementation owner | Link or evidence gap |
+| NFR-009 | Capacity / Scalability | Include when user volume, data growth, concurrency, integration throughput, storage, or reporting growth may affect operations. | Draft target: capacity targets TBD for concurrent users, daily/monthly transaction volume, retained data volume, integration throughput, storage growth, and headroom; record `Not applicable` rationale if growth risk is negligible. | Workload And Measurement Baseline required. | Conditional | Workload baseline and growth/headroom evidence unresolved. | Capacity model, load test, data growth forecast, storage estimate, integration throughput test. | Linked BRD/PRD/FRD/ADR ID(s), or `Not applicable` rationale | `ai-platform-engineer`, data owner, implementation owner | Link or evidence gap |
+| NFR-010 | Compliance Evidence | Release approval shall include evidence for production readiness controls. | Evidence pack includes security/privacy review, access control matrix, audit samples, backup/restore, availability/fallback drill if applicable, data integrity/import/export validation, observability evidence, capacity evidence when applicable, and open exception approvals. | Release evidence target list and approval path required. | Draft | Validation/test evidence targets unresolved. | Release readiness review. | Linked BRD/PRD/FRD/ADR ID(s) | `ai-security-engineer`, `ai-platform-engineer`, `ai-quality-engineer` | Link or evidence gap |
+
+## Quality Categories
+
+| Category | Required Target | Applies To | Validation Method | Evidence Owner |
+|:---------|:----------------|:-----------|:------------------|:---------------|
+| Performance | p95 latency, throughput, queue time, import/export duration, or batch duration target | Core workflows, APIs, reports, imports, exports, batch jobs, integrations | Load, API, browser, batch, or telemetry validation | Implementation owner / `ai-quality-engineer` |
+| Availability | SLO, uptime, planned maintenance, support window, fallback approval, fallback drill | 24/7 or business-hours operations | SLO dashboard, synthetic checks, failover/fallback drill, incident review | `ai-platform-engineer` / operations owner |
+| Recovery & Resilience | RTO, RPO, backup, restore, degradation, retry, idempotency, reconciliation | Service, data, integrations, fallback/manual process | Backup restore, recovery drill, resilience review, reconciliation report | `ai-platform-engineer` / data owner |
+| Security & Privacy | Classification, access, audit, encryption, retention, masking, upload controls when applicable, evidence storage, deletion/archive | Sensitive data, accounts, files, reports, exports, logs | Security review, audit log check, control test, evidence package | `ai-security-engineer` |
+| Accessibility & Localization | WCAG, Arabic/RTL, language, keyboard, screen-reader, viewport/form-factor targets | User-facing workflows | Accessibility test, screen review, axe scan, manual keyboard/assistive tech check | UX/frontend owner |
+| Usability | p90 timed-task thresholds and critical task failure criteria | Core user workflows from FR IDs | Timed UAT observation, task completion analysis, UX review | UX/frontend owner / `ai-quality-engineer` |
+| Observability | Logs, metrics, traces, alert, dashboard, correlation, operational trend signals | Runtime service, integrations, data jobs, security-relevant events | Dashboard, alert dry run, log sample, trace sample, telemetry query | `ai-platform-engineer` |
+| Capacity & Scalability | Concurrent users, throughput, data growth, storage, queue depth, integration volume, and headroom targets | Runtime service, data stores, integrations, reports, imports/exports | Capacity model, load test, data growth forecast, storage estimate, throughput test | `ai-platform-engineer` / data owner |
+| Data & Integration | Freshness, consistency, retention, residency, interface, reconciliation, import/export integrity | Stored data, imports, exports, integrations, reports | Data quality check, integration test, retention evidence, reconciliation report | Data/integration owner |
+
+## Validation Plan
+
+| Validation Area | Evidence Required | Exit Criteria |
+|---|---|---|
+| Performance and workload | Load/API/browser/batch timing report covering core workflows, reports, imports/exports, and integrations where applicable. | Performance NFRs meet p95/p90 targets or exceptions are approved. |
+| Availability and recovery | Health checks, uptime dashboard, backup/restore, planned-maintenance record, fallback/failover drill when applicable, import/reconciliation after fallback when applicable. | Availability/recovery NFRs met; fallback is approved, staffed, drilled, and evidenced before go-live where required. |
+| Security and privacy | Security review, authorization matrix tests, masking/encryption evidence, retention/deletion evidence, export/log redaction evidence, upload-control evidence when applicable, local/non-federated account policy approval when applicable. | Security/privacy NFRs accepted by `ai-security-engineer`; production blockers closed or formally excepted before production. |
+| Capacity and scalability | Capacity model, data growth forecast, storage estimate, load/throughput test when applicable. | Capacity/scalability NFRs met or marked not applicable with rationale. |
+| Audit and data integrity | Audit event samples, database/storage constraint review, import/export validation report, reconciliation evidence. | Audit and data integrity NFRs met with no critical gaps. |
+| Usability/accessibility/compatibility | Timed UAT notes, critical task failure log, accessibility scan, keyboard/focus review, viewport/browser/channel matrix. | Usability p90 thresholds met; 0 critical task failures; no critical accessibility/compatibility defects. |
+| Observability and readiness | Dashboard/log evidence, alert dry run, trace sample, release evidence pack, exception register. | Operational readiness evidence complete and owned. |
+
+## Traceability
+
+All source, FR, story, test, and evidence references in this table must satisfy the Reference Integrity Check. Use Markdown links for existing targets, and list unresolved IDs as evidence gaps.
+
+| Source / Driver | Related NFRs | Related FR / Story | Validation Target | Evidence Status |
+|---|---|---|---|---|
+| BRD/PRD/FRD/ADR ID(s) for performance/workload | NFR-001 | FR/US ID(s) | Performance validation | Pending |
+| BRD/PRD/FRD/ADR ID(s) for operations, support, fallback, or SLA | NFR-002, NFR-003 | FR/US ID(s) | Availability/recovery validation | Pending |
+| BRD/PRD/FRD/ADR ID(s) for accounts, roles, sensitive data, files, exports, logs, or compliance | NFR-004, NFR-005, NFR-006, NFR-010 | FR/US ID(s) | Security/privacy validation | Pending |
+| BRD/PRD/FRD ID(s) for core user workflows and form factors | NFR-007 | FR/US ID(s) | Usability/accessibility validation | Pending |
+| BRD/PRD/FRD/ADR ID(s) for operations, monitoring, dependencies, capacity, or support | NFR-008, NFR-009, NFR-010 | FR/US ID(s) | Observability/capacity/readiness validation | Pending |
+
+## Assumptions, Risks, And Open Questions
+
+| ID | Type | Description | Owner | Needed By | Impact |
+|---|---|---|---|---|---|
+| NFR-A-001 | Assumption | TBD workload, user volume, support model, operating window, dependency, or data-volume assumption. | TBD | Architecture / test planning | Targets may need adjustment if assumption changes. |
+| NFR-Q-001 | Question / Production blocker | What is the data classification, and what retention period applies to sensitive records, files, exports, and audit logs if sensitive data applies? | `ai-security-engineer` / data owner | Security design | Production blocker until classification and approved retention/deletion/archive policy or formal exception exists. |
+| NFR-Q-002 | Question / Production blocker | What masking/redaction rules apply in UI, API, reports, exports, notifications, integrations, and logs? | `ai-security-engineer` | UI/API/integration implementation | Production blocker until approved masking/redaction policy or formal exception exists. |
+| NFR-Q-003 | Question / Conditional production blocker | Do local, shared, service, vendor, or non-federated accounts apply; if yes, what credential, lockout, reset, MFA, and lifecycle rules apply? | `ai-security-engineer` | Authentication implementation | Production blocker when applicable until account policy or formal exception exists. |
+| NFR-Q-004 | Question / Conditional production blocker | Do file uploads, captured evidence, generated exports, or attachments apply; if yes, what file types, size limits, malware scanning, storage class, and access model are approved? | `ai-security-engineer` / `ai-platform-engineer` | File/export/evidence implementation | Production blocker when applicable until upload/export/storage controls or formal exception exists. |
+| NFR-Q-005 | Question / Conditional blocker | What user volume, concurrency, data growth, storage, throughput, and integration growth assumptions apply? | `ai-platform-engineer` / data owner | Architecture / performance planning | Capacity targets cannot be finalized until answered or marked not applicable with rationale. |
+| NFR-R-001 | Risk / Approval blocker | Required `/standards` files are absent or incomplete. | Repository owner | Formal approval | Add the standards or record an explicit standards exception before formal approval. |
+
+## Routed Items
+
+| Item | Why This Is Not NFR | Owning Role / Skill | Status |
+|:-----|:--------------------|:--------------------|:-------|
+| TBD FR, UX, architecture, implementation, test execution, or backlog-ranking item. | TBD | TBD | Routed / Pending / Accepted |
+
+## Change Log
+
+| Date | Change | Reason / Source |
+|---|---|---|
+| YYYY-MM-DD | Initial NFR draft or update summary. | Source request / review finding / ticket. |
+
+## Evidence
+
+- Source evidence:
+- Template / workflow used: `adp-arch-nfr`, selected workflow, and this template.
+- Validation performed:
+- Validation gaps: List missing approved policies, standards, source links, unresolved IDs, workload baselines, telemetry, test evidence, platform SLA, support model, or exception approvals.
+
+## Handoff
+
+- **Summary for downstream role(s):**
+- **Risks to carry forward:**
+- **Required review / approval:**

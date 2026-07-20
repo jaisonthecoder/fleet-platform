@@ -1,0 +1,133 @@
+# {{fr_id}} - {{behavior_name}}
+
+**Artifact owner:** `ai-product-manager`
+**Package path:** `docs/02-product/FR/{{fr_slug}}/`
+**Index:** [../../functional-requirements.md](../../functional-requirements.md)
+**Source request / ticket:**
+**Upstream artifacts:**
+**Status:** Draft
+**Last updated:**
+**Downstream role(s):** `ai-solution-architect`, `ai-ux-ui-designer`, `ai-quality-engineer`, `ai-delivery-planner`, implementation role(s)
+
+## 1. Requirement Summary
+
+- **Priority:** Must / Should / Could / Won't
+- **Readiness status:** Draft / Blocked / Ready for review / Ready for delivery / Approved
+- **Blocking dependencies:** None / list blocker IDs from the index.
+- **Policy or legal dependency:** None / list policy owner, decision needed, and needed-by date.
+- **Data source dependency:** None / list source system, owner, availability, and evidence link.
+- **Architecture status:** Draft / Ready for architecture review / Approved by architecture; see [{{fr_slug}}-lld.md]({{fr_slug}}-lld.md).
+- **Backlog / story link:** [US-TBD](../../../04-planning/product-backlog.md#us-tbd); required before `Ready for delivery`.
+- **Test readiness:** Pending / Test target linked / Evidence provided.
+- **Cannot proceed until:** None / blocker resolution, policy decision, backlog link, architecture review, test target, data source evidence, or owner approval.
+- **Source trace:** [BR-TBD](../../../01-discovery/brd.md#br-tbd), [PRD-TBD](../../prd.md#prd-tbd), [US-TBD](../../../04-planning/product-backlog.md#us-tbd), stakeholder note, regulation, incident, or support ticket.
+
+## 2. User Story Context
+
+Use this section to merge the user story into the functional requirement so the FR explains the feature intent, user value, and scenario context without requiring readers to open the story first.
+
+- **Story statement:** As a `<actor / persona>`, I want `<capability / behavior>`, so that `<business or user outcome>`.
+- **Story source:** [US-TBD](../../../04-planning/product-backlog.md#us-tbd), PRD story file, backlog item, stakeholder note, or `Not available - evidence gap recorded`.
+- **Feature objective:** Plain-language description of what this feature enables and why it matters.
+- **User value / business value:** Operational, compliance, productivity, service, reporting, or customer value expected from this behavior.
+- **Primary user scenario:** Narrative of the normal user journey or system scenario this FR supports.
+- **Story-derived constraints:** Story notes, assumptions, exclusions, or scope boundaries that shape this FR.
+- **Story-derived acceptance focus:** Summarize the story acceptance criteria that this FR must satisfy; keep full testable criteria in Section 4.
+
+## 3. Behavior Detail
+
+- **Actor(s):** Primary actor and any supporting actor/system.
+- **Trigger:** Event, user action, schedule, integration message, or business condition that starts the behavior.
+- **Preconditions:** Required state, permissions, configuration, data, upstream availability, or operational context.
+- **System behavior:** Observable behavior the system shall perform. Avoid database, framework, or UI-layout design unless it is required product behavior.
+- **Inputs / data captured:** Data fields, source, required/optional status, format/lookup dependencies, and validation rules.
+- **Outputs / state changes:** Link output records, status changes, notifications, reports, exports, events, audit entries, or visible confirmations.
+- **Permissions / access rules:** Roles, policies, ownership, segregation, or visibility rules that affect the behavior.
+- **Audit / history behavior:** Required when the action changes regulated, operational, financial, security, personal, or otherwise sensitive data; otherwise record `Not applicable` with rationale.
+- **Business rules:** [BRULE-001](../../functional-requirements.md#7-business-rules); list each rule that constrains the behavior.
+- **Exception paths:** Permission denied, missing/invalid input, duplicate/conflict, partial completion, upstream failure, timeout, offline/fallback, cancel/retry, and unsupported state.
+
+## 4. Acceptance Criteria
+
+Each `Must` FR needs one happy path, one alternate/edge path, and one permission/error path unless explicitly justified. Include expected output, audit/history behavior, and no-change/rollback rule where relevant.
+Where a linked user story has acceptance criteria, merge the relevant story criteria into these FR criteria and make them observable, testable, and traceable to the FR ID.
+
+| AC ID | Scenario | Given | When | Then |
+|:------|:---------|:------|:-----|:-----|
+| [{{fr_id}}.AC1](#{{fr_anchor}}ac1---happy-path) | Happy path | TBD required context, actor permission, data, and system state. | TBD actor or system performs the trigger action. | TBD observable successful outcome, persisted state, audit/history entry, notification, report, or visible confirmation. |
+| [{{fr_id}}.AC2](#{{fr_anchor}}ac2---edge-or-alternate-path) | Edge or alternate path | TBD alternate valid condition, boundary case, or partial data state. | TBD actor or system performs the alternate action. | TBD expected alternate outcome without ambiguity. |
+| [{{fr_id}}.AC3](#{{fr_anchor}}ac3---error-permission-or-exception-path) | Error, permission, or exception path | TBD invalid, unauthorized, duplicate, missing, upstream-failure, unsupported, or timeout condition. | TBD actor or system attempts the action. | TBD rejection, error message, rollback/no-change rule, audit entry, retry path, or escalation behavior. |
+
+### {{fr_id}}.AC1 - Happy Path
+
+Given ...
+When ...
+Then ...
+
+### {{fr_id}}.AC2 - Edge Or Alternate Path
+
+Given ...
+When ...
+Then ...
+
+### {{fr_id}}.AC3 - Error Permission Or Exception Path
+
+Given ...
+When ...
+Then ...
+
+## 5. Sequence Diagram
+
+- **Mermaid source:** [sequence.mmd](sequence.mmd)
+- **Draw.io companion:** [sequence.drawio](sequence.drawio)
+- **Requirement:** Keep `sequence.mmd` as the source of truth. Render it to SVG and embed the URL-encoded SVG data URI in the Draw.io `mermaid-render` image cell.
+- **Simple behavior exception:** If no diagram is required, record `Not required - single-step behavior` here and in the index.
+
+```mermaid
+sequenceDiagram
+    actor Actor as "Primary actor"
+    participant System as "System"
+    Actor->>System: Trigger behavior
+    System-->>Actor: Return observable outcome
+    alt Exception or invalid state
+        System-->>Actor: Return rejection, reason, and required next action
+    end
+```
+
+## 6. Draft Test Cases
+
+- **Test case file:** [{{fr_slug}}-test-cases.md]({{fr_slug}}-test-cases.md)
+- **Requirement:** Generate at least one draft test case for each acceptance criterion. Keep these as QA-planning drafts linked to FR/AC IDs; `ai-quality-engineer` owns final test design, automation, execution, and evidence.
+- **Traceability:** Link test case IDs from [{{fr_slug}}-test-cases.md]({{fr_slug}}-test-cases.md) back to the acceptance criteria above.
+
+## 7. Report / Export Definition
+
+Required for reporting, dashboard, extract, export, notification attachment, or evidence-output FRs; otherwise record `Not applicable` with rationale.
+
+| Report / Export Name | Fields | Filters | Format | Permission | Audit Rule | Evidence / Test Target |
+|:---------------------|:-------|:--------|:-------|:-----------|:-----------|:------------------------|
+| TBD report/export or `Not applicable` | TBD field list and source | TBD filters/date range/scope | PDF / Excel / CSV / API / screen / notification | TBD role or policy | TBD view/download/export audit rule | [TEST-TBD](../../../06-verification/test-cases.md#test-tbd) |
+
+## 8. Sensitive Data Handling
+
+Required for privacy, security, personal data, credentials, financial, operationally sensitive, or regulated data; otherwise record `Not applicable` with rationale.
+
+| Data Type | Capture Allowed? | Storage Allowed? | Retention Rule | Deletion Rule | Access Roles | Audit Required? | Policy Owner |
+|:----------|:-----------------|:-----------------|:---------------|:--------------|:-------------|:----------------|:-------------|
+| TBD data type or `Not applicable` | Yes / No / Pending policy | Yes / No / Pending policy | TBD retention source | TBD deletion/anonymization rule | TBD roles | Yes / No | Security / Legal / Data owner |
+
+## 9. FR-Level LLD Link
+
+- **LLD:** [{{fr_slug}}-lld.md]({{fr_slug}}-lld.md)
+- **LLD status:** Draft / Ready for architecture review / Approved by architecture
+- **Architecture owner:** `ai-solution-architect` / `adp-arch-lld`
+- **Implementation blocker?** Yes / No
+
+## 10. Evidence And Handoff
+
+- **Validation target:** [TEST-TBD](../../../06-verification/test-cases.md#test-tbd)
+- **Evidence status:** Pending / Provided / Not applicable, with evidence path or owner.
+- **Open questions / blockers:** None / list blocker IDs from the index.
+- **Summary for downstream role(s):**
+- **Risks to carry forward:**
+- **Required review / approval:**

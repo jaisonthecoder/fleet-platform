@@ -1,0 +1,47 @@
+name: app-ui CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'app-ui/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/ci.yml'
+
+# All app-ui dependencies resolve from the public npm registry (verified: the
+# lockfile has no private-feed references). If private packages are added later,
+# configure registry auth (e.g. an NODE_AUTH_TOKEN secret) before install.
+jobs:
+  app-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm --filter app-ui typecheck
+
+      - name: Lint
+        run: pnpm --filter app-ui lint
+
+      - name: Format check
+        run: pnpm --filter app-ui format:check
+
+      - name: Test
+        run: pnpm --filter app-ui test
+
+      - name: Build
+        run: pnpm --filter app-ui build

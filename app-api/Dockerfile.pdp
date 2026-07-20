@@ -1,0 +1,27 @@
+# Fleet Management Platform — PDP (Policy Decision Point) deployable.
+# Build from the REPOSITORY ROOT:  docker build -f app-api/Dockerfile.pdp -t fleet-pdp .
+FROM node:24-alpine AS base
+ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
+RUN corepack enable
+WORKDIR /repo
+
+FROM base AS deps
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY app-api/package.json ./app-api/package.json
+COPY app-ui/package.json ./app-ui/package.json
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --filter fleet-platform-api...
+
+FROM deps AS build
+COPY app-api ./app-api
+RUN pnpm --filter fleet-platform-api build
+
+FROM base AS runtime
+ENV NODE_ENV=production
+COPY --from=build /repo/node_modules ./node_modules
+COPY --from=build /repo/app-api/node_modules ./app-api/node_modules
+COPY --from=build /repo/app-api/dist ./app-api/dist
+COPY --from=build /repo/app-api/package.json ./app-api/package.json
+WORKDIR /repo/app-api
+EXPOSE 3001
+CMD ["node", "--enable-source-maps", "dist/main.pdp.js"]

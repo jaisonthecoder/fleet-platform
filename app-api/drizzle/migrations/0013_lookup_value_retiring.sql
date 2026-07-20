@@ -1,0 +1,1 @@
+ALTER TABLE "fleet"."lookup_value" ADD COLUMN "retiring" boolean DEFAULT false NOT NULL;

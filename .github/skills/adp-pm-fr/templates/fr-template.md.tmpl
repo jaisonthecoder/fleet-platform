@@ -1,0 +1,137 @@
+# Functional Requirements - {{feature}}
+
+**Artifact owner:** `ai-product-manager`
+**Source request / ticket:**
+**Upstream artifacts:**
+**Target path:** `docs/02-product/FR/functional-requirements.md`
+**Status:** Draft
+**Last updated:**
+**Downstream role(s):** `ai-solution-architect`, `ai-ux-ui-designer`, `ai-quality-engineer`, `ai-delivery-planner`, implementation role(s)
+
+## Delivery Readiness Gate
+
+| Gate Item | Status | Evidence / Link | Owner | Notes |
+|:----------|:-------|:----------------|:------|:------|
+| Backlog / ticket linked? | Yes / No | [US-TBD](../04-planning/product-backlog.md#us-tbd) | Product Owner | Required before any FR is `Ready for delivery` or `Approved`. |
+| Sponsor / owner named? | Yes / No | TBD sponsor or decision owner | Product Owner | Required before approval. |
+| Security / legal policy resolved? | Yes / No / Not applicable | [FR-Q-002](#11-assumptions-risks-and-open-questions) / policy reference | Security / Legal owner | If unresolved, affected FRs must be `Draft` or `Blocked`. |
+| Test owner identified? | Yes / No | [TEST-TBD](../05-quality/test-cases.md#test-tbd) | `ai-quality-engineer` / QA owner | Required before delivery readiness. |
+| Ready for delivery? | Yes / No | Linked backlog, policy, and test evidence | Product Owner | `Yes` only when no blocking dependencies remain. |
+
+## 1. Purpose
+
+State the product behavior this artifact defines, the business outcome it supports, and the downstream work it enables.
+
+## 2. Scope
+
+| Scope Ref ID | Category | Scope Item | Source Trace | Related FR(s) / Rule(s) | Notes |
+|:-------------|:---------|:-----------|:-------------|:-------------------------|:------|
+| `SCOPE-IN-001` | In scope | TBD included product behavior, actor, workflow, data, integration, report, handoff, or operational scenario. | [BR-TBD](../01-discovery/brd.md#br-tbd) / [PRD-TBD](prd.md#prd-tbd) / [US-TBD](../04-planning/product-backlog.md#us-tbd) / stakeholder note | [FR-001](#fr-001---tbd-behavior-name) / [BRULE-001](#7-business-rules) | TBD boundary, condition, tenant, terminal, or release note. |
+| `SCOPE-OUT-001` | Out of scope | TBD excluded behavior, manual process, channel, integration, report, user group, exception, or future enhancement. | [BR-TBD](../01-discovery/brd.md#br-tbd) / [PRD-TBD](prd.md#prd-tbd) / decision note | Not applicable / deferred to [FR-Q-001](#11-assumptions-risks-and-open-questions) | TBD rationale, owner, deferred path, or explicit non-goal. |
+
+- **Assumptions:**
+- **Open questions / blockers:** List unresolved scope, actor, business-rule, acceptance, data, permission, integration, or ownership questions. Mark blockers explicitly as `Scope blocker`, `Business-rule blocker`, `Acceptance blocker`, `Data blocker`, or `Ownership blocker`.
+
+## 3. AD Ports Checks
+
+- **Tenant / terminal impact:**
+- **Arabic / RTL or accessibility impact:**
+- **UAE data residency / PDPL / NESA impact:**
+- **Operational window, vessel, customs, or maritime SLA impact:**
+- **SAP / Oracle / Port Community System integration impact:**
+
+## 4. Template Use Notes
+
+- Ask the requester for missing values before generation when a `TBD` would affect scope, behavior, actor, business rule, acceptance, evidence, or ownership.
+- No `TBD` may remain when status is `Approved` or `Ready for delivery` unless it is listed in Section 11 as an assumption, risk, deferred item, or blocker with an owner and needed-by date.
+- Create one package folder per FR at `docs/02-product/FR/fr-<nnn>/`.
+- Keep detailed FR content in the package `fr-<nnn>-description.md` from `templates/fr-record-template.md.tmpl`; keep this document as the index, readiness gate, summary, and cross-FR traceability view.
+- Merge linked user story context into each package `fr-<nnn>-description.md`: story statement, feature objective, user or business value, primary scenario, story-derived constraints, and relevant story acceptance criteria. Do not leave feature detail only in a backlog/story link.
+- Each FR package must contain `fr-<nnn>-description.md`, `fr-<nnn>-test-cases.md`, `sequence.mmd`, `sequence.drawio` when required, and `fr-<nnn>-lld.md` from `templates/fr-lld-template.md.tmpl`.
+- Keep each acceptance criterion independently testable in the FR package description file. Every `Must` FR requires at least one happy path, one alternate/edge path, and one permission/error path unless explicitly justified.
+- Generate draft test cases in the FR package `fr-<nnn>-test-cases.md` from the acceptance criteria. Final test design, execution, and evidence remain owned by `ai-quality-engineer`.
+- Use `sequence.mmd` as the MermaidJS source and `sequence.drawio` as the editable companion in the same FR package folder. For simple single-step FRs, record `Not required - single-step behavior`.
+- Mermaid safety: avoid semicolons in sequence message text because some renderers treat `;` as a statement separator. Use ` - ` or `,` instead. Avoid raw pipes, unmatched brackets/quotes, and HTML-like angle brackets in labels. Quote participant labels that contain punctuation or slashes, for example `participant API as ".NET Retention API Job"`.
+- Make traceable items and outputs clickable. Link FR IDs to package description files, AC IDs to anchors inside the package description file, test case IDs to anchors inside `fr-<nnn>-test-cases.md`, and sequence/Draw.io/LLD artifacts to the same package folder. If the target path or anchor is not yet known, keep the ID visible and list the missing link in Section 13 as an evidence gap.
+- Do not mark an FR `Ready for delivery` or `Approved` if its only story/backlog trace is an `FR-Q-*` blocker, open question, or generic `TBD`. Delivery-ready FRs require actual backlog/story and test/validation links.
+
+## 5. Functional Requirement Summary
+
+| FR ID | Priority | Requirement Summary | Package | Test Cases | Sequence | LLD | Source Trace | Primary Actor | Status | Owner |
+|:------|:---------|:--------------------|:--------|:-----------|:---------|:----|:-------------|:--------------|:-------|:------|
+| [FR-001](fr-001/fr-001-description.md) | **Must** | TBD observable behavior in one sentence. | [description](fr-001/fr-001-description.md) | [test cases](fr-001/fr-001-test-cases.md) | [sequence.mmd](fr-001/sequence.mmd) / [sequence.drawio](fr-001/sequence.drawio) | [LLD](fr-001/fr-001-lld.md) | **BR:** [BR-TBD](../01-discovery/brd.md#br-tbd); **PRD/story:** [US-TBD](../04-planning/product-backlog.md#us-tbd) | TBD | Draft | TBD |
+
+## 6. FR Package Inventory
+
+| FR ID | Folder | Required Files | Package Status | Missing / Evidence Gap |
+|:------|:-------|:---------------|:---------------|:-----------------------|
+| [FR-001](fr-001/fr-001-description.md) | `docs/02-product/FR/fr-001/` | `fr-001-description.md`, `fr-001-test-cases.md`, `sequence.mmd`, `sequence.drawio`, `fr-001-lld.md` | Draft / Ready for review / Approved | TBD missing artifact, approval, or evidence gap. |
+
+## 7. Business Rules
+
+| Rule ID | Source Trace | Rule Summary | Applies To | Exceptions / Notes | Owner |
+|:--------|:-------------|:-------------|:-----------|:-------------------|:------|
+| [BRULE-001](#7-business-rules) | [BR-TBD](../01-discovery/brd.md#br-tbd) | TBD decision, calculation, eligibility, state, retention, or workflow rule. | [FR-001](#fr-001---tbd-behavior-name) | TBD | TBD |
+
+## 8. Acceptance Criteria
+
+Use stable scenario IDs and Given/When/Then format. Each `Must` FR needs at least one happy path, one relevant edge/alternate path, and one error/permission/exception path unless explicitly justified.
+Each scenario must be independently testable and should avoid compound `Then` clauses. If a scenario needs multiple evidence checks, split it into separate AC IDs or list sub-checks under one unambiguous outcome.
+
+### FR-001.AC1 - Happy path
+Given ...
+When ...
+Then ...
+
+### FR-001.AC2 - Edge or alternate path
+Given ...
+When ...
+Then ...
+
+### FR-001.AC3 - Error, permission, or exception path
+Given ...
+When ...
+Then ...
+
+## 9. Traceability
+
+Delivery-ready FRs must have real backlog/story and test links. Do not use an `FR-Q-*` blocker, open question, or generic `TBD` as the only Story / Backlog Item for any FR marked `Ready for delivery` or `Approved`; keep the FR `Draft` or `Blocked` until the delivery trace exists.
+
+| Source | Functional Requirement | Business Rule(s) | Acceptance Criteria | Draft Test Case(s) | Sequence | LLD | Story / Backlog Item | Test / Validation Target | Evidence Status |
+|:-------|:-----------------------|:-----------------|:--------------------|:-------------------|:---------|:----|:---------------------|:-------------------------|:----------------|
+| [BR-TBD](../01-discovery/brd.md#br-tbd) | [FR-001](fr-001/fr-001-description.md) | [BRULE-001](#7-business-rules) | [FR-001.AC1](fr-001/fr-001-description.md#fr-001ac1---happy-path) to [FR-001.AC3](fr-001/fr-001-description.md#fr-001ac3---error-permission-or-exception-path) | [TC-FR-001-001](fr-001/fr-001-test-cases.md#tc-fr-001-001) to [TC-FR-001-003](fr-001/fr-001-test-cases.md#tc-fr-001-003) | [sequence.mmd](fr-001/sequence.mmd) / [sequence.drawio](fr-001/sequence.drawio) | [fr-001-lld.md](fr-001/fr-001-lld.md) | [US-TBD](../04-planning/product-backlog.md#us-tbd) | [TEST-TBD](../06-verification/test-cases.md#test-tbd) | Pending |
+
+## 10. Routed Items
+
+| Item | Why This Is Not FR | Owning Role / Skill | Status |
+|:-----|:-------------------|:--------------------|:-------|
+| TBD NFR, UX, architecture, implementation, test execution, or backlog-ranking item. | TBD | TBD | Routed / Pending / Accepted |
+
+## 11. Assumptions, Risks, And Open Questions
+
+| ID | Type | Description | Owner | Needed By | Impact |
+|:---|:-----|:------------|:------|:----------|:-------|
+| FR-A-001 | Assumption | TBD actor, workflow, data, integration, or operating assumption. | TBD | FR approval / design / implementation | Requirement may change if assumption is false. |
+| FR-Q-001 | Scope blocker | TBD unresolved scope boundary or excluded behavior. | Product Owner | FR approval | Cannot approve affected FRs until resolved or formally deferred. |
+| FR-Q-002 | Business-rule blocker | TBD unresolved eligibility, validation, state, calculation, exception, or authority rule. | Business owner / `ai-business-analyst` | FR approval | Downstream design and tests may encode the wrong rule. |
+| FR-Q-003 | Acceptance blocker | TBD missing acceptance threshold, scenario, role, or evidence owner. | Product Owner / `ai-quality-engineer` | QA planning | FR cannot be considered test-ready. |
+| FR-R-001 | Risk | TBD behavioral ambiguity, dependency, or ownership risk. | TBD | Planning / implementation | Delivery may proceed only if risk is accepted or mitigated. |
+
+## 12. Change Log
+
+| Date | Change | FR IDs | Reason / Source |
+|:-----|:-------|:-------|:----------------|
+| YYYY-MM-DD | Initial FR draft or update summary. | [FR-001](#fr-001---tbd-behavior-name) | Source request / review finding / ticket. |
+
+## 13. Evidence
+
+- Source evidence:
+- Template / workflow used: `adp-pm-fr`, selected workflow, and this template.
+- Validation performed:
+- Validation gaps: List missing approvals, source artifacts, business rules, acceptance examples, test IDs, standards, or evidence.
+
+## 14. Handoff
+
+- **Summary for downstream role(s):**
+- **Risks to carry forward:**
+- **Required review / approval:**

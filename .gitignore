@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+
+# Build and test output
+dist/
+build/
+coverage/
+.vite/
+.turbo/
+.cache/
+*.tsbuildinfo
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.pfx
+*.p12
+
+# Runtime files
+*.log
+logs/
+tmp/
+temp/
+*.pid
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local test and browser artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Package-manager debug output
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*

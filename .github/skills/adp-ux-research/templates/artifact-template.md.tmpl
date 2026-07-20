@@ -1,0 +1,87 @@
+# Artifact Template
+
+Use with `adp-ux-research` when producing or updating: ux-research.md.
+
+## Header
+
+- **Artifact owner:** `ai-ux-ui-designer`
+- **Source request / ticket:**
+- **Upstream artifacts:**
+- **Target path:**
+- **Last updated:**
+- **Downstream role(s):** `ai-frontend-react`, `ai-frontend-angular`, `ai-mobile-rn`, `ai-quality-engineer`
+
+## Purpose
+
+State why this artifact exists and what downstream decision or delivery activity it enables.
+
+## Scope
+
+- **In scope:**
+- **Out of scope:**
+- **Assumptions:**
+- **Open questions:**
+
+## AD Ports Checks
+
+- **Tenant / terminal impact:**
+- **Arabic / RTL or accessibility impact:**
+- **UAE data residency / PDPL / NESA impact:**
+- **Operational window, vessel, customs, or maritime SLA impact:**
+- **SAP / Oracle / Port Community System integration impact:**
+
+## Main Content
+
+Replace this section with the artifact-specific content. Keep decisions traceable to source evidence and avoid copying shared standards into this file.
+
+### Personas / User Groups
+
+- **Persona / group:**
+- **Goal:**
+- **Constraints:**
+
+### Journey Map / Service Blueprint
+
+Use this section when the artifact includes a journey map, service blueprint, or user flow. Prefer Mermaid so the diagram stays reviewable in Markdown; link Figma or Miro only when the source diagram must remain in a design board.
+Mermaid safety: avoid semicolons and raw pipes in labels, keep brackets/quotes balanced, and use ` - ` or `,` instead of `;`.
+
+```mermaid
+journey
+  title User Journey - <journey name>
+  section Discover
+    Identify need: 3: User
+    Review requirements: 4: User
+  section Complete Task
+    Start request: 3: User
+    Resolve blockers: 2: User
+    Submit request: 5: User
+  section Follow Up
+    Track status: 4: User
+    Receive outcome: 5: User
+```
+
+### User Flow / System Touchpoints
+
+Use Mermaid-safe labels for every node and edge. Quote labels that contain punctuation, slashes, or parentheses.
+
+```mermaid
+flowchart LR
+  A["Trigger / user need"] --> B["Entry point / screen"]
+  B --> C["Primary action"]
+  C --> D{"Decision or validation"}
+  D -->|Success| E["Outcome"]
+  D -->|Error| F["Error recovery"]
+  D -->|Abandon| G["Abandon / save state"]
+```
+
+## Evidence
+
+- Source evidence:
+- Validation performed:
+- Validation gaps:
+
+## Handoff
+
+- **Summary for downstream role(s):**
+- **Risks to carry forward:**
+- **Required review / approval:**

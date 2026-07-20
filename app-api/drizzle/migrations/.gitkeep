@@ -1,0 +1,4 @@
+# Drizzle migrations
+
+Generated migration SQL is written here by `pnpm db:generate` once business
+tables exist in `src/common/database/schema.ts`. Applied with `pnpm db:migrate`.

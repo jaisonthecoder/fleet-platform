@@ -1,0 +1,215 @@
+# Business Requirements Document Template
+
+[Project / Country Name]
+
+**Solution / Initiative:** [Solution / Module / Phase Name]  
+**Version:** [0.1]  
+**Status:** [Draft / In Review / Final]  
+**Date:** [DD MMM YYYY]  
+**Sponsor:** [Name / Role]  
+**Business Analyst:** [Name / Role]  
+**Source Request / Ticket:** [Reference]
+
+## Optional Formal Document Control
+
+Complete this section only when the BRD must be issued as a controlled Word document for formal review or approval. Remove it for lightweight development-start use.
+
+| Field | Value |
+|---|---|
+| Document Title | [Project Name] - Business Requirements Document |
+| Document Identifier | [BRD-PRJ-NN] |
+| Document Link | [Insert SharePoint or storage location] |
+| Document Classification | [Internal / Restricted / Confidential] |
+| Document Owner | [Organization Name / Role] |
+
+### Optional Version History
+
+| Version | Date | Author | Summary of Changes |
+|---|---|---|---|
+| [0.1] | [DD MMM YYYY] | [Author Name] | [Initial draft] |
+
+### Optional Reviewers and Approvers
+
+| Role | Name | Review / Approval | Date |
+|---|---|---|---|
+| [Reviewer Role] | [Name] | [Review] | [DD MMM YYYY] |
+| [Approver Role] | [Name] | [Approval] | [DD MMM YYYY] |
+
+## Executive Summary
+
+[Summarize the initiative in one page or less. State the business need, why change is needed now, the target business outcome, who benefits, and the approval decision required.]
+
+## 1. Business Context
+
+### 1.1 Background
+
+[Describe the strategic, operational, regulatory, customer, or organizational context for the initiative.]
+
+### 1.2 Business Problem / Opportunity
+
+[Describe the business problem or opportunity. Focus on business impact, not solution design.]
+
+### 1.3 Current State and Pain Points
+
+[Describe how the business process, service, or capability works today. Include key pain points, constraints, manual work, risks, delays, or gaps. Include known or suspected root causes only when they are relevant and evidence-backed.]
+
+### 1.4 Drivers for Change
+
+| Driver ID | Driver | Type | Source / Evidence |
+|---|---|---|---|
+| DR-001 | [Business, regulatory, operational, customer, cost, risk, or strategic driver] | [Type] | [Source] |
+
+## 2. Objectives and Scopes
+
+### 2.1 Objectives, Metrics, and Beneficiaries
+
+#### 2.1.1 Business Objectives
+
+| Objective ID | Business Objective | Owner |
+|---|---|---|
+| OBJ-001 | [State the business outcome the initiative must achieve.] | [Role] |
+
+#### 2.1.2 Success Metrics
+
+| Metric ID | Linked Objective | Metric | Baseline | Target | Timeframe | Owner |
+|---|---|---|---|---|---|---|
+| M-001 | OBJ-001 | [Measurable outcome metric] | [Current value] | [Target value] | [When] | [Role] |
+
+#### 2.1.3 Beneficiaries
+
+| Beneficiary | Expected Benefit | Linked Objective |
+|---|---|---|
+| [User / stakeholder group] | [Business value they receive] | OBJ-001 |
+
+### 2.2 Scopes
+
+[Provide a short scope statement that names the initiative, the business capability being addressed, the affected stakeholders, and the release boundary.]
+
+#### 2.2.1 In Scope
+
+- [Capability, process, geography, stakeholder group, policy area, or business outcome included in this BRD.]
+- [Add or remove bullets as needed.]
+
+#### 2.2.2 Out Scope
+
+- [Capability, process, geography, stakeholder group, integration, migration, or business activity excluded from this BRD.]
+- [Add rationale where exclusion may be misunderstood.]
+
+#### 2.2.3 Release Scope
+
+| Release / Phase | Included Business Capability | Deferred / Excluded Items |
+|---|---|---|
+| [Release 1] | [Capability or process] | [Deferred items] |
+
+#### 2.2.4 User and Stakeholder Scope
+
+| Stakeholder / User Group | Role in Current State | Role in Future State | Impact |
+|---|---|---|---|
+| [Stakeholder group] | [Current involvement] | [Expected involvement] | [High / Medium / Low] |
+
+## 3. Future State
+
+### 3.1 Target Business Outcome
+
+[Describe the desired future state after the initiative is delivered. Keep this at business outcome level.]
+
+### 3.2 Future Business Process Summary
+
+| Process ID | Process / Capability | Future State Summary | Owner |
+|---|---|---|---|
+| BP-001 | [Process name] | [How the process should work at a business level] | [Role] |
+
+### 3.3 Business Rules and Policies
+
+| Rule ID | Business Rule / Policy | Source | Applies To |
+|---|---|---|---|
+| RULE-001 | [Business rule, policy, regulation, or operational decision rule] | [Source] | [Process / stakeholder] |
+
+## 4. Requirements
+
+### 4.1 Business Requirements
+
+Business requirements describe what business outcome or capability is needed. They should not describe screens, APIs, detailed workflows, technical design, performance thresholds, or implementation behavior.
+
+| BR ID | Business Requirement | Business Outcome | Priority | Source / Driver |
+|---|---|---|---|---|
+| BR-001 | [The business needs to achieve / enable / comply with ...] | [Outcome] | [Must / Should / Could / Won't] | DR-001 |
+
+### 4.2 Stakeholder Requirements
+
+Stakeholder requirements describe what a stakeholder group needs in order for the business requirement to be satisfied. Detailed system functions belong in the FR template.
+
+| SR ID | Stakeholder Requirement | Stakeholder / User Group | Linked BR ID | Priority |
+|---|---|---|---|---|
+| SR-001 | [Stakeholder needs to ...] | [Group] | BR-001 | [Must / Should / Could / Won't] |
+
+### 4.3 Transition Requirements
+
+Transition requirements describe temporary business needs required to move from current state to future state.
+
+| TR ID | Transition Requirement | Type | Linked BR ID | Owner |
+|---|---|---|---|---|
+| TR-001 | [Training, migration, cutover, readiness, communication, decommissioning, or temporary support need] | [Type] | BR-001 | [Role] |
+
+## 5. Assumptions, Constraints, and Dependencies
+
+### 5.1 Assumptions
+
+| ID | Assumption | Validation Needed | Owner |
+|---|---|---|---|
+| A-001 | [Assumption being made] | [How / when it will be validated] | [Role] |
+
+### 5.2 Constraints
+
+| ID | Constraint | Impact | Source |
+|---|---|---|---|
+| C-001 | [Constraint limiting scope, timing, policy, budget, operation, or delivery] | [Impact] | [Source] |
+
+### 5.3 Dependencies
+
+| ID | Dependency | Owner | Needed By | Risk If Late |
+|---|---|---|---|---|
+| D-001 | [Dependency] | [Role / team] | [Date / milestone] | [Impact] |
+
+## 6. Risks and Open Questions
+
+### 6.1 Business Risks
+
+| Risk ID | Risk | Likelihood | Impact | Mitigation | Owner |
+|---|---|---|---|---|---|
+| R-001 | [Business risk affecting need, value, scope, adoption, compliance, or operations] | [H / M / L] | [H / M / L] | [Mitigation] | [Role] |
+
+### 6.2 Open Questions
+
+| Question ID | Question | Owner | Needed By | Impact If Unanswered |
+|---|---|---|---|---|
+| Q-001 | [Open question] | [Role] | [Date / milestone] | [Impact] |
+
+## 7. Traceability and Handoff
+
+### 7.1 Traceability Matrix
+
+| Driver ID | Objective ID | BR ID | SR / TR ID | Downstream FR / NFR ID |
+|---|---|---|---|---|
+| DR-001 | OBJ-001 | BR-001 | SR-001 | [To be completed in FR / NFR templates] |
+
+### 7.2 FR / NFR Handoff Notes
+
+- Functional details, system behavior, process steps, screen behavior, validations, integrations, and acceptance criteria must be captured in the FR template.
+- Performance, security, availability, scalability, auditability, usability, accessibility, localization, observability, and supportability requirements must be captured in the NFR template.
+- Each FR and NFR should trace back to one or more BR IDs from this BRD.
+
+## Annex A: Glossary and Acronyms
+
+| Term / Acronym | Definition |
+|---|---|
+| BRD | Business Requirements Document |
+| FR | Functional Requirement |
+| NFR | Non-Functional Requirement |
+| [Term] | [Definition] |
+
+## Annex B: References
+
+| Reference ID | Source | Type | Relevance |
+|---|---|---|---|
+| REF-001 | [Document, workshop, interview, regulation, policy, metric, or system evidence] | [Type] | [Why it matters] |

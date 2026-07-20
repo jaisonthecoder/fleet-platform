@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style data-omelette-print-defaults>
+@media print {
+  @page { margin: 0.5in; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid; }
+  figure, table, pre, blockquote, img, svg, tr, [class~="card" i] { break-inside: avoid; }
+  img, svg { max-width: 100%; }
+  p { orphans: 3; widows: 3; }
+}
+</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { -webkit-font-smoothing: antialiased; }
+    ::selection { background: rgba(177,80,43,.25); }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(120,110,90,.28); border-radius: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    @keyframes helm-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes helm-pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+    @keyframes helm-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(176,54,42,.35); } 100% { box-shadow: 0 0 0 8px rgba(176,54,42,0); } }
+    input, select, textarea, button { font-family: inherit; }
+    input:focus, select:focus, textarea:focus { outline: none; }
+  </style>
+</helmet>
+<div style="--bg:{{ t.bg }}; --surface:{{ t.surface }}; --surfaceAlt:{{ t.surfaceAlt }}; --surfaceHover:{{ t.surfaceHover }}; --border:{{ t.border }}; --borderStrong:{{ t.borderStrong }}; --text:{{ t.text }}; --textSecondary:{{ t.textSecondary }}; --textTertiary:{{ t.textTertiary }}; --primary:{{ t.primary }}; --primaryHover:{{ t.primaryHover }}; --primaryTint:{{ t.primaryTint }}; --onPrimary:{{ t.onPrimary }}; --ok:{{ t.ok }}; --okTint:{{ t.okTint }}; --warn:{{ t.warn }}; --warnTint:{{ t.warnTint }}; --danger:{{ t.danger }}; --dangerTint:{{ t.dangerTint }}; --info:{{ t.info }}; --infoTint:{{ t.infoTint }}; --plum:{{ t.plum }}; --plumTint:{{ t.plumTint }}; --shadowSm:{{ t.shadowSm }}; --shadowMd:{{ t.shadowMd }}; --heroWash:{{ t.heroWash }}; background:var(--bg); color:var(--text); font-family:'Public Sans',system-ui,sans-serif; min-height:100vh; width:100%; display:flex; transition:background .25s ease,color .25s ease;">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside style="width:264px; flex:none; background:var(--surfaceAlt); border-right:1px solid var(--border); display:flex; flex-direction:column; height:100vh; position:sticky; top:0;">
+    <div style="display:flex; align-items:center; gap:11px; padding:22px 20px 16px;">
+      <div style="width:38px; height:38px; border-radius:11px; background:linear-gradient(155deg, var(--primary), var(--primaryHover)); display:flex; align-items:center; justify-content:center; flex:none; box-shadow:0 6px 16px -6px color-mix(in oklab, var(--primary) 60%, transparent);">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z" stroke="var(--onPrimary)" stroke-width="2" stroke-linejoin="round"/><path d="M9 12.5 11 15l4.5-5.5" stroke="var(--onPrimary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:18px; letter-spacing:-.015em; line-height:1.1;">Helm</div>
+        <div style="font-size:10px; color:var(--textTertiary); font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-top:2px;">Fleet Platform</div>
+      </div>
+    </div>
+
+    <div style="padding:6px 22px 10px;">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--textTertiary);">{{ roleLabel }}</div>
+    </div>
+
+    <!-- Employee nav -->
+    <sc-if value="{{ isEmployee }}" hint-placeholder-val="{{ true }}">
+      <nav style="display:flex; flex-direction:column; gap:2px; padding:0 14px;">
+        <button onClick="{{ nav.home.click }}" style="{{ nav.home.style }}">
+          <span style="{{ nav.home.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 11.5 12 4l9 7.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>Home</span>
+        </button>
+        <button onClick="{{ nav.book.click }}" style="{{ nav.book.style }}">
+          <span style="{{ nav.book.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="7" width="17" height="13" rx="2.2" stroke="currentColor" stroke-width="1.9"/><path d="M8 4v5M16 4v5M3.5 11.5h17" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span>Book a vehicle</span>
+        </button>
+        <button onClick="{{ nav.entitlement.click }}" style="{{ nav.entitlement.style }}">
+          <span style="{{ nav.entitlement.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M8.5 12.5h7M8.5 16h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span>Dedicated vehicle</span>
+        </button>
+      </nav>
+    </sc-if>
+
+    <!-- Fleet Manager nav -->
+    <sc-if value="{{ isFleetManager }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex; flex-direction:column; gap:2px; padding:0 14px;">
+        <button onClick="{{ nav.ops.click }}" style="{{ nav.ops.style }}">
+          <span style="{{ nav.ops.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2.2-5 3.6 10 2.2-5H21" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>Ops dashboard</span>
+        </button>
+        <button onClick="{{ nav.handover.click }}" style="{{ nav.handover.style }}">
+          <span style="{{ nav.handover.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 12h11M11 7l4 5-4 5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 6v12" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span>Handover &amp; return</span>
+        </button>
+        <button onClick="{{ nav.approvals.click }}" style="{{ nav.approvals.style }}">
+          <span style="{{ nav.approvals.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M9 12.5 11 15l4.5-5.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="8.3" stroke="currentColor" stroke-width="1.9"/></svg></span>
+          <span>Booking approvals</span>
+        </button>
+        <button onClick="{{ nav.fleet.click }}" style="{{ nav.fleet.style }}">
+          <span style="{{ nav.fleet.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><rect x="3" y="10" width="12" height="7" rx="1.4" stroke="currentColor" stroke-width="1.9"/><path d="M15 12.5h3.3L21 15.5V17h-6" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="7" cy="18.5" r="1.6" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18.5" r="1.6" stroke="currentColor" stroke-width="1.7"/></svg></span>
+          <span>Fleet vehicles</span>
+        </button>
+        <button onClick="{{ nav.compliance.click }}" style="{{ nav.compliance.style }}">
+          <span style="{{ nav.compliance.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 5 6.2v5.3c0 4.7 3 7.6 7 9 4-1.4 7-4.3 7-9V6.2L12 3.5Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M9.2 12.2 11.3 14l3.5-4.2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span>Compliance &amp; alerts</span>
+        </button>
+        <button onClick="{{ nav.fines.click }}" style="{{ nav.fines.style }}">
+          <span style="{{ nav.fines.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3.2h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10.6 4.3 2.9 17.5a1.7 1.7 0 0 0 1.5 2.6h15.2a1.7 1.7 0 0 0 1.5-2.6L13.4 4.3a1.7 1.7 0 0 0-2.8 0Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></span>
+          <span>Fines &amp; black points</span>
+        </button>
+        <button onClick="{{ nav.map.click }}" style="{{ nav.map.style }}">
+          <span style="{{ nav.map.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6 9 4Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M9 4v14M15 6v14" stroke="currentColor" stroke-width="1.9"/></svg></span>
+          <span>Live map</span>
+        </button>
+      </nav>
+    </sc-if>
+
+    <!-- Executive nav -->
+    <sc-if value="{{ isExecutive }}" hint-placeholder-val="{{ false }}">
+      <nav style="display:flex; flex-direction:column; gap:2px; padding:0 14px;">
+        <button onClick="{{ nav.dashboard.click }}" style="{{ nav.dashboard.style }}">
+          <span style="{{ nav.dashboard.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 19V10M11 19V5M18 19v-7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M3 19h18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span>Executive dashboard</span>
+        </button>
+        <button onClick="{{ nav.entitlements.click }}" style="{{ nav.entitlements.style }}">
+          <span style="{{ nav.entitlements.iconWrap }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M8.5 12.5h7M8.5 16h5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></span>
+          <span>Entitlement approvals</span>
+        </button>
+      </nav>
+    </sc-if>
+
+    <div style="margin-top:auto; padding:14px; display:flex; flex-direction:column; gap:10px;">
+      <button onClick="{{ toggleMobilePreview }}" style="width:100%; display:flex; align-items:center; justify-content:center; gap:9px; padding:11px 12px; border-radius:10px; border:1px dashed var(--borderStrong); background:var(--surface); color:var(--textSecondary); font-size:12.5px; font-weight:700; cursor:pointer;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="7" y="2.5" width="10" height="19" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 18h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        View driver mobile app
+      </button>
+      <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:var(--surface); border:1px solid var(--border);">
+        <div style="width:34px; height:34px; border-radius:50%; background:var(--primary); color:var(--onPrimary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12.5px; font-family:'Sora',sans-serif; flex:none;">{{ currentUser.initials }}</div>
+        <div style="min-width:0;">
+          <div style="font-size:12.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ currentUser.name }}</div>
+          <div style="font-size:11px; color:var(--textTertiary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ currentUser.empId }}</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div style="flex:1; min-width:0; display:flex; flex-direction:column; height:100vh; overflow:hidden;">
+
+    <!-- Top bar -->
+    <header style="height:68px; flex:none; display:flex; align-items:center; gap:14px; padding:0 28px; border-bottom:1px solid var(--border); background:var(--surface);">
+      <div>
+        <div style="font-size:10.5px; color:var(--textTertiary); font-weight:700; letter-spacing:.08em;">{{ breadcrumbCluster }}</div>
+        <div style="font-family:'Sora',sans-serif; font-size:17px; font-weight:700; letter-spacing:-.01em;">{{ pageTitle }}</div>
+      </div>
+
+      <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+        <!-- Role switcher -->
+        <div style="display:flex; align-items:center; background:var(--surfaceAlt); border-radius:10px; padding:3px; gap:2px;">
+          <button onClick="{{ roleBtn.employee.click }}" style="{{ roleBtn.employee.style }}">Employee</button>
+          <button onClick="{{ roleBtn.fleetManager.click }}" style="{{ roleBtn.fleetManager.style }}">Fleet Mgr</button>
+          <button onClick="{{ roleBtn.executive.click }}" style="{{ roleBtn.executive.style }}">Executive</button>
+        </div>
+
+        <button onClick="{{ toggleAiPanel }}" style="display:flex; align-items:center; gap:7px; height:38px; padding:0 14px; border-radius:9px; border:1px solid color-mix(in oklab, var(--plum) 30%, var(--border)); background:var(--plumTint); color:var(--plum); font-size:12.5px; font-weight:700; cursor:pointer;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2.5 13.8 8l5.5 1.8-5.5 1.8L12 17l-1.8-5.4L4.7 9.8 10.2 8 12 2.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M19 15.5 19.9 18l2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          Ask Helm AI
+        </button>
+
+        <button onClick="{{ toggleNotifPanel }}" style="position:relative; width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--textSecondary); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.4 5.3 2 6H4c.6-.7 2-2 2-6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 19.5a2.2 2.2 0 0 0 4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span style="position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%; background:var(--danger); border:1.5px solid var(--surface); animation:helm-pulse-ring 2s infinite;"></span>
+        </button>
+
+        <button onClick="{{ toggleTheme }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--surface); color:var(--textSecondary); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+          <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.3" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </sc-if>
+          <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M20.8 14.2A8.5 8.5 0 1 1 9.8 3.2a7 7 0 0 0 11 11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          </sc-if>
+        </button>
+
+        <div style="width:38px; height:38px; border-radius:50%; background:linear-gradient(155deg, var(--primary), var(--primaryHover)); color:var(--onPrimary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; font-family:'Sora',sans-serif;">{{ currentUser.initials }}</div>
+      </div>
+    </header>
+
+    <!-- Page body -->
+    <main style="flex:1; overflow-y:auto; padding:30px 34px 64px;">
+
+      <!-- ============ EMPLOYEE :: HOME ============ -->
+      <sc-if value="{{ showEmployeeHome }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1120px; animation:helm-fade-up .4s ease both;">
+
+          <div style="position:relative; border-radius:20px; padding:30px 32px; margin-bottom:24px; overflow:hidden; background:var(--surface); border:1px solid var(--border);">
+            <div style="position:absolute; inset:0; background:var(--heroWash); pointer-events:none;"></div>
+            <div style="position:relative; display:flex; align-items:flex-start; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+              <div>
+                <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--primary); margin-bottom:8px;">GS Pool · Mina Zayed</div>
+                <div style="font-family:'Sora',sans-serif; font-size:30px; font-weight:700; letter-spacing:-.02em; line-height:1.15;">Good morning, {{ currentUser.firstName }}.</div>
+                <div style="color:var(--textSecondary); font-size:14.5px; margin-top:8px; max-width:52ch; line-height:1.6;">Your licence is valid until {{ currentUser.licenceExpiry }} · no blocks on your account · approvals go to {{ currentUser.approver }}.</div>
+              </div>
+              <button onClick="{{ nav.book.click }}" style="display:flex; align-items:center; gap:8px; height:48px; padding:0 22px; border-radius:12px; border:none; background:linear-gradient(155deg, var(--primary), var(--primaryHover)); color:var(--onPrimary); font-weight:700; font-size:14px; cursor:pointer; flex:none; box-shadow:0 10px 24px -8px color-mix(in oklab, var(--primary) 55%, transparent);">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                Book a vehicle
+              </button>
+            </div>
+
+            <div style="position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:26px;">
+              <div style="background:var(--surfaceAlt); border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+                <div style="width:38px; height:38px; border-radius:10px; background:var(--infoTint); color:var(--info); display:flex; align-items:center; justify-content:center; flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5.5" width="17" height="15" rx="2.2" stroke="currentColor" stroke-width="1.8"/><path d="M8 3.5v4M16 3.5v4M3.5 10.5h17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+                <div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:19px; line-height:1;">{{ homeStats.upcoming }}</div><div style="font-size:12px; color:var(--textSecondary); margin-top:3px;">Upcoming trips</div></div>
+              </div>
+              <div style="background:var(--surfaceAlt); border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+                <div style="width:38px; height:38px; border-radius:10px; background:var(--dangerTint); color:var(--danger); display:flex; align-items:center; justify-content:center; flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3.2h.01" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/><path d="M10.6 4.3 2.9 17.5a1.7 1.7 0 0 0 1.5 2.6h15.2a1.7 1.7 0 0 0 1.5-2.6L13.4 4.3a1.7 1.7 0 0 0-2.8 0Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+                <div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:19px; line-height:1;">{{ homeStats.fines }}</div><div style="font-size:12px; color:var(--textSecondary); margin-top:3px;">Outstanding fine</div></div>
+              </div>
+              <div style="background:var(--surfaceAlt); border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+                <div style="width:38px; height:38px; border-radius:10px; background:var(--okTint); color:var(--ok); display:flex; align-items:center; justify-content:center; flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 5 6.2v5.3c0 4.7 3 7.6 7 9 4-1.4 7-4.3 7-9V6.2L12 3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.2 12.2 11.3 14l3.5-4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div><div style="font-family:'Sora',sans-serif; font-weight:700; font-size:19px; line-height:1;">Valid</div><div style="font-size:12px; color:var(--textSecondary); margin-top:3px;">Licence to Feb 2027</div></div>
+              </div>
+            </div>
+          </div>
+
+          <sc-if value="{{ currentUser.fineAlert }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; gap:14px; align-items:flex-start; background:var(--dangerTint); border:1px solid color-mix(in oklab, var(--danger) 30%, var(--border)); border-radius:16px; padding:18px 20px; margin-bottom:24px;">
+              <div style="width:36px; height:36px; border-radius:10px; background:var(--danger); flex:none; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 14px -4px color-mix(in oklab, var(--danger) 55%, transparent);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3.2h.01" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M10.6 3.3 1.9 18.5a1.9 1.9 0 0 0 1.7 2.9h17a1.9 1.9 0 0 0 1.6-2.9L13.5 3.3a1.9 1.9 0 0 0-2.9 0Z" stroke="white" stroke-width="2"/></svg>
+              </div>
+              <div>
+                <div style="font-weight:700; font-size:14.5px;">One fine needs your attention</div>
+                <div style="color:var(--textSecondary); font-size:13.5px; margin-top:5px; line-height:1.6;">A speeding fine (4 black points) from 28 Jun is attributed to booking <b style="color:var(--text); font-family:'JetBrains Mono',monospace; font-weight:600;">BK-1187</b>. Transfer the points to your personal traffic file by <b style="color:var(--text);">18 Jul</b> — bookings are blocked after that date until the transfer is confirmed.</div>
+                <button style="margin-top:12px; height:36px; padding:0 16px; border-radius:8px; border:1px solid var(--danger); background:var(--surface); color:var(--danger); font-weight:700; font-size:12.5px; cursor:pointer;">Start transfer</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px; margin-bottom:13px;">Your bookings</div>
+          <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:30px;">
+            <sc-for list="{{ myBookings }}" as="b" hint-placeholder-count="2">
+              <div style="display:grid; grid-template-columns:76px 1fr auto; gap:18px; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:17px 19px; box-shadow:var(--shadowSm);">
+                <div style="text-align:center; border-right:1px solid var(--border); padding-right:16px;">
+                  <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px;">{{ b.time }}</div>
+                  <div style="font-size:11px; color:var(--textTertiary); font-weight:600; margin-top:3px;">{{ b.day }}</div>
+                </div>
+                <div>
+                  <div style="font-weight:700; font-size:14.5px; font-family:'Sora',sans-serif;">{{ b.vehicle }} <span style="font-family:'JetBrains Mono',monospace; font-weight:500; font-size:12.5px; color:var(--textSecondary);">· {{ b.plate }}</span></div>
+                  <div style="color:var(--textSecondary); font-size:13px; margin-top:4px;">{{ b.id }} · {{ b.destination }} · returns {{ b.returnTime }} · consent signed ✓</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:6px; padding:7px 13px; border-radius:999px; background:{{ b.statusBg }}; color:{{ b.statusColor }}; font-size:12px; font-weight:700; white-space:nowrap;">{{ b.status }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px; margin-bottom:13px;">Recommended for you at GS Pool</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:14px;">
+            <sc-for list="{{ homeVehicles }}" as="v" hint-placeholder-count="3">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:17px; display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadowSm);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:9px; background:var(--surfaceAlt); display:flex; align-items:center; justify-content:center; flex:none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3.5 15.5v-3.2l1.8-4.3a1.6 1.6 0 0 1 1.5-1h10.4a1.6 1.6 0 0 1 1.5 1l1.8 4.3v3.2" stroke="var(--textSecondary)" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="16.5" r="1.7" stroke="var(--textSecondary)" stroke-width="1.5"/><circle cx="17" cy="16.5" r="1.7" stroke="var(--textSecondary)" stroke-width="1.5"/><path d="M3.5 13h17" stroke="var(--textSecondary)" stroke-width="1.6"/></svg></div>
+                    <div style="font-weight:700; font-family:'Sora',sans-serif; font-size:14.5px;">{{ v.model }}</div>
+                  </div>
+                  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; background:var(--surfaceAlt); border:1px solid var(--border); border-radius:6px; padding:3px 7px; white-space:nowrap;">{{ v.plate }}</div>
+                </div>
+                <div style="display:flex; gap:12px; font-size:12px; color:var(--textSecondary);"><span>{{ v.seats }} seats</span><span>{{ v.fuel }}</span></div>
+                <div style="display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:{{ v.availBg }}; color:{{ v.availColor }}; font-size:11.5px; font-weight:700; width:fit-content;">{{ v.availability }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ EMPLOYEE :: BOOK — STEP 1 SEARCH & RESULTS ============ -->
+      <sc-if value="{{ showBookStep1 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1120px; animation:helm-fade-up .4s ease both;">
+          <div style="margin-bottom:22px;">
+            <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--primary); margin-bottom:6px;">GS Pool · Mina Zayed</div>
+            <div style="font-family:'Sora',sans-serif; font-size:26px; font-weight:700; letter-spacing:-.015em;">Where to today?</div>
+            <div style="color:var(--textSecondary); font-size:14px; margin-top:6px;">Pick a window and we'll match you with an eligible vehicle. Consent is signed before submission — no consent, no booking number.</div>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadowMd); padding:20px 22px; display:grid; grid-template-columns:1.3fr 1fr 1fr .8fr; gap:14px; align-items:end; margin-bottom:26px;">
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:7px;">Destination</div>
+              <input value="{{ booking.destination }}" onChange="{{ bookingHandlers.destinationChange }}" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text);"/>
+            </div>
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:7px;">Pick-up</div>
+              <input value="{{ booking.pickup }}" onChange="{{ bookingHandlers.pickupChange }}" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text); font-family:'JetBrains Mono',monospace;"/>
+            </div>
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:7px;">Return</div>
+              <input value="{{ booking.ret }}" onChange="{{ bookingHandlers.retChange }}" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text); font-family:'JetBrains Mono',monospace;"/>
+            </div>
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:7px;">Passengers</div>
+              <select value="{{ booking.pax }}" onChange="{{ bookingHandlers.paxChange }}" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text);">
+                <option value="1">1</option><option value="2">2</option><option value="4">4</option><option value="7">7+</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:13px;">
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px;">Today at GS Pool</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--textTertiary);">Thu 9 Jul · 06:00–18:00</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 20px 20px; margin-bottom:28px;">
+            <sc-for list="{{ timelineVehicles }}" as="tv" hint-placeholder-count="3">
+              <div style="display:grid; grid-template-columns:150px 1fr; gap:16px; align-items:center; padding:9px 0;">
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;">{{ tv.plate }}</div>
+                  <div style="font-size:11.5px; color:var(--textTertiary); margin-top:1px;">{{ tv.model }}</div>
+                </div>
+                <div style="position:relative; height:30px; background:var(--surfaceAlt); border-radius:8px; overflow:hidden; display:flex;">
+                  <sc-for list="{{ tv.segments }}" as="seg" hint-placeholder-count="2">
+                    <div style="position:absolute; left:{{ seg.left }}%; width:{{ seg.width }}%; top:0; bottom:0; background:{{ seg.bg }}; color:{{ seg.color }}; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:700; white-space:nowrap; overflow:hidden; border-radius:6px; margin:2px;">{{ seg.label }}</div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+            <div style="display:flex; gap:20px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:11.5px; color:var(--textSecondary); flex-wrap:wrap;">
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:11px; height:11px; border-radius:3px; background:var(--primary); display:inline-block;"></span>Your booking</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:11px; height:11px; border-radius:3px; background:var(--textTertiary); display:inline-block;"></span>Booked / unavailable</span>
+              <span style="display:flex; align-items:center; gap:6px;"><span style="width:11px; height:11px; border-radius:3px; background:var(--okTint); border:1px solid var(--ok); display:inline-block;"></span>Open</span>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:13px;">
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px;">Eligible vehicles</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--textTertiary);">{{ eligibleVehicles.length }} matching your trip</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:14px;">
+            <sc-for list="{{ eligibleVehicles }}" as="v" hint-placeholder-count="3">
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:var(--shadowSm);">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                  <div style="font-weight:700; font-family:'Sora',sans-serif; font-size:15px;">{{ v.model }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; background:var(--surfaceAlt); border:1px solid var(--border); border-radius:6px; padding:3px 7px;">{{ v.plate }}</div>
+                </div>
+                <div style="display:flex; gap:12px; font-size:12px; color:var(--textSecondary);"><span>{{ v.seats }} seats</span><span>{{ v.fuel }}</span><span>{{ v.yard }}</span></div>
+                <div style="display:inline-flex; align-items:center; gap:6px; padding:6px 11px; border-radius:999px; background:{{ v.availBg }}; color:{{ v.availColor }}; font-size:11.5px; font-weight:700; width:fit-content;">{{ v.availability }}</div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:6px;">
+                  <span style="font-size:12px; color:var(--textTertiary);">{{ v.fuelEstimate }}</span>
+                  <button onClick="{{ v.bookClick }}" style="height:38px; padding:0 18px; border-radius:9px; border:none; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:12.5px; cursor:pointer;">Book</button>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ EMPLOYEE :: BOOK — STEP 2 CONSENT ============ -->
+      <sc-if value="{{ showBookStep2 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px; animation:helm-fade-up .4s ease both;">
+          <button onClick="{{ bookingPrev }}" style="display:flex; align-items:center; gap:6px; border:none; background:none; color:var(--textSecondary); font-size:13px; font-weight:600; cursor:pointer; padding:0; margin-bottom:16px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Back to results
+          </button>
+          <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; margin-bottom:18px;">Review &amp; consent</div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadowSm); margin-bottom:18px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--textTertiary); margin-bottom:12px;">Trip summary</div>
+            <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:16px;">
+              <div><div style="font-size:11.5px; color:var(--textTertiary); font-weight:700;">VEHICLE</div><div style="font-weight:700; font-family:'Sora',sans-serif; margin-top:4px;">{{ selectedVehicle.model }}</div><div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--textSecondary); margin-top:2px;">{{ selectedVehicle.plate }}</div></div>
+              <div><div style="font-size:11.5px; color:var(--textTertiary); font-weight:700;">DESTINATION</div><div style="font-weight:600; margin-top:4px;">{{ booking.destination }}</div></div>
+              <div><div style="font-size:11.5px; color:var(--textTertiary); font-weight:700;">WINDOW</div><div style="font-weight:600; margin-top:4px; font-family:'JetBrains Mono',monospace;">{{ booking.pickup }} → {{ booking.ret }}</div></div>
+              <div><div style="font-size:11.5px; color:var(--textTertiary); font-weight:700;">PASSENGERS</div><div style="font-weight:600; margin-top:4px;">{{ booking.pax }}</div></div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadowSm);">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--textTertiary); margin-bottom:14px;">Digital consent — required before submission</div>
+            <div style="display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--textSecondary); line-height:1.6; margin-bottom:16px;">
+              <div style="display:flex; gap:9px;"><span style="color:var(--ok);">✓</span> I will operate this vehicle in accordance with company policy.</div>
+              <div style="display:flex; gap:9px;"><span style="color:var(--ok);">✓</span> I accept responsibility for fines, tolls and damage incurred during this booking.</div>
+              <div style="display:flex; gap:9px;"><span style="color:var(--ok);">✓</span> I confirm I hold a valid UAE driving licence.</div>
+            </div>
+            <label style="display:flex; align-items:center; gap:10px; padding:13px 14px; border-radius:10px; background:var(--surfaceAlt); cursor:pointer; margin-bottom:14px;">
+              <input type="checkbox" checked="{{ booking.consentChecked }}" onChange="{{ toggleConsent }}" style="width:18px; height:18px; accent-color:var(--primary);"/>
+              <span style="font-size:13.5px; font-weight:600;">I have read and agree to the above (policy v3.2)</span>
+            </label>
+            <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:7px;">Type your full name to sign</div>
+            <input value="{{ booking.signatureName }}" onChange="{{ bookingHandlers.signatureChange }}" placeholder="Full name" style="width:100%; height:46px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 14px; font-size:14px; color:var(--text); font-family:'Sora',sans-serif; margin-bottom:20px;"/>
+            <button onClick="{{ confirmBooking }}" disabled="{{ bookingSubmitDisabled }}" style="{{ bookingSubmitStyle }}">Sign &amp; submit booking</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ EMPLOYEE :: BOOK — STEP 4 CONFIRMATION ============ -->
+      <sc-if value="{{ showBookStep4 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:640px; animation:helm-pop .4s ease both; text-align:center; padding-top:30px;">
+          <div style="width:64px; height:64px; border-radius:50%; background:var(--okTint); color:var(--ok); display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700;">Booking confirmed</div>
+          <div style="color:var(--textSecondary); font-size:14px; margin-top:8px;">Booking <b style="color:var(--text); font-family:'JetBrains Mono',monospace;">BK-1247</b> is on your calendar. The fleet manager at GS Pool has been notified.</div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px 24px; margin-top:24px; text-align:left; box-shadow:var(--shadowSm);">
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13.5px;"><span style="color:var(--textSecondary);">Vehicle</span><span style="font-weight:600;">{{ selectedVehicle.model }} · {{ selectedVehicle.plate }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:13.5px;"><span style="color:var(--textSecondary);">Window</span><span style="font-weight:600; font-family:'JetBrains Mono',monospace;">{{ booking.pickup }} → {{ booking.ret }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; font-size:13.5px;"><span style="color:var(--textSecondary);">Destination</span><span style="font-weight:600;">{{ booking.destination }}</span></div>
+          </div>
+
+          <div style="display:flex; gap:12px; justify-content:center; margin-top:24px;">
+            <button onClick="{{ resetBooking }}" style="height:44px; padding:0 18px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-weight:700; font-size:13.5px; cursor:pointer;">Book another</button>
+            <button onClick="{{ nav.home.click }}" style="height:44px; padding:0 18px; border-radius:10px; border:none; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:13.5px; cursor:pointer;">Back to home</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ EMPLOYEE :: ENTITLEMENT — STEP 1 FORM ============ -->
+      <sc-if value="{{ showEntStep1 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:760px; animation:helm-fade-up .4s ease both;">
+          <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; margin-bottom:6px;">Request a dedicated vehicle</div>
+          <div style="color:var(--textSecondary); font-size:14px; margin-bottom:22px; max-width:60ch;">Eligibility is evaluated automatically against your grade and role before this reaches your line manager. Requests above policy thresholds route to your Cluster CEO.</div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:var(--shadowSm); display:flex; flex-direction:column; gap:20px;">
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">Request type</div>
+              <div style="display:flex; gap:8px;">
+                <button onClick="{{ entHandlers.typeLong }}" style="{{ entTypeStyle.long }}">Long-term</button>
+                <button onClick="{{ entHandlers.typeTemp }}" style="{{ entTypeStyle.temp }}">Temporary</button>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">Driver option</div>
+              <div style="display:flex; gap:8px;">
+                <button onClick="{{ entHandlers.driverWith }}" style="{{ entDriverStyle.with }}">With driver</button>
+                <button onClick="{{ entHandlers.driverWithout }}" style="{{ entDriverStyle.without }}">Without driver</button>
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div>
+                <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">Duration (months)</div>
+                <input value="{{ entitlement.duration }}" onChange="{{ entHandlers.durationChange }}" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text); font-family:'JetBrains Mono',monospace;"/>
+              </div>
+              <div>
+                <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">Location</div>
+                <input value="{{ entitlement.location }}" onChange="{{ entHandlers.locationChange }}" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text);"/>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">Cost centre</div>
+              <input value="{{ entitlement.costCentre }}" onChange="{{ entHandlers.costCentreChange }}" placeholder="e.g. LOG-4410" style="width:100%; height:44px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:0 13px; font-size:13.5px; color:var(--text);"/>
+            </div>
+            <div>
+              <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">Business justification</div>
+              <textarea value="{{ entitlement.justification }}" onChange="{{ entHandlers.justificationChange }}" placeholder="Explain the operational need — sites covered, rotation pattern, time saved…" style="width:100%; height:96px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:9px; padding:11px 13px; font-size:13.5px; color:var(--text); resize:vertical;"></textarea>
+            </div>
+            <button onClick="{{ entitlementNext }}" style="height:48px; border:none; border-radius:11px; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:14px; cursor:pointer;">Check eligibility →</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ EMPLOYEE :: ENTITLEMENT — STEP 2 ELIGIBILITY ============ -->
+      <sc-if value="{{ showEntStep2 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:700px; animation:helm-fade-up .4s ease both;">
+          <button onClick="{{ entitlementPrev }}" style="display:flex; align-items:center; gap:6px; border:none; background:none; color:var(--textSecondary); font-size:13px; font-weight:600; cursor:pointer; padding:0; margin-bottom:16px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M15 5 8 12l7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Back to form
+          </button>
+          <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700; margin-bottom:18px;">Automated eligibility check</div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadowSm); margin-bottom:18px;">
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; gap:12px; align-items:flex-start; padding-bottom:12px; border-bottom:1px dashed var(--border);">
+                <div style="width:22px; height:22px; border-radius:50%; background:var(--ok); color:#fff; display:flex; align-items:center; justify-content:center; flex:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div><div style="font-weight:700; font-size:13.5px;">Grade eligible</div><div style="color:var(--textSecondary); font-size:12.5px; margin-top:2px;">Your grade meets the policy floor for this request type.</div></div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:flex-start; padding-bottom:12px; border-bottom:1px dashed var(--border);">
+                <div style="width:22px; height:22px; border-radius:50%; background:var(--ok); color:#fff; display:flex; align-items:center; justify-content:center; flex:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div><div style="font-weight:700; font-size:13.5px;">No blocking conditions</div><div style="color:var(--textSecondary); font-size:12.5px; margin-top:2px;">No black points, behaviour flags or expired documents on file.</div></div>
+              </div>
+              <div style="display:flex; gap:12px; align-items:flex-start;">
+                <div style="width:22px; height:22px; border-radius:50%; background:var(--info); color:#fff; display:flex; align-items:center; justify-content:center; flex:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3.2h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+                <div><div style="font-weight:700; font-size:13.5px;">Routes to Cluster CEO</div><div style="color:var(--textSecondary); font-size:12.5px; margin-top:2px;">{{ entitlement.duration }} months exceeds the 12-month auto-approve threshold — your line manager and cluster fleet lead endorse first, then it reaches the Cluster CEO for final sign-off.</div></div>
+              </div>
+            </div>
+          </div>
+          <button onClick="{{ submitEntitlement }}" style="width:100%; height:50px; border:none; border-radius:11px; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:14.5px; cursor:pointer;">Confirm &amp; send for approval</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ EMPLOYEE :: ENTITLEMENT — STEP 3 STATUS ============ -->
+      <sc-if value="{{ showEntStep3 }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:640px; animation:helm-pop .4s ease both; text-align:center; padding-top:24px;">
+          <div style="width:64px; height:64px; border-radius:50%; background:var(--okTint); color:var(--ok); display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div style="font-family:'Sora',sans-serif; font-size:24px; font-weight:700;">Request submitted</div>
+          <div style="color:var(--textSecondary); font-size:14px; margin-top:8px;">Request <b style="color:var(--text); font-family:'JetBrains Mono',monospace;">DVR-104</b> is on its way through the approval chain. SLA target: 5 business days.</div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:26px 24px; margin-top:26px; box-shadow:var(--shadowSm); text-align:left;">
+            <div style="display:flex; align-items:flex-start; gap:0; flex-wrap:wrap;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:84px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--ok); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">✓</div>
+                <div style="font-size:11.5px; font-weight:700; text-align:center;">You</div>
+                <div style="font-size:10px; color:var(--textTertiary); text-align:center;">SUBMITTED TODAY</div>
+              </div>
+              <div style="flex:1; height:2px; background:var(--ok); margin-top:16px; min-width:24px;"></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:84px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--surfaceAlt); border:2px dashed var(--borderStrong); color:var(--textTertiary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">2</div>
+                <div style="font-size:11.5px; font-weight:700; text-align:center;">{{ currentUser.approver }}</div>
+                <div style="font-size:10px; color:var(--textTertiary); text-align:center;">LINE MANAGER</div>
+              </div>
+              <div style="flex:1; height:2px; background:repeating-linear-gradient(90deg, var(--border) 0 6px, transparent 6px 11px); margin-top:16px; min-width:24px;"></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:84px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--surfaceAlt); border:2px dashed var(--borderStrong); color:var(--textTertiary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">3</div>
+                <div style="font-size:11.5px; font-weight:700; text-align:center;">Cluster Fleet Lead</div>
+                <div style="font-size:10px; color:var(--textTertiary); text-align:center;">PENDING</div>
+              </div>
+              <div style="flex:1; height:2px; background:repeating-linear-gradient(90deg, var(--border) 0 6px, transparent 6px 11px); margin-top:16px; min-width:24px;"></div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:6px; min-width:84px;">
+                <div style="width:32px; height:32px; border-radius:50%; background:var(--surfaceAlt); border:2px dashed var(--borderStrong); color:var(--textTertiary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px;">4</div>
+                <div style="font-size:11.5px; font-weight:700; text-align:center;">Cluster CEO</div>
+                <div style="font-size:10px; color:var(--textTertiary); text-align:center;">POLICY GATE</div>
+              </div>
+            </div>
+          </div>
+          <button onClick="{{ nav.home.click }}" style="margin-top:24px; height:44px; padding:0 20px; border-radius:10px; border:none; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:13.5px; cursor:pointer;">Back to home</button>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: OPS DASHBOARD ============ -->
+      <sc-if value="{{ showOps }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1240px; animation:helm-fade-up .4s ease both;">
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadowSm);">
+              <div style="font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--textTertiary);">Vehicles on trip</div>
+              <div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; margin-top:8px;">118</div>
+              <div style="font-size:12px; color:var(--textSecondary); margin-top:6px;">of 262 fleet · +12 vs this hour last week</div>
+            </div>
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadowSm);">
+              <div style="font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--textTertiary);">Utilisation now</div>
+              <div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; margin-top:8px;">73%</div>
+              <div style="font-size:12px; color:var(--textSecondary); margin-top:6px;">GS Pool peak in 38 min · waitlist 4</div>
+            </div>
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadowSm);">
+              <div style="font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--warn);">Attention queue</div>
+              <div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; margin-top:8px; color:var(--warn);">7</div>
+              <div style="font-size:12px; color:var(--textSecondary); margin-top:6px;">2 critical · 3 compliance · 2 behaviour</div>
+            </div>
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadowSm);">
+              <div style="font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--textTertiary);">Cost / km · MTD</div>
+              <div style="font-family:'Sora',sans-serif; font-size:32px; font-weight:700; margin-top:8px;">AED 1.84</div>
+              <div style="font-size:12px; color:var(--ok); margin-top:6px;">▼ 6.2% vs last month</div>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; align-items:start;">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadowSm);">
+              <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+                <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">Attention queue</div>
+                <div style="margin-left:auto; font-size:11.5px; color:var(--textTertiary);">oldest 26 min</div>
+              </div>
+              <sc-for list="{{ opsAlerts }}" as="a" hint-placeholder-count="5">
+                <div style="display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center; padding:15px 20px; border-bottom:1px solid var(--border);">
+                  <div style="width:9px; height:36px; border-radius:5px; background:{{ a.sevColor }};"></div>
+                  <div>
+                    <div style="font-weight:700; font-size:13.5px;">{{ a.title }}</div>
+                    <div style="color:var(--textSecondary); font-size:12px; margin-top:3px;">{{ a.detail }}</div>
+                  </div>
+                  <div style="display:flex; flex-direction:column; align-items:flex-end; gap:7px;">
+                    <span style="font-size:11px; color:var(--textTertiary); font-family:'JetBrains Mono',monospace;">{{ a.age }}</span>
+                    <button style="height:30px; padding:0 12px; border-radius:7px; border:1px solid var(--border); background:var(--surfaceAlt); color:var(--text); font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;">{{ a.action }}</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadowSm);">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px; margin-bottom:16px;">Pool load — right now</div>
+              <sc-for list="{{ poolsLoad }}" as="p" hint-placeholder-count="5">
+                <div style="margin-bottom:14px;">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <div><span style="font-weight:700; font-size:13px;">{{ p.name }}</span> <span style="font-size:11px; color:var(--textTertiary);">· {{ p.sub }}</span></div>
+                    <span style="font-weight:700; font-size:13px; color:{{ p.color }};">{{ p.pct }}%</span>
+                  </div>
+                  <div style="height:8px; border-radius:5px; background:var(--surfaceAlt); overflow:hidden;">
+                    <div style="height:100%; width:{{ p.pct }}%; background:{{ p.color }}; border-radius:5px;"></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: HANDOVER ============ -->
+      <sc-if value="{{ showHandover }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:820px; animation:helm-fade-up .4s ease both;">
+          <div style="display:flex; gap:6px; margin-bottom:20px;">
+            <sc-for list="{{ handoverStepsDots }}" as="d" hint-placeholder-count="4">
+              <div style="height:5px; flex:1; border-radius:3px; background:{{ d.bg }};"></div>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--text); color:var(--bg); border-radius:16px; padding:20px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div style="width:46px; height:46px; border-radius:50%; background:var(--primary); color:var(--onPrimary); display:flex; align-items:center; justify-content:center; font-weight:700; font-family:'Sora',sans-serif;">AK</div>
+              <div>
+                <div style="font-weight:700; font-size:16px;">Amina Khoury</div>
+                <div style="font-size:12px; opacity:.7; font-family:'JetBrains Mono',monospace; margin-top:2px;">EMP-20481 · licence valid to 02/2027</div>
+                <div style="font-size:11px; color:#6ee7b7; font-weight:700; margin-top:6px; letter-spacing:.04em;">✓ ELIGIBILITY PASSED · CONSENT SIGNED 08:12</div>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:19px; background:var(--surface); color:var(--text); border-radius:8px; padding:10px 16px; letter-spacing:.06em;">AD 88914</div>
+              <div style="font-size:11px; opacity:.7; margin-top:6px;">Nissan Patrol · Yard A · BK-1204</div>
+            </div>
+          </div>
+
+          <!-- Step 1: identity -->
+          <sc-if value="{{ handoverStepIs1 }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:var(--shadowSm); text-align:center;">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px; margin-bottom:8px;">Verify booking &amp; begin inspection</div>
+              <div style="color:var(--textSecondary); font-size:13.5px; margin-bottom:18px;">Booking number, employee ID and eligibility have been confirmed above.</div>
+              <button onClick="{{ handoverNext }}" style="height:48px; padding:0 24px; border:none; border-radius:11px; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:14px; cursor:pointer;">Begin walkaround →</button>
+            </div>
+          </sc-if>
+
+          <!-- Step 2: checklist -->
+          <sc-if value="{{ handoverStepIs2 }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadowSm);">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">Walkaround inspection</div>
+                <div style="margin-left:auto; font-size:11.5px; font-weight:700; color:var(--textSecondary);">{{ checksDoneCount }} of 5</div>
+              </div>
+              <sc-for list="{{ checklistItems }}" as="c" hint-placeholder-count="5">
+                <div style="display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; border:1.5px solid {{ c.borderColor }}; background:{{ c.bg }}; border-radius:10px; padding:13px 15px; margin-bottom:9px;">
+                  <div><div style="font-weight:700; font-size:13.5px;">{{ c.label }}</div><div style="color:var(--textSecondary); font-size:11.5px; margin-top:2px;">{{ c.hint }}</div></div>
+                  <div style="display:flex; gap:6px;">
+                    <button onClick="{{ c.passClick }}" style="{{ c.passStyle }}">PASS</button>
+                    <button onClick="{{ c.failClick }}" style="{{ c.failStyle }}">FAIL</button>
+                  </div>
+                </div>
+              </sc-for>
+              <div style="display:flex; gap:10px; margin-top:16px;">
+                <button onClick="{{ handoverPrev }}" style="height:46px; padding:0 18px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-weight:700; font-size:13.5px; cursor:pointer;">Back</button>
+                <button onClick="{{ handoverNext }}" disabled="{{ handoverChecksIncomplete }}" style="{{ handoverChecksBtnStyle }}">Continue to readings →</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Step 3: odometer/fuel/damage -->
+          <sc-if value="{{ handoverStepIs3 }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadowSm); margin-bottom:16px;">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px; margin-bottom:16px;">Odometer &amp; fuel</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div>
+                  <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">STARTING ODOMETER (KM)</div>
+                  <input value="{{ handover.odometer }}" onChange="{{ setOdometer }}" style="width:100%; height:52px; border:1px solid var(--border); background:var(--surfaceAlt); border-radius:10px; padding:0 15px; font-size:22px; font-weight:700; font-family:'JetBrains Mono',monospace; color:var(--text);"/>
+                  <div style="font-size:11.5px; color:var(--textSecondary); margin-top:8px;">Telematics reads matching value · within tolerance</div>
+                </div>
+                <div>
+                  <div style="font-size:11.5px; font-weight:700; color:var(--textSecondary); margin-bottom:8px;">FUEL LEVEL</div>
+                  <input type="range" min="0" max="8" step="1" value="{{ handover.fuel }}" onChange="{{ setFuel }}" style="width:100%; accent-color:var(--primary); margin-top:14px;"/>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--textTertiary); font-weight:700; margin-top:6px;"><span>E</span><span>¼</span><span>½</span><span>¾</span><span>F</span></div>
+                  <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:20px; margin-top:8px;">{{ fuelLabel }} <span style="font-size:12px; color:var(--textSecondary); font-weight:500;">tank</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:22px; box-shadow:var(--shadowSm);">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px; margin-bottom:6px;">Damage map</div>
+              <div style="color:var(--textSecondary); font-size:12.5px; margin-bottom:14px;">Existing marks carry over from the last return, timestamped and photographed.</div>
+              <sc-for list="{{ handover.damagePins }}" as="p" hint-placeholder-count="1">
+                <div style="display:flex; align-items:center; gap:10px; border:1px solid var(--border); border-radius:10px; padding:11px 13px; margin-bottom:8px;">
+                  <div style="width:22px; height:22px; border-radius:50%; background:var(--danger); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; flex:none;">{{ p.id }}</div>
+                  <div style="font-size:13px;">{{ p.label }}</div>
+                </div>
+              </sc-for>
+              <button style="width:100%; height:44px; border:1.5px dashed var(--borderStrong); background:transparent; border-radius:10px; color:var(--textSecondary); font-weight:700; font-size:12.5px; cursor:pointer; margin-top:6px;">+ Add photo</button>
+              <div style="display:flex; gap:10px; margin-top:18px;">
+                <button onClick="{{ handoverPrev }}" style="height:46px; padding:0 18px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-weight:700; font-size:13.5px; cursor:pointer;">Back</button>
+                <button onClick="{{ handoverNext }}" style="flex:1; height:46px; border-radius:10px; border:none; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:13.5px; cursor:pointer;">Continue to signature →</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Step 4: signature -->
+          <sc-if value="{{ handoverStepIs4 }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; box-shadow:var(--shadowSm);">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px; margin-bottom:6px;">Driver acknowledgement</div>
+              <div style="color:var(--textSecondary); font-size:13px; margin-bottom:16px;">Amina signs on this device to accept the vehicle in the condition recorded above.</div>
+              <button onClick="{{ signHandover }}" style="{{ sigPadStyle }}">
+                <sc-if value="{{ handover.signed }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-family:'Sora',sans-serif; font-size:22px; font-weight:700; color:var(--ok);">Amina Khoury ✓</span>
+                </sc-if>
+                <sc-if value="{{ handoverNotSigned }}" hint-placeholder-val="{{ true }}">
+                  <span style="color:var(--textTertiary); font-size:13.5px; font-weight:600;">Tap to sign as Amina Khoury</span>
+                </sc-if>
+              </button>
+              <div style="background:var(--surfaceAlt); border-radius:10px; padding:13px 15px; margin-top:14px; font-size:12px; color:var(--textSecondary); line-height:1.6;">✓ Booking consent v3.2 already on file (08:12, iOS) — this signature covers condition acceptance at handover only.</div>
+              <div style="display:flex; align-items:center; gap:12px; margin-top:20px;">
+                <div style="font-size:12px; color:var(--textSecondary); font-weight:600;">{{ handoverReadinessNote }}</div>
+                <button onClick="{{ handoverNext }}" disabled="{{ handoverNotSigned }}" style="{{ handoverGoStyle }}">Hand over keys →</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Step done (past 4) -->
+          <sc-if value="{{ handoverDone }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:30px; box-shadow:var(--shadowSm); text-align:center;">
+              <div style="width:56px; height:56px; border-radius:50%; background:var(--okTint); color:var(--ok); display:flex; align-items:center; justify-content:center; margin:0 auto 16px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:17px;">Keys handed over</div>
+              <div style="color:var(--textSecondary); font-size:13px; margin-top:6px;">Buffer window starts now. BK-1204 is active.</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: BOOKING APPROVALS ============ -->
+      <sc-if value="{{ showApprovals }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:360px 1fr; gap:16px; align-items:start; max-width:1280px; animation:helm-fade-up .4s ease both;">
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <sc-for list="{{ approvalQueueMeta }}" as="q" hint-placeholder-count="4">
+              <button onClick="{{ q.click }}" style="{{ q.cardStyle }}">
+                <div style="display:flex; align-items:baseline; gap:8px;">
+                  <span style="font-weight:700; font-size:13.5px;">{{ q.who }}</span>
+                  <span style="margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; color:{{ q.waitColor }};">{{ q.waiting }}</span>
+                </div>
+                <div style="color:var(--textSecondary); font-size:12px; margin-top:5px;">{{ q.vehicle }} · {{ q.window }}</div>
+                <div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+                  <sc-for list="{{ q.flagList }}" as="f" hint-placeholder-count="2">
+                    <span style="font-size:9.5px; font-weight:700; letter-spacing:.03em; padding:4px 8px; border-radius:999px; background:{{ f.bg }}; color:{{ f.color }};">{{ f.text }}</span>
+                  </sc-for>
+                </div>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadowSm);">
+            <div style="padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px;">
+              <div style="width:48px; height:48px; border-radius:50%; background:var(--text); color:var(--bg); display:flex; align-items:center; justify-content:center; font-weight:700; font-family:'Sora',sans-serif; flex:none;">{{ selectedApproval.avatar }}</div>
+              <div>
+                <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:17px;">{{ selectedApproval.who }}</div>
+                <div style="color:var(--textSecondary); font-size:12px; margin-top:3px;">{{ selectedApproval.empId }} · {{ selectedApproval.reportsNote }}</div>
+              </div>
+              <div style="margin-left:auto; text-align:right;">
+                <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:14px;">{{ selectedApproval.id }}</div>
+              </div>
+            </div>
+
+            <div style="padding:22px 24px; display:flex; flex-direction:column; gap:18px;">
+              <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border:1px solid var(--border); border-radius:12px; overflow:hidden;">
+                <div style="background:var(--surface); padding:13px 15px;"><div style="font-size:10px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em;">VEHICLE</div><div style="font-weight:700; font-size:13.5px; margin-top:6px;">{{ selectedApproval.vehicle }}</div><div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--textSecondary); margin-top:2px;">{{ selectedApproval.plate }}</div></div>
+                <div style="background:var(--surface); padding:13px 15px;"><div style="font-size:10px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em;">WINDOW</div><div style="font-weight:700; font-size:13.5px; margin-top:6px;">{{ selectedApproval.day }}</div><div style="font-size:11.5px; color:var(--textSecondary); margin-top:2px;">{{ selectedApproval.window }}</div></div>
+                <div style="background:var(--surface); padding:13px 15px;"><div style="font-size:10px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em;">PURPOSE</div><div style="font-weight:700; font-size:13.5px; margin-top:6px;">{{ selectedApproval.purpose }}</div></div>
+                <div style="background:var(--surface); padding:13px 15px;"><div style="font-size:10px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em;">EST. COST</div><div style="font-weight:700; font-size:13.5px; margin-top:6px;">{{ selectedApproval.cost }}</div><div style="font-size:11.5px; color:var(--textSecondary); margin-top:2px;">{{ selectedApproval.costNote }}</div></div>
+              </div>
+
+              <div>
+                <div style="font-size:11px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em; margin-bottom:10px;">SYSTEM VERDICTS</div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <sc-for list="{{ selectedApproval.verdictList }}" as="v" hint-placeholder-count="3">
+                    <div style="display:flex; gap:11px; align-items:flex-start; border:1px solid {{ v.borderColor }}; background:{{ v.bg }}; border-radius:10px; padding:12px 14px;">
+                      <div style="width:20px; height:20px; border-radius:50%; background:{{ v.iconBg }}; color:#fff; display:flex; align-items:center; justify-content:center; flex:none; margin-top:1px;">{{ v.iconChar }}</div>
+                      <div><div style="font-weight:700; font-size:13px;">{{ v.title }}</div><div style="color:var(--textSecondary); font-size:12px; margin-top:2px; line-height:1.5;">{{ v.detail }}</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border-left:3px solid var(--primary); background:var(--primaryTint); border-radius:0 10px 10px 0; padding:13px 16px; font-size:13px; line-height:1.6;">
+                <div style="font-size:10px; font-weight:700; color:var(--primary); letter-spacing:.06em; margin-bottom:5px;">JUSTIFICATION</div>
+                {{ selectedApproval.justification }}
+              </div>
+            </div>
+
+            <div style="padding:16px 24px; border-top:1px solid var(--border); background:var(--surfaceAlt); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <sc-if value="{{ selectedApprovalDecided }}" hint-placeholder-val="{{ false }}">
+                <div style="font-weight:700; font-size:13.5px; color:var(--ok);">✓ Decision recorded — {{ selectedApprovalDecision }}</div>
+              </sc-if>
+              <sc-if value="{{ selectedApprovalPending }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ approveHandler }}" style="height:44px; padding:0 20px; border:none; border-radius:10px; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:13.5px; cursor:pointer;">Approve</button>
+                <button style="height:44px; padding:0 18px; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text); font-weight:700; font-size:13.5px; cursor:pointer;">Request change</button>
+                <button onClick="{{ declineHandler }}" style="height:44px; padding:0 18px; border:1px solid var(--danger); border-radius:10px; background:var(--surface); color:var(--danger); font-weight:700; font-size:13.5px; cursor:pointer;">Decline…</button>
+                <div style="margin-left:auto; font-size:11px; color:var(--textTertiary); max-width:220px; line-height:1.5;">You cannot approve requests you raised (SoD-01) — those route to your delegate.</div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: FLEET VEHICLES ============ -->
+      <sc-if value="{{ showFleet }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1280px; animation:helm-fade-up .4s ease both;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadowSm);">
+            <div style="display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr 1fr .7fr; gap:12px; padding:13px 20px; background:var(--surfaceAlt); font-size:11px; font-weight:700; color:var(--textTertiary); letter-spacing:.04em;">
+              <div>VEHICLE</div><div>POOL</div><div>STATUS</div><div>MULKIYA</div><div>INSURANCE</div><div></div>
+            </div>
+            <sc-for list="{{ fleetVehicles }}" as="v" hint-placeholder-count="6">
+              <div style="display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr 1fr .7fr; gap:12px; padding:15px 20px; border-top:1px solid var(--border); align-items:center;">
+                <div>
+                  <div style="font-weight:700; font-size:13.5px;">{{ v.model }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--textSecondary); margin-top:2px;">{{ v.plate }}</div>
+                </div>
+                <div style="font-size:12.5px; color:var(--textSecondary);">{{ v.pool }}</div>
+                <div><span style="display:inline-flex; padding:5px 10px; border-radius:999px; background:{{ v.availBg }}; color:{{ v.availColor }}; font-size:11px; font-weight:700;">{{ v.status }}</span></div>
+                <div style="font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--textSecondary);">{{ v.mulkiyaExpiry }}</div>
+                <div style="font-size:12px; font-family:'JetBrains Mono',monospace; color:var(--textSecondary);">{{ v.insuranceExpiry }}</div>
+                <div><button onClick="{{ v.drawerClick }}" style="height:32px; padding:0 14px; border-radius:7px; border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:11.5px; font-weight:700; cursor:pointer;">View</button></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: COMPLIANCE & ALERTS ============ -->
+      <sc-if value="{{ showCompliance }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:900px; animation:helm-fade-up .4s ease both;">
+          <div style="display:flex; gap:14px; align-items:flex-start; background:var(--dangerTint); border:1px solid color-mix(in oklab, var(--danger) 35%, var(--border)); border-radius:14px; padding:18px 20px; margin-bottom:24px;">
+            <div style="width:34px; height:34px; border-radius:9px; background:var(--danger); flex:none; display:flex; align-items:center; justify-content:center;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3.2h.01" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/></svg></div>
+            <div>
+              <div style="font-weight:700; font-size:14.5px;">Hard block active — Toyota Corolla · AD 09981</div>
+              <div style="color:var(--textSecondary); font-size:13px; margin-top:4px; line-height:1.6;">Insurance expired 3 days ago. Booking is disabled group-wide for this vehicle — no override is permitted (FR-BOOK-08). Renewal must be confirmed before it re-enters the pool.</div>
+            </div>
+          </div>
+
+          <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:16px; margin-bottom:14px;">Escalating alert ladder</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <sc-for list="{{ complianceAlertsMeta }}" as="c" hint-placeholder-count="4">
+              <div style="display:grid; grid-template-columns:150px 1fr auto; gap:16px; align-items:center; background:var(--surface); border:1px solid var(--border); border-left:4px solid {{ c.toneColor }}; border-radius:12px; padding:16px 18px; box-shadow:var(--shadowSm);">
+                <div style="font-size:11px; font-weight:700; color:{{ c.toneColor }}; text-transform:uppercase; letter-spacing:.04em;">{{ c.tier }}</div>
+                <div>
+                  <div style="font-weight:700; font-size:13.5px;">{{ c.vehicle }} <span style="font-weight:500; color:var(--textSecondary);">· {{ c.doc }}</span></div>
+                  <div style="color:var(--textSecondary); font-size:12px; margin-top:3px;">{{ c.pool }} · {{ c.note }}</div>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px; color:{{ c.toneColor }}; white-space:nowrap;">{{ c.due }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: FINES & BLACK POINTS ============ -->
+      <sc-if value="{{ showFines }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:1000px; animation:helm-fade-up .4s ease both;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadowSm);">
+            <div style="display:grid; grid-template-columns:1fr 1.2fr 1fr .8fr .7fr 1.4fr; gap:12px; padding:13px 20px; background:var(--surfaceAlt); font-size:11px; font-weight:700; color:var(--textTertiary); letter-spacing:.04em;">
+              <div>FINE</div><div>DRIVER</div><div>TYPE</div><div>AMOUNT</div><div>POINTS</div><div>STATUS</div>
+            </div>
+            <sc-for list="{{ finesMeta }}" as="f" hint-placeholder-count="4">
+              <div style="display:grid; grid-template-columns:1fr 1.2fr 1fr .8fr .7fr 1.4fr; gap:12px; padding:15px 20px; border-top:1px solid var(--border); align-items:center;">
+                <div style="font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px;">{{ f.id }}</div>
+                <div><div style="font-weight:600; font-size:13px;">{{ f.driver }}</div><div style="font-size:11px; color:var(--textTertiary); font-family:'JetBrains Mono',monospace;">{{ f.booking }}</div></div>
+                <div style="font-size:12.5px; color:var(--textSecondary);">{{ f.type }}</div>
+                <div style="font-weight:700; font-size:13px; font-family:'JetBrains Mono',monospace;">{{ f.amount }}</div>
+                <div style="font-weight:700; font-size:13px; color:{{ f.pointsColor }};">{{ f.points }}</div>
+                <div><span style="display:inline-flex; padding:5px 10px; border-radius:999px; background:{{ f.statusBg }}; color:{{ f.statusColor }}; font-size:10.5px; font-weight:700; text-align:left;">{{ f.status }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ FLEET MANAGER :: LIVE MAP ============ -->
+      <sc-if value="{{ showMap }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:16px; max-width:1280px; align-items:start; animation:helm-fade-up .4s ease both;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadowSm);">
+            <div style="padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+              <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">Mina Zayed — live plot</div>
+              <div style="margin-left:auto; font-size:11.5px; color:var(--textTertiary);">31 vehicles in sector · refreshed 4s ago</div>
+            </div>
+            <div style="position:relative; aspect-ratio:16/10; background:var(--surfaceAlt);">
+              <svg viewBox="0 0 400 250" style="width:100%; height:100%; display:block;">
+                <rect x="0" y="0" width="400" height="250" fill="var(--surfaceAlt)"/>
+                <path d="M0 170 C 60 150, 120 190, 180 165 C 240 145, 300 175, 400 150" stroke="var(--border)" stroke-width="14" fill="none"/>
+                <path d="M40 0 L 60 250" stroke="var(--border)" stroke-width="10" fill="none"/>
+                <path d="M250 0 L 230 250" stroke="var(--border)" stroke-width="10" fill="none"/>
+                <path d="M0 60 L 400 45" stroke="var(--border)" stroke-width="6" fill="none"/>
+                <text x="16" y="30" font-size="10" fill="var(--textTertiary)" font-family="JetBrains Mono, monospace">HARBOUR APPROACH</text>
+                <text x="270" y="120" font-size="10" fill="var(--textTertiary)" font-family="JetBrains Mono, monospace">BERTH 4–9</text>
+                <text x="150" y="215" font-size="10" fill="var(--textTertiary)" font-family="JetBrains Mono, monospace">GATE 4</text>
+                <sc-for list="{{ mapVehicles }}" as="mv" hint-placeholder-count="6">
+                  <circle cx="{{ mv.x }}" cy="{{ mv.y }}" r="{{ mv.r }}" fill="{{ mv.color }}"/>
+                </sc-for>
+              </svg>
+              <div style="position:absolute; left:14px; bottom:12px; display:flex; gap:14px; background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:8px 12px; font-size:11px; font-weight:600; color:var(--textSecondary);">
+                <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:var(--ok); display:inline-block;"></span>On plan</span>
+                <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:var(--warn); display:inline-block;"></span>Caution</span>
+                <span style="display:flex; align-items:center; gap:5px;"><span style="width:8px; height:8px; border-radius:50%; background:var(--danger); display:inline-block;"></span>Deviation</span>
+              </div>
+            </div>
+            <div style="padding:16px 20px; border-top:1px solid var(--border); display:flex; gap:12px; align-items:flex-start; background:var(--dangerTint);">
+              <div style="width:8px; height:8px; border-radius:50%; background:var(--danger); margin-top:6px; flex:none;"></div>
+              <div><div style="font-weight:700; font-size:13px;">Geofence deviation — AD 61550</div><div style="color:var(--textSecondary); font-size:12px; margin-top:2px;">Left corridor E11 → Kezad 280 at 08:22 · driver M. Farsi · BK-1216 · 26 min ago</div></div>
+            </div>
+          </div>
+
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadowSm);">
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px; margin-bottom:16px;">Pool load</div>
+            <sc-for list="{{ poolsLoad }}" as="p" hint-placeholder-count="5">
+              <div style="margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                  <div><span style="font-weight:700; font-size:13px;">{{ p.name }}</span> <span style="font-size:11px; color:var(--textTertiary);">· {{ p.sub }}</span></div>
+                  <span style="font-weight:700; font-size:13px; color:{{ p.color }};">{{ p.pct }}%</span>
+                </div>
+                <div style="height:8px; border-radius:5px; background:var(--surfaceAlt); overflow:hidden;">
+                  <div style="height:100%; width:{{ p.pct }}%; background:{{ p.color }}; border-radius:5px;"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+    </main>
+  </div>
+
+  <!-- Fleet vehicle drawer -->
+  <sc-if value="{{ fleetDrawerOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeFleetDrawer }}" style="position:fixed; inset:0; background:rgba(15,12,8,.4); z-index:42;"></div>
+    <div style="position:fixed; top:0; right:0; bottom:0; width:420px; background:var(--surface); border-left:1px solid var(--border); z-index:43; display:flex; flex-direction:column; animation:helm-fade-up .25s ease both;">
+      <div style="padding:20px 22px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px;">
+        <div>
+          <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:17px;">{{ fleetDrawerVehicle.model }}</div>
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--textSecondary); margin-top:2px;">{{ fleetDrawerVehicle.plate }}</div>
+        </div>
+        <button onClick="{{ closeFleetDrawer }}" style="margin-left:auto; width:30px; height:30px; border-radius:8px; border:none; background:var(--surfaceAlt); color:var(--textSecondary); cursor:pointer; font-size:15px;">✕</button>
+      </div>
+      <div style="flex:1; overflow-y:auto; padding:20px 22px; display:flex; flex-direction:column; gap:20px;">
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em; margin-bottom:10px;">IDENTITY</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px;">
+            <div><div style="color:var(--textTertiary); font-size:11px;">POOL</div><div style="font-weight:600; margin-top:3px;">{{ fleetDrawerVehicle.pool }}</div></div>
+            <div><div style="color:var(--textTertiary); font-size:11px;">YARD</div><div style="font-weight:600; margin-top:3px;">{{ fleetDrawerVehicle.yard }}</div></div>
+            <div><div style="color:var(--textTertiary); font-size:11px;">SEATS</div><div style="font-weight:600; margin-top:3px;">{{ fleetDrawerVehicle.seats }}</div></div>
+            <div><div style="color:var(--textTertiary); font-size:11px;">FUEL</div><div style="font-weight:600; margin-top:3px;">{{ fleetDrawerVehicle.fuel }}</div></div>
+            <div><div style="color:var(--textTertiary); font-size:11px;">ODOMETER</div><div style="font-weight:600; margin-top:3px;">{{ fleetDrawerVehicle.odometer }}</div></div>
+            <div><div style="color:var(--textTertiary); font-size:11px;">TELEMATICS</div><div style="font-weight:600; margin-top:3px;">{{ fleetDrawerVehicle.telematics }}</div></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em; margin-bottom:10px;">COMPLIANCE DOCUMENTS</div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div style="display:flex; justify-content:space-between; padding:10px 12px; background:var(--surfaceAlt); border-radius:9px; font-size:12.5px;"><span>Mulkiya (registration)</span><span style="font-family:'JetBrains Mono',monospace; font-weight:700;">{{ fleetDrawerVehicle.mulkiyaExpiry }}</span></div>
+            <div style="display:flex; justify-content:space-between; padding:10px 12px; background:var(--surfaceAlt); border-radius:9px; font-size:12.5px;"><span>Insurance</span><span style="font-family:'JetBrains Mono',monospace; font-weight:700;">{{ fleetDrawerVehicle.insuranceExpiry }}</span></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px; font-weight:700; color:var(--textTertiary); letter-spacing:.05em; margin-bottom:10px;">RISK &amp; HISTORY</div>
+          <div style="display:flex; justify-content:space-between; padding:10px 12px; background:var(--surfaceAlt); border-radius:9px; font-size:12.5px; margin-bottom:8px;"><span>Lifetime fines</span><span style="font-weight:700;">{{ fleetDrawerVehicle.lifetimeFines }}</span></div>
+          <sc-if value="{{ fleetDrawerHasPredictiveFlag }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; gap:10px; align-items:flex-start; background:var(--dangerTint); border-radius:9px; padding:11px 13px;">
+              <div style="width:8px; height:8px; border-radius:50%; background:var(--danger); margin-top:6px; flex:none;"></div>
+              <div style="font-size:12.5px; line-height:1.5;"><b>Predictive maintenance flag</b><br/><span style="color:var(--textSecondary);">Breakdown risk elevated — 2 repeat faults in the last 60 days.</span></div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- AI Copilot slide-over -->
+  <sc-if value="{{ aiPanelOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleAiPanel }}" style="position:fixed; inset:0; background:rgba(15,12,8,.4); z-index:40;"></div>
+    <div style="position:fixed; top:0; right:0; bottom:0; width:400px; background:var(--surface); border-left:1px solid var(--border); z-index:41; display:flex; flex-direction:column; animation:helm-fade-up .25s ease both;">
+      <div style="padding:20px 20px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+        <div style="width:34px; height:34px; border-radius:9px; background:var(--plumTint); display:flex; align-items:center; justify-content:center;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M12 2.5 13.8 8l5.5 1.8-5.5 1.8L12 17l-1.8-5.4L4.7 9.8 10.2 8 12 2.5Z" stroke="var(--plum)" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:15px;">Helm AI Copilot</div>
+        <button onClick="{{ toggleAiPanel }}" style="margin-left:auto; width:28px; height:28px; border-radius:8px; border:none; background:var(--surfaceAlt); color:var(--textSecondary); cursor:pointer; font-size:15px;">✕</button>
+      </div>
+      <div style="flex:1; overflow-y:auto; padding:18px 20px; display:flex; flex-direction:column; gap:14px;">
+        <sc-for list="{{ aiMessages }}" as="m" hint-placeholder-count="2">
+          <div style="max-width:88%; align-self:{{ m.align }}; background:{{ m.bg }}; color:{{ m.color }}; border-radius:14px; padding:12px 15px; font-size:13px; line-height:1.55;">{{ m.text }}</div>
+        </sc-for>
+      </div>
+      <div style="padding:14px 18px 18px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:11px; font-weight:700; color:var(--textTertiary); text-transform:uppercase; letter-spacing:.05em;">Try asking</div>
+        <sc-for list="{{ aiSuggestionsList }}" as="s" hint-placeholder-count="3">
+          <button onClick="{{ s.click }}" style="text-align:left; padding:10px 13px; border-radius:9px; border:1px solid var(--border); background:var(--surfaceAlt); color:var(--text); font-size:12.5px; cursor:pointer;">{{ s.text }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Notifications panel -->
+  <sc-if value="{{ notifPanelOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleNotifPanel }}" style="position:fixed; inset:0; background:rgba(15,12,8,.35); z-index:40;"></div>
+    <div style="position:fixed; top:76px; right:28px; width:370px; max-height:70vh; overflow-y:auto; background:var(--surface); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadowMd); z-index:41; animation:helm-fade-up .2s ease both;">
+      <div style="padding:16px 18px; border-bottom:1px solid var(--border); font-family:'Sora',sans-serif; font-weight:700; font-size:14.5px;">Notifications</div>
+      <sc-for list="{{ notifications }}" as="n" hint-placeholder-count="4">
+        <div style="padding:13px 18px; border-bottom:1px solid var(--border); display:flex; gap:11px;">
+          <div style="width:8px; height:8px; border-radius:50%; background:{{ n.dot }}; margin-top:6px; flex:none;"></div>
+          <div>
+            <div style="font-size:13px; font-weight:600;">{{ n.title }}</div>
+            <div style="font-size:12px; color:var(--textSecondary); margin-top:2px;">{{ n.time }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <!-- Mobile preview modal -->
+  <sc-if value="{{ mobilePreviewOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(15,12,8,.55); z-index:50; display:flex; align-items:center; justify-content:center;" onClick="{{ toggleMobilePreview }}">
+      <div onClick="{{ stopClick }}" style="position:relative;">
+        <button onClick="{{ toggleMobilePreview }}" style="position:absolute; top:-14px; right:-14px; width:34px; height:34px; border-radius:50%; border:none; background:var(--surface); color:var(--text); box-shadow:var(--shadowMd); cursor:pointer; z-index:2; font-size:15px;">✕</button>
+        <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" title="Helm" hint-size="375px,780px">
+          <div style="height:100%; overflow-y:auto; background:var(--bg); font-family:'Public Sans',system-ui,sans-serif; color:var(--text); padding:16px 16px 26px;">
+            <div style="font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--primary); margin-bottom:4px;">GS Pool · Mina Zayed</div>
+            <div style="font-family:'Sora',sans-serif; font-size:20px; font-weight:700; margin-bottom:14px;">Where to today?</div>
+            <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:16px;">
+              <div style="font-size:11px; font-weight:700; color:var(--textSecondary); margin-bottom:6px;">Destination</div>
+              <div style="font-size:13.5px; font-weight:600; margin-bottom:10px;">{{ booking.destination }}</div>
+              <div style="display:flex; gap:10px;">
+                <div style="flex:1;"><div style="font-size:11px; font-weight:700; color:var(--textSecondary); margin-bottom:6px;">Pick-up</div><div style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600;">{{ booking.pickup }}</div></div>
+                <div style="flex:1;"><div style="font-size:11px; font-weight:700; color:var(--textSecondary); margin-bottom:6px;">Return</div><div style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:600;">{{ booking.ret }}</div></div>
+              </div>
+            </div>
+            <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:14px; margin-bottom:10px;">Eligible vehicles</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ eligibleVehicles }}" as="v" hint-placeholder-count="3">
+                <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:13px;">
+                  <div style="display:flex; justify-content:space-between;"><span style="font-weight:700; font-size:13.5px;">{{ v.model }}</span><span style="font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:700; background:var(--surfaceAlt); border-radius:5px; padding:2px 6px;">{{ v.plate }}</span></div>
+                  <div style="font-size:11.5px; color:var(--textSecondary); margin-top:6px;">{{ v.seats }} seats · {{ v.fuel }}</div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <span style="display:inline-flex; padding:4px 9px; border-radius:999px; background:{{ v.availBg }}; color:{{ v.availColor }}; font-size:10.5px; font-weight:700;">{{ v.availability }}</span>
+                    <button style="height:32px; padding:0 14px; border-radius:8px; border:none; background:var(--primary); color:var(--onPrimary); font-weight:700; font-size:11.5px;">Book</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </x-import>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 900}, &quot;defaultRole&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;employee&quot;, &quot;options&quot;: [&quot;employee&quot;, &quot;fleetManager&quot;, &quot;executive&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;}, &quot;defaultTheme&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;light&quot;, &quot;options&quot;: [&quot;light&quot;, &quot;dark&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Behavior&quot;}}">
+const LIGHT = {
+  bg: '#F6F4F1', surface: '#FFFFFF', surfaceAlt: '#F0EDE8', surfaceHover: '#EAE6DF',
+  border: '#E4DFD6', borderStrong: '#CFC6B8',
+  text: '#191712', textSecondary: '#635C4F', textTertiary: '#948C7C',
+  primary: '#B1502B', primaryHover: '#953F20', primaryTint: '#F5E4DA', onPrimary: '#FFFFFF',
+  ok: '#2A7A4E', okTint: '#E1F0E6', warn: '#A96A12', warnTint: '#F7ECD8',
+  danger: '#B0362A', dangerTint: '#F8E2DE', info: '#2A5FA0', infoTint: '#E1EBF6',
+  plum: '#6B4A87', plumTint: '#EDE5F1',
+  shadowSm: '0 1px 3px rgba(25,18,8,.06)', shadowMd: '0 16px 40px -12px rgba(25,18,8,.22)',
+  heroWash: 'radial-gradient(60% 100% at 100% 0%, rgba(177,80,43,.08), transparent 70%)'
+};
+const DARK = {
+  bg: '#14120F', surface: '#1C1A16', surfaceAlt: '#23201B', surfaceHover: '#2B2721',
+  border: '#332F27', borderStrong: '#463F34',
+  text: '#F3EFE8', textSecondary: '#B3AB9B', textTertiary: '#7D7669',
+  primary: '#E2864F', primaryHover: '#EF9A66', primaryTint: '#3A2417', onPrimary: '#1C1006',
+  ok: '#59B884', okTint: '#1B3324', warn: '#E0A93D', warnTint: '#3A2D12',
+  danger: '#E17162', dangerTint: '#3A1D18', info: '#6FA3DE', infoTint: '#1B2A3D',
+  plum: '#B08FCB', plumTint: '#2C2333',
+  shadowSm: 'none', shadowMd: '0 16px 40px -12px rgba(0,0,0,.6)',
+  heroWash: 'radial-gradient(60% 100% at 100% 0%, rgba(226,134,79,.10), transparent 70%)'
+};
+
+const NAV_ROLE_OF = { home:'employee', book:'employee', entitlement:'employee', ops:'fleetManager', handover:'fleetManager', approvals:'fleetManager', fleet:'fleetManager', compliance:'fleetManager', fines:'fleetManager', map:'fleetManager', dashboard:'executive', entitlements:'executive' };
+
+class Component extends DCLogic {
+  state = {
+    theme: this.props.defaultTheme || 'light',
+    role: this.props.defaultRole || 'employee',
+    page: { employee: 'home', fleetManager: 'ops', executive: 'dashboard' },
+    aiPanelOpen: false,
+    notifPanelOpen: false,
+    mobilePreviewOpen: false,
+    aiMessages: [ { text: "Ask me about utilisation, fines, compliance or right-sizing — I read live across every cluster.", align: 'flex-start', bg: 'var(--surfaceAlt)', color: 'var(--text)' } ],
+    booking: { step: 1, destination: 'Khalifa Port, Gate 4', pickup: '09:00', ret: '15:00', pax: '2', selectedVehicleId: null, consentChecked: false, signatureName: '', submitted: false },
+    entitlement: { step: 1, type: 'long-term', driverOption: 'without-driver', duration: '24', location: 'Kezad 280', costCentre: '', justification: '', submitted: false },
+    handover: {
+      step: 1,
+      checks: { panels: 'pass', tyres: 'pass', lights: null, assets: null, cabin: null },
+      odometer: '48213', fuel: 7,
+      damagePins: [{ id: 1, x: 24, y: 22, label: 'Scratch — front-left wing · logged 02 Jul' }],
+      signed: false
+    },
+    fleetDrawerVehicleId: null,
+    selectedApprovalId: 'BK-1211',
+    approvalDecisions: {},
+    selectedFineId: null,
+    selectedEntitlementId: 'DVR-088',
+    entitlementDecided: {}
+  };
+
+  currentUser = { firstName: 'Amina', name: 'Amina Khoury', initials: 'AK', empId: 'EMP-20481', licenceExpiry: 'Feb 2027', approver: 'R. Haddad', fineAlert: true };
+
+  vehicles = [
+    { id: 'v1', model: 'Toyota Land Cruiser', plate: 'AD 40213', seats: 7, fuel: 'Hybrid', pool: 'GS Pool — Mina Zayed', yard: 'Yard B', status: 'Active', availability: 'Available from 12:30', availBg: 'var(--warnTint)', availColor: 'var(--warn)', fuelEstimate: 'Est. fuel 5.1L', mulkiyaExpiry: '02 Nov 2026', insuranceExpiry: '05 Aug 2026', odometer: '61,204 km', lifetimeFines: 1, telematics: 'Online' },
+    { id: 'v2', model: 'Nissan Patrol', plate: 'AD 88914', seats: 5, fuel: 'Petrol', pool: 'GS Pool — Mina Zayed', yard: 'Yard A', status: 'In Use', availability: 'Booked until 15:00', availBg: 'var(--surfaceAlt)', availColor: 'var(--textSecondary)', fuelEstimate: 'Est. fuel 7.4L', mulkiyaExpiry: '15 Jan 2027', insuranceExpiry: '01 Dec 2026', odometer: '48,213 km', lifetimeFines: 2, telematics: 'Online' },
+    { id: 'v3', model: 'Toyota Hiace', plate: 'AD 55102', seats: 12, fuel: 'Diesel', pool: 'GS Pool — Mina Zayed', yard: 'Yard B', status: 'Under Maintenance', availability: 'Free from 13:00', availBg: 'var(--warnTint)', availColor: 'var(--warn)', fuelEstimate: 'Est. fuel 9.8L', mulkiyaExpiry: '20 Sep 2026', insuranceExpiry: '10 Feb 2027', odometer: '102,880 km', lifetimeFines: 0, telematics: 'Offline' },
+    { id: 'v4', model: 'Toyota Fortuner', plate: '— (pre-allocation)', seats: 7, fuel: 'Petrol', pool: 'Kezad HQ', yard: '—', status: 'Reserve', availability: 'Pending entitlement decision', availBg: 'var(--infoTint)', availColor: 'var(--info)', fuelEstimate: '—', mulkiyaExpiry: '—', insuranceExpiry: '—', odometer: '0 km', lifetimeFines: 0, telematics: 'Not installed' },
+    { id: 'v5', model: 'Toyota Corolla', plate: 'AD 77120', seats: 5, fuel: 'Petrol', pool: 'Khalifa Port Pool', yard: 'Yard C', status: 'Active', availability: 'Fuel variance flagged', availBg: 'var(--warnTint)', availColor: 'var(--warn)', fuelEstimate: 'Est. fuel 6.2L', mulkiyaExpiry: '11 Mar 2027', insuranceExpiry: '22 Jun 2027', odometer: '73,410 km', lifetimeFines: 0, telematics: 'Online' },
+    { id: 'v6', model: 'Nissan Patrol', plate: 'AD 51002', seats: 5, fuel: 'Petrol', pool: 'Zayed Port Pool', yard: 'Yard A', status: 'Active', availability: 'Predictive maintenance flag', availBg: 'var(--dangerTint)', availColor: 'var(--danger)', fuelEstimate: 'Est. fuel 7.9L', mulkiyaExpiry: '30 Apr 2027', insuranceExpiry: '14 Jul 2026', odometer: '92,004 km', lifetimeFines: 3, telematics: 'Online' },
+    { id: 'v7', model: 'Nissan Patrol', plate: 'AD 33190', seats: 5, fuel: 'Petrol', pool: 'Logistics — Dedicated', yard: '—', status: 'Dedicated', availability: 'Assigned — K. Al Mazrouei', availBg: 'var(--infoTint)', availColor: 'var(--info)', fuelEstimate: '—', mulkiyaExpiry: '19 May 2027', insuranceExpiry: '02 Sep 2026', odometer: '39,220 km', lifetimeFines: 1, telematics: 'Online' },
+    { id: 'v8', model: 'Kia EV6', plate: 'AD 90044', seats: 5, fuel: 'Electric', pool: 'GS Pool — Mina Zayed', yard: 'Yard A', status: 'Active', availability: 'Available all day', availBg: 'var(--okTint)', availColor: 'var(--ok)', fuelEstimate: 'Est. 9.1 kWh', mulkiyaExpiry: '08 Jan 2028', insuranceExpiry: '08 Jan 2027', odometer: '11,004 km', lifetimeFines: 0, telematics: 'Online' },
+    { id: 'v9', model: 'Toyota Hiace', plate: 'AD 24410', seats: 12, fuel: 'Diesel', pool: 'Zayed Port Pool', yard: 'Yard B', status: 'Active', availability: 'Insurance expires in 7 days', availBg: 'var(--dangerTint)', availColor: 'var(--danger)', fuelEstimate: 'Est. fuel 11.2L', mulkiyaExpiry: '01 Oct 2026', insuranceExpiry: '17 Jul 2026', odometer: '58,900 km', lifetimeFines: 0, telematics: 'Online' }
+  ];
+
+  myBookingsData = [
+    { id: 'BK-1204', vehicle: 'Nissan Patrol', plate: 'AD 88914', day: 'Today', time: '09:00', returnTime: '15:00', destination: 'Khalifa Port Gate 4', status: 'Approved', statusBg: 'var(--okTint)', statusColor: 'var(--ok)' },
+    { id: 'BK-1211', vehicle: 'Nissan Patrol', plate: 'AD 88914', day: 'Mon 13 Jul', time: '07:30', returnTime: '12:00', destination: 'Kezad 280 site visit', status: 'Awaiting approval', statusBg: 'var(--warnTint)', statusColor: 'var(--warn)' }
+  ];
+
+  timelineVehiclesData = [
+    { plate: 'AD 40213', model: 'Land Cruiser · 7 seats', segments: [
+      { left: 0, width: 50, bg: 'var(--textTertiary)', color: '#fff', label: 'Booked' },
+      { left: 54, width: 46, bg: 'var(--okTint)', color: 'var(--ok)', label: 'Book from 12:30 →' }
+    ] },
+    { plate: 'AD 88914', model: 'Patrol · 5 seats', segments: [
+      { left: 0, width: 25, bg: 'var(--okTint)', color: 'var(--ok)', label: 'Open' },
+      { left: 25, width: 50, bg: 'var(--primary)', color: 'var(--onPrimary)', label: 'Your booking · 09–15' },
+      { left: 79, width: 21, bg: 'var(--okTint)', color: 'var(--ok)', label: 'Open' }
+    ] },
+    { plate: 'AD 55102', model: 'Hiace · 12 seats', segments: [
+      { left: 0, width: 58, bg: 'var(--textTertiary)', color: '#fff', label: 'Under maintenance' },
+      { left: 60, width: 40, bg: 'var(--okTint)', color: 'var(--ok)', label: 'Book from 13:00 →' }
+    ] }
+  ];
+
+  approvalQueue = [
+    { id: 'BK-1211', who: 'Amina Khoury', empId: 'EMP-20481', avatar: 'AK', waiting: '3h 40m', urgent: false, vehicle: 'Nissan Patrol', plate: 'AD 88914', seats: 5, day: 'Mon 13 Jul', window: '07:30 – 12:00 (4.5h)', purpose: 'Site visit · 2 passengers', destination: 'Kezad 280 site office', cost: 'AED 96', costNote: 'fuel 7.4L + wear',
+      trip: [{ t: '07:30', label: 'GS Pool, Mina Zayed' }, { t: '08:25', label: 'Kezad 280 site office', leg: '52 km · E11' }, { t: '12:00', label: 'GS Pool return + buffer', leg: '52 km return' }],
+      verdicts: [
+        { ok: true, title: 'Eligibility gate passed', detail: 'Employment active · licence valid to 02/2027 · no black-point or behaviour blocks' },
+        { ok: true, title: 'Consent v3.2 signed', detail: '08:12 · iOS · covers fines, damages, usage policy' },
+        { ok: true, title: 'No conflicts on vehicle', detail: 'Previous booking ends 06:45 · 15-min buffer respected · Mulkiya + insurance current' },
+        { ok: false, title: 'Monday 07:30 is pool peak', detail: 'GS Pool forecast 88% at pick-up · a 09:00 start would free a vehicle for the waitlist' }
+      ],
+      justification: 'Quarterly HSE inspection at the Kezad 280 site office with two auditors. Client contact confirmed for 09:00; need buffer for gate clearance.',
+      reportsNote: 'Reports to you · 14 bookings YTD, 0 no-shows, 1 late return', flags: ['ELIGIBLE', 'CONSENT ✓', '1ST THIS WEEK'] },
+    { id: 'BK-1231', who: 'Omar Farsi', empId: 'EMP-19042', avatar: 'OF', waiting: 'Tomorrow 06:00', urgent: true, vehicle: 'Toyota Hiace', plate: 'AD 55102', seats: 12, day: 'Tomorrow', window: '06:00 – 18:00 (12h)', purpose: 'Crew move · 9 passengers', destination: 'Khalifa Gate 2', cost: 'AED 210', costNote: 'fuel 9.8L + wear',
+      trip: [{ t: '06:00', label: 'GS Pool, Mina Zayed' }, { t: '07:10', label: 'Khalifa Gate 2', leg: '38 km' }, { t: '18:00', label: 'GS Pool return + buffer', leg: '38 km return' }],
+      verdicts: [
+        { ok: true, title: 'Eligibility gate passed', detail: 'Employment active · licence valid · no blocks' },
+        { ok: false, title: '12h duration — escalated', detail: 'Exceeds 8h auto-approve threshold for van category — requires manager sign-off' }
+      ],
+      justification: 'Crew rotation for the Khalifa Gate 2 night shift changeover — 9 technicians, one round trip.',
+      reportsNote: 'Reports to you · 22 bookings YTD, 0 no-shows', flags: ['ELIGIBLE', '12H DURATION — ESCALATED'] },
+    { id: 'BK-1238', who: 'Lena Haddad', empId: 'EMP-20877', avatar: 'LH', waiting: '1h 05m', urgent: false, vehicle: 'Toyota Land Cruiser', plate: 'AD 40213', seats: 7, day: 'Thu 16 Jul', window: '09:00 – 15:00 (6h)', purpose: 'Vendor audit · 3 passengers', destination: 'Maqta vendor site', cost: 'AED 140', costNote: 'fuel 5.1L + wear',
+      trip: [{ t: '09:00', label: 'GS Pool, Mina Zayed' }, { t: '09:50', label: 'Maqta vendor site', leg: '44 km' }, { t: '15:00', label: 'GS Pool return + buffer', leg: '44 km return' }],
+      verdicts: [
+        { ok: true, title: 'Eligibility gate passed', detail: 'Employment active · licence valid · no blocks' },
+        { ok: true, title: 'Consent v3.2 signed', detail: '07:58 · web · covers fines, damages, usage policy' },
+        { ok: true, title: 'No conflicts on vehicle', detail: 'Vehicle free all day · Mulkiya renews in 4 months' }
+      ],
+      justification: 'Annual vendor performance audit at the Maqta site — procurement has requested fleet representation.',
+      reportsNote: 'Reports to you · 9 bookings YTD, 0 no-shows', flags: ['ELIGIBLE', 'CONSENT ✓'] },
+    { id: 'SUB-0447', who: 'Yusuf Rahman', empId: 'EMP-21390', avatar: 'YR', waiting: '25m', urgent: false, vehicle: 'Substitute driver authorisation', plate: 'for H. Rahman', seats: null, day: '14–18 Jul', window: '5-day window', purpose: 'Substitute driver while primary driver on leave', destination: '—', cost: '—', costNote: '',
+      trip: [], verdicts: [ { ok: false, title: 'Substitution — liability shifts', detail: 'Fines, tolls and trip attribution move to Y. Rahman for the authorised window' } ],
+      justification: 'H. Rahman on approved annual leave 14–18 Jul; Y. Rahman covers the dedicated-vehicle route during this window.',
+      reportsNote: 'Reports to you', flags: ['SUBSTITUTION — LIABILITY SHIFTS'] }
+  ];
+
+  fines = [
+    { id: 'FN-2291', driver: 'Amina Khoury', booking: 'BK-1187', amount: 'AED 600', type: 'Radar speeding', points: 4, status: 'Pending recovery', statusBg: 'var(--warnTint)', statusColor: 'var(--warn)', date: '28 Jun 2026' },
+    { id: 'FN-2278', driver: 'Khalid Al Mazrouei', booking: 'BK-0942', amount: 'AED 200', type: 'Parking', points: 0, status: 'Recovered', statusBg: 'var(--okTint)', statusColor: 'var(--ok)', date: '11 Jun 2026' },
+    { id: 'FN-2312', driver: 'H. Rahman', booking: 'BK-1098', amount: 'AED 800', type: 'Radar speeding', points: 4, status: 'Access blocked — transfer overdue', statusBg: 'var(--dangerTint)', statusColor: 'var(--danger)', date: '02 Jul 2026' },
+    { id: 'FN-2265', driver: 'M. Farsi', booking: 'BK-1216', amount: 'AED 150', type: 'Salik — disputed', points: 0, status: 'Under review', statusBg: 'var(--infoTint)', statusColor: 'var(--info)', date: '05 Jul 2026' }
+  ];
+
+  entitlementRequests = [
+    { id: 'DVR-088', who: 'Sara Mansouri', role: 'Director, Site Operations', grade: 'D1', cluster: 'Logistics', service: '6 yrs service', usage: '31 pool bookings YTD, 92% on-time return', vehicle: 'Toyota Fortuner', duration: '24 months', costCentre: 'LOG-4410', location: 'Kezad 280', start: '01 Aug 2026', submitted: '6 Jul',
+      chain: [ { name: 'K. Osei', role: 'Line Manager', date: '6 Jul', state: 'done' }, { name: 'D. Verma', role: 'Cluster Fleet Lead', date: '7 Jul', state: 'done' }, { name: 'You', role: 'Cluster CEO · policy gate', date: '', state: 'pending' } ],
+      policyVerdicts: [
+        { ok: true, title: 'Grade eligible', detail: 'D1 ≥ policy floor (Director) for long-term without-driver', ref: 'ELG-R2' },
+        { ok: true, title: 'Role test passed', detail: 'Multi-site operational role · 3 designated sites · 460 km/week baseline', ref: 'ELG-R5' },
+        { ok: true, title: 'Vehicle class within band', detail: 'Fortuner = mid-SUV band for D1 · no upgrade exception requested', ref: 'ELG-R7' },
+        { ok: false, title: 'Duration exceeds auto-approve threshold', detail: '24 months > 12-month threshold — this is why the request reached you', ref: 'ELG-T3' }
+      ],
+      justification: 'Site Operations now covers Kezad 280, E11 warehouse block and the new 310 expansion — three sites, daily rotation. Pool booking round-trips to Mina Zayed add ~90 minutes/day of dead travel. A dedicated vehicle stationed at Kezad removes that loss for the 24-month build-out programme.',
+      endorsement: 'Verified. The 310 programme schedule is attached.',
+      docs: ['310 programme memo.pdf', 'Site rotation schedule.pdf', 'Trip-log analysis, 90 days.xlsx'],
+      cost: { total: 'AED 118k / 24 months', items: [ { label: 'Lease', pct: 72, value: '85k' }, { label: 'Fuel est.', pct: 19, value: '22k' }, { label: 'Insurance', pct: 7, value: '8k' }, { label: 'Tolls est.', pct: 3, value: '3k' } ], alt: 'Continued pool usage at her current pattern ≈ AED 71k + ~380 h/yr travel overhead. Net programme case: positive if utilisation ≥ 55%.' } },
+    { id: 'DVR-093', who: 'Faisal Nuaimi', role: 'Executive Assistant to GCEO', grade: 'Exec', cluster: 'Corporate', service: '3 yrs service', usage: '9 pool bookings YTD', vehicle: 'Lexus ES — with driver', duration: '12 months', costCentre: 'COR-1002', location: 'HQ', start: '01 Sep 2026', submitted: '3 Jul',
+      chain: [ { name: 'N. Okoye', role: 'Line Manager', date: '3 Jul', state: 'done' }, { name: 'D. Verma', role: 'Cluster Fleet Lead', date: '4 Jul', state: 'done' }, { name: 'You', role: 'Cluster CEO · policy gate', date: '', state: 'pending' } ],
+      policyVerdicts: [
+        { ok: true, title: 'Executive-assignment category', detail: 'With-driver allocations for GCEO office pre-approved under standing policy', ref: 'ELG-R9' },
+        { ok: false, title: 'Requires professional driver eligibility record', detail: 'Chauffeur licence + sponsor contract not yet attached', ref: 'ELG-T7' }
+      ],
+      justification: 'Direct executive support role requiring same-day availability and confidential transport for the GCEO office.',
+      endorsement: 'Standard executive-support allocation, budget pre-cleared.',
+      docs: ['Executive office memo.pdf'],
+      cost: { total: 'AED 96k / 12 months', items: [ { label: 'Lease', pct: 58, value: '48k' }, { label: 'Driver salary share', pct: 30, value: '25k' }, { label: 'Fuel est.', pct: 8, value: '7k' }, { label: 'Insurance', pct: 4, value: '3k' } ], alt: 'No pool alternative modelled — with-driver executive transport is a standing policy category.' } }
+  ];
+
+  complianceAlerts = [
+    { tier: '14-day (urgent)', tone: 'danger', vehicle: 'Toyota Hiace · AD 24410', doc: 'Insurance', due: 'Expires in 7 days', pool: 'Zayed Port Pool', note: 'Renewal PO pending with lessor · 2 more vehicles in this batch' },
+    { tier: '30-day', tone: 'warn', vehicle: 'Toyota Land Cruiser · AD 40213', doc: 'Mulkiya (registration)', due: 'Expires in 28 days', pool: 'GS Pool — Mina Zayed', note: 'Renewal reminder sent to Fleet Manager' },
+    { tier: '60-day', tone: 'info', vehicle: 'Nissan Patrol · AD 33190', doc: 'Insurance', due: 'Expires in 54 days', pool: 'Logistics — Dedicated', note: 'On track — no action required yet' },
+    { tier: 'Expired — hard block', tone: 'danger', vehicle: 'Toyota Corolla · AD 09981', doc: 'Insurance', due: 'Expired 3 days ago', pool: 'Khalifa Port Pool', note: 'Booking disabled group-wide · no override permitted (FR-BOOK-08)' }
+  ];
+
+  opsAlerts = [
+    { sev: 'danger', title: 'Geofence deviation — AD 61550', detail: 'Left corridor E11 → Kezad 280 at 08:22 · driver M. Farsi · BK-1216', age: '26 min', action: 'Review route' },
+    { sev: 'danger', title: 'Black-points transfer overdue', detail: 'Driver H. Rahman · 4 pts · deadline passed 08:00 · access now blocked', age: '42 min', action: 'Escalate HR' },
+    { sev: 'warn', title: 'Insurance expires in 7 days', detail: '3 vehicles · Zayed Port Pool · renewal PO pending with lessor', age: '2 h', action: 'Nudge vendor' },
+    { sev: 'warn', title: 'Fuel variance +31% — AD 77120', detail: 'Expected 12.4L vs invoiced 16.2L · booking BK-1198 · 2nd occurrence', age: '3 h', action: 'Open case' },
+    { sev: 'info', title: 'Predictive flag — Patrol AD 51002', detail: 'Breakdown risk elevated · 92k km, 2 repeat faults · book service slot?', age: '5 h', action: 'Schedule' }
+  ];
+
+  poolsLoad = [
+    { name: 'GS Pool', sub: 'Mina Zayed · 46 veh', pct: 73, hot: false },
+    { name: 'Khalifa Port', sub: 'Ports · 84 veh', pct: 91, hot: true },
+    { name: 'Kezad HQ', sub: 'Logistics · 58 veh', pct: 64, hot: false },
+    { name: 'Zayed Port', sub: 'Ports · 39 veh', pct: 55, hot: false },
+    { name: 'AD Maritime', sub: 'M&S · 31 veh', pct: 42, hot: false }
+  ];
+
+  aiRecommendationsData = [
+    { tone: 'ok', title: 'Off-hire 4 sedans at Kezad HQ', detail: 'Utilisation 11–19% for 5 straight months · demand fully absorbable by pool', gain: '+412k', gainNote: 'AED / year' },
+    { tone: 'info', title: 'Transfer 3 SUVs: Zayed Port → Khalifa Port', detail: 'Khalifa at 91% load, daily waitlists · Zayed at 55%', gain: '+9 pts', gainNote: 'group utilisation' },
+    { tone: 'warn', title: 'Renegotiate Lessor B before September renewal', detail: 'Their vehicles: 2.3× off-road days vs Lessor A · 41 units up for renewal', gain: '~280k', gainNote: 'AED leverage' }
+  ];
+
+  notificationsData = [
+    { dot: 'var(--danger)', title: 'Fine attributed to BK-1187 — transfer due 18 Jul', time: '12 min ago' },
+    { dot: 'var(--warn)', title: 'Booking BK-1231 escalated — 12h duration', time: '38 min ago' },
+    { dot: 'var(--info)', title: 'Entitlement DVR-088 awaiting your decision', time: '1 h ago' },
+    { dot: 'var(--ok)', title: 'Handover complete — AD 40213 to A. Khoury', time: '2 h ago' }
+  ];
+
+  aiResponses = {
+    'Which pools are under-utilised this month?': 'Zayed Port Pool is running at 55% vs a 75% target — 3 SUVs there have averaged under 20% utilisation for 8 weeks. Recommend transferring them to Khalifa Port Pool, which is at 91% with daily waitlists.',
+    'Predict maintenance risk this week': 'Nissan Patrol AD 51002 shows elevated breakdown risk — 92,004 km with 2 repeat brake-system faults in the last 60 days. Recommend booking a service slot before its next assignment.',
+    'Show fines trend for Q2': 'Q2 fines: 47 total, AED 28,400 attributed, 100% linked to a driver. Radar speeding is the largest category (61%), concentrated on the E11 corridor between 07:00–08:30.'
+  };
+
+  theme() { return this.state.theme === 'dark' ? DARK : LIGHT; }
+
+  navTo = (role, page) => () => this.setState((s) => ({ role, page: { ...s.page, [role]: page } }));
+  setRoleTo = (role) => () => this.setState({ role });
+  toggleTheme = () => this.setState((s) => ({ theme: s.theme === 'dark' ? 'light' : 'dark' }));
+  toggleAiPanel = () => this.setState((s) => ({ aiPanelOpen: !s.aiPanelOpen, notifPanelOpen: false }));
+  toggleNotifPanel = () => this.setState((s) => ({ notifPanelOpen: !s.notifPanelOpen, aiPanelOpen: false }));
+  toggleMobilePreview = () => this.setState((s) => ({ mobilePreviewOpen: !s.mobilePreviewOpen }));
+  stopClick = (e) => { if (e && e.stopPropagation) e.stopPropagation(); };
+
+  askAi = (prompt) => () => {
+    const answer = this.aiResponses[prompt] || "I don't have enough data to answer that yet — try one of the suggested questions.";
+    this.setState((s) => ({
+      aiMessages: [
+        ...s.aiMessages,
+        { text: prompt, align: 'flex-end', bg: 'var(--primary)', color: 'var(--onPrimary)' },
+        { text: answer, align: 'flex-start', bg: 'var(--surfaceAlt)', color: 'var(--text)' }
+      ]
+    }));
+  };
+
+  // Booking wizard
+  setBookingField = (key) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((s) => ({ booking: { ...s.booking, [key]: v } })); };
+  bookingNext = () => this.setState((s) => ({ booking: { ...s.booking, step: Math.min(4, s.booking.step + 1) } }));
+  bookingPrev = () => this.setState((s) => ({ booking: { ...s.booking, step: 1 } }));
+  selectVehicle = (id) => () => this.setState((s) => ({ booking: { ...s.booking, selectedVehicleId: id, step: 2 } }));
+  toggleConsent = () => this.setState((s) => ({ booking: { ...s.booking, consentChecked: !s.booking.consentChecked } }));
+  confirmBooking = () => { const s = this.state.booking; if (!s.consentChecked || !s.signatureName) return; this.setState((st) => ({ booking: { ...st.booking, step: 4, submitted: true } })); };
+  resetBooking = () => this.setState({ booking: { step: 1, destination: 'Khalifa Port, Gate 4', pickup: '09:00', ret: '15:00', pax: '2', selectedVehicleId: null, consentChecked: false, signatureName: '', submitted: false } });
+
+  // Entitlement wizard (employee)
+  setEntitlementField = (key) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((s) => ({ entitlement: { ...s.entitlement, [key]: v } })); };
+  setEntitlementType = (val) => () => this.setState((s) => ({ entitlement: { ...s.entitlement, type: val } }));
+  setDriverOption = (val) => () => this.setState((s) => ({ entitlement: { ...s.entitlement, driverOption: val } }));
+  entitlementNext = () => this.setState((s) => ({ entitlement: { ...s.entitlement, step: Math.min(3, s.entitlement.step + 1) } }));
+  entitlementPrev = () => this.setState((s) => ({ entitlement: { ...s.entitlement, step: Math.max(1, s.entitlement.step - 1) } }));
+  submitEntitlement = () => this.setState((s) => ({ entitlement: { ...s.entitlement, step: 3, submitted: true } }));
+
+  // Handover wizard
+  setCheck = (key, val) => () => this.setState((s) => ({ handover: { ...s.handover, checks: { ...s.handover.checks, [key]: val } } }));
+  setOdometer = (e) => { const v = e.target.value; this.setState((s) => ({ handover: { ...s.handover, odometer: v } })); };
+  setFuel = (e) => { const v = e.target.value; this.setState((s) => ({ handover: { ...s.handover, fuel: +v } })); };
+  signHandover = () => this.setState((s) => ({ handover: { ...s.handover, signed: true } }));
+  clearSignature = () => this.setState((s) => ({ handover: { ...s.handover, signed: false } }));
+  handoverNext = () => this.setState((s) => ({ handover: { ...s.handover, step: Math.min(5, s.handover.step + 1) } }));
+  handoverPrev = () => this.setState((s) => ({ handover: { ...s.handover, step: Math.max(1, s.handover.step - 1) } }));
+
+  checklistMeta = [
+    { key: 'panels', label: 'Body panels & glass', hint: 'no new damage vs last return record' },
+    { key: 'tyres', label: 'Tyres & spare', hint: 'tread visual · pressure warning light off' },
+    { key: 'lights', label: 'Lights & indicators', hint: 'head, brake, hazard' },
+    { key: 'assets', label: 'On-vehicle assets', hint: 'Salik tag · Darb tag · fuel card · first-aid kit' },
+    { key: 'cabin', label: 'Cabin condition', hint: 'clean · no personal items from previous booking' }
+  ];
+
+  openFleetDrawer = (id) => () => this.setState({ fleetDrawerVehicleId: id });
+  closeFleetDrawer = () => this.setState({ fleetDrawerVehicleId: null });
+  selectApproval = (id) => () => this.setState({ selectedApprovalId: id });
+  decideApproval = (id, decision) => () => this.setState((s) => ({ approvalDecisions: { ...s.approvalDecisions, [id]: decision } }));
+  selectFine = (id) => () => this.setState((s) => ({ selectedFineId: s.selectedFineId === id ? null : id }));
+  selectEntitlement = (id) => () => this.setState({ selectedEntitlementId: id });
+  decideEntitlement = (id, decision) => () => this.setState((s) => ({ entitlementDecided: { ...s.entitlementDecided, [id]: decision } }));
+
+  navMeta() {
+    const page = this.state.page[this.state.role];
+    const out = {};
+    Object.keys(NAV_ROLE_OF).forEach((k) => {
+      const active = page === k;
+      out[k] = {
+        style: `display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;border:none;cursor:pointer;font-size:13.5px;font-weight:${active ? 700 : 500};background:${active ? 'var(--primaryTint)' : 'transparent'};color:${active ? 'var(--primary)' : 'var(--textSecondary)'};text-align:left;width:100%;`,
+        iconWrap: `width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;background:${active ? 'var(--primary)' : 'transparent'};color:${active ? 'var(--onPrimary)' : 'var(--textTertiary)'};`,
+        click: this.navTo(NAV_ROLE_OF[k], k)
+      };
+    });
+    return out;
+  }
+
+  segBtnStyle(active) {
+    return `flex:1;height:44px;border-radius:9px;border:1px solid ${active ? 'var(--primary)' : 'var(--border)'};background:${active ? 'var(--primaryTint)' : 'var(--surfaceAlt)'};color:${active ? 'var(--primary)' : 'var(--textSecondary)'};font-weight:700;font-size:13px;cursor:pointer;`;
+  }
+
+  roleBtnMeta() {
+    const roles = ['employee', 'fleetManager', 'executive'];
+    const out = {};
+    roles.forEach((r) => {
+      const active = this.state.role === r;
+      out[r] = {
+        style: `height:32px;padding:0 14px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:700;background:${active ? 'var(--surface)' : 'transparent'};color:${active ? 'var(--text)' : 'var(--textTertiary)'};box-shadow:${active ? 'var(--shadowSm)' : 'none'};`,
+        click: this.setRoleTo(r)
+      };
+    });
+    return out;
+  }
+
+  renderVals() {
+    const t = this.theme();
+    const role = this.state.role;
+    const page = this.state.page[role];
+    const roleLabels = { employee: 'Employee', fleetManager: 'Fleet Manager', executive: 'Executive' };
+    const pageTitles = {
+      employee: { home: 'Home', book: 'Book a vehicle', entitlement: 'Dedicated vehicle request' },
+      fleetManager: { ops: 'Ops dashboard', handover: 'Vehicle handover', approvals: 'Booking approvals', fleet: 'Fleet vehicles', compliance: 'Compliance & alerts', fines: 'Fines & black points', map: 'Live map' },
+      executive: { dashboard: 'Executive dashboard', entitlements: 'Entitlement approvals' }
+    };
+    const clusterCrumbs = { employee: 'GS POOL · MINA ZAYED', fleetManager: 'GROUP OPERATIONS', executive: 'ALL CLUSTERS · GROUP' };
+
+    const pax = parseInt(this.state.booking.pax, 10) || 1;
+    const eligibleVehicles = this.vehicles
+      .filter((v) => v.pool === 'GS Pool — Mina Zayed' && v.seats >= pax)
+      .map((v) => ({ ...v, bookClick: this.selectVehicle(v.id) }));
+
+    const selectedVehicle = this.vehicles.find((v) => v.id === this.state.booking.selectedVehicleId) || eligibleVehicles[0] || this.vehicles[0];
+
+    const aiSuggestionsList = Object.keys(this.aiResponses).map((q) => ({ text: q, click: this.askAi(q) }));
+
+    return {
+      t,
+      isDark: this.state.theme === 'dark',
+      isLight: this.state.theme !== 'dark',
+      isEmployee: role === 'employee',
+      isFleetManager: role === 'fleetManager',
+      isExecutive: role === 'executive',
+      roleLabel: roleLabels[role],
+      pageTitle: pageTitles[role][page],
+      breadcrumbCluster: clusterCrumbs[role],
+      currentUser: this.currentUser,
+      nav: this.navMeta(),
+      roleBtn: this.roleBtnMeta(),
+      toggleTheme: this.toggleTheme,
+      toggleAiPanel: this.toggleAiPanel,
+      toggleNotifPanel: this.toggleNotifPanel,
+      toggleMobilePreview: this.toggleMobilePreview,
+      stopClick: this.stopClick,
+      aiPanelOpen: this.state.aiPanelOpen,
+      notifPanelOpen: this.state.notifPanelOpen,
+      mobilePreviewOpen: this.state.mobilePreviewOpen,
+      aiMessages: this.state.aiMessages,
+      aiSuggestionsList,
+      notifications: this.notificationsData,
+
+      showEmployeeHome: role === 'employee' && page === 'home',
+      homeStats: { upcoming: this.myBookingsData.length, fines: 1 },
+      myBookings: this.myBookingsData,
+      homeVehicles: this.vehicles.slice(0, 3),
+
+      showBookStep1: role === 'employee' && page === 'book' && this.state.booking.step === 1,
+      showBookStep2: role === 'employee' && page === 'book' && this.state.booking.step === 2,
+      showBookStep4: role === 'employee' && page === 'book' && this.state.booking.step === 4,
+      booking: this.state.booking,
+      bookingHandlers: {
+        destinationChange: this.setBookingField('destination'),
+        pickupChange: this.setBookingField('pickup'),
+        retChange: this.setBookingField('ret'),
+        paxChange: this.setBookingField('pax'),
+        signatureChange: this.setBookingField('signatureName')
+      },
+      bookingPrev: this.bookingPrev,
+      toggleConsent: this.toggleConsent,
+      confirmBooking: this.confirmBooking,
+      resetBooking: this.resetBooking,
+      bookingSubmitDisabled: !(this.state.booking.consentChecked && this.state.booking.signatureName),
+      bookingSubmitStyle: `width:100%;height:50px;border:none;border-radius:11px;font-weight:700;font-size:14.5px;cursor:${(this.state.booking.consentChecked && this.state.booking.signatureName) ? 'pointer' : 'not-allowed'};background:${(this.state.booking.consentChecked && this.state.booking.signatureName) ? 'var(--primary)' : 'var(--surfaceAlt)'};color:${(this.state.booking.consentChecked && this.state.booking.signatureName) ? 'var(--onPrimary)' : 'var(--textTertiary)'};`,
+      timelineVehicles: this.timelineVehiclesData,
+      eligibleVehicles,
+      selectedVehicle,
+
+      showEntStep1: role === 'employee' && page === 'entitlement' && this.state.entitlement.step === 1,
+      showEntStep2: role === 'employee' && page === 'entitlement' && this.state.entitlement.step === 2,
+      showEntStep3: role === 'employee' && page === 'entitlement' && this.state.entitlement.step === 3,
+      entitlement: this.state.entitlement,
+      entHandlers: {
+        typeLong: this.setEntitlementType('long-term'),
+        typeTemp: this.setEntitlementType('temporary'),
+        driverWith: this.setDriverOption('with-driver'),
+        driverWithout: this.setDriverOption('without-driver'),
+        durationChange: this.setEntitlementField('duration'),
+        locationChange: this.setEntitlementField('location'),
+        costCentreChange: this.setEntitlementField('costCentre'),
+        justificationChange: this.setEntitlementField('justification')
+      },
+      entTypeStyle: {
+        long: this.segBtnStyle(this.state.entitlement.type === 'long-term'),
+        temp: this.segBtnStyle(this.state.entitlement.type === 'temporary')
+      },
+      entDriverStyle: {
+        with: this.segBtnStyle(this.state.entitlement.driverOption === 'with-driver'),
+        without: this.segBtnStyle(this.state.entitlement.driverOption === 'without-driver')
+      },
+      entitlementNext: this.entitlementNext,
+      entitlementPrev: this.entitlementPrev,
+      submitEntitlement: this.submitEntitlement,
+
+      showOps: role === 'fleetManager' && page === 'ops',
+      opsAlerts: this.opsAlerts.map((a) => ({ ...a, sevColor: a.sev === 'danger' ? 'var(--danger)' : a.sev === 'warn' ? 'var(--warn)' : 'var(--info)' })),
+      poolsLoad: this.poolsLoad.map((p) => ({ ...p, color: p.hot ? 'var(--warn)' : 'var(--primary)' })),
+
+      showHandover: role === 'fleetManager' && page === 'handover',
+      handover: this.state.handover,
+      handoverStepsDots: [1, 2, 3, 4].map((n) => ({ bg: this.state.handover.step > n ? 'var(--primary)' : this.state.handover.step === n ? 'var(--primary)' : 'var(--border)' })),
+      handoverStepIs1: this.state.handover.step === 1,
+      handoverStepIs2: this.state.handover.step === 2,
+      handoverStepIs3: this.state.handover.step === 3,
+      handoverStepIs4: this.state.handover.step === 4,
+      handoverDone: this.state.handover.step === 5,
+      handoverNext: this.handoverNext,
+      handoverPrev: this.handoverPrev,
+      checklistItems: this.checklistMeta.map((m) => {
+        const val = this.state.handover.checks[m.key];
+        return {
+          ...m,
+          passClick: this.setCheck(m.key, 'pass'),
+          failClick: this.setCheck(m.key, 'fail'),
+          bg: val === 'pass' ? 'var(--okTint)' : val === 'fail' ? 'var(--dangerTint)' : 'var(--surface)',
+          borderColor: val === 'pass' ? 'var(--ok)' : val === 'fail' ? 'var(--danger)' : 'var(--border)',
+          passStyle: `min-width:56px;height:38px;border-radius:8px;border:1.5px solid var(--border);background:${val === 'pass' ? 'var(--ok)' : 'var(--surface)'};color:${val === 'pass' ? '#fff' : 'var(--textSecondary)'};font-weight:700;font-size:11.5px;cursor:pointer;`,
+          failStyle: `min-width:56px;height:38px;border-radius:8px;border:1.5px solid var(--border);background:${val === 'fail' ? 'var(--danger)' : 'var(--surface)'};color:${val === 'fail' ? '#fff' : 'var(--textSecondary)'};font-weight:700;font-size:11.5px;cursor:pointer;`
+        };
+      }),
+      checksDoneCount: Object.values(this.state.handover.checks).filter(Boolean).length,
+      handoverChecksIncomplete: Object.values(this.state.handover.checks).filter(Boolean).length < 5,
+      handoverChecksBtnStyle: `flex:1;height:46px;border-radius:10px;border:none;font-weight:700;font-size:13.5px;cursor:${Object.values(this.state.handover.checks).filter(Boolean).length < 5 ? 'not-allowed' : 'pointer'};background:${Object.values(this.state.handover.checks).filter(Boolean).length < 5 ? 'var(--surfaceAlt)' : 'var(--primary)'};color:${Object.values(this.state.handover.checks).filter(Boolean).length < 5 ? 'var(--textTertiary)' : 'var(--onPrimary)'};`,
+      setOdometer: this.setOdometer,
+      setFuel: this.setFuel,
+      fuelLabel: ['E', '⅛', '¼', '⅜', '½', '⅝', '¾', '⅞', 'F'][this.state.handover.fuel],
+      signHandover: this.signHandover,
+      handoverNotSigned: !this.state.handover.signed,
+      sigPadStyle: `width:100%;height:130px;border-radius:12px;border:2px dashed ${this.state.handover.signed ? 'var(--ok)' : 'var(--borderStrong)'};background:var(--surfaceAlt);display:flex;align-items:center;justify-content:center;cursor:pointer;`,
+      handoverReadinessNote: this.state.handover.signed ? 'Ready — keys → Amina, buffer starts on confirm.' : '1 item left: signature',
+      handoverGoStyle: `margin-left:auto;height:48px;padding:0 22px;border-radius:11px;border:none;font-weight:700;font-size:14px;cursor:${this.state.handover.signed ? 'pointer' : 'not-allowed'};background:${this.state.handover.signed ? 'var(--primary)' : 'var(--surfaceAlt)'};color:${this.state.handover.signed ? 'var(--onPrimary)' : 'var(--textTertiary)'};`,
+
+      showApprovals: role === 'fleetManager' && page === 'approvals',
+      approvalQueueMeta: this.approvalQueue.map((q) => {
+        const selected = q.id === this.state.selectedApprovalId;
+        return {
+          ...q,
+          click: this.selectApproval(q.id),
+          waitColor: q.urgent ? 'var(--warn)' : 'var(--textTertiary)',
+          flagList: q.flags.map((f) => ({ text: f, bg: f.indexOf('ESCALATED') >= 0 || f.indexOf('LIABILITY') >= 0 ? 'var(--warnTint)' : 'var(--okTint)', color: f.indexOf('ESCALATED') >= 0 || f.indexOf('LIABILITY') >= 0 ? 'var(--warn)' : 'var(--ok)' })),
+          cardStyle: `text-align:left;width:100%;background:var(--surface);border:1.5px solid ${selected ? 'var(--text)' : 'var(--border)'};border-radius:12px;padding:14px 16px;cursor:pointer;box-shadow:${selected ? 'var(--shadowMd)' : 'var(--shadowSm)'};`
+        };
+      }),
+      selectedApproval: (() => {
+        const q = this.approvalQueue.find((x) => x.id === this.state.selectedApprovalId) || this.approvalQueue[0];
+        return { ...q, verdictList: q.verdicts.map((v) => ({ ...v, bg: v.ok ? 'var(--okTint)' : 'var(--warnTint)', borderColor: v.ok ? 'color-mix(in oklab, var(--ok) 30%, var(--border))' : 'color-mix(in oklab, var(--warn) 35%, var(--border))', iconBg: v.ok ? 'var(--ok)' : 'var(--warn)', iconChar: v.ok ? '✓' : '!' })) };
+      })(),
+      selectedApprovalDecided: !!this.state.approvalDecisions[this.state.selectedApprovalId],
+      selectedApprovalPending: !this.state.approvalDecisions[this.state.selectedApprovalId],
+      selectedApprovalDecision: this.state.approvalDecisions[this.state.selectedApprovalId] || '',
+      approveHandler: this.decideApproval(this.state.selectedApprovalId, 'Approved'),
+      declineHandler: this.decideApproval(this.state.selectedApprovalId, 'Declined'),
+
+      showFleet: role === 'fleetManager' && page === 'fleet',
+      fleetVehicles: this.vehicles.map((v) => ({ ...v, pool: v.pool, drawerClick: this.openFleetDrawer(v.id) })),
+      fleetDrawerOpen: !!this.state.fleetDrawerVehicleId,
+      fleetDrawerVehicle: this.vehicles.find((v) => v.id === this.state.fleetDrawerVehicleId) || this.vehicles[0],
+      fleetDrawerHasPredictiveFlag: this.state.fleetDrawerVehicleId === 'v6',
+      closeFleetDrawer: this.closeFleetDrawer,
+
+      showCompliance: role === 'fleetManager' && page === 'compliance',
+      complianceAlertsMeta: this.complianceAlerts.map((c) => ({ ...c, toneColor: c.tone === 'danger' ? 'var(--danger)' : c.tone === 'warn' ? 'var(--warn)' : 'var(--info)' })),
+
+      showFines: role === 'fleetManager' && page === 'fines',
+      finesMeta: this.fines.map((f) => ({ ...f, pointsColor: f.points > 0 ? 'var(--danger)' : 'var(--textTertiary)' })),
+
+      showMap: role === 'fleetManager' && page === 'map',
+      mapVehicles: [
+        { x: 250, y: 170, r: 5, color: 'var(--ok)' }, { x: 280, y: 150, r: 5, color: 'var(--ok)' },
+        { x: 220, y: 190, r: 5, color: 'var(--ok)' }, { x: 320, y: 130, r: 5, color: 'var(--ok)' },
+        { x: 300, y: 105, r: 5, color: 'var(--ok)' }, { x: 340, y: 105, r: 6, color: 'var(--warn)' },
+        { x: 190, y: 205, r: 6, color: 'var(--warn)' }, { x: 165, y: 215, r: 7, color: 'var(--danger)' }
+      ],
+    };
+  }
+}
+
+</script>
+<script>
+(async () => {
+  if (!document.title || !document.title.trim()) document.title = "Helm";
+  // Prepend so page-supplied @page / break rules (deck-stage's margin:0,
+  // author CSS) keep source-order precedence over the baseline.
+  const baseCss = document.createElement('style');
+  baseCss.textContent = "@media print {\n  figure, table { break-inside: avoid; }\n  *, *::before, *::after {\n    print-color-adjust: exact; -webkit-print-color-adjust: exact;\n    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;\n    animation-delay: -99s !important; animation-duration: .001s !important;\n    animation-iteration-count: 1 !important; animation-fill-mode: both !important;\n    animation-play-state: running !important; transition-duration: 0s !important;\n  }\n}";
+  document.head.prepend(baseCss);
+  if (document.readyState === 'loading') {
+    await new Promise((r) => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  }
+  let ds = document.querySelector('deck-stage');
+  // whenDefined never resolves when nothing registers the element, so only
+  // await it when a <deck-stage> tag exists (and race a timeout regardless).
+  if (ds && !customElements.get('deck-stage')) {
+    try {
+      await Promise.race([
+        customElements.whenDefined('deck-stage'),
+        new Promise((r) => setTimeout(r, 3000)),
+      ]);
+    } catch (e) {}
+    ds = document.querySelector('deck-stage');
+  }
+  // dc-runtime assigns window.DCLogic at init and mounts into #dc-root on
+  // DOMContentLoaded; settle on that subtree so React has rendered before
+  // print(). Non-DC pages fall through to weighing body.
+  const isDc = !ds && 'DCLogic' in window;
+  const settleRoot = ds || (isDc ? document.getElementById('dc-root') : null) || document.body;
+  if (settleRoot) {
+    // Weigh only content children — skip script/style/template so inline
+    // Babel/CSS doesn't register as stable "content" before the framework
+    // has mounted anything.
+    const MEDIA = 'img,svg,canvas,video,picture,iframe,embed,object';
+    const weigh = () => {
+      let text = 0, media = 0;
+      for (const c of settleRoot.children) {
+        const t = c.tagName;
+        if (t === 'SCRIPT' || t === 'STYLE' || t === 'TEMPLATE') continue;
+        text += (c.textContent || '').trim().length;
+        media += c.querySelectorAll(MEDIA).length + (c.matches(MEDIA) ? 1 : 0);
+      }
+      return text + media * 100;
+    };
+    // "Non-zero and stable" alone is not sufficient to mean rendered: generic
+    // body can carry a static shell while async main content is pending, and
+    // #dc-root can carry the root DC's static text while child refs are still
+    // .sc-placeholder boxes. Gate generic on readyState 'complete', and never
+    // accept stability while a dc-runtime placeholder is present.
+    const isGeneric = settleRoot === document.body;
+    const deadline = Date.now() + 15000;
+    let last = -1, stable = 0;
+    while (Date.now() < deadline) {
+      const n = weigh();
+      const ready =
+        (!isGeneric || document.readyState === 'complete') &&
+        !settleRoot.querySelector('.sc-placeholder');
+      if (n > 0 && n === last && ready) { if (++stable >= 2) break; } else { stable = 0; }
+      last = n;
+      await new Promise((r) => setTimeout(r, 250));
+    }
+  }
+  // Project support.js may predate runtime default-seeding; push via bridge.
+  if (isDc && window.__dcSetProps && window.__dcRootName) {
+    try {
+      const dpEl = document.querySelector('script[data-dc-script]');
+      const meta = JSON.parse((dpEl && dpEl.getAttribute('data-props')) || '{}');
+      const bag = {};
+      for (const k in meta)
+        if (k[0] !== '$' && meta[k] && meta[k].default !== undefined)
+          bag[k] = meta[k].default;
+      if (Object.keys(bag).length) {
+        window.__dcSetProps(window.__dcRootName(), bag);
+        await new Promise((r) => setTimeout(r, 50));
+      }
+    } catch (e) {}
+  }
+  // Reveal content gated on scroll or visibility before printing. Lazy <img>,
+  // IntersectionObserver fade-ins, and collapsed <details> don't render while
+  // off-screen, so a long page would print with them blank or closed. Open
+  // every <details>, force native-lazy images eager, and scroll the document
+  // through its full height to trip lazy-load + IO; then wait (bounded) for the
+  // newly-triggered images. Inert for deck-stage (slides aren't scroll-gated).
+  try {
+    for (const d of document.querySelectorAll('details')) d.open = true;
+    for (const img of document.querySelectorAll('img[loading="lazy"]'))
+      img.loading = 'eager';
+    const scroller = document.scrollingElement || document.documentElement;
+    const full = Math.max(scroller.scrollHeight, document.body.scrollHeight);
+    const step = window.innerHeight || 800;
+    for (let y = 0; y <= full; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => requestAnimationFrame(r));
+    }
+    window.scrollTo(0, 0);
+    await Promise.race([
+      Promise.all(
+        [...document.images].map((img) =>
+          img.complete
+            ? null
+            : new Promise((res) => {
+                img.addEventListener('load', res, { once: true });
+                img.addEventListener('error', res, { once: true });
+              })
+        )
+      ),
+      new Promise((r) => setTimeout(r, 4000)),
+    ]);
+  } catch (e) {}
+  try { await document.fonts.ready; } catch (e) {}
+  // Jump every animation to its end state so print() never captures a slide
+  // mid-entrance. Ordering matters: the 0s-transition style must be live
+  // BEFORE data-deck-active is set so attribute-keyed transitions don't
+  // start a (now-0s) run from the pre-active base.
+  const st = document.createElement('style');
+  st.textContent = '*,*::before,*::after{animation-delay:-99s !important;animation-duration:.001s !important;animation-iteration-count:1 !important;animation-fill-mode:both !important;animation-play-state:running !important;transition-duration:0s !important}';
+  document.head.appendChild(st);
+  for (const d of document.querySelectorAll('deck-stage')) {
+    for (const c of d.children) {
+      const t = c.tagName;
+      if (t === 'SCRIPT' || t === 'STYLE' || t === 'TEMPLATE') continue;
+      c.setAttribute('data-deck-active', '');
+    }
+  }
+  // Re-append deck-stage's @page last so no author @page can add a margin and
+  // spill each full-bleed slide onto two sheets. Backstop for old copies.
+  if (ds) {
+    let pg = document.getElementById('deck-stage-print-page');
+    if (!pg) {
+      pg = document.createElement('style');
+      pg.textContent = '@page{size:' + (+ds.getAttribute('width') || 1920) +
+        'px ' + (+ds.getAttribute('height') || 1080) + 'px;margin:0}';
+    }
+    document.body.appendChild(pg);
+  }
+  try {
+    const sweep = () => {
+      for (const a of document.getAnimations()) {
+        try { a.finish(); } catch (e) {
+          try { a.currentTime = (a.effect && a.effect.getComputedTiming().duration) || 0; a.pause(); } catch (e2) {}
+        }
+      }
+    };
+    sweep();
+    await new Promise((r) => requestAnimationFrame(r));
+    sweep();
+    await new Promise((r) => requestAnimationFrame(r));
+  } catch (e) {}
+  // A document that owns its print CSS (the doc-page starter injects the
+  // meta at runtime; hand-rolled print designs author it) gets no automatic
+  // page geometry and keeps its forced breaks: strip the injected default
+  // @page — write time cannot see a runtime-injected meta — skip the frame
+  // override below, and skip the fakepage-flattening further down. What
+  // still applies: the print baseline and break-hygiene defaults (no @page
+  // in either; low specificity, so the document's own print CSS wins) and
+  // the break-inside relaxation on >page elements (avoid on those cannot
+  // be honored whoever authored it).
+  var ownsPrint = !!document.querySelector('meta[name="omelette-owns-print" i]');
+  if (ownsPrint) {
+    var dst = document.querySelector('style[data-omelette-print-defaults]');
+    if (dst && dst.textContent) {
+      dst.textContent = dst.textContent.replace(/@page\b[^{}]*\{[^}]*\}/, '');
+    }
+  }
+  // Size the PDF page to the rendered design unless the file opted into
+  // standard paper via @page{size:letter|A4|…} or declared print ownership
+  // via the meta above. Decks own their own @page.
+  // Wrappers (body, …) lose padding+margin so the frame sits at (0,0); the
+  // frame itself loses only margin — its padding is INSIDE the measured
+  // rect and must stay, or content shifts and leaves a gap at bottom/right.
+  var __m = null;
+  try { __m = (() => {
+  var STAMP = true;
+  var docEl = document.documentElement;
+  var doc = { width: docEl.scrollWidth, height: docEl.scrollHeight };
+  // Name-presence check, case-insensitive — the same contract as the
+  // instant-PDF path's runtime check in deck-stage-export.ts. The name is
+  // a string literal here because that file interpolates this script into
+  // its print script, so importing a shared constant from it would be a
+  // cycle; measure.test.ts pins the literal so the two cannot drift apart
+  // silently.
+  var ownsPrint = !!document.querySelector('meta[name="omelette-owns-print" i]');
+
+  var ds = document.querySelector('deck-stage');
+  if (ds) {
+    var dw = Number(ds.getAttribute('width')) || 1920;
+    var dh = Number(ds.getAttribute('height')) || 1080;
+    var n = typeof ds.length === 'number' ? ds.length : ds.children.length;
+    var idx = typeof ds.index === 'number' ? ds.index : 0;
+    var frames = [];
+    for (var i = 0; i < n; i++) frames.push({ left: 0, top: 0, width: dw, height: dh });
+    return { kind: 'deck', source: 'declared', doc: doc, frames: frames,
+      authored: frames.map(function(){return{width:true,height:true}}),
+      deck: { width: dw, height: dh, slideCount: n, index: idx },
+      signals: { paperPage: false, pxPage: false, ownsPrint: ownsPrint } };
+  }
+
+  // Declared kind: a doc-page tag names the kind outright, so no signal
+  // heuristics run (like the deck branch above, signals report false —
+  // they describe inferred classifications only). The tag alone is not
+  // trusted: the element must have upgraded (shadowRoot present), so a
+  // leftover tag whose script was deleted falls through to the heuristics
+  // that handle plain markup.
+  var stageSx = window.scrollX || 0, stageSy = window.scrollY || 0;
+  var dp = document.querySelector('doc-page');
+  if (dp && dp.shadowRoot) {
+    // Crop to the sheet, not the host — the desk around it is screen-only
+    // chrome that must not land in PNG exports.
+    var sheet = dp.shadowRoot.querySelector('.sheet');
+    var sr = (sheet || dp).getBoundingClientRect();
+    return { kind: 'paper-doc', source: 'declared', doc: doc,
+      frames: [{ left: sr.left + stageSx, top: sr.top + stageSy,
+        width: sr.width, height: sr.height }],
+      authored: [{ width: false, height: false }],
+      signals: { paperPage: false, pxPage: false, ownsPrint: ownsPrint } };
+  }
+  var paperPage = false, pxPage = false;
+  var eachRule = function (fn) {
+    for (var s = 0; s < document.styleSheets.length; s++) {
+      var rs; try { rs = document.styleSheets[s].cssRules; } catch (e) { continue; }
+      for (var r = 0; r < rs.length; r++) {
+        fn(rs[r]);
+        if (rs[r].cssRules) for (var n = 0; n < rs[r].cssRules.length; n++) fn(rs[r].cssRules[n]);
+      }
+    }
+  };
+  eachRule(function (r) {
+    if (r.type !== 6) return;
+    var m = /\bsize\s*:\s*([^;}]+)/i.exec(r.cssText || '');
+    if (!m) return;
+    if (/\b(letter|a[3-5]|legal|ledger)\b/i.test(m[1])) paperPage = true;
+    if (/\d+(?:\.\d+)?px\b/i.test(m[1])) pxPage = true;
+  });
+  var signals = { paperPage: paperPage, pxPage: pxPage, ownsPrint: ownsPrint };
+
+  var pxVal = function (v) {
+    var m = /^(\d+(?:\.\d+)?)px$/.exec(v || ''); return m ? +m[1] : 0;
+  };
+  var authoredPx = function (el, prop) {
+    if (pxVal(el.style[prop])) return true;
+    var attr = el.getAttribute(prop);
+    if (attr && /^\d+$/.test(attr)) return true;
+    var hit = false;
+    eachRule(function (r) {
+      if (hit || r.type !== 1 || !r.style) return;
+      try { if (el.matches(r.selectorText) && pxVal(r.style[prop])) hit = true; } catch (e) {}
+    });
+    return hit;
+  };
+
+  var el = document.body, rootPxW = false;
+  for (;;) {
+    var kids = [];
+    for (var c = 0; c < el.children.length; c++) {
+      var t = el.children[c].tagName;
+      if (t !== 'SCRIPT' && t !== 'STYLE' && t !== 'TEMPLATE') kids.push(el.children[c]);
+    }
+    if (kids.length !== 1 || !(kids[0] instanceof HTMLElement)) break;
+    if (STAMP) el.setAttribute('data-om-frame-wrap', '');
+    el = kids[0];
+    rootPxW = authoredPx(el, 'width');
+    if (rootPxW) break;
+  }
+  if (!rootPxW) rootPxW = authoredPx(el, 'width');
+
+  // @page{size:letter} alone is a flowing doc; with a px-width root it's a
+  // fixed sheet pretending to be paper — fall through and size to render.
+  if (paperPage && !rootPxW) {
+    return { kind: 'paper-doc', source: 'inferred', doc: doc, signals: signals,
+      frames: [{ left: 0, top: 0, width: doc.width, height: doc.height }],
+      authored: [{ width: false, height: false }] };
+  }
+
+  var sx = window.scrollX || 0, sy = window.scrollY || 0;
+  var rectOf = function (e) {
+    var r = e.getBoundingClientRect();
+    var oy; try { oy = getComputedStyle(e).overflowY; } catch (err) {}
+    var h = oy === 'visible' ? Math.max(r.height, e.scrollHeight || 0) : r.height;
+    return { left: r.left + sx, top: r.top + sy, width: r.width, height: h };
+  };
+
+  // Multi-frame: off unless the page opts in via data-om-multi-frame on the
+  // stop element — the explicit opt-in is what guards against card grids
+  // and pricing tables that match the geometry but aren't separate
+  // canvases. Two ways to name the frames, explicit first:
+  // 1. Descendants marked data-om-frame-export (the social-frames starter
+  //    marks each asset frame; shells/panels around them are presentation,
+  //    so nesting is expected). Document order.
+  // 2. Fallback, no marked descendants: direct children with an authored px
+  //    width AND height (the original geometry heuristic).
+  // Frames may be different sizes (a gallery mixes 1080×1920 stories with
+  // 728×90 banners); data-om-frame-label rides along for export filenames.
+  if (el.hasAttribute('data-om-multi-frame')) {
+    var visOk = function (e) {
+      var cs; try { cs = getComputedStyle(e); } catch (err) { return false; }
+      return cs.display !== 'none' && cs.visibility !== 'hidden' && cs.position !== 'fixed';
+    };
+    // A frame's crop is its VISUAL box — never the scrollHeight-inflated
+    // rect that rectOf computes for page roots. Shadow-DOM hover controls
+    // (image-slot's Replace bar parks 29px below its host) and similar
+    // escaping UI contribute scrollable overflow to the frame, and the
+    // inflated height both squashes the nominal-size resize and drags
+    // content below the frame into the crop. Zoom-independent; bit every
+    // slot-bearing frame.
+    var frameRectOf = function (e) {
+      var r = e.getBoundingClientRect();
+      return { left: r.left + sx, top: r.top + sy, width: r.width, height: r.height };
+    };
+    var pushCand = function (list, e) {
+      if (!visOk(e)) return;
+      var rc = frameRectOf(e);
+      if (rc.width < 2 || rc.height < 2) return;
+      var lbl = e.getAttribute('data-om-frame-label');
+      if (lbl) rc.label = lbl;
+      list.push(rc);
+    };
+    var cands = [];
+    var marked = el.querySelectorAll('[data-om-frame-export]');
+    if (marked.length) {
+      for (var mk = 0; mk < marked.length; mk++) pushCand(cands, marked[mk]);
+    } else {
+      for (var k = 0; k < el.children.length; k++) {
+        var ch = el.children[k];
+        if (!authoredPx(ch, 'width') || !authoredPx(ch, 'height')) continue;
+        pushCand(cands, ch);
+      }
+    }
+    if (cands.length >= 2) {
+      return { kind: 'multi-frame', source: 'inferred', doc: doc, signals: signals,
+        frames: cands, authored: cands.map(function(){return{width:true,height:true}}) };
+    }
+  }
+
+  if (STAMP) el.setAttribute('data-om-frame', '');
+  return { kind: 'single-canvas', source: 'inferred', doc: doc, signals: signals,
+    frames: [rectOf(el)],
+    authored: [{ width: rootPxW, height: authoredPx(el, 'height') }] };
+})(); } catch (e) {}
+  var frame = null;
+  if (!ownsPrint && __m && __m.kind === 'single-canvas') {
+    var f = __m.frames && __m.frames[0];
+    if (f && f.width >= 200 && f.height >= 200) {
+      frame = f;
+      var fst = document.createElement('style');
+      fst.textContent = '@media print{@page{size:' + Math.ceil(f.width) + 'px ' +
+        Math.ceil(f.height) + 'px;margin:0}' +
+        'html,body,[data-om-frame-wrap]{padding:0!important;margin:0!important;background:none!important}' +
+        '[data-om-frame]{margin:0!important}}';
+      document.body.appendChild(fst);
+    }
+  }
+  // Relax break-inside on oversized elements. An element taller than a
+  // printable page can't honor break-inside: avoid — browsers either overflow
+  // it or push it whole to the next page, leaving a blank gap, then break it
+  // anyway at an arbitrary point. After the final layout (content revealed,
+  // animations jumped), find elements taller than a page that still compute
+  // break-inside: avoid and reset them to auto, so the browser breaks them at
+  // their children's boundaries instead (children keep their own avoid). PAGE_PX
+  // is a conservative portrait estimate at 96 CSS px/in — Letter/A4 usable
+  // height minus our 0.5in margins — so only clearly-oversized elements are
+  // touched and under-page elements still stay whole. Skipped for decks (slides
+  // are sized to the page) and for fixed-size canvases (frame set, or an author
+  // px-based @page) — runs as before for flowing docs on letter/A4.
+  try {
+    if (!ds && !frame && !(__m && __m.signals && __m.signals.pxPage)) {
+      const PAGE_PX = 1024;
+      // Our print defaults add a real @page margin only when the source has
+      // no @page of its own; computed style can't tell us (it reports screen
+      // media), so read the injected rule directly.
+      const defaults = document.querySelector('style[data-omelette-print-defaults]');
+      const pageInset = /@page\s*\{[^}]*margin/.test(defaults ? defaults.textContent || '' : '');
+      const SEL = 'section,article,figure,table,pre,blockquote,[class~="card" i],[class~="page" i],[class~="sheet" i]';
+      for (const el of document.body.querySelectorAll(SEL)) {
+        if (el instanceof HTMLElement && el.offsetHeight > PAGE_PX) {
+          el.setAttribute('data-om-oversized', '');
+          // Fake-paged docs simulate sheets with over-tall break-after:page
+          // boxes; honoring the break spills half-blank pages and ends a
+          // colored box mid-sheet. Flow them, and (only when we own the page
+          // inset) drop the redundant padding/background via the rule below.
+          const cs = getComputedStyle(el);
+          // An owns-print doc's forced breaks are intentional sheet
+          // boundaries, never fake-paged simulation — don't strip them.
+          // The break-inside relaxation above still applies: avoid on a
+          // >page element is impossible to honor whoever authored it.
+          if (
+            !ownsPrint &&
+            (cs.breakAfter === 'page' || cs.pageBreakAfter === 'always')
+          ) {
+            el.setAttribute('data-om-fakepage', '');
+          }
+        }
+      }
+      const ost = document.createElement('style');
+      ost.textContent = '@media print{' +
+        '[data-om-oversized]{break-inside:auto !important;page-break-inside:auto !important}' +
+        '[data-om-fakepage]{break-after:auto !important;page-break-after:auto !important}' +
+        (pageInset ? '[data-om-fakepage]{padding:0 !important;background:none !important}' : '') +
+        '}';
+      document.head.appendChild(ost);
+    }
+  } catch (e) {}
+  // macOS Preview renders Skia-PDF Luminosity soft-masks as opaque grey boxes;
+  // swap the CSS that triggers them for Preview-safe forms.
+  try {
+    for (const el of document.body.querySelectorAll('*')) {
+      const cs = getComputedStyle(el);
+
+      if (cs.boxShadow !== 'none' && cs.filter === 'none') {
+        const outs = [], kept = [];
+        for (const s of cs.boxShadow.split(/,(?![^(]*[)])/)) {
+          const t = s.trim();
+          const m = t.match(/^(rgba?[(][^)]+[)]) (-?[0-9.]+px) (-?[0-9.]+px) ([0-9.]+px) -?[0-9.]+px$/);
+          if (m && parseFloat(m[4]) > 0) outs.push('drop-shadow(' + m[2] + ' ' + m[3] + ' ' + m[4] + ' ' + m[1] + ')');
+          else kept.push(t);
+        }
+        if (outs.length) {
+          el.style.setProperty('filter', outs.join(' '), 'important');
+          el.style.setProperty('box-shadow', kept.join(', ') || 'none', 'important');
+        }
+      }
+
+      const mask = cs.maskImage && cs.maskImage !== 'none' ? cs.maskImage : cs.webkitMaskImage;
+      if (mask && mask !== 'none' && cs.filter === 'none') el.style.setProperty('filter', 'opacity(1)', 'important');
+    }
+  } catch (e) {}
+  setTimeout(() => { try { window.print(); } catch (e) {} }, 200);
+})();
+</script>
+</body>
+</html>

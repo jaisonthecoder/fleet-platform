@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:#F5F3EC; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;">
+  <div style="width:64px;flex:none;background:#0B3D5C;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:8px;">
+    <a href="Home.dc.html" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;text-decoration:none;"><div style="display:flex;gap:2px;"><div style="width:4px;height:16px;background:#E2A33D;"></div><div style="width:4px;height:16px;background:#fff;"></div><div style="width:4px;height:16px;background:#E2A33D;"></div></div></a>
+    <a href="Booking%20%26%20Consent.dc.html" title="Booking &amp; consent" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">BK</a>
+    <a href="Handover%20%26%20Return.dc.html" title="Handover &amp; return" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">HR</a>
+    <a href="Approval%20Inbox.dc.html" title="Approval inbox" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">AP</a>
+    <a href="Entitlement%20Decision.dc.html" title="Entitlement decision" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">EN</a>
+    <a href="Fleet%20Command%20Console.dc.html" title="Command console" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">CC</a>
+    <a href="Fines%20Register.dc.html" title="Fines register" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">FR</a>
+    <a href="Policy%20Engine%20Authoring.dc.html" title="Policy engine" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:#E2A33D;color:#10181F;">PE</a>
+    <div title="Executive dashboard — not yet built" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font:700 12px 'IBM Plex Sans',sans-serif;color:#4d6a7d;">EX</div>
+  </div>
+  <div style="flex:1;background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;min-width:0;">
+
+  <div style="display:flex;flex-direction:column;border-bottom:1px solid #10181F1f;background:#fff;">
+    <div style="padding:10px 48px 0;font:500 12px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">Wayfinder <span style="margin:0 6px;">/</span> Operational <span style="margin:0 6px;">/</span> Policy Engine Authoring</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 48px 20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;"><div style="display:flex;gap:3px;"><div style="width:5px;height:20px;background:#0B3D5C;"></div><div style="width:5px;height:20px;background:#E2A33D;"></div><div style="width:5px;height:20px;background:#0B3D5C;"></div></div>
+      <span style="font:700 18px 'IBM Plex Sans',sans-serif;">Wayfinder</span></a>
+      <span style="font:500 14px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-left:8px;">Policy Engine · System Admin</span>
+    </div>
+    <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;">PAP — Policy Administration Point</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:360px 1fr;flex:1;">
+
+    <!-- Rule type list -->
+    <div style="background:#fff;border-right:1px solid #10181F1a;overflow-y:auto;padding:24px 0;">
+      <div style="padding:0 26px 16px;font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;">Registered rule types</div>
+      <sc-for list="{{ ruleTypes }}" as="rt" hint-placeholder-count="6">
+        <div onClick="{{ rt.select }}" style="padding:16px 26px;cursor:pointer;background:{{ rt.rowBg }};border-left:4px solid {{ rt.rowAccent }};">
+          <div style="font-size:16px;font-weight:600;margin-bottom:4px;">{{ rt.name }}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font:12px 'IBM Plex Sans',sans-serif;color:#5b6572;">{{ rt.consumer }}</span>
+            <span style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.04em;color:{{ rt.stateColor }};">{{ rt.stateLabel }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Editor -->
+    <div style="padding:44px 56px;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:10px;">{{ selected.consumer }} · rule type</div>
+          <h1 style="font-size:30px;margin:0;font-weight:700;">{{ selected.name }}</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:{{ selected.stateBg }};border:1px solid {{ selected.stateBorder }};color:{{ selected.stateColor }};padding:7px 14px 7px 10px;border-radius:3px;">
+          <span style="width:7px;height:7px;background:{{ selected.stateColor }};border-radius:50%;"></span>
+          <span style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.05em;">{{ selected.stateLabel }}</span>
+        </div>
+      </div>
+      <p style="font-size:15px;color:#5b6572;margin:8px 0 32px;max-width:720px;">{{ selected.description }}</p>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Decision table — {{ selected.version }}</div>
+      <div style="border:1px solid #10181F1a;margin-bottom:8px;overflow-x:auto;">
+        <div style="display:grid;grid-template-columns:{{ selected.gridCols }};min-width:600px;">
+          <sc-for list="{{ selected.headers }}" as="h" hint-placeholder-count="4">
+            <div style="background:#0B3D5C;color:#fff;padding:12px 16px;font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.04em;text-transform:uppercase;border-right:1px solid #ffffff26;">{{ h.label }}</div>
+          </sc-for>
+          <sc-for list="{{ selected.flatRows }}" as="cell" hint-placeholder-count="16">
+            <div style="background:{{ cell.bg }};padding:13px 16px;font-size:15px;color:{{ cell.color }};font-weight:{{ cell.weight }};border-right:1px solid #10181F0f;border-top:1px solid #10181F0f;">{{ cell.value }}</div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="font-size:13px;color:#9aa2ab;margin-bottom:36px;">Evaluated top-down, first match wins · mandatory default row shown last</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;background:#10181F1a;border:1px solid #10181F1a;margin-bottom:36px;">
+        <div style="background:#fff;padding:20px 22px;"><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">Effective from</div><div style="font-size:18px;font-weight:600;">{{ selected.effectiveFrom }}</div></div>
+        <div style="background:#fff;padding:20px 22px;"><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">Fallback</div><div style="font-size:18px;font-weight:600;">{{ selected.fallback }}</div></div>
+        <div style="background:#fff;padding:20px 22px;"><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">Requires 2nd-person approval</div><div style="font-size:18px;font-weight:600;">{{ selected.needsApproval }}</div></div>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Dry-run validation</div>
+      <div style="background:#fff;border:1px solid #10181F1a;padding:22px 26px;margin-bottom:32px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <span style="font-size:15px;color:#5b6572;">Draft evaluated against last {{ selected.sampleSize }} live transactions</span>
+          <button onClick="{{ runDryRun }}" style="background:#fff;color:#0B3D5C;border:1.5px solid #0B3D5C;padding:10px 18px;font:600 14px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Run dry-run</button>
+        </div>
+        <sc-if value="{{ showDryRunResult }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:2px;background:#10181F1a;">
+            <div style="flex:1;background:#F5F3EC;padding:14px 16px;"><div style="font:12px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-bottom:4px;">Unchanged</div><div style="font:700 22px 'IBM Plex Sans',sans-serif;">{{ selected.dryRunUnchanged }}</div></div>
+            <div style="flex:1;background:#F5F3EC;padding:14px 16px;"><div style="font:12px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-bottom:4px;">Would flip to allow</div><div style="font:700 22px 'IBM Plex Sans',sans-serif;color:#1F7A4D;">{{ selected.dryRunFlipAllow }}</div></div>
+            <div style="flex:1;background:#F5F3EC;padding:14px 16px;"><div style="font:12px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-bottom:4px;">Would flip to deny</div><div style="font:700 22px 'IBM Plex Sans',sans-serif;color:#B33F3F;">{{ selected.dryRunFlipDeny }}</div></div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;gap:14px;">
+        <button onClick="{{ submitForReview }}" style="flex:1;background:#fff;color:#5b6572;border:1.5px solid #10181F33;padding:15px;font:600 15px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Submit for review</button>
+        <button onClick="{{ activate }}" disabled="{{ activateDisabled }}" style="flex:1;background:{{ activateBg }};color:#fff;border:none;padding:15px;font:600 15px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Activate version</button>
+      </div>
+      <sc-if value="{{ showActivated }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:18px;display:flex;align-items:center;gap:10px;color:#1F7A4D;font:600 15px 'IBM Plex Sans',sans-serif;">
+          <span style="width:8px;height:8px;background:#1F7A4D;border-radius:50%;"></span>New version activated — prior version superseded, remains queryable.
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B3D5C"/><rect x="20" y="25" width="60" height="12" fill="#E2A33D"/><rect x="20" y="45" width="60" height="10" fill="#fff"/><rect x="20" y="62" width="40" height="10" fill="#fff"/></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const RULE_TYPES = [
+  {
+    id: 'elig', name: 'Dedicated-vehicle eligibility', consumer: 'M5 · Entitlements', state: 'active', version: 'v2.1',
+    description: 'Determines whether an employee qualifies for a dedicated vehicle and which approval chain applies, based on grade, request type and cluster.',
+    headers: ['Grade', 'Request type', 'Cluster', 'Outcome', 'Chain'],
+    rows: [
+      ['≥ Director', 'Long-term', 'Any', 'Eligible', 'LM → CFL → Cluster CEO'],
+      ['≥ Manager', 'Temporary ≤30d', 'Any', 'Eligible', 'LM → CFL'],
+      ['Any', 'Any', 'Any', 'Not eligible (default)', '—'],
+    ],
+    effectiveFrom: '01 Jul 2026', fallback: 'Deny (default row)', needsApproval: 'Yes',
+    sampleSize: '1,240', dryRunUnchanged: '1,198', dryRunFlipAllow: '31', dryRunFlipDeny: '11',
+  },
+  {
+    id: 'buffer', name: 'Booking buffer', consumer: 'M4 · Booking', state: 'active', version: 'v1.4',
+    description: 'Minutes required between consecutive bookings on the same vehicle, by category.',
+    headers: ['Category', 'Buffer (min)', 'Escalation'],
+    rows: [
+      ['Sedan', '10', 'None'],
+      ['SUV / Van', '15', 'None'],
+      ['Any (default)', '10', 'None'],
+    ],
+    effectiveFrom: '12 May 2026', fallback: '10 min', needsApproval: 'No',
+    sampleSize: '4,802', dryRunUnchanged: '4,802', dryRunFlipAllow: '0', dryRunFlipDeny: '0',
+  },
+  {
+    id: 'hardblock', name: 'Hard-block conditions', consumer: 'M7 · Compliance', state: 'active', version: 'v3.0',
+    description: 'Conditions that deny booking with no override — expired registration or insurance.',
+    headers: ['Condition', 'Outcome', 'Override'],
+    rows: [
+      ['Mulkiya expired', 'Deny', 'Not permitted'],
+      ['Insurance expired', 'Deny', 'Not permitted'],
+      ['Any (default)', 'Allow', '—'],
+    ],
+    effectiveFrom: '01 Feb 2026', fallback: 'Deny + escalate', needsApproval: 'Yes',
+    sampleSize: '4,802', dryRunUnchanged: '4,802', dryRunFlipAllow: '0', dryRunFlipDeny: '0',
+  },
+  {
+    id: 'blackpoint', name: 'Black-point timeframe', consumer: 'M8 · Fines', state: 'in_review', version: 'v1.2-draft',
+    description: 'Days allowed for a driver to transfer black points to their personal traffic file before a platform-wide block is raised.',
+    headers: ['Severity', 'Timeframe', 'Escalation'],
+    rows: [
+      ['Minor', '30 days', 'HR notified'],
+      ['Major', '14 days', 'HR + LM notified'],
+      ['Any (default)', '30 days', 'HR notified'],
+    ],
+    effectiveFrom: 'Draft, not yet effective', fallback: '30 days', needsApproval: 'Yes',
+    sampleSize: '312', dryRunUnchanged: '288', dryRunFlipAllow: '0', dryRunFlipDeny: '24',
+  },
+  {
+    id: 'fuel', name: 'Fuel deviation threshold', consumer: 'M6 · Handover', state: 'active', version: 'v1.0',
+    description: 'Deviation between actual and expected fuel at return that triggers an advisory flag for review.',
+    headers: ['Category', 'Threshold', 'Action'],
+    rows: [
+      ['Any', '±20%', 'Flag for review'],
+      ['Any (default)', '±20%', 'Flag for review'],
+    ],
+    effectiveFrom: '01 Feb 2026', fallback: 'Flag at ±20%', needsApproval: 'No',
+    sampleSize: '2,110', dryRunUnchanged: '2,110', dryRunFlipAllow: '0', dryRunFlipDeny: '0',
+  },
+  {
+    id: 'consent', name: 'Consent re-consent tolerance', consumer: 'M4 · Booking', state: 'draft', version: 'v1.0-draft',
+    description: 'How far a booking may be modified (driver, category, window) before re-consent is required.',
+    headers: ['Change type', 'Tolerance', 'Outcome'],
+    rows: [
+      ['Window shift', '≤ 30 min', 'No re-consent'],
+      ['Category change', 'Any', 'Re-consent required'],
+      ['Any (default)', '—', 'Re-consent required'],
+    ],
+    effectiveFrom: 'Draft, not yet effective', fallback: 'Re-consent required', needsApproval: 'Yes',
+    sampleSize: '—', dryRunUnchanged: '—', dryRunFlipAllow: '—', dryRunFlipDeny: '—',
+  },
+];
+
+const STATE_META = {
+  active: { label: 'ACTIVE', color: '#1F7A4D', bg: '#1F7A4D14', border: '#1F7A4D40' },
+  in_review: { label: 'IN REVIEW', color: '#C1791F', bg: '#C1791F14', border: '#C1791F40' },
+  draft: { label: 'DRAFT', color: '#5b6572', bg: '#5b657214', border: '#5b657240' },
+};
+
+class Component extends DCLogic {
+  state = {
+    selectedId: 'elig',
+    dryRunRun: {},
+    activated: {},
+  };
+
+  renderVals() {
+    const s = this.state;
+
+    const ruleTypes = RULE_TYPES.map(rt => {
+      const meta = STATE_META[rt.state];
+      const isSelected = s.selectedId === rt.id;
+      return {
+        id: rt.id, name: rt.name, consumer: rt.consumer,
+        select: () => this.setState({ selectedId: rt.id }),
+        rowBg: isSelected ? '#0B3D5C0d' : '#fff',
+        rowAccent: isSelected ? '#E2A33D' : 'transparent',
+        stateLabel: meta.label, stateColor: meta.color,
+      };
+    });
+
+    const src = RULE_TYPES.find(rt => rt.id === s.selectedId) || RULE_TYPES[0];
+    const meta = STATE_META[src.state];
+
+    const headers = src.headers.map(label => ({ label }));
+    const flatRows = [];
+    src.rows.forEach((row, ri) => {
+      const isDefault = ri === src.rows.length - 1;
+      row.forEach((value, ci) => {
+        flatRows.push({
+          value,
+          bg: isDefault ? '#F5F3EC' : '#fff',
+          color: ci === src.headers.length - 2 && !isDefault ? '#1F7A4D' : '#10181F',
+          weight: (ci === src.headers.length - 2) ? 700 : 400,
+        });
+      });
+    });
+
+    const dryRunDone = !!s.dryRunRun[src.id];
+    const activated = !!s.activated[src.id];
+
+    return {
+      ruleTypes,
+      selected: {
+        consumer: src.consumer, name: src.name, description: src.description, version: src.version,
+        stateLabel: meta.label, stateColor: meta.color, stateBg: meta.bg, stateBorder: meta.border,
+        gridCols: src.headers.map(() => '1fr').join(' '),
+        headers, flatRows,
+        effectiveFrom: src.effectiveFrom, fallback: src.fallback, needsApproval: src.needsApproval,
+        sampleSize: src.sampleSize,
+        dryRunUnchanged: src.dryRunUnchanged, dryRunFlipAllow: src.dryRunFlipAllow, dryRunFlipDeny: src.dryRunFlipDeny,
+      },
+      showDryRunResult: dryRunDone,
+      runDryRun: () => this.setState(st => ({ dryRunRun: { ...st.dryRunRun, [src.id]: true } })),
+      submitForReview: () => {},
+      activateDisabled: !dryRunDone,
+      activateBg: dryRunDone ? '#0B3D5C' : '#10181F33',
+      activate: () => { if (dryRunDone) this.setState(st => ({ activated: { ...st.activated, [src.id]: true } })); },
+      showActivated: activated,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:#F5F3EC; }
+    input[type=range] { accent-color:#0B3D5C; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;">
+  <div style="width:64px;flex:none;background:#0B3D5C;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:8px;">
+    <a href="Home.dc.html" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;text-decoration:none;"><div style="display:flex;gap:2px;"><div style="width:4px;height:16px;background:#E2A33D;"></div><div style="width:4px;height:16px;background:#fff;"></div><div style="width:4px;height:16px;background:#E2A33D;"></div></div></a>
+    <a href="Booking%20%26%20Consent.dc.html" title="Booking &amp; consent" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">BK</a>
+    <a href="Handover%20%26%20Return.dc.html" title="Handover &amp; return" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:#E2A33D;color:#10181F;">HR</a>
+    <a href="Approval%20Inbox.dc.html" title="Approval inbox" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">AP</a>
+    <a href="Entitlement%20Decision.dc.html" title="Entitlement decision" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">EN</a>
+    <a href="Fleet%20Command%20Console.dc.html" title="Command console" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">CC</a>
+    <a href="Fines%20Register.dc.html" title="Fines register" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">FR</a>
+    <a href="Policy%20Engine%20Authoring.dc.html" title="Policy engine" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">PE</a>
+    <div title="Executive dashboard — not yet built" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font:700 12px 'IBM Plex Sans',sans-serif;color:#4d6a7d;">EX</div>
+  </div>
+  <div style="flex:1;background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;min-width:0;">
+
+  <!-- Header -->
+  <div style="display:flex;flex-direction:column;border-bottom:1px solid #10181F1f;background:#fff;">
+    <div style="padding:10px 48px 0;font:500 12px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">Wayfinder <span style="margin:0 6px;">/</span> Operational <span style="margin:0 6px;">/</span> Handover &amp; Return</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 48px 20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;"><div style="display:flex;gap:3px;"><div style="width:5px;height:20px;background:#0B3D5C;"></div><div style="width:5px;height:20px;background:#E2A33D;"></div><div style="width:5px;height:20px;background:#0B3D5C;"></div></div>
+      <span style="font:700 18px 'IBM Plex Sans',sans-serif;">Wayfinder</span></a>
+      <span style="font:500 14px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-left:8px;">Fleet Manager · GS Pool</span>
+    </div>
+    <div style="display:flex;gap:2px;background:#F5F3EC;border-radius:4px;padding:3px;">
+      <button onClick="{{ setModeHandover }}" style="border:none;padding:9px 20px;border-radius:3px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ handoverTabBg }};color:{{ handoverTabFg }};">Handover</button>
+      <button onClick="{{ setModeReturn }}" style="border:none;padding:9px 20px;border-radius:3px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ returnTabBg }};color:{{ returnTabFg }};">Return</button>
+    </div>
+    </div>
+  </div>
+
+  <!-- Vehicle / booking strip -->
+  <div style="display:flex;align-items:center;gap:36px;padding:20px 48px;background:#0B3D5C;color:#fff;">
+    <div><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#8fa9b8;">Booking</div><div style="font:700 20px 'IBM Plex Sans',sans-serif;margin-top:4px;">WF-482910</div></div>
+    <div><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#8fa9b8;">Vehicle</div><div style="font-size:19px;font-weight:600;margin-top:4px;">Toyota Land Cruiser · DXB-42198</div></div>
+    <div><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#8fa9b8;">Driver</div><div style="font-size:19px;font-weight:600;margin-top:4px;">Ahmed Al Mazrouei</div></div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;background:#ffffff1a;border:1px solid #ffffff33;padding:6px 12px 6px 9px;border-radius:3px;"><span style="width:8px;height:8px;background:#7fd39c;border-radius:50%;"></span><span style="font:600 13px 'IBM Plex Sans',sans-serif;">GPS ONLINE</span></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#10181F14;flex:1;">
+
+    <!-- Left: checklist -->
+    <div style="background:#F5F3EC;padding:44px 48px;">
+      <div style="font:600 24px/1 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#0B3D5C;margin-bottom:24px;">{{ checklistTitle }}</div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:12px;">{{ odometerLabel }}</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:32px;">
+        <input type="number" value="{{ odometer }}" onChange="{{ setOdometer }}" style="width:180px;padding:12px 14px;font:26px 'IBM Plex Sans',sans-serif;border:1.5px solid #10181F33;border-radius:3px;background:#fff;"/>
+        <span style="font-size:17px;color:#5b6572;">km</span>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:12px;">Fuel level — {{ fuelLevel }}%</div>
+      <div style="margin-bottom:8px;">
+        <input type="range" min="0" max="100" step="5" value="{{ fuelLevel }}" onChange="{{ setFuel }}" style="width:100%;"/>
+      </div>
+      <div style="height:22px;border-radius:3px;background:#fff;border:1px solid #10181F33;overflow:hidden;margin-bottom:36px;">
+        <div style="height:100%;width:{{ fuelLevel }}%;background:{{ fuelColor }};"></div>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Key</div>
+      <div style="display:flex;gap:10px;margin-bottom:36px;">
+        <button onClick="{{ setKeyIssued }}" style="padding:12px 22px;border-radius:3px;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ keyIssuedBg }};color:{{ keyIssuedFg }};border:1.5px solid {{ keyIssuedBorder }};">{{ keyActionLabel }} confirmed</button>
+      </div>
+
+      <sc-if value="{{ isReturn }}" hint-placeholder-val="{{ false }}">
+        <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Condition on return</div>
+        <div style="display:flex;gap:10px;margin-bottom:20px;">
+          <sc-for list="{{ conditions }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.select }}" style="padding:11px 18px;border-radius:3px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }};border:1.5px solid {{ c.border }};">{{ c.name }}</button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ showFuelFlag }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;background:#C1791F14;border:1px solid #C1791F40;color:#C1791F;padding:12px 16px;border-radius:3px;font-size:15px;margin-bottom:24px;">
+            <span style="width:8px;height:8px;background:#C1791F;border-radius:50%;flex:none;"></span>
+            Fuel deviation exceeds ±20% — flagged for review, not blocking.
+          </div>
+        </sc-if>
+      </sc-if>
+
+    </div>
+
+    <!-- Right: damage map + signature -->
+    <div style="background:#fff;padding:44px 48px;">
+      <div style="font:600 24px/1 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#0B3D5C;margin-bottom:8px;">Condition capture</div>
+      <p style="font-size:15px;color:#5b6572;margin:0 0 20px;">Tap the diagram to pin any existing damage.</p>
+
+      <div ref="{{ damageAreaRef }}" onClick="{{ addPin }}" style="position:relative;background:#F5F3EC;border:1.5px solid #10181F26;border-radius:6px;height:280px;margin-bottom:12px;cursor:crosshair;overflow:hidden;">
+        <svg viewBox="0 0 300 200" style="position:absolute;inset:0;width:100%;height:100%;">
+          <rect x="60" y="30" width="180" height="140" rx="22" fill="none" stroke="#0B3D5C" stroke-width="3"/>
+          <rect x="90" y="30" width="120" height="34" rx="10" fill="none" stroke="#0B3D5C" stroke-width="2"/>
+          <line x1="60" y1="100" x2="240" y2="100" stroke="#0B3D5C" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <circle cx="90" cy="170" r="12" fill="none" stroke="#0B3D5C" stroke-width="2"/>
+          <circle cx="210" cy="170" r="12" fill="none" stroke="#0B3D5C" stroke-width="2"/>
+          <circle cx="90" cy="30" r="12" fill="none" stroke="#0B3D5C" stroke-width="2"/>
+          <circle cx="210" cy="30" r="12" fill="none" stroke="#0B3D5C" stroke-width="2"/>
+        </svg>
+        <sc-for list="{{ pins }}" as="p" hint-placeholder-count="0">
+          <div style="position:absolute;left:{{ p.left }};top:{{ p.top }};width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#B33F3F;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.3);"></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;">
+        <span style="font-size:14px;color:#5b6572;">{{ pinCountLabel }}</span>
+        <button onClick="{{ clearPins }}" style="background:transparent;border:none;color:#B33F3F;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;padding:4px;">Clear pins</button>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:12px;">Signature — {{ signerLabel }}</div>
+      <div style="position:relative;border:1.5px solid #10181F33;border-radius:6px;background:#F5F3EC;margin-bottom:12px;">
+        <canvas ref="{{ canvasRef }}" width="600" height="150" style="width:100%;height:150px;display:block;cursor:crosshair;touch-action:none;"></canvas>
+        <div style="position:absolute;left:16px;right:16px;bottom:20px;border-bottom:1.5px dashed #10181F4d;pointer-events:none;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;">
+        <span style="font-size:14px;color:{{ signedColor }};font-weight:600;">{{ signedLabel }}</span>
+        <button onClick="{{ clearSignature }}" style="background:transparent;border:none;color:#5b6572;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;padding:4px;">Clear signature</button>
+      </div>
+
+      <button onClick="{{ submit }}" disabled="{{ submitDisabled }}" style="width:100%;background:{{ submitBg }};color:#fff;border:none;padding:17px;font:600 17px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">{{ submitLabel }}</button>
+
+      <sc-if value="{{ showConfirmed }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:16px;display:flex;align-items:center;gap:8px;color:#1F7A4D;font:600 15px 'IBM Plex Sans',sans-serif;">
+          <span style="width:8px;height:8px;background:#1F7A4D;border-radius:50%;"></span>{{ confirmedText }}
+        </div>
+      </sc-if>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B3D5C"/><rect x="25" y="35" width="50" height="30" rx="8" fill="#E2A33D"/></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    mode: 'handover',
+    odometer: 84213,
+    fuel: 80,
+    keyConfirmed: false,
+    condition: null,
+    pins: [],
+    signed: false,
+    submitted: false,
+  };
+
+  componentDidMount() {
+    this._wireCanvas();
+  }
+
+  componentDidUpdate() {
+    this._wireCanvas();
+  }
+
+  _wireCanvas() {
+    const canvas = this._canvasEl;
+    if (!canvas || canvas._wired) return;
+    canvas._wired = true;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#0B3D5C';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    let drawing = false;
+
+    const pos = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      return { x: cx * (canvas.width / rect.width), y: cy * (canvas.height / rect.height) };
+    };
+    const start = (e) => { drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); };
+    const move = (e) => {
+      if (!drawing) return;
+      e.preventDefault();
+      const p = pos(e);
+      ctx.lineTo(p.x, p.y); ctx.stroke();
+      if (!this.state.signed) this.setState({ signed: true });
+    };
+    const end = () => { drawing = false; };
+
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start, { passive: true });
+    canvas.addEventListener('touchmove', move, { passive: false });
+    canvas.addEventListener('touchend', end);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isReturn = s.mode === 'return';
+
+    const fuelColor = s.fuel < 25 ? '#B33F3F' : s.fuel < 55 ? '#C1791F' : '#1F7A4D';
+    const expectedFuel = 65;
+    const fuelDeviation = Math.abs(s.fuel - expectedFuel) / 100;
+
+    const conditionOptions = ['Good', 'Minor wear', 'Damage noted'];
+    const conditions = conditionOptions.map(name => ({
+      name,
+      select: () => this.setState({ condition: name }),
+      bg: s.condition === name ? '#0B3D5C' : '#fff',
+      fg: s.condition === name ? '#fff' : '#10181F',
+      border: s.condition === name ? '#0B3D5C' : '#10181F33',
+    }));
+
+    const pins = s.pins.map(p => ({ left: p.x + '%', top: p.y + '%' }));
+
+    const canSubmit = s.keyConfirmed && s.signed && (!isReturn || !!s.condition);
+
+    return {
+      handoverTabBg: !isReturn ? '#0B3D5C' : 'transparent',
+      handoverTabFg: !isReturn ? '#fff' : '#5b6572',
+      returnTabBg: isReturn ? '#0B3D5C' : 'transparent',
+      returnTabFg: isReturn ? '#fff' : '#5b6572',
+      setModeHandover: () => this.setState({ mode: 'handover', submitted: false }),
+      setModeReturn: () => this.setState({ mode: 'return', submitted: false }),
+
+      checklistTitle: isReturn ? 'Return checklist' : 'Handover checklist',
+      odometerLabel: isReturn ? 'Ending odometer' : 'Starting odometer',
+      odometer: s.odometer,
+      setOdometer: (e) => this.setState({ odometer: Number(e.target.value) || 0 }),
+
+      fuelLevel: s.fuel,
+      setFuel: (e) => this.setState({ fuel: Number(e.target.value) }),
+      fuelColor,
+
+      isReturn,
+      keyActionLabel: isReturn ? 'Return' : 'Issue',
+      keyIssuedBg: s.keyConfirmed ? '#1F7A4D' : '#fff',
+      keyIssuedFg: s.keyConfirmed ? '#fff' : '#10181F',
+      keyIssuedBorder: s.keyConfirmed ? '#1F7A4D' : '#10181F33',
+      setKeyIssued: () => this.setState(st => ({ keyConfirmed: !st.keyConfirmed })),
+
+      conditions,
+      showFuelFlag: isReturn && fuelDeviation > 0.20,
+
+      damageAreaRef: (el) => { this._damageEl = el; },
+      addPin: (e) => {
+        const rect = this._damageEl.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        this.setState(st => ({ pins: [...st.pins, { x, y }] }));
+      },
+      pins,
+      pinCountLabel: s.pins.length === 0 ? 'No damage pinned' : s.pins.length + ' point' + (s.pins.length > 1 ? 's' : '') + ' pinned',
+      clearPins: () => this.setState({ pins: [] }),
+
+      signerLabel: isReturn ? 'Fleet Manager' : 'Ahmed Al Mazrouei',
+      canvasRef: (el) => { this._canvasEl = el; if (el) this._wireCanvas(); },
+      signedColor: s.signed ? '#1F7A4D' : '#9aa2ab',
+      signedLabel: s.signed ? 'Signed' : 'Not yet signed',
+      clearSignature: () => {
+        if (this._canvasEl) {
+          const ctx = this._canvasEl.getContext('2d');
+          ctx.clearRect(0, 0, this._canvasEl.width, this._canvasEl.height);
+        }
+        this.setState({ signed: false });
+      },
+
+      submitDisabled: !canSubmit,
+      submitBg: canSubmit ? '#0B3D5C' : '#10181F33',
+      submitLabel: isReturn ? 'Confirm return' : 'Confirm handover',
+      submit: () => { if (canSubmit) this.setState({ submitted: true }); },
+      showConfirmed: s.submitted,
+      confirmedText: isReturn ? 'Return recorded — reconciliation logged' : 'Handover recorded — trip active',
+    };
+  }
+}
+</script>
+</body>
+</html>

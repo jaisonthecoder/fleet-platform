@@ -1,0 +1,3 @@
+ALTER TABLE "fleet"."lookup_type" ADD COLUMN "parent_type_id" uuid;--> statement-breakpoint
+ALTER TABLE "fleet"."lookup_type" ADD CONSTRAINT "lookup_type_parent_type_id_lookup_type_id_fk" FOREIGN KEY ("parent_type_id") REFERENCES "fleet"."lookup_type"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "lookup_type_parent_type_idx" ON "fleet"."lookup_type" USING btree ("parent_type_id");

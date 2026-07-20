@@ -1,0 +1,537 @@
+<!-- ============================================================
+HLD GENERATION TEMPLATE — hld-template.md.tmpl
+============================================================
+HOW TO USE
+1. Provide inputs alongside this template:
+   - BRD (business requirements document)         [REQUIRED]
+   - FRD / PRD (functional requirements)          [REQUIRED]
+   - NFRs (nfr.md or stated targets)              [REQUIRED — if absent, generate ASSUMPTIONS and flag]
+   - Business constraints (budget, timeline, mandated tech)  [RECOMMENDED]
+   - Domain context (tenancy, regulatory scope, existing landscape)  [RECOMMENDED]
+   - Role/team list                               [OPTIONAL]
+   - Existing ADRs                                [OPTIONAL]
+2. Prompt: "Use the HLD template. Fill it from the attached BRD and FRD.
+   Follow all embedded generation rules."
+3. The AI replaces every {{placeholder}}, deletes instruction comments,
+   and deletes any section marked OMIT-IF-NOT-APPLICABLE that doesn't apply
+   (recording the omission in §1.3).
+
+GLOBAL GENERATION RULES (apply to every section)
+R1  NO-INVENTION: every number (TPS, users, volumes, latency, retention,
+    growth) must trace to an input document. If missing, create ASSUMPTION-nn
+    in §13 with a stated default, reference it inline as "sized under
+    ASSUMPTION-nn", and add it to §15 Open Questions if the design would
+    change materially depending on the true value. NEVER invent a plausible
+    figure.
+R2  TRACE: every functional statement cites its source as [BRD-x], [FR-x],
+    [NFR-x], or [ASSUMPTION-nn]. If you cannot cite it, don't write it.
+R3  OWNERS: if no role list was provided, use the literal «OWNER-TBD» /
+    «DATE-TBD». Never guess names, roles, or sprints.
+R4  TIER A sections (marked below) use the full sub-structure: Purpose /
+    Design Detail / Key Decisions / Alternatives / Risks / Validation /
+    Downstream Implications / Open Questions. Budget 300–600 words + tables.
+R5  TIER B sections use only Purpose / Content (+ Constraints if any).
+    Budget 100–250 words. Do NOT add Alternatives tables to Tier B.
+R6  HONEST ALTERNATIVES: each Tier A Alternatives table needs at least one
+    genuinely viable option; the Cons of the SELECTED approach must be
+    stated and carried into that section's Risks. A trade study where the
+    winner sweeps every column is invalid.
+R7  DIAGRAMS: every section describing structure or flow must reference a
+    diagram at hld-<view>.drawio — either existing (state what to
+    verify in it) or specified (type, required elements, target path).
+R8  ANTI-GENERIC: banned phrases include "the system should be scalable",
+    "security will be implemented", "integrates with external systems",
+    "monitoring will be configured". Always state: WHAT scales, the sourced
+    load figure, WHICH component absorbs it and how, WHAT failure mode is
+    protected against, WHICH named control applies, WHICH integration
+    pattern and why, and the SPECIFIC metric/threshold/alert that proves
+    the design works.
+R9  CONSOLIDATION: per-section Risks and Open Questions also roll up into
+    §14 and §15. Assumptions live ONLY in §13 and are referenced inline.
+R10 DECISIONS: every Tier A Key Decision links an ADR (existing or
+    "ADR-required: <title>") in the last column.
+============================================================ -->
+
+# High-Level Design — {{Solution / Project Name}}
+
+## Document Control
+
+| Field | Value |
+|---|---|
+| Version | {{0.1 draft}} |
+| Status | Draft — pending architecture review |
+| Author | «OWNER-TBD» (AI-generated, requires human review) |
+| Source inputs | {{BRD vX.Y, FRD vX.Y, NFR vX.Y — filenames and versions}} |
+| Reviewers required | Solution Architect, Security, Data, Platform/SRE |
+| Related ADRs | See §16 |
+
+---
+
+## 1. Introduction & Scope  <!-- TIER B -->
+
+### 1.1 Purpose
+<!-- 2–3 sentences: what this HLD covers and what decisions it is meant to support. -->
+{{...}}
+
+### 1.2 In Scope / Out of Scope
+<!-- Derive strictly from BRD/FRD scope statements. Cite [BRD-x]. -->
+| In scope | Source | Out of scope | Source |
+|---|---|---|---|
+| {{...}} | [BRD-x] | {{...}} | [BRD-x] |
+
+### 1.3 Omitted Sections
+<!-- List any template sections deleted as not applicable, with one-line reason. Write "None" if all retained. -->
+{{None}}
+
+---
+
+## 2. Business & Functional Drivers  <!-- TIER B -->
+
+### 2.1 Purpose
+Summarizes the business outcomes and functional capabilities that constrain the architecture, so every later decision can trace back to a driver.
+
+### 2.2 Content
+<!-- 5–10 rows max. Only drivers that CHANGE an architecture decision. Cite sources. -->
+| # | Driver | Source | Architectural consequence |
+|---|---|---|---|
+| D1 | {{...}} | [BRD-x] | {{e.g., forces async integration; drives multi-tenant isolation}} |
+
+### 2.3 Key Volumetrics & Targets
+<!-- ONLY sourced figures (R1). Missing values → ASSUMPTION-nn. -->
+| Metric | Value | Source |
+|---|---|---|
+| {{Peak concurrent users}} | {{...}} | [NFR-x] or [ASSUMPTION-nn] |
+| {{Transactions/day}} | {{...}} | {{...}} |
+| {{Data growth/year}} | {{...}} | {{...}} |
+| {{Availability target}} | {{...}} | {{...}} |
+| {{Latency target (p95)}} | {{...}} | {{...}} |
+
+---
+
+## 2A. AD Ports Architecture Checks  <!-- TIER B -->
+
+### 2A.1 Purpose
+Confirms whether AD Ports-specific architecture edges apply before the HLD locks integration, data, security, runtime, or operational decisions.
+
+### 2A.2 Content
+<!-- Mark Applies as Yes/No/Unknown. If Unknown, create an Open Question in §15. Cite source or ASSUMPTION-nn. -->
+| Check | Applies? | Source | Architecture impact |
+|---|---|---|---|
+| Multi-terminal tenancy / terminal-specific behavior | {{Yes/No/Unknown}} | {{[BRD-x]/[FR-x]/[ASSUMPTION-nn]}} | {{...}} |
+| Arabic / RTL / accessibility impact | {{Yes/No/Unknown}} | {{...}} | {{...}} |
+| UAE data residency / PDPL / NESA impact | {{Yes/No/Unknown}} | {{...}} | {{...}} |
+| Operational window, vessel, customs, or maritime SLA impact | {{Yes/No/Unknown}} | {{...}} | {{...}} |
+| SAP / Oracle / Port Community System integration impact | {{Yes/No/Unknown}} | {{...}} | {{...}} |
+
+### 2A.3 Notable Constraints or Assumptions
+{{Bullet list referencing ASSUMPTION-nn, or "None"}}
+
+---
+
+## 3. Context View  <!-- TIER B -->
+
+### 3.1 Purpose
+Establishes the system boundary: users, external systems, and the direction of every interaction crossing the boundary.
+
+### 3.2 Content
+<!-- Actor/system table + C4 L1 diagram (R7). Every row cites a source. -->
+| Actor / External system | Interaction (in/out) | Protocol / channel | Source |
+|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | [FR-x] |
+
+**Diagram:** `hld-context.drawio` — C4 Level 1. Must show: {{all actors above, system boundary, labeled interaction arrows}}.
+
+### 3.3 Notable Constraints or Assumptions
+{{Bullet list referencing ASSUMPTION-nn, or "None"}}
+
+---
+
+## 4. Application / Conceptual View  <!-- TIER B -->
+
+### 4.1 Purpose
+Names the major application components and their responsibilities before committing to logical structure.
+
+### 4.2 Content
+<!-- Component responsibility table. One row per component; responsibilities in one sentence each. -->
+| Component | Responsibility | Owning capability [FR ref] |
+|---|---|---|
+| {{...}} | {{...}} | [FR-x] |
+
+**Diagram:** `hld-application.drawio` — C4 Level 2 container view. Must show: {{containers above, sync/async links, data stores}}.
+
+---
+
+## 5. Logical Architecture  <!-- TIER A -->
+
+### 5.1 Purpose
+{{What decision this clarifies — e.g., service decomposition and module boundaries, and why the chosen decomposition fits the domain.}}
+
+### 5.2 Design Detail
+<!-- Must cover (R4): components/boundaries/interactions; DATA TOUCHED (CRUD per component); FAILURE MODES with detection signal + recovery; NFR TRACEABILITY by ID. Reference diagram (R7). -->
+{{...}}
+
+**Data touched:** {{per component: created/read/updated/deleted/exchanged, classification}}
+**Failure modes:** {{what fails, the specific detection signal (metric + threshold + alert), recovery path}}
+**NFRs satisfied:** {{[NFR-x]: how; [NFR-y]: how}}
+**Diagram:** `hld-logical.drawio` — {{type, required elements}}.
+
+### 5.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+| {{e.g., modular monolith vs microservices}} | {{...}} | {{...}} | {{ADR-nnn or "ADR-required: ..."}} |
+
+### 5.4 Alternatives Considered  <!-- R6 applies -->
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | {{...}} |
+
+**Cons of selected approach:** {{stated honestly; carried into 5.5}}
+
+### 5.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | «OWNER-TBD» |
+
+### 5.6 Validation Approach
+{{Specific proof: e.g., "walking-skeleton prototype of X↔Y interaction; pass = p95 < [NFR-x] under [sourced load]". Not "will be tested".}}
+
+### 5.7 Downstream Implications
+<!-- Non-obvious, section-specific only. Omit unaffected teams (R4). -->
+{{...}}
+
+### 5.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+| {{...}} | «OWNER-TBD» | {{...}} | «DATE-TBD» |
+
+---
+
+## 6. Integration Architecture & Flows  <!-- TIER A -->
+
+### 6.1 Purpose
+{{Which integration decisions this fixes: patterns per interface, ownership of contracts, failure semantics across boundaries.}}
+
+### 6.2 Design Detail
+<!-- One row per interface. Pattern must be justified against coupling + latency constraint (R8). Include failure semantics: retry, idempotency, DLQ, timeout, ordering. -->
+| Interface | Direction | Pattern (sync REST / async event / batch / CDC) | Why this pattern | Failure semantics | Source |
+|---|---|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | {{coupling/latency reason}} | {{retry/idempotency/DLQ}} | [FR-x] |
+
+**Failure modes:** {{e.g., downstream unavailable → circuit breaker opens at [threshold], alert [name], buffered in [queue] with [sourced retention]}}
+**NFRs satisfied:** {{...}}
+**Diagram:** `hld-integration.drawio` — sequence diagram(s) for {{the top N critical flows}}, showing happy path + primary failure path.
+
+### 6.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+
+### 6.4 Alternatives Considered
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+
+**Cons of selected approach:** {{...}}
+
+### 6.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+
+### 6.6 Validation Approach
+{{e.g., contract tests per interface; failure injection on top flow; pass criteria}}
+
+### 6.7 Downstream Implications
+{{...}}
+
+### 6.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+
+---
+
+## 7. Data Architecture  <!-- TIER A -->
+
+### 7.1 Purpose
+{{Which data decisions this fixes: store selection, ownership boundaries, lifecycle, residency.}}
+
+### 7.2 Design Detail
+<!-- Entity ownership, store choice per data class, retention/archival, residency & classification, migration approach if brownfield. All volumes sourced (R1). -->
+{{...}}
+
+| Data domain | Owner component | Store | Classification | Residency | Retention | Source |
+|---|---|---|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | {{...}} | {{...}} | {{...}} | [NFR-x]/[ASSUMPTION-nn] |
+
+**Failure modes:** {{e.g., replica lag > [threshold] → alert [name]; backup restore RTO/RPO = [sourced targets]}}
+**NFRs satisfied:** {{...}}
+**Diagram:** `hld-data.drawio` — {{ERD of core entities / data-flow diagram}}.
+
+### 7.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+
+### 7.4 Alternatives Considered
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+
+**Cons of selected approach:** {{...}}
+
+### 7.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+
+### 7.6 Validation Approach
+{{e.g., restore drill against RPO/RTO; volume test at [sourced growth × horizon]}}
+
+### 7.7 Downstream Implications
+{{...}}
+
+### 7.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+
+---
+
+## 8. Security Architecture  <!-- TIER A -->
+
+### 8.1 Purpose
+{{Which security decisions this fixes: identity, authZ model, tenant isolation, secrets/keys, compliance mapping.}}
+
+### 8.2 Design Detail
+<!-- Named controls only (R8): e.g., "OIDC via <IdP>, RBAC with roles R1–Rn, tenant isolation by <row-level security / schema / DB-per-tenant>, secrets in <vault>, TLS 1.2+ in transit, AES-256 at rest, key rotation <period, sourced>". Map each control to the requirement/regulation it satisfies. -->
+{{...}}
+
+| Control | Applies to | Standard / clause | Source |
+|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | [NFR-x]/[BRD-x] |
+
+**Failure modes:** {{e.g., IdP outage → behavior; token replay → mitigation; audit-log gap detection signal}}
+**NFRs satisfied:** {{...}}
+**Diagram:** `hld-security.drawio` — {{trust boundaries, authN/Z flow}}.
+
+### 8.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+
+### 8.4 Alternatives Considered
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+
+**Cons of selected approach:** {{...}}
+
+### 8.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+
+### 8.6 Validation Approach
+{{e.g., threat-model review of trust-boundary diagram; pen test scope; tenant-isolation test cases}}
+
+### 8.7 Downstream Implications
+{{...}}
+
+### 8.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+
+---
+
+## 9. Runtime & Deployment View  <!-- TIER A -->
+
+### 9.1 Purpose
+{{Which topology decisions this fixes: environments, regions/zones, scaling mechanism, HA/DR posture.}}
+
+### 9.2 Design Detail
+<!-- WHAT scales, sourced load figure, WHICH component absorbs it and by what mechanism (R8). HA/DR: failure domain, failover mechanism, sourced RTO/RPO. Environments list. -->
+{{...}}
+
+**Scaling:** {{component X scales horizontally on [metric > threshold], sized for [sourced peak] under [ASSUMPTION-nn if applicable]}}
+**Failure modes:** {{zone loss → behavior; region loss → behavior; detection signal for each}}
+**NFRs satisfied:** {{...}}
+**Diagram:** `hld-runtime.drawio` — deployment diagram: {{regions, zones, environments, scaling units}}.
+
+### 9.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+
+### 9.4 Alternatives Considered
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+
+**Cons of selected approach:** {{...}}
+
+### 9.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+
+### 9.6 Validation Approach
+{{e.g., load test to [sourced peak × safety factor]; chaos test of zone failover; pass criteria}}
+
+### 9.7 Downstream Implications
+{{...}}
+
+### 9.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+
+---
+
+## 10. Technology Stack  <!-- TIER A -->
+
+### 10.1 Purpose
+{{Fixes the technology selections and records why each fits the constraints (including mandated tech from business constraints).}}
+
+### 10.2 Design Detail
+| Layer | Selection | Constraint honored | Source |
+|---|---|---|---|
+| {{Frontend / Backend / Data / Messaging / Platform / CI-CD / Observability}} | {{...}} | {{e.g., mandated by [BRD-x]; team skill; licensing}} | {{...}} |
+
+### 10.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+
+### 10.4 Alternatives Considered
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+
+**Cons of selected approach:** {{...}}
+
+### 10.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+
+### 10.6 Validation Approach
+{{e.g., spike/POC list for unproven selections, each with pass criteria}}
+
+### 10.7 Downstream Implications
+{{...}}
+
+### 10.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+
+---
+
+## 11. Operations & Observability  <!-- TIER A -->
+
+### 11.1 Purpose
+{{Fixes how the running system is observed, alerted on, and operated — the signals that prove the design works (R8).}}
+
+### 11.2 Design Detail
+<!-- Golden signals per critical component: metric, threshold, alert, responder. Log/trace strategy. Runbook triggers. NOT "monitoring will be configured". -->
+| Component | Signal (metric) | Threshold | Alert → responder | Proves |
+|---|---|---|---|---|
+| {{...}} | {{...}} | {{...}} | {{... → «OWNER-TBD»}} | {{which design assumption / NFR}} |
+
+**NFRs satisfied:** {{...}}
+**Diagram:** `hld-operations.drawio` — {{observability data flow / operational topology}} (OMIT-IF-NOT-APPLICABLE).
+
+### 11.3 Key Decisions
+| Decision | Rationale | Impact | ADR / Assumption Ref |
+|---|---|---|---|
+
+### 11.4 Alternatives Considered
+| Alternative | Pros | Cons | Reason Not Selected |
+|---|---|---|---|
+
+**Cons of selected approach:** {{...}}
+
+### 11.5 Risks and Mitigations
+| Risk | Impact | Mitigation | Owner |
+|---|---|---|---|
+
+### 11.6 Validation Approach
+{{e.g., game-day exercising top 3 failure modes from §5–§9; alert fire-drill pass criteria}}
+
+### 11.7 Downstream Implications
+{{...}}
+
+### 11.8 Open Questions
+| Question | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|
+
+---
+
+## 12. NFR Traceability Matrix
+
+<!-- One row per NFR from the input. Every NFR must map to at least one section; unmapped NFR = design gap → add to §15. -->
+| NFR ID | Requirement | Satisfied by (section) | How | Validated by |
+|---|---|---|---|---|
+| [NFR-1] | {{...}} | {{§9}} | {{...}} | {{§9.6}} |
+
+---
+
+## 13. Assumptions Register
+
+<!-- SINGLE source of truth (R9). Every ASSUMPTION-nn referenced anywhere lives here. -->
+| ID | Assumption | Default used | Why needed | Design impact if wrong | Confirm with |
+|---|---|---|---|---|---|
+| ASSUMPTION-01 | {{...}} | {{...}} | {{missing from inputs}} | {{...}} | «OWNER-TBD» |
+
+---
+
+## 14. Consolidated Risk Register
+
+<!-- Roll-up of all section risks, deduplicated, sorted by impact. -->
+| # | Risk | Section | Impact | Mitigation | Owner |
+|---|---|---|---|---|---|
+
+---
+
+## 15. Consolidated Open Questions
+
+<!-- Roll-up of all section open questions + unmapped NFRs + design-changing assumptions. -->
+| # | Question | Section | Owner | Impact if Unanswered | Required By |
+|---|---|---|---|---|---|
+
+---
+
+## 16. ADR Index
+
+### 16.1 Cross-Cutting ADRs
+
+| ADR | Title | Status | Section |
+|---|---|---|---|
+| {{ADR-XC-001 or "ADR-required: <title>"}} | {{...}} | {{Proposed / Accepted / Required}} | {{§x}} |
+
+### 16.2 Backend ADRs
+
+<!-- Backend ADRs capture service boundaries, API style, transaction boundaries, persistence, messaging, validation, caching, resiliency, background processing, authorization enforcement, and integration adapters. -->
+| ADR | Backend decision | Status | Section | Owner |
+|---|---|---|---|---|
+| {{ADR-BE-001 or "ADR-required: <title>"}} | {{...}} | {{Proposed / Accepted / Required}} | {{§x}} | {{ai-backend-dotnet / ai-backend-nestjs / ai-backend-python / «OWNER-TBD»}} |
+
+### 16.3 Frontend ADRs
+
+<!-- Frontend ADRs capture application shell, routing, state management, API client strategy, form handling, component system, accessibility, i18n/RTL, caching, error handling, offline behavior, and test strategy. -->
+| ADR | Frontend decision | Status | Section | Owner |
+|---|---|---|---|---|
+| {{ADR-FE-001 or "ADR-required: <title>"}} | {{...}} | {{Proposed / Accepted / Required}} | {{§x}} | {{ai-frontend-react / ai-frontend-angular / «OWNER-TBD»}} |
+
+---
+
+## Appendix A — Diagram Index
+
+| Diagram | Path | Type | Status |
+|---|---|---|---|
+| Context | hld-context.drawio | C4 L1 | {{To produce / Exists}} |
+| Application | hld-application.drawio | C4 L2 | {{...}} |
+| Logical | hld-logical.drawio | {{...}} | {{...}} |
+| Integration flows | hld-integration.drawio | Sequence | {{...}} |
+| Data | hld-data.drawio | ERD / DFD | {{...}} |
+| Security | hld-security.drawio | Trust boundaries | {{...}} |
+| Runtime | hld-runtime.drawio | Deployment | {{...}} |
+
+<!-- ============================================================
+FINAL SELF-CHECK — the AI must verify before finishing:
+[ ] Zero unsourced numbers (every figure cites input or ASSUMPTION-nn)
+[ ] Every Tier A section has all 8 sub-parts; no Tier B section has
+    an Alternatives table
+[ ] Every Alternatives table has ≥1 viable option AND states the
+    selected approach's Cons, which also appear in that section's Risks
+[ ] Every structural/flow section references a diagram with required
+    elements listed
+[ ] Every NFR appears in §12; unmapped NFRs are in §15
+[ ] §13/§14/§15 roll-ups are complete and deduplicated
+[ ] No banned generic phrases (R8) anywhere
+[ ] All Owner/date fields are real (from provided role list) or the
+    literal «OWNER-TBD» / «DATE-TBD»
+[ ] All instruction comments deleted from the final output
+============================================================ -->

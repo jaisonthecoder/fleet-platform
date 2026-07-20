@@ -1,0 +1,97 @@
+# Low-Level Design Template
+
+Use with `adp-fend-react-architecture` when producing or updating: frontend LLD section in lld.md, diagrams/lld-frontend-*.drawio.
+
+## Header
+
+- **Artifact owner:** `ai-frontend-react`
+- **Source request / ticket:**
+- **Upstream artifacts:**
+- **Target path:**
+- **Last updated:**
+- **Downstream role(s):** `ai-reviewer`
+
+## Purpose
+
+State why this artifact exists and what downstream decision or delivery activity it enables.
+
+## Scope
+
+- **In scope:**
+- **Out of scope:**
+- **Assumptions:**
+- **Open questions:**
+
+## AD Ports Checks
+
+- **Tenant / terminal impact:**
+- **Arabic / RTL or accessibility impact:**
+- **UAE data residency / PDPL / NESA impact:**
+- **Operational window, vessel, customs, or maritime SLA impact:**
+- **SAP / Oracle / Port Community System integration impact:**
+
+## Main Content
+
+### LLD Backend/Frontend Contract Matrix Input
+
+- **Source LLD path:**
+- **Contract matrix status:** draft / approved / blocked
+- **Contract owner:**
+- **Known contract gaps:**
+
+### Frontend ADR
+
+- **ADR path:** `docs/03-architecture/ADR/adr-frontend-architecture.md`
+- **ADR status:** proposed / accepted / superseded
+- **Decision summary:** React/Vite or framework decision, feature-based structure, routing strategy, state/query strategy, API pattern, i18n/RTL approach, evidence expectations.
+- **Exceptions:**
+
+### Frontend Delivery Manifest
+
+```yaml
+frontendDelivery:
+  framework: react
+  architectureStyle: feature-based
+  routingStrategy:
+  defaultFeatureFolder:
+  sharedUiFolder:
+  coreFolder:
+  statePattern:
+  apiPattern:
+  permissionsPattern:
+  i18n:
+    rtlRequired:
+    locales:
+  evidenceRequired:
+```
+
+### Feature Inventory
+
+| Feature ID | Name | Source Requirement | Shape | Route | Folder | Data/API | Permissions | States Needed | Skill / Workflow | Evidence | Status |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+
+### API Wiring Map
+
+| Feature ID | Operation / Endpoint | Method / Event | Request DTO | Response DTO | Error States | Permission Claim | Audit Event | Mock / MSW Fixture | Backend Owner | Contract Status |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+### UX Traceability Contract
+
+| Screen / Frame | Feature ID | Source FR/NFR | API Operation | UI States | Permissions | UX Status |
+|---|---|---|---|---|---|---|
+
+### React LLD
+
+Replace this section with the artifact-specific route, page composition, component boundaries, data flow, validation, loading/error, accessibility, i18n/RTL, cache/query, and test design. Keep decisions traceable to source evidence and avoid copying shared standards into this file.
+
+## Evidence
+
+- Source evidence:
+- Validation performed:
+- Validation gaps:
+
+## Handoff
+
+- **Summary for downstream role(s):**
+- **Risks to carry forward:**
+- **Required review / approval:**

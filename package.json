@@ -1,0 +1,20 @@
+{
+  "name": "fleet-platform-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.15.0",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=11.15.0"
+  },
+  "scripts": {
+    "build": "pnpm --recursive --if-present build",
+    "lint": "pnpm --recursive --if-present lint",
+    "test": "pnpm --recursive --if-present test",
+    "test:e2e": "pnpm --filter fleet-platform-api test:e2e",
+    "test:coverage": "pnpm --recursive --if-present test:coverage",
+    "typecheck": "pnpm --recursive --if-present typecheck",
+    "audit": "pnpm audit --prod",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm test:e2e && pnpm build && pnpm audit"
+  }
+}

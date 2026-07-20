@@ -1,0 +1,15 @@
+# Build context is the repository root. Keeps images small and reproducible.
+**/node_modules
+**/dist
+**/coverage
+**/.env
+**/.env.*
+!**/.env.example
+**/*.tsbuildinfo
+.git
+.github
+docs
+Business-INTAKE
+**/*.md
+docker
+docker-compose.yml

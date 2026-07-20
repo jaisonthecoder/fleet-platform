@@ -1,0 +1,1 @@
+ALTER TYPE "public"."fleet_workflow_status" ADD VALUE 'ModificationRequested';

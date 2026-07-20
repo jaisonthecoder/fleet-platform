@@ -1,0 +1,279 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   Wayfinder — Design tokens (EXACT hex from the modern prototype:
+   Business-INTAKE/carpool-modern-design-approach/Design System.dc.html).
+   Three layers: raw hex → semantic tokens → components (Layer 2 only).
+   ONE type family: IBM Plex Sans (+ Sans Arabic). No mono — data uses
+   the same family with tabular-nums (.font-data / .eyebrow below).
+   ============================================================ */
+
+:root {
+  /* Ground & neutrals — warm paper (Wayfinder) */
+  --paper: #f5f3ec;
+  --surface: #ffffff;
+  --surface-2: #eeeae0;
+  --surface-hover: #e6e1d3;
+  --ink: #10181f;
+  --ink-2: #5b6572;
+  --ink-3: #8b93a0;
+  /* Soft warm hairline (modern-mix) — not a hard ink line */
+  --line: #e0dacb;
+  --field: #c8bfa9;
+
+  /* Chrome — navy rail */
+  --rail: #0b3d5c;
+  --rail-ink: #ffffff;
+  --rail-muted: #cddce5;
+
+  /* Brand — ink navy (structure) */
+  --brand: #0b3d5c;
+  --brand-strong: #0a3350;
+  --brand-ink: #ffffff;
+  --brand-soft: rgba(11, 61, 92, 0.08);
+
+  /* Signal — wayfinding gold (accent, never a status) */
+  --signal: #e2a33d;
+  --signal-strong: #c6892a;
+  --signal-ink: #10181f;
+
+  /* Primary action */
+  --action: #0b3d5c;
+  --action-ink: #ffffff;
+  --accent-ink: #0b3d5c;
+
+  /* AI / assistant accent (plum) */
+  --plum: #5c4a73;
+  --plum-tint: #eae4ef;
+
+  /* Status — fixed semantics, tuned per theme (prototype exact) */
+  --ok: #1f7a4d;
+  --warn: #c1791f;
+  --danger: #b33f3f;
+  --danger-ink: #ffffff;
+  --info: #0e5c7a;
+
+  --ring: #0b3d5c;
+
+  --radius: 0.1875rem;
+
+  --shadow-rest:
+    0 1px 2px rgba(16, 24, 31, 0.06), 0 1px 3px rgba(16, 24, 31, 0.05);
+  --shadow-raised: 0 16px 40px -14px rgba(16, 24, 31, 0.24);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dark {
+  /* Deep navy world — EXACT Entitlement-Decision register from the prototype
+     (content bg #0B3D5C, surfaces #0e4a6b/#12557a). */
+  --paper: #0b3d5c;
+  --surface: #0e4a6b;
+  --surface-2: #12557a;
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --ink: #e4ebef;
+  --ink-2: #8fa9b8;
+  --ink-3: #6f8598;
+  --line: rgba(255, 255, 255, 0.12);
+  --field: rgba(255, 255, 255, 0.2);
+
+  --rail: #082e47;
+  --rail-ink: #ffffff;
+  --rail-muted: #8fa9b8;
+
+  --brand: #0e5c7a;
+  --brand-strong: #16729a;
+  --brand-ink: #ffffff;
+  --brand-soft: rgba(255, 255, 255, 0.08);
+
+  --signal: #e2a33d;
+  --signal-strong: #efbc64;
+  --signal-ink: #10181f;
+
+  /* On navy, the primary action is gold (matches the Approve CTA) */
+  --action: #e2a33d;
+  --action-ink: #10181f;
+  --accent-ink: #ffffff;
+
+  --plum: #9c86b8;
+  --plum-tint: rgba(156, 134, 184, 0.16);
+
+  --ok: #7fd39c;
+  --warn: #e0a94a;
+  --danger: #e37a7a;
+  --danger-ink: #10181f;
+  --info: #6b9fd6;
+
+  --ring: #e2a33d;
+
+  --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-raised: 0 16px 40px -14px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  /* shadcn semantic names → Layer-2 tokens */
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--action);
+  --color-primary-foreground: var(--action-ink);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--ink-2);
+  --color-accent: var(--brand-soft);
+  --color-accent-foreground: var(--accent-ink);
+  --color-destructive: var(--danger);
+  --color-destructive-foreground: var(--danger-ink);
+  --color-border: var(--line);
+  --color-input: var(--field);
+  --color-ring: var(--ring);
+
+  /* Design-system extensions */
+  --color-surface-2: var(--surface-2);
+  --color-rail: var(--rail);
+  --color-rail-foreground: var(--rail-ink);
+  --color-rail-muted: var(--rail-muted);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-foreground: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-signal: var(--signal);
+  --color-signal-strong: var(--signal-strong);
+  --color-signal-foreground: var(--signal-ink);
+  --color-success: var(--ok);
+  --color-warning: var(--warn);
+  --color-info: var(--info);
+  --color-ink-3: var(--ink-3);
+  --color-surface-hover: var(--surface-hover);
+  --color-plum: var(--plum);
+  --color-plum-tint: var(--plum-tint);
+
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 1px);
+  --radius-xl: calc(var(--radius) + 3px);
+
+  --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  /* ONE family: the "mono" slot maps to Sans so any font-mono utility or
+     legacy .font-data usage renders the single family (with tabular-nums). */
+  --font-mono: var(--font-sans);
+}
+
+/* Default border color = the design token. In @layer base so explicit
+   `border-*` utilities (e.g. border-white/10 on the rail) still win. */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+}
+html {
+  min-width: 320px;
+  background: var(--paper);
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+svg {
+  flex-shrink: 0;
+}
+
+/* Focus is always visible: 2px ring + 2px offset (design-system §9) */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Machine-verifiable data (plates, IDs, amounts) — same family, tabular figures */
+.font-data {
+  font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Uppercase eyebrow / section label — single family, wide tracking */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* ============================================================
+   Scrollbars — thin, token-coloured, floating pill (design-system
+   §5). Replaces the default OS scrollbar app-wide (sidebar nav,
+   dialogs, dropdowns, tables, any overflow panel) so scroll chrome
+   matches the rest of the surface instead of a stock grey control.
+   ============================================================ */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--field) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: var(--field);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--ink-3);
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* The navy rail (sidebar) stays dark chrome in both light and dark
+     themes — the warm `--field` thumb reads as invisible against it,
+     so give it a translucent white thumb instead. */
+  .bg-rail,
+  .bg-rail * {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+  .bg-rail::-webkit-scrollbar-thumb,
+  .bg-rail *::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  .bg-rail::-webkit-scrollbar-thumb:hover,
+  .bg-rail *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

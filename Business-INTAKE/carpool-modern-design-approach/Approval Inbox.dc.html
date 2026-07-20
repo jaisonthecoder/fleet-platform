@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:#F5F3EC; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;">
+  <div style="width:64px;flex:none;background:#0B3D5C;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:8px;">
+    <a href="Home.dc.html" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;text-decoration:none;"><div style="display:flex;gap:2px;"><div style="width:4px;height:16px;background:#E2A33D;"></div><div style="width:4px;height:16px;background:#fff;"></div><div style="width:4px;height:16px;background:#E2A33D;"></div></div></a>
+    <a href="Booking%20%26%20Consent.dc.html" title="Booking &amp; consent" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">BK</a>
+    <a href="Handover%20%26%20Return.dc.html" title="Handover &amp; return" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">HR</a>
+    <a href="Approval%20Inbox.dc.html" title="Approval inbox" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:#E2A33D;color:#10181F;">AP</a>
+    <a href="Entitlement%20Decision.dc.html" title="Entitlement decision" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">EN</a>
+    <a href="Fleet%20Command%20Console.dc.html" title="Command console" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">CC</a>
+    <a href="Fines%20Register.dc.html" title="Fines register" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">FR</a>
+    <a href="Policy%20Engine%20Authoring.dc.html" title="Policy engine" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">PE</a>
+    <div title="Executive dashboard — not yet built" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font:700 12px 'IBM Plex Sans',sans-serif;color:#4d6a7d;">EX</div>
+  </div>
+  <div style="flex:1;background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;min-width:0;">
+
+  <div style="display:flex;flex-direction:column;border-bottom:1px solid #10181F1f;background:#fff;">
+    <div style="padding:10px 48px 0;font:500 12px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">Wayfinder <span style="margin:0 6px;">/</span> Operational <span style="margin:0 6px;">/</span> Approval Inbox</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 48px 20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;"><div style="display:flex;gap:3px;"><div style="width:5px;height:20px;background:#0B3D5C;"></div><div style="width:5px;height:20px;background:#E2A33D;"></div><div style="width:5px;height:20px;background:#0B3D5C;"></div></div>
+      <span style="font:700 18px 'IBM Plex Sans',sans-serif;">Wayfinder</span></a>
+      <span style="font:500 14px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-left:8px;">Line Manager · Sara Al Hashimi</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;background:#0B3D5C0d;border:1px solid #0B3D5C33;padding:8px 14px;border-radius:3px;">
+      <span style="font:700 16px 'IBM Plex Sans',sans-serif;color:#0B3D5C;">{{ pendingCount }}</span>
+      <span style="font-size:14px;color:#5b6572;">pending your decision</span>
+    </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:420px 1fr;flex:1;">
+
+    <!-- Queue -->
+    <div style="background:#fff;border-right:1px solid #10181F1a;overflow-y:auto;">
+      <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+        <div onClick="{{ it.select }}" style="padding:22px 28px;border-bottom:1px solid #10181F14;cursor:pointer;background:{{ it.rowBg }};border-left:4px solid {{ it.rowAccent }};">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+            <span style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:{{ it.typeColor }};">{{ it.type }}</span>
+            <span style="font:13px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">{{ it.age }}</span>
+          </div>
+          <div style="font-size:18px;font-weight:600;margin-bottom:4px;">{{ it.requester }}</div>
+          <div style="font-size:14px;color:#5b6572;">{{ it.summary }}</div>
+          <sc-if value="{{ it.showDecided }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:10px;font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.05em;text-transform:uppercase;color:{{ it.decidedColor }};">{{ it.decidedLabel }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Decision panel -->
+    <div style="padding:48px 56px;overflow-y:auto;">
+      <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:{{ selected.typeColor }};margin-bottom:12px;">{{ selected.type }}</div>
+      <h1 style="font-size:32px;margin:0 0 6px;font-weight:700;">{{ selected.requester }}</h1>
+      <p style="font-size:16px;color:#5b6572;margin:0 0 36px;">{{ selected.summary }}</p>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;margin-bottom:32px;">
+        <sc-for list="{{ selected.facts }}" as="f" hint-placeholder-count="3">
+          <div style="background:#fff;padding:20px 22px;"><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">{{ f.label }}</div><div style="font-size:19px;font-weight:600;">{{ f.value }}</div></div>
+        </sc-for>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">System verdict</div>
+      <div style="background:#fff;border:1px solid #10181F1a;margin-bottom:32px;">
+        <sc-for list="{{ selected.checks }}" as="c" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:14px;padding:16px 22px;border-bottom:1px solid #10181F0f;">
+            <div style="width:22px;height:22px;border-radius:50%;background:{{ c.iconBg }};display:flex;align-items:center;justify-content:center;flex:none;"><span style="color:#fff;font:700 13px 'IBM Plex Sans',sans-serif;">{{ c.icon }}</span></div>
+            <span style="font-size:16px;flex:1;">{{ c.label }}</span>
+            <span style="font:13px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">{{ c.detail }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;background:#0B3D5C0d;border:1px solid #0B3D5C26;padding:14px 18px;border-radius:3px;margin-bottom:36px;font-size:14px;color:#5b6572;">
+        Policy version <span style="font:600 14px 'IBM Plex Sans',sans-serif;color:#0B3D5C;margin-left:4px;">{{ selected.policyVersion }}</span> in force at decision time · SoD-01 verified: you did not raise this request
+      </div>
+
+      <sc-if value="{{ selected.isPending }}" hint-placeholder-val="{{ true }}">
+        <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:12px;">Reason (required to decline)</div>
+        <textarea value="{{ declineReason }}" onChange="{{ setDeclineReason }}" placeholder="Optional unless declining…" style="width:100%;box-sizing:border-box;min-height:80px;padding:14px 16px;font:15px 'IBM Plex Sans',sans-serif;border:1.5px solid #10181F33;border-radius:3px;margin-bottom:28px;resize:vertical;"></textarea>
+
+        <div style="display:flex;gap:14px;">
+          <button onClick="{{ decline }}" disabled="{{ declineDisabled }}" style="flex:1;background:#fff;color:#B33F3F;border:1.5px solid #B33F3F;padding:16px;font:600 16px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Decline</button>
+          <button onClick="{{ approve }}" style="flex:2;background:#0B3D5C;color:#fff;border:none;padding:16px;font:600 16px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Approve</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ selected.isDecided }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;padding:20px 24px;background:{{ selected.decidedBg }};border:1px solid {{ selected.decidedBorder }};border-radius:3px;color:{{ selected.decidedColor }};font-size:17px;font-weight:600;">
+          <span style="width:9px;height:9px;border-radius:50%;background:{{ selected.decidedColor }};"></span>{{ selected.decidedMessage }}
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B3D5C"/><rect x="25" y="30" width="50" height="8" fill="#E2A33D"/><rect x="25" y="46" width="50" height="8" fill="#fff"/><rect x="25" y="62" width="30" height="8" fill="#fff"/></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ITEMS = [
+  {
+    id: 'b1', type: 'Booking', typeColor: '#0B3D5C', requester: 'Fatima Al Suwaidi', age: '12m ago',
+    summary: 'Toyota Camry · Tomorrow, 09:00–13:00',
+    facts: [
+      { label: 'Vehicle', value: 'Toyota Camry · DXB-30541' },
+      { label: 'Window', value: 'Tomorrow, 09:00–13:00' },
+      { label: 'Purpose', value: 'Client site visit' },
+    ],
+    checks: [
+      { label: 'Employment active', icon: '✓', iconBg: '#1F7A4D', detail: 'Oracle HCM' },
+      { label: 'Licence valid', icon: '✓', iconBg: '#1F7A4D', detail: 'exp. 2028' },
+      { label: 'No black-points block', icon: '✓', iconBg: '#1F7A4D', detail: 'clear' },
+      { label: 'Buffer &amp; duration within policy', icon: '✓', iconBg: '#1F7A4D', detail: '10 min buffer ok' },
+    ],
+    policyVersion: 'v4.2',
+  },
+  {
+    id: 'b2', type: 'Booking', typeColor: '#0B3D5C', requester: 'Omar Al Zaabi', age: '38m ago',
+    summary: 'Nissan Patrol · Thu, 08:00–17:00',
+    facts: [
+      { label: 'Vehicle', value: 'Nissan Patrol · AUH-10233' },
+      { label: 'Window', value: 'Thu, 08:00–17:00' },
+      { label: 'Purpose', value: 'Site inspection, Khalifa Port' },
+    ],
+    checks: [
+      { label: 'Employment active', icon: '✓', iconBg: '#1F7A4D', detail: 'Oracle HCM' },
+      { label: 'Licence valid', icon: '✓', iconBg: '#1F7A4D', detail: 'exp. 2027' },
+      { label: 'No black-points block', icon: '✓', iconBg: '#1F7A4D', detail: 'clear' },
+      { label: 'Vehicle insurance', icon: '!', iconBg: '#C1791F', detail: 'expires in 9 days' },
+    ],
+    policyVersion: 'v4.2',
+  },
+  {
+    id: 'e1', type: 'Entitlement', typeColor: '#E2A33D', requester: 'Khalid Al Marzouqi', age: '2h ago',
+    summary: 'Dedicated vehicle request · Grade: Senior Manager',
+    facts: [
+      { label: 'Grade', value: 'Senior Manager' },
+      { label: 'Request type', value: 'Long-term' },
+      { label: 'Cluster', value: 'Ports Cluster' },
+    ],
+    checks: [
+      { label: 'Grade meets threshold', icon: '✓', iconBg: '#1F7A4D', detail: 'D8 decision table' },
+      { label: 'Employment active', icon: '✓', iconBg: '#1F7A4D', detail: 'Oracle HCM' },
+      { label: 'Licence valid', icon: '✓', iconBg: '#1F7A4D', detail: 'exp. 2026' },
+      { label: 'Approval chain', icon: '→', iconBg: '#0B3D5C', detail: 'LM → CFL → Cluster CEO' },
+    ],
+    policyVersion: 'v2.1',
+  },
+  {
+    id: 'b3', type: 'Booking', typeColor: '#0B3D5C', requester: 'Mariam Al Ketbi', age: '1d ago',
+    summary: 'Hyundai H1 · Yesterday, 10:00–13:00',
+    facts: [
+      { label: 'Vehicle', value: 'Hyundai H1 · DXB-55871' },
+      { label: 'Window', value: 'Yesterday, 10:00–13:00' },
+      { label: 'Purpose', value: 'Team transport' },
+    ],
+    checks: [
+      { label: 'Employment active', icon: '✓', iconBg: '#1F7A4D', detail: 'Oracle HCM' },
+      { label: 'Licence valid', icon: '✓', iconBg: '#1F7A4D', detail: 'exp. 2029' },
+      { label: 'No black-points block', icon: '✓', iconBg: '#1F7A4D', detail: 'clear' },
+      { label: 'Buffer &amp; duration within policy', icon: '✓', iconBg: '#1F7A4D', detail: 'within cap' },
+    ],
+    policyVersion: 'v4.1',
+  },
+];
+
+class Component extends DCLogic {
+  state = {
+    selectedId: 'b1',
+    decisions: {},
+    declineReason: '',
+  };
+
+  renderVals() {
+    const s = this.state;
+    const pendingCount = ITEMS.filter(it => !s.decisions[it.id]).length;
+
+    const items = ITEMS.map(it => {
+      const decision = s.decisions[it.id];
+      const isSelected = s.selectedId === it.id;
+      return {
+        id: it.id, type: it.type, typeColor: it.typeColor, requester: it.requester,
+        age: it.age, summary: it.summary,
+        select: () => this.setState({ selectedId: it.id, declineReason: '' }),
+        rowBg: isSelected ? '#0B3D5C0d' : '#fff',
+        rowAccent: isSelected ? '#E2A33D' : 'transparent',
+        showDecided: !!decision,
+        decidedLabel: decision === 'approved' ? '✓ Approved' : decision === 'declined' ? '✕ Declined' : '',
+        decidedColor: decision === 'approved' ? '#1F7A4D' : '#B33F3F',
+      };
+    });
+
+    const src = ITEMS.find(it => it.id === s.selectedId) || ITEMS[0];
+    const decision = s.decisions[src.id];
+
+    const selected = {
+      type: src.type, typeColor: src.typeColor, requester: src.requester, summary: src.summary,
+      facts: src.facts, checks: src.checks, policyVersion: src.policyVersion,
+      isPending: !decision,
+      isDecided: !!decision,
+      decidedBg: decision === 'approved' ? '#1F7A4D14' : '#B33F3F14',
+      decidedBorder: decision === 'approved' ? '#1F7A4D40' : '#B33F3F40',
+      decidedColor: decision === 'approved' ? '#1F7A4D' : '#B33F3F',
+      decidedMessage: decision === 'approved' ? 'Approved — fleet manager notified' : 'Declined — requester notified with reason',
+    };
+
+    return {
+      pendingCount,
+      items,
+      selected,
+      declineReason: s.declineReason,
+      setDeclineReason: (e) => this.setState({ declineReason: e.target.value }),
+      declineDisabled: s.declineReason.trim().length === 0,
+      approve: () => this.setState(st => ({ decisions: { ...st.decisions, [src.id]: 'approved' } })),
+      decline: () => {
+        if (s.declineReason.trim().length === 0) return;
+        this.setState(st => ({ decisions: { ...st.decisions, [src.id]: 'declined' } }));
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# Local development infrastructure for the Fleet Management Platform.
+# Usage: docker compose up -d   (from the repository root)
+name: fleet-platform
+
+services:
+  postgres:
+    image: timescale/timescaledb:latest-pg17
+    container_name: fleet-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fleet
+      POSTGRES_PASSWORD: fleet
+      POSTGRES_DB: fleet
+    ports:
+      # Host 5432 may be taken by another local stack; remapped to 5442.
+      - '5442:5432'
+    volumes:
+      - fleet-pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U fleet -d fleet']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: fleet-redis
+    restart: unless-stopped
+    command: ['redis-server', '--save', '60', '1', '--loglevel', 'warning']
+    ports:
+      - '6379:6379'
+    volumes:
+      - fleet-redisdata:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  fleet-pgdata:
+  fleet-redisdata:

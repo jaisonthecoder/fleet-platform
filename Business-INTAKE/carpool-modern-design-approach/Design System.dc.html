@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <meta name="design_doc_mode" content="canvas">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; background:#F5F3EC; font-family:'IBM Plex Sans',sans-serif; }
+    ::selection { background:#0B3D5C; color:#fff; }
+    a { color:#0B3D5C; }
+    a:hover { color:#0E5C7A; }
+  </style>
+</helmet>
+
+<div style="max-width:1180px;margin:0 auto;padding:72px 48px 140px;color:#10181F;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;border-bottom:3px solid #10181F;padding-bottom:28px;margin-bottom:56px;">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+        <div style="display:flex;gap:3px;">
+          <div style="width:6px;height:22px;background:#0B3D5C;"></div>
+          <div style="width:6px;height:22px;background:#E2A33D;"></div>
+          <div style="width:6px;height:22px;background:#0B3D5C;"></div>
+        </div>
+        <span style="font:600 12px/1 'IBM Plex Mono',monospace;letter-spacing:0.12em;color:#5b6572;text-transform:uppercase;">Design System 01</span>
+      </div>
+      <h1 style="font-size:56px;line-height:1;margin:0;font-weight:700;letter-spacing:-0.01em;">Wayfinder</h1>
+      <p style="font-size:18px;color:#4b5560;margin:14px 0 0;max-width:640px;line-height:1.5;">Visual language for the Carpool &amp; Fleet Management Platform. Operational software for people in motion — a driver at 6am, a fleet manager standing in a yard.</p>
+    </div>
+    <div style="text-align:right;font:500 13px/1.6 'IBM Plex Mono',monospace;color:#5b6572;white-space:nowrap;">
+      v1.0 · Foundation<br>AD Ports Group pilot
+    </div>
+  </div>
+
+  <!-- Philosophy -->
+  <section style="margin-bottom:72px;">
+    <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:#0B3D5C;margin:0 0 20px;">Philosophy</h2>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:#10181F1a;border:1px solid #10181F1a;">
+      <div style="background:#F5F3EC;padding:22px 18px;"><div style="font:600 22px/1 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:10px;">01</div><div style="font-size:14px;font-weight:600;margin-bottom:6px;">The 2-minute booking</div><div style="font-size:12.5px;color:#5b6572;line-height:1.5;">Speed is the feature for drivers.</div></div>
+      <div style="background:#F5F3EC;padding:22px 18px;"><div style="font:600 22px/1 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:10px;">02</div><div style="font-size:14px;font-weight:600;margin-bottom:6px;">Status is never colour alone</div><div style="font-size:12.5px;color:#5b6572;line-height:1.5;">Shape, label and colour together.</div></div>
+      <div style="background:#F5F3EC;padding:22px 18px;"><div style="font:600 22px/1 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:10px;">03</div><div style="font-size:14px;font-weight:600;margin-bottom:6px;">Blocks explain themselves</div><div style="font-size:12.5px;color:#5b6572;line-height:1.5;">Cause and next action, always.</div></div>
+      <div style="background:#F5F3EC;padding:22px 18px;"><div style="font:600 22px/1 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:10px;">04</div><div style="font-size:14px;font-weight:600;margin-bottom:6px;">Speaks the user's job</div><div style="font-size:12.5px;color:#5b6572;line-height:1.5;">A driver's screen isn't an exec's screen.</div></div>
+      <div style="background:#F5F3EC;padding:22px 18px;"><div style="font:600 22px/1 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:10px;">05</div><div style="font-size:14px;font-weight:600;margin-bottom:6px;">Calm by default, loud on exception</div><div style="font-size:12.5px;color:#5b6572;line-height:1.5;">Reserve intensity for what matters.</div></div>
+    </div>
+  </section>
+
+  <!-- Color -->
+  <section style="margin-bottom:72px;">
+    <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:#0B3D5C;margin:0 0 20px;">Color</h2>
+    <p style="font-size:14px;color:#5b6572;max-width:640px;line-height:1.6;margin:0 0 24px;">Three layers: brand input → semantic tokens (derived via color-mix) → components. Components never touch raw values. Status colours stay fixed under every brand — expired insurance must look like danger regardless of theme.</p>
+
+    <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin:0 0 10px;">Brand &amp; neutrals</div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:32px;">
+      <div><div style="height:76px;background:#0B3D5C;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#0B3D5C</div><div style="font-size:11.5px;color:#5b6572;">brand / ink-navy</div></div>
+      <div><div style="height:76px;background:#0E5C7A;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#0E5C7A</div><div style="font-size:11.5px;color:#5b6572;">brand-2 / harbor</div></div>
+      <div><div style="height:76px;background:#E2A33D;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#E2A33D</div><div style="font-size:11.5px;color:#5b6572;">signal / wayfinding accent</div></div>
+      <div><div style="height:76px;background:#10181F;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;color:#10181F;">#10181F</div><div style="font-size:11.5px;color:#5b6572;">ink</div></div>
+      <div><div style="height:76px;background:#F5F3EC;border:1px solid #10181F1a;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#F5F3EC</div><div style="font-size:11.5px;color:#5b6572;">paper</div></div>
+      <div><div style="height:76px;background:#FFFFFF;border:1px solid #10181F1a;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#FFFFFF</div><div style="font-size:11.5px;color:#5b6572;">surface</div></div>
+    </div>
+
+    <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin:0 0 10px;">Status — fixed across every brand</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+      <div><div style="height:76px;background:#1F7A4D;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#1F7A4D</div><div style="font-size:11.5px;color:#5b6572;">ok — compliant, on time</div></div>
+      <div><div style="height:76px;background:#C1791F;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#C1791F</div><div style="font-size:11.5px;color:#5b6572;">warn — expiring, at risk</div></div>
+      <div><div style="height:76px;background:#B33F3F;"></div><div style="font:600 12px 'IBM Plex Mono',monospace;margin-top:8px;">#B33F3F</div><div style="font-size:11.5px;color:#5b6572;">danger — blocked, expired</div></div>
+    </div>
+  </section>
+
+  <!-- Type -->
+  <section style="margin-bottom:72px;">
+    <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:#0B3D5C;margin:0 0 20px;">Typography</h2>
+    <p style="font-size:14px;color:#5b6572;max-width:640px;line-height:1.6;margin:0 0 28px;">IBM Plex Sans for UI and narrative copy. IBM Plex Mono for anything a human verifies character-by-character — plate numbers, IDs, timestamps, costs, policy versions.</p>
+    <div style="border-top:1px solid #10181F1a;">
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 0;border-bottom:1px solid #10181F1a;"><div style="width:90px;font:12px 'IBM Plex Mono',monospace;color:#5b6572;flex:none;">Display / 44</div><div style="font-size:44px;font-weight:700;letter-spacing:-0.01em;">Fleet, governed.</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 0;border-bottom:1px solid #10181F1a;"><div style="width:90px;font:12px 'IBM Plex Mono',monospace;color:#5b6572;flex:none;">Title / 28</div><div style="font-size:28px;font-weight:600;">Dedicated vehicle entitlement</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 0;border-bottom:1px solid #10181F1a;"><div style="width:90px;font:12px 'IBM Plex Mono',monospace;color:#5b6572;flex:none;">Body / 16</div><div style="font-size:16px;line-height:1.6;max-width:520px;">The system speaks the user's job — a driver's screen is not an executive's screen.</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 0;border-bottom:1px solid #10181F1a;"><div style="width:90px;font:12px 'IBM Plex Mono',monospace;color:#5b6572;flex:none;">Mono / 15</div><div style="font:15px 'IBM Plex Mono',monospace;">DXB-42198 · Mulkiya exp 04 AUG 2026 · AED 1,240.00</div></div>
+      <div style="display:flex;align-items:baseline;gap:24px;padding:20px 0;"><div style="width:90px;font:12px 'IBM Plex Mono',monospace;color:#5b6572;flex:none;">Label / 12</div><div style="font:600 12px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;">Booking Reference</div></div>
+    </div>
+  </section>
+
+  <!-- Components -->
+  <section style="margin-bottom:72px;">
+    <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:#0B3D5C;margin:0 0 20px;">Components</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#10181F1a;border:1px solid #10181F1a;">
+
+      <div style="background:#fff;padding:28px;">
+        <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:16px;">Buttons</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button style="background:#0B3D5C;color:#fff;border:none;padding:11px 20px;font:600 14px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Confirm booking</button>
+          <button style="background:transparent;color:#0B3D5C;border:1.5px solid #0B3D5C;padding:10px 19px;font:600 14px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">View details</button>
+          <button style="background:transparent;color:#B33F3F;border:none;padding:11px 4px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;">Decline</button>
+        </div>
+      </div>
+
+      <div style="background:#fff;padding:28px;">
+        <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:16px;">Status pills</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:6px;background:#1F7A4D14;border:1px solid #1F7A4D40;color:#1F7A4D;padding:5px 11px 5px 8px;border-radius:3px;font:600 12px 'IBM Plex Mono',monospace;"><span style="width:7px;height:7px;background:#1F7A4D;"></span>COMPLIANT</div>
+          <div style="display:flex;align-items:center;gap:6px;background:#C1791F14;border:1px solid #C1791F40;color:#C1791F;padding:5px 11px 5px 8px;border-radius:3px;font:600 12px 'IBM Plex Mono',monospace;"><span style="width:7px;height:7px;background:#C1791F;"></span>EXPIRES 12D</div>
+          <div style="display:flex;align-items:center;gap:6px;background:#B33F3F14;border:1px solid #B33F3F40;color:#B33F3F;padding:5px 11px 5px 8px;border-radius:3px;font:600 12px 'IBM Plex Mono',monospace;"><span style="width:7px;height:7px;background:#B33F3F;"></span>BLOCKED</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;padding:28px;grid-column:1 / -1;">
+        <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:16px;">Availability strip — berth occupancy motif</div>
+        <div style="display:flex;gap:3px;height:34px;">
+          <div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#C1791F;"></div><div style="flex:1;background:#B33F3F;"></div><div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#0B3D5C;"></div><div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#1F7A4D;"></div><div style="flex:1;background:#C1791F;"></div><div style="flex:1;background:#1F7A4D;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font:12px 'IBM Plex Mono',monospace;color:#5b6572;margin-top:8px;"><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+      </div>
+
+      <div style="background:#fff;padding:28px;">
+        <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:16px;">Signal bar — active/selected</div>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#0B3D5C0d;border-left:4px solid #E2A33D;"><span style="font:600 14px 'IBM Plex Sans',sans-serif;">Dedicated vehicles</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-left:4px solid transparent;"><span style="font:14px 'IBM Plex Sans',sans-serif;color:#5b6572;">Bookings</span></div>
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-left:4px solid transparent;"><span style="font:14px 'IBM Plex Sans',sans-serif;color:#5b6572;">Compliance</span></div>
+        </div>
+      </div>
+
+      <div style="background:#fff;padding:28px;">
+        <div style="font:600 11px/1 'IBM Plex Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:16px;">Data row (monospace)</div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #10181F14;font:14px 'IBM Plex Sans',sans-serif;">
+          <span>Toyota Land Cruiser</span><span style="font:14px 'IBM Plex Mono',monospace;color:#5b6572;">DXB-42198</span><span style="font:14px 'IBM Plex Mono',monospace;">AED 0.84/km</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;font:14px 'IBM Plex Sans',sans-serif;">
+          <span>Nissan Patrol</span><span style="font:14px 'IBM Plex Mono',monospace;color:#5b6572;">AUH-10233</span><span style="font:14px 'IBM Plex Mono',monospace;">AED 1.02/km</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Registers -->
+  <section>
+    <h2 style="font:600 13px/1 'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:#0B3D5C;margin:0 0 20px;">Three registers, deliberately</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div style="background:#F5F3EC;border:1px solid #10181F1a;padding:24px;">
+        <div style="font:700 15px/1 'IBM Plex Sans',sans-serif;margin-bottom:8px;">Calm</div>
+        <div style="font-size:13px;color:#5b6572;line-height:1.6;">Booking pages. Drivers need speed — generous whitespace, one clear action, minimal chrome.</div>
+      </div>
+      <div style="background:#10181F;color:#fff;border:1px solid #10181F;padding:24px;">
+        <div style="font:700 15px/1 'IBM Plex Sans',sans-serif;margin-bottom:8px;">Theatrical</div>
+        <div style="font-size:13px;color:#b8bfc7;line-height:1.6;">The command console. A control room earns density — radar plots, live tickers, dark surfaces.</div>
+      </div>
+      <div style="background:#0B3D5C;color:#fff;border:1px solid #0B3D5C;padding:24px;">
+        <div style="font:700 15px/1 'IBM Plex Sans',sans-serif;margin-bottom:8px;">Cinematic</div>
+        <div style="font-size:13px;color:#cddce5;line-height:1.6;">Executive view. Boardroom screens — large numbers, restrained motion, one story per screen.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B3D5C"/><rect x="30" y="15" width="8" height="70" fill="#E2A33D"/><text x="50" y="94" font-size="10" fill="#fff" text-anchor="middle" font-family="monospace">DS</text></svg></template>
+
+</x-dc>
+</body>
+</html>

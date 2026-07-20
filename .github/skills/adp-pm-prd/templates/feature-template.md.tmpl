@@ -1,0 +1,113 @@
+# {{US-ID}} — {{title}}
+
+**Story ID:** {{US-ID}}
+**Title:** {{title}}
+**Owner:** TBD
+**Priority:** TBD <!-- Must / Should / Could / Won't -->
+**BR mapping:** BR-TBD
+**PRD index:** `docs/02-product/PRD/prd.md`
+**Scope type:** TBD <!-- backend/API | UI | full-stack | non-API/non-UI -->
+**Status:** Draft
+
+## 1. Story
+
+As a **{{persona}}**, I want **{{capability}}**, so that **{{outcome}}**.
+
+## 2. Acceptance Criteria
+
+Use stable scenario IDs. Do not renumber existing IDs.
+
+### {{US-ID}}.1 — Happy path
+Given …
+When …
+Then …
+
+### {{US-ID}}.2 — Edge case
+Given …
+When …
+Then …
+
+### {{US-ID}}.3 — Edge case
+Given …
+When …
+Then …
+
+### {{US-ID}}.4 — Error path
+Given …
+When …
+Then …
+
+## 3. API Validation
+
+Use this section for backend/API story scope verification. State `not applicable` with rationale if no backend/API behavior is expected.
+
+```bash
+curl -i -X POST "https://example.test/api/resource" \
+  -H "Content-Type: application/json" \
+  -d '{"example":"value"}'
+```
+
+**Expected status:** `201 Created`
+**Expected response fields:** `id`, `status`, `createdAt`
+**Evidence placeholder:** TBD
+
+## 4. UI Validation
+
+Use this section for UI story scope verification. State `not applicable` with rationale if no UI behavior is expected.
+
+```ts
+test('{{US-ID}} primary journey', async ({ page }) => {
+  await page.goto('/target-page');
+  await page.getByRole('button', { name: /submit/i }).click();
+  await expect(page.getByText(/success/i)).toBeVisible();
+});
+```
+
+**Evidence placeholder:** TBD
+
+## 5. User Story Scope Verification
+
+Complete this before marking the story ready for QA or done.
+
+- [ ] This story has its own file and is linked from `docs/02-product/PRD/prd.md`.
+- [ ] Scope type is identified as backend/API, UI, full-stack, or non-API/non-UI.
+- [ ] Backend/API scope is verified with `curl` when the scope type includes backend/API, or marked not applicable with rationale.
+- [ ] UI scope is verified with Playwright when the scope type includes UI, or marked not applicable with rationale.
+- [ ] Full-stack scope includes both backend/API `curl` and UI Playwright verification.
+- [ ] Non-API/non-UI scope includes an alternate evidence path.
+- [ ] Acceptance criteria IDs match the test evidence rows below.
+- [ ] Evidence placeholders contain command output, test run links, screenshots, CI links, or an explicit pending status.
+
+## 6. Implementation Validation Checklist
+
+- [ ] Story maps to one or more BRs.
+- [ ] Acceptance criteria are implemented.
+- [ ] API validation executed or marked not applicable with rationale.
+- [ ] UI validation executed or marked not applicable with rationale.
+- [ ] NFRs met or exceptions documented.
+- [ ] Security, data residency, accessibility, and operational resilience checks completed where applicable.
+- [ ] Out-of-scope manual processes were not turned into unsupported application features.
+
+## 7. Story-Specific NFRs
+
+| ID | Category | Target | Measurement method | Owner | Evidence / test target |
+|----|----------|--------|--------------------|-------|------------------------|
+| NFR-{{US-ID}}-001 | TBD | TBD | TBD | TBD | TBD |
+
+## 8. Dependencies
+
+- TBD
+
+## 9. Out of Scope
+
+- TBD
+
+## 10. Test Evidence
+
+| Check | Status | Evidence / link | Owner | Date |
+|-------|--------|-----------------|-------|------|
+| API `curl` scope verification | Not run / N/A | TBD | TBD | TBD |
+| UI Playwright scope verification | Not run / N/A | TBD | TBD | TBD |
+| Automated tests | Not run | TBD | TBD | TBD |
+| NFR validation | Not run | TBD | TBD | TBD |
+| Review sign-off | Not started | TBD | TBD | TBD |

@@ -1,0 +1,104 @@
+name: app-api CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - 'app-api/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - '.github/workflows/api-ci.yml'
+
+jobs:
+  app-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type-check
+        run: pnpm --filter fleet-platform-api typecheck
+
+      - name: Lint
+        run: pnpm --filter fleet-platform-api lint
+
+      - name: Module boundaries (dependency-cruiser)
+        run: pnpm --filter fleet-platform-api depcruise
+
+      - name: Guard dormant organization_id (ADR-008)
+        run: pnpm --filter fleet-platform-api guard:org
+
+      - name: Guard contract drift
+        run: pnpm --filter fleet-platform-api guard:contracts
+
+      - name: Unit tests
+        run: pnpm --filter fleet-platform-api test
+
+      - name: E2E tests
+        run: pnpm --filter fleet-platform-api test:e2e
+
+      - name: Build
+        run: pnpm --filter fleet-platform-api build
+
+  # DB-backed correctness gates: migrations apply cleanly + integration suites
+  # (audit hash chain, PDP cache, outbox/inbox DLQ replay, PDP latency floor).
+  app-api-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg17
+        env:
+          POSTGRES_USER: fleet
+          POSTGRES_PASSWORD: fleet
+          POSTGRES_DB: fleet
+        ports:
+          - 5442:5432
+        options: >-
+          --health-cmd "pg_isready -U fleet -d fleet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://fleet:fleet@localhost:5442/fleet
+      REDIS_URL: redis://localhost:6379
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Migration test (fresh forward apply + object presence + idempotency)
+        run: pnpm --filter fleet-platform-api migration:test
+
+      - name: Integration tests (DB + Redis)
+        run: pnpm --filter fleet-platform-api test:integration

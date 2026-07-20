@@ -1,0 +1,16 @@
+# React Component Skeleton
+
+Use with `adp-fend-react-component`. Replace placeholders before use and keep AD Ports tenant, security, observability, and test evidence requirements visible in the implementation.
+
+```
+import type { ReactNode } from 'react';
+
+type <ComponentName>Props = {
+  children?: ReactNode;
+  tenantId: string;
+};
+
+export function <ComponentName>({ children }: <ComponentName>Props) {
+  return <section>{children}</section>;
+}
+```

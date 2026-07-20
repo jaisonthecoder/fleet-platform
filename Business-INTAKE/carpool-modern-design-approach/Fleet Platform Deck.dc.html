@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; }
+  </style>
+</helmet>
+
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+<section data-label="Title" data-screen-label="01" data-speaker-notes="Welcome. This deck tells the whole story: the problem, the solution, the architecture, the phased delivery plan, and what's built so far." style="background:#0B3D5C;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:100px 120px;">
+  <div style="display:flex;gap:5px;margin-bottom:44px;">
+    <div style="width:10px;height:40px;background:#E2A33D;"></div>
+    <div style="width:10px;height:40px;background:#fff;"></div>
+    <div style="width:10px;height:40px;background:#E2A33D;"></div>
+  </div>
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.14em;text-transform:uppercase;color:#E2A33D;margin-bottom:28px;">Carpool &amp; Fleet Management Platform</div>
+  <h1 style="font-size:120px;line-height:0.98;margin:0;font-weight:700;letter-spacing:-0.01em;">Wayfinder</h1>
+  <p style="font-size:34px;color:#cddce5;margin:40px 0 0;max-width:1200px;line-height:1.5;">A group-wide, AI-enabled fleet platform — built for AD Ports Group, designed as a reusable product for any organization.</p>
+  <div style="margin-top:64px;font:500 26px/1 'IBM Plex Mono',monospace;color:#8fa9b8;">Reference client: AD Ports Group · Pilot: GS Pool, Mina Zayed</div>
+</section>
+
+<section data-label="The Problem" data-screen-label="02" data-speaker-notes="300+ vehicles, one pool with any system at all. Everything else is email, phone calls, walk-ins. When a fine arrives nobody can prove who was driving." style="background:#F5F3EC;color:#10181F;display:flex;padding:100px 120px;gap:100px;">
+  <div style="flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;">
+    <div style="font:700 220px/0.9 'IBM Plex Mono',monospace;color:#0B3D5C;">300+</div>
+    <div style="font:600 30px/1.3 'IBM Plex Sans',sans-serif;color:#5b6572;margin-top:16px;max-width:420px;">vehicles across clusters, sites and geographies. Exactly one pool runs any booking system.</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:0;border-top:2px solid #10181F;">
+    <div style="display:flex;align-items:center;gap:28px;padding:26px 0;border-bottom:1px solid #10181F26;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;width:50px;">01</div><div style="font-size:26px;line-height:1.4;">Vehicle inventory lives in scattered spreadsheets of inconsistent quality.</div></div>
+    <div style="display:flex;align-items:center;gap:28px;padding:26px 0;border-bottom:1px solid #10181F26;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;width:50px;">02</div><div style="font-size:26px;line-height:1.4;">When a fine arrives, nobody can reliably prove who was driving — so it can't be recovered.</div></div>
+    <div style="display:flex;align-items:center;gap:28px;padding:26px 0;border-bottom:1px solid #10181F26;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;width:50px;">03</div><div style="font-size:26px;line-height:1.4;">Registration and insurance expire unnoticed. Executive car approvals live in email chains.</div></div>
+    <div style="display:flex;align-items:center;gap:28px;padding:26px 0;border-bottom:1px solid #10181F26;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;width:50px;">04</div><div style="font-size:26px;line-height:1.4;">Every new entity the group opens recreates the same mess from zero.</div></div>
+  </div>
+</section>
+
+<section data-label="Where the Cost Sits" data-screen-label="03" data-speaker-notes="Five places the cost hides today, none of them visible in any single report." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Cost &amp; Risk</div>
+  <h2 style="font-size:64px;margin:0 0 64px;font-weight:700;max-width:1100px;">Where the cost sits</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#fff;padding:40px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font-size:30px;font-weight:600;line-height:1.35;">Avoidable lease &amp; depreciation on under-used vehicles no one challenges</div></div>
+    <div style="background:#fff;padding:40px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font-size:30px;font-weight:600;line-height:1.35;">Fines, tolls and damages that can't be attributed — and so can't be recovered</div></div>
+    <div style="background:#fff;padding:40px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font-size:30px;font-weight:600;line-height:1.35;">Compliance lapses discovered only after the fact</div></div>
+    <div style="background:#fff;padding:40px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font-size:30px;font-weight:600;line-height:1.35;">Management time consumed reconciling spreadsheets</div></div>
+    <div style="background:#fff;padding:40px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font-size:30px;font-weight:600;line-height:1.35;">The same fragmented pattern recreated at every new entity</div></div>
+  </div>
+</section>
+
+<section data-label="The Solution" data-screen-label="04" data-speaker-notes="This is the one-sentence version of the whole platform. Everything else in this deck expands one clause of it." style="background:#0B3D5C;color:#fff;display:flex;align-items:center;justify-content:center;padding:100px 160px;">
+  <div style="font-size:56px;line-height:1.4;font-weight:600;max-width:1500px;text-align:left;">A group-wide, role-based, AI-enabled fleet platform that replaces manual inventory and partial booking, governs entitlement for dedicated vehicles up to <span style="color:#E2A33D;">Cluster CEO</span>, enforces <span style="color:#E2A33D;">driver accountability</span> for fines, tolls and damages, and gives management a <span style="color:#E2A33D;">real-time view</span> of utilisation, cost and risk across every cluster.</div>
+</section>
+
+<section data-label="Business Outcomes" data-screen-label="05" data-speaker-notes="These are the funded outcomes — why the business sponsors this. Eight of twelve shown; the full register runs to O12." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Why It's Funded</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;">Business outcomes</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;">
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O1</div><div style="font-size:24px;font-weight:600;line-height:1.35;">Single governed group-wide vehicle master</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O2</div><div style="font-size:24px;font-weight:600;line-height:1.35;">Driver accountability via mandatory digital consent</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O3</div><div style="font-size:24px;font-weight:600;line-height:1.35;">Real-time visibility at pool, cluster and group level</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O4</div><div style="font-size:24px;font-weight:600;line-height:1.35;">Automated compliance alerting and hard blocks</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O6</div><div style="font-size:24px;font-weight:600;line-height:1.35;">Structured entitlement workflow to Cluster CEO</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O7</div><div style="font-size:24px;font-weight:600;line-height:1.35;">AI detection of cost outliers and anomalies</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O9</div><div style="font-size:24px;font-weight:600;line-height:1.35;">ESG metrics — fuel, CO₂, EV/hybrid penetration</div></div>
+    <div style="background:#fff;padding:32px 28px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;margin-bottom:14px;">O12</div><div style="font-size:24px;font-weight:600;line-height:1.35;">Attributed costs actually recovered, not just recorded</div></div>
+  </div>
+</section>
+
+<section data-label="Scope" data-screen-label="06" data-speaker-notes="Clear boundary: heavy equipment, buses, licence issuance and payroll execution stay out. Jurisdiction concepts like Mulkiya and Salik are configurable, not hard-coded." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Boundaries</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;">What's in, what's out</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;">
+    <div>
+      <div style="font:700 24px/1 'IBM Plex Mono',monospace;color:#1F7A4D;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px;">In scope</div>
+      <div style="font-size:28px;line-height:2.1;color:#10181F;">Vehicle master &amp; lifecycle · org hierarchy · self-service booking · dedicated-vehicle entitlements · handover &amp; damage capture · driver eligibility · telematics · fines &amp; cost recovery · tolls · fuel &amp; fuel cards · vendor &amp; lease management · key custody · behaviour scoring · AI optimisation · ESG · audit · public API</div>
+    </div>
+    <div>
+      <div style="font:700 24px/1 'IBM Plex Mono',monospace;color:#B33F3F;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:24px;">Out of scope</div>
+      <div style="font-size:28px;line-height:2.1;color:#10181F;">Heavy equipment — cranes, RTGs (EAM systems) · fixed-route shuttle buses · driver licence issuance (validated only) · physical workshop execution · Oracle finance modules · payroll execution (platform raises the instruction; payroll executes)</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="Capability Architecture" data-screen-label="07" data-speaker-notes="Fifteen capability domains. C8 telematics moved into Phase 1 because plug-and-play OBD-II trackers changed the calculus." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Architecture</div>
+  <h2 style="font-size:64px;margin:0 0 48px;font-weight:700;">15 capability domains</h2>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C1</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Fleet Master &amp; Lifecycle</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C2</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Carpool Booking &amp; Allocation</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C3</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Dedicated Vehicle Entitlements</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C4</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Handover, Return &amp; Damage</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C5</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Replacement &amp; Substitute Drivers</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C6</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Eligibility &amp; Compliance Alerts</div></div>
+    <div style="background:#0B3D5C;color:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C7</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Fines, Black Points &amp; Recovery</div></div>
+    <div style="background:#0B3D5C;color:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C8</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Telematics &amp; Live Tracking</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C9</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Fuel, Fuel Cards &amp; Cost</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C10</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Behaviour Scoring</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C11</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">AI Optimisation &amp; Right-Sizing</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C12</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">ESG &amp; Sustainability</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C13</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Vendor &amp; Lease Contracts</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C14</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Toll Management</div></div>
+    <div style="background:#fff;padding:20px 22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">C15</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Key &amp; Asset Custody</div></div>
+  </div>
+</section>
+
+<section data-label="Platform Foundations" data-screen-label="08" data-speaker-notes="Eleven foundations underpin all fifteen capabilities. The policy engine is the one that makes this a product rather than a one-off build." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Architecture</div>
+  <h2 style="font-size:64px;margin:0 0 48px;font-weight:700;">Platform foundations</h2>
+  <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#0B3D5C;color:#fff;padding:32px 30px;grid-row:span 2;display:flex;flex-direction:column;justify-content:center;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">P3</div><div style="font-size:30px;font-weight:700;margin-top:14px;line-height:1.3;">Policy &amp; Configuration Engine</div><div style="font-size:24px;color:#cddce5;margin-top:14px;line-height:1.5;">The crown jewel — every rule lives in configuration, never in code.</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P1</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Multi-tenancy</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P2</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Identity, SSO &amp; Access</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P4</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Workflow &amp; Approval Engine</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P5</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Vehicle Data Model</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P6</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Integrations Map</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P7</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Data Migration &amp; Quality</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P8</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Public API</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P9</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Notifications &amp; Alerting</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P10</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Audit &amp; Overrides</div></div>
+    <div style="background:#fff;padding:24px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">P11</div><div style="font-size:24px;font-weight:600;margin-top:8px;line-height:1.3;">Reporting &amp; Analytics</div></div>
+  </div>
+</section>
+
+<section data-label="The Policy Engine" data-screen-label="09" data-speaker-notes="PAP/PDP/PEP is the industry-standard separation behind XACML and DMN. The hard constraint is 200ms and fail-safe, never fail-open." style="background:#0B3D5C;color:#fff;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#E2A33D;margin-bottom:20px;">The Crown Jewel</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;color:#fff;">A product, not a project</h2>
+  <div style="display:flex;gap:2px;background:#ffffff26;flex:1;">
+    <div style="flex:1;background:#0e4a6b;padding:36px 32px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">PAP</div><div style="font-size:26px;font-weight:700;margin-top:16px;">Admin authors rules</div><div style="font-size:24px;color:#cddce5;margin-top:16px;line-height:1.55;">Business-readable decision tables. Testable, diffable, versioned.</div></div>
+    <div style="flex:1;background:#0e4a6b;padding:36px 32px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">PDP</div><div style="font-size:26px;font-weight:700;margin-top:16px;">One decision service</div><div style="font-size:24px;color:#cddce5;margin-top:16px;line-height:1.55;"><span style="font-family:'IBM Plex Mono',monospace;">evaluate(ruleType, context) → decision, reasons, version</span></div></div>
+    <div style="flex:1;background:#0e4a6b;padding:36px 32px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">PEP</div><div style="font-size:26px;font-weight:700;margin-top:16px;">Modules enforce, never author</div><div style="font-size:24px;color:#cddce5;margin-top:16px;line-height:1.55;">Booking, entitlements, compliance gate, fines — they read answers, never contain rule logic.</div></div>
+  </div>
+  <div style="display:flex;gap:56px;margin-top:44px;font:600 24px 'IBM Plex Mono',monospace;color:#E2A33D;">
+    <div>&lt; 200ms decision latency</div>
+    <div>fails safe — deny + escalate, never fail open</div>
+  </div>
+</section>
+
+<section data-label="Three Non-Retrofittable Rules" data-screen-label="10" data-speaker-notes="These cost almost nothing to build now and are practically impossible to bolt on after Phase 1 ships." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Architecture</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;max-width:1400px;">Three rules that cannot be retrofitted</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#fff;padding:40px 34px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">FR-ARC-01</div><div style="font-size:28px;font-weight:700;margin-top:18px;">Tenant-ready data model</div><div style="font-size:24px;color:#5b6572;margin-top:16px;line-height:1.55;">Every entity carries a tenant key from day one. Phase 1 runs single-tenant; no table assumes it stays that way.</div></div>
+    <div style="background:#fff;padding:40px 34px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">FR-ARC-02</div><div style="font-size:28px;font-weight:700;margin-top:18px;">Generic hierarchy engine</div><div style="font-size:24px;color:#5b6572;margin-top:16px;line-height:1.55;">N-level configurable tree — deployed as Cluster → Pool → Location. Another org configures Company → Region → Branch.</div></div>
+    <div style="background:#fff;padding:40px 34px;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">FR-ARC-03</div><div style="font-size:28px;font-weight:700;margin-top:18px;">Rules in configuration, not code</div><div style="font-size:24px;color:#5b6572;margin-top:16px;line-height:1.55;">No AD Ports threshold, chain or buffer is ever hard-coded into the system.</div></div>
+  </div>
+</section>
+
+<section data-label="Non-Negotiables" data-screen-label="11" data-speaker-notes="These four hold regardless of phase or client. No consent, no booking. No override on expired documents. Structural SoD. AI flags, humans decide." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Governance</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;">Non-negotiables</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#fff;padding:32px 34px;"><div style="font-size:26px;font-weight:700;color:#0B3D5C;">Digital consent</div><div style="font-size:24px;color:#5b6572;margin-top:12px;line-height:1.55;">No consent, no booking number, no allocation — ever. Bound to driver, vehicle, window and policy version.</div></div>
+    <div style="background:#fff;padding:32px 34px;"><div style="font-size:26px;font-weight:700;color:#B33F3F;">Hard blocks</div><div style="font-size:24px;color:#5b6572;margin-top:12px;line-height:1.55;">No booking on expired registration or insurance — no override, structurally enforced.</div></div>
+    <div style="background:#fff;padding:32px 34px;"><div style="font-size:26px;font-weight:700;color:#0B3D5C;">Segregation of duties</div><div style="font-size:24px;color:#5b6572;margin-top:12px;line-height:1.55;">8 structural rules — never approve your own booking; Finance and Fleet Manager never co-held on one scope.</div></div>
+    <div style="background:#fff;padding:32px 34px;"><div style="font-size:26px;font-weight:700;color:#0B3D5C;">AI guardrails</div><div style="font-size:24px;color:#5b6572;margin-top:12px;line-height:1.55;">AI flags, humans decide. No AI output autonomously executes a blocking or disciplinary action.</div></div>
+  </div>
+</section>
+
+<section data-label="Delivery Roadmap" data-screen-label="12" data-speaker-notes="Four phases, each independently valuable. Phase 1 is a working booking and accountability platform on its own." style="background:#0B3D5C;color:#fff;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#E2A33D;margin-bottom:20px;">Delivery</div>
+  <h2 style="font-size:64px;margin:0 0 64px;font-weight:700;color:#fff;">Four phases, each valuable alone</h2>
+  <div style="display:flex;gap:2px;flex:1;background:#ffffff26;">
+    <div style="flex:1;background:#0e4a6b;padding:36px 28px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">PHASE 0</div><div style="font-size:26px;font-weight:700;margin-top:14px;">Foundation</div><div style="font-size:24px;color:#cddce5;margin-top:14px;line-height:1.5;">Multi-tenancy scaffold, identity/SSO, policy &amp; workflow engines, audit log — nothing user-facing.</div></div>
+    <div style="flex:1;background:#E2A33D;color:#10181F;padding:36px 28px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;">PHASE 1</div><div style="font-size:26px;font-weight:700;margin-top:14px;">Foundation MVP</div><div style="font-size:24px;margin-top:14px;line-height:1.5;">Prove the loop at GS Pool — booking, entitlements, handover, compliance, fines, GPS.</div></div>
+    <div style="flex:1;background:#0e4a6b;padding:36px 28px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">PHASE 2</div><div style="font-size:26px;font-weight:700;margin-top:14px;">Scale &amp; Automate</div><div style="font-size:24px;color:#cddce5;margin-top:14px;line-height:1.5;">Group-wide rollout, mobile app, OCR, tolls, vendor &amp; lease, behaviour scoring.</div></div>
+    <div style="flex:1;background:#0e4a6b;padding:36px 28px;display:flex;flex-direction:column;"><div style="font:700 26px 'IBM Plex Mono',monospace;color:#E2A33D;">PHASE 3</div><div style="font-size:26px;font-weight:700;margin-top:14px;">Intelligence &amp; International</div><div style="font-size:24px;color:#cddce5;margin-top:14px;line-height:1.5;">AI optimisation, predictive maintenance, ESG, international rollout.</div></div>
+  </div>
+</section>
+
+<section data-label="Phase 1 — MVP" data-screen-label="13" data-speaker-notes="Ten modules, success defined as GS Pool fully off Mehwar with the KPIs met. GPS moved into Phase 1 because trackers are now genuinely plug-and-play." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:44px;">
+    <div>
+      <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Phase 1</div>
+      <h2 style="font-size:60px;margin:0;font-weight:700;">Prove the loop at GS Pool</h2>
+    </div>
+    <div style="text-align:right;font-size:24px;color:#5b6572;max-width:420px;line-height:1.5;">Book → consent → approve → hand over → return → fine pinned to driver → nothing runs on expired documents.</div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M1</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Platform base</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M2</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Vehicle master</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M3</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Data migration</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M4</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Booking</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M5</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Dedicated vehicles</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M6</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Handover &amp; return</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M7</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Compliance engine</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M8</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Fines &amp; black points</div></div>
+    <div style="background:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M9</div><div style="font-size:24px;font-weight:600;margin-top:8px;">Dashboards</div></div>
+    <div style="background:#0B3D5C;color:#fff;padding:22px;"><div style="font:700 24px 'IBM Plex Mono',monospace;color:#E2A33D;">M10</div><div style="font-size:24px;font-weight:600;margin-top:8px;">GPS &amp; telematics</div></div>
+  </div>
+  <div style="margin-top:28px;font:600 24px 'IBM Plex Mono',monospace;color:#B33F3F;">Go-live gate: ≥ 90% tracker coverage at the pilot pool</div>
+</section>
+
+<section data-label="Phase 2 & Phase 3" data-screen-label="14" data-speaker-notes="Phase 2 automates what Phase 1 proved. Phase 3 makes it intelligent and takes it international." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Beyond MVP</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;">Scale, then get smart</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;">
+    <div>
+      <div style="font:700 24px 'IBM Plex Mono',monospace;color:#0B3D5C;letter-spacing:0.06em;margin-bottom:20px;">PHASE 2 — SCALE &amp; AUTOMATE</div>
+      <div style="font-size:24px;line-height:2.0;">Group-wide UAE rollout · mobile app, offline capture · CV-ready damage photos · OCR fuel invoices &amp; fuel cards · toll management · replacement/substitute self-service · vendor &amp; lease management · behaviour scoring · payroll recovery · route-replay &amp; geofencing · public API v1</div>
+    </div>
+    <div>
+      <div style="font:700 24px 'IBM Plex Mono',monospace;color:#0B3D5C;letter-spacing:0.06em;margin-bottom:20px;">PHASE 3 — INTELLIGENCE &amp; INTERNATIONAL</div>
+      <div style="font-size:24px;line-height:2.0;">AI optimisation &amp; right-sizing · predictive maintenance · anomaly &amp; fraud detection · driver risk scoring · AI copilot · computer-vision damage comparison · ESG reporting · international rollout, jurisdiction packs, multi-tenant hardening</div>
+    </div>
+  </div>
+</section>
+
+<section data-label="Year 1 KPI Targets" data-screen-label="15" data-speaker-notes="These are the numbers Phase 1 is held to. Zero trips on expired documents is a hard requirement, not an aspiration." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Accountability</div>
+  <h2 style="font-size:64px;margin:0 0 56px;font-weight:700;">Year 1 KPI targets</h2>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:#10181F1a;border:1px solid #10181F1a;flex:1;">
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">98%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Inventory completeness</div></div>
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">90%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Booking adoption</div></div>
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">95%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Entitlements in-platform</div></div>
+    <div style="background:#B33F3F;color:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;">0</div><div style="font-size:24px;margin-top:10px;">Trips on expired documents</div></div>
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">95%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Fines attribution rate</div></div>
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">80%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Recovery rate, 90 days</div></div>
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">90%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Cost-per-km transparency</div></div>
+    <div style="background:#fff;padding:32px 28px;display:flex;flex-direction:column;justify-content:flex-end;"><div style="font:700 68px 'IBM Plex Mono',monospace;color:#0B3D5C;">100%</div><div style="font-size:24px;color:#5b6572;margin-top:10px;">Lease expiries actioned before expiry</div></div>
+  </div>
+</section>
+
+<section data-label="Risks & Decisions" data-screen-label="16" data-speaker-notes="Top risks and the decisions blocking Phase 1 build — each has a named owner." style="background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:20px;">Governance</div>
+  <h2 style="font-size:64px;margin:0 0 48px;font-weight:700;">Top risks, and what's blocking Phase 1</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;flex:1;">
+    <div>
+      <div style="font:700 24px 'IBM Plex Mono',monospace;color:#B33F3F;letter-spacing:0.06em;margin-bottom:20px;">RISKS · LIKELIHOOD / IMPACT</div>
+      <div style="display:flex;flex-direction:column;">
+        <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #10181F26;font-size:24px;"><span>Inventory data quality on migration</span><span style="font:600 24px 'IBM Plex Mono',monospace;color:#B33F3F;">H / H</span></div>
+        <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #10181F26;font-size:24px;"><span>Open policy decisions block Phase 1 build</span><span style="font:600 24px 'IBM Plex Mono',monospace;color:#B33F3F;">H / H</span></div>
+        <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #10181F26;font-size:24px;"><span>Telematics APIs unavailable on leased vehicles</span><span style="font:600 24px 'IBM Plex Mono',monospace;color:#C1791F;">H / M</span></div>
+        <div style="display:flex;justify-content:space-between;padding:16px 0;font-size:24px;"><span>Resistance from entity-level fleet teams</span><span style="font:600 24px 'IBM Plex Mono',monospace;color:#C1791F;">M / H</span></div>
+      </div>
+    </div>
+    <div>
+      <div style="font:700 24px 'IBM Plex Mono',monospace;color:#0B3D5C;letter-spacing:0.06em;margin-bottom:20px;">BLOCKING DECISIONS · OWNER</div>
+      <div style="display:flex;flex-direction:column;">
+        <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #10181F26;font-size:24px;"><span>D8 — Dedicated-vehicle eligibility policy</span><span style="color:#5b6572;">Group HR / Cluster CEOs</span></div>
+        <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #10181F26;font-size:24px;"><span>D7 — Consent wording (EN + AR)</span><span style="color:#5b6572;">Legal</span></div>
+        <div style="display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid #10181F26;font-size:24px;"><span>D13 — Recovery mechanism &amp; waiver authority</span><span style="color:#5b6572;">HR / Legal / Finance</span></div>
+        <div style="display:flex;justify-content:space-between;padding:16px 0;font-size:24px;"><span>D9 — Black-point transfer timeframe</span><span style="color:#5b6572;">Group HR / Legal</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-label="Closing" data-screen-label="17" data-speaker-notes="We've defined the Wayfinding visual language and are building the screen set next: booking, handover, approvals, entitlement, command console, executive view, fines register, and policy authoring." style="background:#0B3D5C;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:100px 120px;">
+  <div style="font:600 24px/1 'IBM Plex Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#E2A33D;margin-bottom:28px;">Next</div>
+  <h2 style="font-size:60px;margin:0 0 48px;font-weight:700;max-width:1300px;">Wayfinding — the visual language for every screen in this platform</h2>
+  <div style="font-size:26px;line-height:1.6;color:#cddce5;max-width:1300px;">Calm for the booking page a driver needs to move through fast. Theatrical for the command console a control room earns. Cinematic for the boardroom. Eight screens across those three registers are next: booking &amp; consent, handover &amp; return, approvals, entitlement decisions, the command console, the executive dashboard, the fines register, and policy authoring.</div>
+</section>
+
+</x-import>
+
+</x-dc>
+</body>
+</html>

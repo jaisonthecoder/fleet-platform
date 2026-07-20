@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:#F5F3EC; }
+    a { text-decoration:none; color:inherit; }
+    a:hover { color:inherit; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;">
+  <div style="width:64px;flex:none;background:#0B3D5C;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:8px;">
+    <a href="Home.dc.html" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;text-decoration:none;"><div style="display:flex;gap:2px;"><div style="width:4px;height:16px;background:#E2A33D;"></div><div style="width:4px;height:16px;background:#fff;"></div><div style="width:4px;height:16px;background:#E2A33D;"></div></div></a>
+    <a href="Booking%20%26%20Consent.dc.html" title="Booking &amp; consent" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">BK</a>
+    <a href="Handover%20%26%20Return.dc.html" title="Handover &amp; return" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">HR</a>
+    <a href="Approval%20Inbox.dc.html" title="Approval inbox" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">AP</a>
+    <a href="Entitlement%20Decision.dc.html" title="Entitlement decision" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">EN</a>
+    <a href="Fleet%20Command%20Console.dc.html" title="Command console" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">CC</a>
+    <a href="Fines%20Register.dc.html" title="Fines register" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">FR</a>
+    <a href="Policy%20Engine%20Authoring.dc.html" title="Policy engine" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">PE</a>
+    <div title="Executive dashboard — not yet built" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font:700 12px 'IBM Plex Sans',sans-serif;color:#4d6a7d;">EX</div>
+  </div>
+  <div style="flex:1;background:#F5F3EC;color:#10181F;min-width:0;">
+
+  <!-- Header -->
+  <div style="display:flex;flex-direction:column;border-bottom:1px solid #10181F1f;background:#fff;">
+    <div style="padding:10px 56px 0;font:500 12px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">Wayfinder <span style="margin:0 6px;">/</span> Home</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 56px 22px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;gap:3px;"><div style="width:6px;height:24px;background:#0B3D5C;"></div><div style="width:6px;height:24px;background:#E2A33D;"></div><div style="width:6px;height:24px;background:#0B3D5C;"></div></div>
+        <span style="font:700 20px 'IBM Plex Sans',sans-serif;">Wayfinder</span>
+      </div>
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;">Carpool &amp; Fleet Management Platform · AD Ports Group</div>
+    </div>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto;padding:64px 48px 120px;">
+
+    <div style="margin-bottom:56px;">
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:16px;">Prototype index</div>
+      <h1 style="font-size:42px;margin:0 0 14px;font-weight:700;max-width:800px;">Every screen, by the person who uses it</h1>
+      <p style="font-size:17px;color:#5b6572;margin:0;max-width:640px;line-height:1.6;">Twelve roles touch this platform. Three visual registers — calm for the driver, theatrical for the control room, cinematic for the boardroom — carry through every screen below.</p>
+    </div>
+
+    <!-- Reference -->
+    <div style="display:flex;gap:2px;background:#10181F1a;border:1px solid #10181F1a;margin-bottom:56px;">
+      <a href="Fleet%20Platform%20Deck.dc.html" style="flex:1;background:#0B3D5C;color:#fff;padding:26px 28px;display:block;">
+        <div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#E2A33D;margin-bottom:10px;">Presentation</div>
+        <div style="font-size:20px;font-weight:700;margin-bottom:6px;">Platform deck</div>
+        <div style="font-size:14px;color:#cddce5;">Full story — problem, architecture, phases, KPIs</div>
+      </a>
+      <a href="Design%20System.dc.html" style="flex:1;background:#fff;padding:26px 28px;display:block;">
+        <div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#0B3D5C;margin-bottom:10px;">Reference</div>
+        <div style="font-size:20px;font-weight:700;margin-bottom:6px;">Wayfinding design system</div>
+        <div style="font-size:14px;color:#5b6572;">Tokens, type, components</div>
+      </a>
+    </div>
+
+    <!-- Groups -->
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+      <div style="margin-bottom:52px;">
+        <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:20px;">
+          <div style="font:600 22px/1 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;">{{ g.name }}</div>
+          <div style="font-size:14px;color:#5b6572;">{{ g.subtitle }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:2px;background:#10181F1a;border:1px solid #10181F1a;">
+          <sc-for list="{{ g.screens }}" as="scr" hint-placeholder-count="3">
+            <a href="{{ scr.href }}" style="background:#fff;padding:28px 30px;display:block;border-top:3px solid {{ scr.accent }};">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+                <span style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;">{{ scr.actor }}</span>
+                <span style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.04em;text-transform:uppercase;color:{{ scr.accent }};">{{ scr.status }}</span>
+              </div>
+              <div style="font-size:21px;font-weight:700;margin-bottom:10px;">{{ scr.name }}</div>
+              <div style="font-size:14.5px;color:#5b6572;line-height:1.5;">{{ scr.description }}</div>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+
+  </div>
+</div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#F5F3EC"/><rect x="10" y="40" width="20" height="20" fill="#0B3D5C"/><rect x="40" y="40" width="20" height="20" fill="#E2A33D"/><rect x="70" y="40" width="20" height="20" fill="#0B3D5C"/></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const GROUPS = [
+  {
+    name: 'Calm', subtitle: '— the booking page a driver needs to move through fast',
+    screens: [
+      { actor: 'Employee / Driver', name: 'Booking &amp; consent', description: 'Window, vehicle, mandatory digital consent, confirmation — four steps, one screen each.', href: 'Booking%20%26%20Consent.dc.html', accent: '#0B3D5C', status: 'Built' },
+    ],
+  },
+  {
+    name: 'Operational', subtitle: '— dense, task-focused tools for the people running the fleet day to day',
+    screens: [
+      { actor: 'Fleet Manager', name: 'Handover &amp; return', description: 'Odometer, fuel gauge, tap-to-pin damage capture, working signature pad.', href: 'Handover%20%26%20Return.dc.html', accent: '#0B3D5C', status: 'Built' },
+      { actor: 'Line Manager', name: 'Approval inbox', description: 'Queue of bookings and entitlements with system verdicts — eligibility, SoD, policy version.', href: 'Approval%20Inbox.dc.html', accent: '#0B3D5C', status: 'Built' },
+      { actor: 'Cluster CEO', name: 'Entitlement decision', description: 'Matched eligibility row, approval chain, cost of the ask — final sign-off.', href: 'Entitlement%20Decision.dc.html', accent: '#0B3D5C', status: 'Built' },
+      { actor: 'Fleet Manager / HR', name: 'Fines &amp; black points', description: 'Auto-attributed fines, recovery pipeline, HR escalation at 3+ fines.', href: 'Fines%20Register.dc.html', accent: '#0B3D5C', status: 'Built' },
+      { actor: 'System Admin', name: 'Policy engine authoring', description: 'Decision tables, dry-run validation, versioned activation — the PAP.', href: 'Policy%20Engine%20Authoring.dc.html', accent: '#0B3D5C', status: 'Built' },
+    ],
+  },
+  {
+    name: 'Theatrical', subtitle: '— a control room earns density',
+    screens: [
+      { actor: 'Cluster / Group Fleet Lead', name: 'Command console', description: 'Live operations grid, KPI wall, attention queue, event ticker.', href: 'Fleet%20Command%20Console.dc.html', accent: '#E2A33D', status: 'Built' },
+    ],
+  },
+  {
+    name: 'Cinematic', subtitle: '— boardroom screens',
+    screens: [
+      { actor: 'Executive', name: 'Executive dashboard', description: 'Cost trend, spend composition, ESG, AI recommendations.', href: '#', accent: '#9aa2ab', status: 'Not yet built' },
+    ],
+  },
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    return { groups: GROUPS };
+  }
+}
+</script>
+</body>
+</html>

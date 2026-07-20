@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entitlement DVR-088 — Cluster CEO</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ACTOR SCREEN · CLUSTER CEO · DEDICATED VEHICLE ENTITLEMENT
+   An executive decides in 90 seconds: who, why, what it costs,
+   what policy says, who already endorsed. Then one decision.
+   ============================================================ */
+:root{
+  --bg:#f2f4f6;--surface:#fff;--ink:#101826;--mut:#5b6b7c;
+  --line:#dde4ea;--accent:#0e7f74;--accent-2:#0a5f57;--soft:#e3f2ef;
+  --warn:#b45309;--warn-bg:#fef3e2;--danger:#c0361f;--danger-bg:#fdeae5;--ok:#15803d;
+  --gold:#8a6d1d;--gold-bg:#faf3dc;
+  --disp:"Space Grotesk",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--r:16px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.55 var(--disp)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+.bar{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:0 18px}
+.bar .in{max-width:980px;margin:auto;display:flex;align-items:center;gap:14px;min-height:58px}
+.bar .role{font:600 10px/1 var(--mono);letter-spacing:.22em;background:var(--gold);padding:6px 10px;border-radius:6px}
+.bar h1{font:600 16px/1;margin:0}
+.bar .queue{margin-left:auto;font:500 12px var(--mono);opacity:.85}
+
+.wrap{max-width:980px;margin:auto;padding:20px 18px 120px}
+
+/* header: person + ask */
+.head{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:24px 28px;display:grid;gap:20px;grid-template-columns:1fr}
+@media(min-width:760px){.head{grid-template-columns:1.4fr 1fr}}
+.head .eyebrow{font:600 10.5px/1 var(--mono);letter-spacing:.24em;color:var(--gold)}
+.head h2{margin:10px 0 4px;font:600 clamp(22px,3vw,30px)/1.15;letter-spacing:-.01em}
+.head .sub{font:500 12.5px/1.7 var(--mono);color:var(--mut)}
+.askbox{border:1.5px solid var(--line);border-radius:12px;padding:16px 18px;align-self:center}
+.askbox .k{font:600 10px/1 var(--mono);letter-spacing:.16em;color:var(--mut)}
+.askbox .v{font:600 17px/1.35;margin-top:6px}
+.askbox .v small{display:block;font:500 12px var(--mono);color:var(--mut);margin-top:4px}
+
+/* chain stepper */
+.chain{display:flex;align-items:center;gap:0;margin:18px 4px 4px;flex-wrap:wrap}
+.cstep{display:flex;align-items:center;gap:10px;font:600 12.5px/1.3 var(--disp)}
+.cstep .b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:var(--soft);color:var(--accent-2);border:2px solid var(--accent)}
+.cstep.pending .b{background:#fff;color:var(--mut);border:2px dashed var(--line);animation:breath 2s ease-in-out infinite}
+@keyframes breath{50%{border-color:var(--gold);color:var(--gold)}}
+.cstep small{display:block;font:500 10.5px var(--mono);color:var(--mut);font-weight:500}
+.clink{width:56px;height:2.5px;background:var(--accent);margin:0 10px}
+.clink.dash{background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 11px)}
+@media(max-width:700px){.clink{width:22px}}
+
+/* main grid */
+.cols{display:grid;gap:14px;margin-top:14px;grid-template-columns:1fr}
+@media(min-width:860px){.cols{grid-template-columns:1.3fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px}
+.card h3{margin:0 0 14px;font:600 14px/1;letter-spacing:.02em;display:flex;gap:10px;align-items:center}
+.card h3 .tag{font:600 9.5px/1 var(--mono);letter-spacing:.16em;color:var(--accent-2);
+  background:var(--soft);border-radius:999px;padding:5px 10px}
+
+/* policy verdict — the eligibility engine speaks */
+.policy{display:grid;gap:9px}
+.pv{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+  border-bottom:1px dashed var(--line);padding:10px 2px}
+.pv:last-child{border:0}
+.pv .ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.pv .ic.ok{background:var(--ok)}.pv .ic.warn{background:var(--warn)}
+.pv b{font-size:13.5px}
+.pv small{display:block;font:500 11.5px/1.5 var(--mono);color:var(--mut)}
+.pv .ref{font:500 10px var(--mono);color:var(--mut);letter-spacing:.06em}
+.threshold{margin-top:12px;background:var(--gold-bg);border:1.5px solid color-mix(in oklab,var(--gold) 35%,var(--line));
+  border-radius:12px;padding:14px 16px;font:500 12.5px/1.7 var(--mono);color:var(--gold)}
+.threshold b{font-weight:600}
+
+/* cost of the ask */
+.cost .big{font:700 34px/1 var(--disp);letter-spacing:-.01em}
+.cost .big small{font:500 12px var(--mono);color:var(--mut);letter-spacing:.06em}
+.cbars{display:grid;gap:10px;margin-top:16px}
+.cb{display:grid;grid-template-columns:110px 1fr 70px;gap:12px;align-items:center;font:500 12px var(--mono);color:var(--mut)}
+.cb .t{height:10px;border-radius:5px;background:var(--soft);position:relative;overflow:hidden}
+.cb .t i{position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--accent);border-radius:5px;
+  transform:scaleX(0);transform-origin:left;animation:g .9s .3s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes g{to{transform:scaleX(1)}}
+.cb b{text-align:right;color:var(--ink)}
+.alt{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px;font:500 12px/1.7 var(--mono);color:var(--mut)}
+.alt b{color:var(--accent-2)}
+
+/* justification + docs */
+.just{border-inline-start:4px solid var(--gold);background:var(--gold-bg);
+  border-radius:0 12px 12px 0;padding:16px 20px;font-size:14.5px;line-height:1.65}
+.just small{display:block;font:600 10.5px var(--mono);letter-spacing:.14em;color:var(--gold);margin-bottom:8px}
+.just cite{display:block;margin-top:10px;font:500 11.5px var(--mono);color:var(--mut);font-style:normal}
+.docs{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.doc{display:inline-flex;gap:9px;align-items:center;border:1.5px solid var(--line);border-radius:10px;
+  padding:10px 14px;font:600 12px var(--mono);color:var(--ink);text-decoration:none;background:#fff}
+.doc:hover{border-color:var(--accent)}
+.doc svg{color:var(--danger)}
+
+/* utilisation covenant */
+.covenant{margin-top:14px;background:var(--soft);border-radius:12px;padding:14px 18px;
+  font:500 12.5px/1.7 var(--mono);color:var(--accent-2)}
+
+/* decision dock */
+.dock{position:fixed;inset:auto 0 0 0;background:#fff;border-top:1px solid var(--line);
+  padding:14px 18px calc(14px + env(safe-area-inset-bottom));z-index:20}
+.dock .in{max-width:980px;margin:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dock .note{font:500 11.5px/1.5 var(--mono);color:var(--mut)}
+.dock .note b{color:var(--ink)}
+.btn{border:0;border-radius:10px;min-height:50px;padding:0 24px;font:600 14.5px var(--disp);
+  display:inline-flex;gap:9px;align-items:center;transition:background .15s,transform .1s}
+.btn:active{transform:translateY(1px)}
+.approve{background:var(--accent);color:#fff;margin-left:auto}
+.approve:hover{background:var(--accent-2)}
+.cond{background:#fff;border:1.5px solid var(--line)}
+.cond:hover{border-color:var(--ink)}
+.reject{background:#fff;color:var(--danger);border:1.5px solid color-mix(in oklab,var(--danger) 40%,var(--line))}
+.reject:hover{background:var(--danger-bg)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,140px);background:var(--ink);color:#fff;
+  border-radius:12px;padding:14px 22px;font:600 13.5px var(--disp);z-index:50;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.toast.show{transform:translate(-50%,0)}
+.toast i{color:#6ee7b7;margin-right:8px}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="in">
+    <span class="role">CLUSTER CEO · LOGISTICS</span>
+    <h1>Dedicated vehicle entitlement</h1>
+    <span class="queue">2 awaiting your decision · SLA 48 h</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Who is asking, for what -->
+  <section class="head">
+    <div>
+      <span class="eyebrow">REQUEST DVR-088 · SUBMITTED 6 JUL · ENDORSED TWICE</span>
+      <h2>Sara Mansouri requests a long-term dedicated SUV, without driver</h2>
+      <p class="sub">Director, Site Operations · Grade D1 · Logistics cluster · 6 yrs service · current usage: 31 pool bookings YTD, 92% on-time return</p>
+
+      <div class="chain" aria-label="Approval chain: line manager approved, cluster fleet lead approved, your decision pending">
+        <div class="cstep"><span class="b">✓</span><span>K. Osei<small>LINE MGR · 6 JUL</small></span></div>
+        <span class="clink"></span>
+        <div class="cstep"><span class="b">✓</span><span>D. Verma<small>CLUSTER FLEET LEAD · 7 JUL</small></span></div>
+        <span class="clink dash"></span>
+        <div class="cstep pending"><span class="b">3</span><span>You<small>CLUSTER CEO · POLICY GATE</small></span></div>
+      </div>
+    </div>
+    <div class="askbox">
+      <div class="k">THE ASK</div>
+      <div class="v">Toyota Fortuner · 24 months
+        <small>Kezad 280 · cost centre LOG-4410 · starts 01 Aug 2026 · BSD return during leave: automatic</small>
+      </div>
+    </div>
+  </section>
+
+  <div class="cols">
+    <!-- Left: policy verdicts + justification -->
+    <div style="display:grid;gap:14px">
+      <div class="card">
+        <h3>Policy engine verdict <span class="tag">POLICY v4.1 · D8</span></h3>
+        <div class="policy">
+          <div class="pv">
+            <span class="ic ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div><b>Grade eligible</b><small>D1 ≥ policy floor (Director) for long-term without-driver</small></div>
+            <span class="ref">ELG-R2</span>
+          </div>
+          <div class="pv">
+            <span class="ic ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div><b>Role test passed</b><small>multi-site operational role · 3 designated sites · 460 km/week baseline</small></div>
+            <span class="ref">ELG-R5</span>
+          </div>
+          <div class="pv">
+            <span class="ic ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <div><b>Vehicle class within band</b><small>Fortuner = mid-SUV band for D1 · no upgrade exception requested</small></div>
+            <span class="ref">ELG-R7</span>
+          </div>
+          <div class="pv">
+            <span class="ic warn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 7v6m0 4h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></span>
+            <div><b>Duration exceeds auto-approve threshold</b><small>24 months > 12-month threshold — this is why the request reached you</small></div>
+            <span class="ref">ELG-T3</span>
+          </div>
+        </div>
+        <div class="threshold">◆ <b>Why you're seeing this:</b> everything below the 12-month threshold stops at the Fleet Lead. Above it, policy routes to Cluster CEO — your decision is the final gate.</div>
+      </div>
+
+      <div class="card">
+        <h3>Justification &amp; evidence</h3>
+        <div class="just">
+          <small>CATEGORY · OPERATIONAL REQUIREMENT</small>
+          "Site Operations now covers Kezad 280, E11 warehouse block and the new 310 expansion — three sites, daily rotation. Pool booking round-trips to Mina Zayed add ~90 minutes/day of dead travel. A dedicated vehicle stationed at Kezad removes that loss for the 24-month build-out programme."
+          <cite>— S. Mansouri · endorsed by K. Osei: "Verified. The 310 programme schedule is attached."</cite>
+        </div>
+        <div class="docs">
+          <a class="doc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6V2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>310 programme memo.pdf</a>
+          <a class="doc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6V2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Site rotation schedule.pdf</a>
+          <a class="doc" href="#"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15H6V2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Trip-log analysis, 90 days.xlsx</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: what it costs + covenant -->
+    <div style="display:grid;gap:14px;align-content:start">
+      <div class="card cost">
+        <h3>Cost of the ask <span class="tag">FINANCE VIEW</span></h3>
+        <div class="big">AED 118k <small>/ 24 MONTHS</small></div>
+        <div class="cbars">
+          <div class="cb"><span>Lease</span><div class="t"><i style="--w:72%"></i></div><b>85k</b></div>
+          <div class="cb"><span>Fuel est.</span><div class="t"><i style="--w:19%"></i></div><b>22k</b></div>
+          <div class="cb"><span>Insurance</span><div class="t"><i style="--w:7%"></i></div><b>8k</b></div>
+          <div class="cb"><span>Tolls est.</span><div class="t"><i style="--w:3%"></i></div><b>3k</b></div>
+        </div>
+        <div class="alt">Alternative modelled: continued pool usage at her current pattern ≈ <b>AED 71k</b> + ~380 h/yr travel overhead. Net programme case: <b>positive if utilisation ≥ 55%</b>.</div>
+      </div>
+
+      <div class="card">
+        <h3>If you approve</h3>
+        <div class="covenant">
+          ✓ Sara signs digital consent before allocation activates<br>
+          ✓ Vehicle auto-returns to shared pool (BSD) during her leave — synced to HR calendar<br>
+          ✓ Utilisation reviewed every 6 months — <b>auto-flagged to you if it drops below 40%</b><br>
+          ✓ Fines &amp; tolls attribute to Sara from day one
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Decision dock -->
+<div class="dock">
+  <div class="in">
+    <p class="note">Your decision closes the chain and is <b>immutably logged</b> (policy v4.1, DVR-088).<br>Declines require a reason — it is shared with the requester.</p>
+    <button class="btn approve" id="ok">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Approve 24 months
+    </button>
+    <button class="btn cond">Approve 12 months instead</button>
+    <button class="btn reject">Decline…</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i>✓</i> Approved — consent request sent to S. Mansouri · fleet lead notified</div>
+
+<script>
+document.getElementById('ok').onclick=function(){
+  var t=document.getElementById('toast');t.classList.add('show');
+  this.disabled=true;this.style.opacity=.6;
+  document.querySelector('.cstep.pending .b').textContent='✓';
+  document.querySelector('.cstep.pending').classList.remove('pending');
+  setTimeout(function(){t.classList.remove('show')},3400);
+};
+</script>
+</body>
+</html>

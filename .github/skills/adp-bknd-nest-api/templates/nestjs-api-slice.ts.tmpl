@@ -1,0 +1,21 @@
+# NestJS API Slice Skeleton
+
+Use with `adp-bknd-nest-api`. Replace placeholders before use and keep AD Ports tenant, security, observability, and test evidence requirements visible in the implementation.
+
+```
+// Replace placeholders before use. Keep controller, service, DTO, and test ownership clear.
+export class <RequestDto> {
+  tenantId!: string;
+}
+
+export class <ResponseDto> {
+  id!: string;
+}
+
+export class <ServiceName> {
+  async execute(request: <RequestDto>): Promise<<ResponseDto>> {
+    // Validate tenant authorization before loading data.
+    throw new Error('Not implemented');
+  }
+}
+```

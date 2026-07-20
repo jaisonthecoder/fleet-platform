@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Handover — BK-1204 · Fleet Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ACTOR SCREEN · FLEET MANAGER · VEHICLE HANDOVER
+   A working screen: verify → inspect → record → sign → hand keys.
+   Built for a tablet held in a yard. Big targets, one column flow.
+   ============================================================ */
+:root{
+  --bg:#f2f4f6;--surface:#fff;--ink:#101826;--mut:#5b6b7c;
+  --line:#dde4ea;--accent:#0e7f74;--accent-2:#0a5f57;
+  --soft:#e3f2ef;--warn:#b45309;--warn-bg:#fef3e2;
+  --danger:#c0361f;--danger-bg:#fdeae5;--ok:#15803d;
+  --disp:"Space Grotesk",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --r:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--disp)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* App bar for the actor context */
+.bar{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:0 18px}
+.bar .in{max-width:900px;margin:auto;display:flex;align-items:center;gap:14px;min-height:58px}
+.bar .role{font:600 10px/1 var(--mono);letter-spacing:.22em;background:var(--accent);
+  padding:6px 10px;border-radius:6px}
+.bar h1{font:600 16px/1 var(--disp);margin:0}
+.bar .bk{margin-left:auto;font:600 13px/1 var(--mono);letter-spacing:.06em;opacity:.85}
+
+.wrap{max-width:900px;margin:auto;padding:18px 18px 110px}
+
+/* Progress steps */
+.steps{display:flex;gap:6px;margin:6px 0 18px}
+.steps i{height:5px;flex:1;border-radius:3px;background:var(--line)}
+.steps i.done{background:var(--accent)}
+.steps i.now{background:linear-gradient(90deg,var(--accent) 55%,var(--line) 0)}
+
+/* Booking identity card */
+.idcard{background:var(--ink);color:#fff;border-radius:var(--r);padding:18px 20px;
+  display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.idcard .who{display:flex;gap:14px;align-items:center}
+.idcard .ava{width:48px;height:48px;border-radius:50%;background:var(--accent);
+  display:grid;place-items:center;font:700 17px var(--disp)}
+.idcard b{font-size:17px}
+.idcard .sub{font:500 12px/1.5 var(--mono);opacity:.75}
+.plate{font:700 20px/1 var(--mono);letter-spacing:.1em;background:#fff;color:var(--ink);
+  border-radius:8px;padding:12px 16px;border:2px solid var(--accent)}
+.checked{display:inline-flex;gap:7px;align-items:center;margin-top:8px;
+  font:600 11px/1 var(--mono);color:#6ee7b7;letter-spacing:.08em}
+
+/* Section cards */
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  margin-top:14px;overflow:hidden}
+.sec>.h{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.sec>.h .n{width:28px;height:28px;border-radius:50%;background:var(--soft);color:var(--accent-2);
+  display:grid;place-items:center;font:700 13px var(--mono)}
+.sec>.h h2{margin:0;font:600 15px/1 var(--disp)}
+.sec>.h .st{margin-left:auto;font:600 11px/1 var(--mono);letter-spacing:.1em;color:var(--mut)}
+.sec>.h .st.ok{color:var(--ok)}
+.body{padding:18px 20px}
+
+/* Inspection checklist */
+.check{display:grid;gap:10px}
+.ck{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;transition:border-color .15s,background .15s}
+.ck.pass{border-color:var(--accent);background:var(--soft)}
+.ck.fail{border-color:var(--danger);background:var(--danger-bg)}
+.ck .l{font-weight:600;font-size:14px}
+.ck .l small{display:block;font:500 11px/1.4 var(--mono);color:var(--mut);margin-top:2px}
+.tog{display:flex;gap:6px}
+.tog button{border:1.5px solid var(--line);background:#fff;border-radius:8px;
+  min-width:52px;min-height:40px;font:600 12px var(--mono);color:var(--mut)}
+.tog button[aria-pressed="true"].y{background:var(--accent);border-color:var(--accent);color:#fff}
+.tog button[aria-pressed="true"].n{background:var(--danger);border-color:var(--danger);color:#fff}
+
+/* Odometer + fuel */
+.io{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:640px){.io{grid-template-columns:1fr 1fr}}
+.field label{display:block;font:600 12px/1 var(--mono);letter-spacing:.08em;color:var(--mut);margin-bottom:8px}
+.odo{display:flex;align-items:center;gap:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.odo input{border:0;font:600 26px/1 var(--mono);letter-spacing:.08em;padding:14px 16px;width:100%;
+  color:var(--ink);background:#fff;min-height:56px}
+.odo input:focus{outline:none;background:var(--soft)}
+.odo .unit{padding:0 16px;font:600 13px var(--mono);color:var(--mut);background:var(--bg);
+  align-self:stretch;display:grid;place-items:center;border-left:1.5px solid var(--line)}
+.gps-hint{margin-top:8px;font:500 11.5px/1.5 var(--mono);color:var(--mut);display:flex;gap:7px;align-items:center}
+.gps-hint b{color:var(--accent-2)}
+.gps-hint .warnb{color:var(--warn)}
+
+/* Fuel gauge slider */
+.fuel{padding:6px 2px}
+.fuel input[type=range]{width:100%;appearance:none;height:14px;border-radius:7px;outline-offset:4px;
+  background:linear-gradient(90deg,var(--danger) 0 15%,var(--warn) 15% 40%,var(--accent) 40% 100%)}
+.fuel input::-webkit-slider-thumb{appearance:none;width:34px;height:34px;border-radius:50%;
+  background:#fff;border:4px solid var(--ink);box-shadow:0 2px 8px rgb(0 0 0/.25);cursor:grab}
+.fuel .scale{display:flex;justify-content:space-between;font:600 11px var(--mono);color:var(--mut);margin-top:8px}
+.fuel .read{font:700 30px/1 var(--disp);margin-top:10px}
+.fuel .read small{font:500 12px var(--mono);color:var(--mut)}
+
+/* Damage marker on car outline */
+.dmg-wrap{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:640px){.dmg-wrap{grid-template-columns:auto 1fr;align-items:start}}
+.carbox{position:relative;width:min(320px,100%);margin:auto;touch-action:manipulation}
+.carbox svg{width:100%;display:block}
+.car-line{fill:#fff;stroke:var(--ink);stroke-width:2.5}
+.car-detail{fill:none;stroke:var(--mut);stroke-width:1.6}
+.pin{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--danger);color:#fff;
+  display:grid;place-items:center;font:700 12px var(--mono);transform:translate(-50%,-50%);
+  box-shadow:0 0 0 4px var(--danger-bg);border:0}
+.dmg-note{font:500 12px/1.6 var(--mono);color:var(--mut)}
+.dmg-list{display:grid;gap:8px;margin-top:10px}
+.dmg-item{display:flex;gap:10px;align-items:center;border:1.5px solid var(--line);
+  border-radius:10px;padding:10px 12px;font-size:13.5px}
+.dmg-item .k{width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;
+  display:grid;place-items:center;font:700 11px var(--mono);flex:none}
+.dmg-item button{margin-left:auto;border:0;background:none;color:var(--mut);font-size:18px;line-height:1}
+.addph{border:1.5px dashed var(--line);border-radius:10px;padding:12px;width:100%;
+  background:#fff;color:var(--mut);font:600 12.5px var(--mono);display:flex;gap:8px;align-items:center;justify-content:center}
+.addph:hover{border-color:var(--accent);color:var(--accent-2)}
+
+/* Signature pad */
+.sig-head{display:flex;align-items:baseline;gap:10px}
+.sig-head p{margin:0;font:500 12px/1.6 var(--mono);color:var(--mut)}
+canvas{width:100%;height:170px;border:1.5px dashed var(--line);border-radius:10px;
+  background:#fff;touch-action:none;display:block;margin-top:12px}
+canvas.signed{border-style:solid;border-color:var(--accent)}
+.sig-tools{display:flex;gap:10px;margin-top:10px;align-items:center}
+.sig-tools button{border:1.5px solid var(--line);background:#fff;border-radius:8px;
+  padding:9px 14px;font:600 12px var(--mono);color:var(--mut)}
+.sig-status{margin-left:auto;font:600 12px var(--mono);color:var(--mut)}
+.sig-status.ok{color:var(--ok)}
+.consent-echo{margin-top:12px;background:var(--soft);border-radius:10px;padding:12px 14px;
+  font:500 12px/1.7 var(--mono);color:var(--accent-2)}
+
+/* Sticky action bar */
+.actionbar{position:fixed;inset:auto 0 0 0;background:#fff;border-top:1px solid var(--line);
+  padding:12px 18px calc(12px + env(safe-area-inset-bottom));z-index:20}
+.actionbar .in{max-width:900px;margin:auto;display:flex;gap:12px;align-items:center}
+.readiness{font:600 12px/1.4 var(--mono);color:var(--mut)}
+.readiness b{color:var(--ink)}
+.go{margin-left:auto;background:var(--accent);color:#fff;border:0;border-radius:10px;
+  padding:0 26px;min-height:52px;font:600 15px var(--disp);display:flex;gap:10px;align-items:center;
+  transition:background .15s,opacity .15s}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.go:not(:disabled):hover{background:var(--accent-2)}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="in">
+    <span class="role">FLEET MANAGER</span>
+    <h1>Vehicle handover</h1>
+    <span class="bk">BK-1204 · 09:00 TODAY</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="steps" aria-label="Handover progress: step 2 of 4">
+    <i class="done"></i><i class="now"></i><i></i><i></i>
+  </div>
+
+  <!-- 0. Identity verified -->
+  <section class="idcard" aria-label="Booking identity">
+    <div class="who">
+      <span class="ava">AK</span>
+      <div>
+        <b>Amina Khoury</b>
+        <div class="sub">EMP-20481 · Group Services · licence valid to 02/2027</div>
+        <span class="checked">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          ELIGIBILITY GATE PASSED · NO BLOCKS · CONSENT v3.2 SIGNED 08:12
+        </span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="plate">AD 88914</div>
+      <div class="sub" style="margin-top:6px;text-align:center">Nissan Patrol · Yard A</div>
+    </div>
+  </section>
+
+  <!-- 1. Walkaround -->
+  <section class="sec">
+    <div class="h"><span class="n">1</span><h2>Walkaround inspection</h2><span class="st" id="ckstat">2 of 5</span></div>
+    <div class="body check" id="checks">
+      <div class="ck pass">
+        <div class="l">Body panels &amp; glass<small>no new damage vs last return record</small></div>
+        <div class="tog"><button class="y" aria-pressed="true">PASS</button><button class="n" aria-pressed="false">FAIL</button></div>
+      </div>
+      <div class="ck pass">
+        <div class="l">Tyres &amp; spare<small>tread visual · pressure warning light off</small></div>
+        <div class="tog"><button class="y" aria-pressed="true">PASS</button><button class="n" aria-pressed="false">FAIL</button></div>
+      </div>
+      <div class="ck">
+        <div class="l">Lights &amp; indicators<small>head, brake, hazard</small></div>
+        <div class="tog"><button class="y" aria-pressed="false">PASS</button><button class="n" aria-pressed="false">FAIL</button></div>
+      </div>
+      <div class="ck">
+        <div class="l">On-vehicle assets<small>Salik tag · Darb tag · fuel card FC-2291 · first-aid kit</small></div>
+        <div class="tog"><button class="y" aria-pressed="false">PASS</button><button class="n" aria-pressed="false">FAIL</button></div>
+      </div>
+      <div class="ck">
+        <div class="l">Cabin condition<small>clean · no personal items from previous booking</small></div>
+        <div class="tog"><button class="y" aria-pressed="false">PASS</button><button class="n" aria-pressed="false">FAIL</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Readings -->
+  <section class="sec">
+    <div class="h"><span class="n">2</span><h2>Odometer &amp; fuel</h2><span class="st ok" id="iostat">TELEMATICS MATCHED</span></div>
+    <div class="body io">
+      <div class="field">
+        <label for="odo">STARTING ODOMETER</label>
+        <div class="odo">
+          <input id="odo" inputmode="numeric" value="48213" aria-describedby="odohint">
+          <span class="unit">km</span>
+        </div>
+        <p class="gps-hint" id="odohint">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="m8.5 12.5 2.5 2.5 4.5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Telematics reads <b>48,213 km</b> · manual entry within tolerance
+        </p>
+      </div>
+      <div class="field fuel">
+        <label for="fuel">FUEL LEVEL</label>
+        <input type="range" id="fuel" min="0" max="8" step="1" value="7"
+          aria-valuetext="Seven eighths">
+        <div class="scale"><span>E</span><span>¼</span><span>½</span><span>¾</span><span>F</span></div>
+        <div class="read"><span id="fuelval">⅞</span> <small>TANK · EST. 68 L</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Damage map -->
+  <section class="sec">
+    <div class="h"><span class="n">3</span><h2>Damage map</h2><span class="st">TAP THE VEHICLE TO PIN</span></div>
+    <div class="body dmg-wrap">
+      <div class="carbox" id="carbox" role="application" aria-label="Vehicle top view. Tap to mark damage. One existing mark: scratch on front left wing.">
+        <svg viewBox="0 0 200 380" aria-hidden="true">
+          <rect class="car-line" x="35" y="20" rx="42" ry="52" width="130" height="340"/>
+          <path class="car-detail" d="M50 120 Q100 96 150 120"/>
+          <path class="car-detail" d="M50 250 Q100 272 150 250"/>
+          <rect class="car-detail" x="58" y="132" width="84" height="106" rx="12"/>
+          <line class="car-detail" x1="35" y1="86" x2="12" y2="96"/><line class="car-detail" x1="165" y1="86" x2="188" y2="96"/>
+          <line class="car-detail" x1="35" y1="290" x2="12" y2="300"/><line class="car-detail" x1="165" y1="290" x2="188" y2="300"/>
+        </svg>
+        <button class="pin" style="left:24%;top:22%" aria-label="Damage 1: scratch, front left wing">1</button>
+      </div>
+      <div>
+        <p class="dmg-note">Existing marks carry over from the last return. New pins are timestamped, photographed and countersigned — they become evidence, not argument.</p>
+        <div class="dmg-list" id="dmglist">
+          <div class="dmg-item"><span class="k">1</span> Scratch · front-left wing · logged 02 Jul (previous booking) <button aria-label="Remove damage 1" disabled>·</button></div>
+        </div>
+        <button class="addph" type="button" style="margin-top:10px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 8h3l2-3h6l2 3h3v11H4V8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" stroke="currentColor" stroke-width="2"/></svg>
+          ADD PHOTO (2 ATTACHED)
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Signature -->
+  <section class="sec">
+    <div class="h"><span class="n">4</span><h2>Driver acknowledgement</h2><span class="st" id="sigstat">AWAITING SIGNATURE</span></div>
+    <div class="body">
+      <div class="sig-head">
+        <p>Amina signs on this device to accept the vehicle in the condition recorded above.</p>
+      </div>
+      <canvas id="pad" aria-label="Signature area. Sign with finger or stylus."></canvas>
+      <div class="sig-tools">
+        <button type="button" id="clearSig">CLEAR</button>
+        <span class="sig-status" id="sigmsg">Sign above to continue</span>
+      </div>
+      <div class="consent-echo">
+        ✓ Booking consent v3.2 already on file (08:12, iOS, IP 10.4.2.88) — this signature covers <b>condition acceptance at handover</b> only.
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="actionbar">
+  <div class="in">
+    <span class="readiness" id="ready"><b>2 items left:</b> 3 checks · signature</span>
+    <button class="go" id="handBtn" disabled>
+      Hand over keys
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ---- checklist toggles ---- */
+var checks=document.querySelectorAll('.ck');
+function refreshChecks(){
+  var done=0;
+  checks.forEach(function(ck){
+    var y=ck.querySelector('.y'),n=ck.querySelector('.n');
+    ck.classList.toggle('pass',y.getAttribute('aria-pressed')==='true');
+    ck.classList.toggle('fail',n.getAttribute('aria-pressed')==='true');
+    if(y.getAttribute('aria-pressed')==='true'||n.getAttribute('aria-pressed')==='true')done++;
+  });
+  document.getElementById('ckstat').textContent=done+' of '+checks.length;
+  return done;
+}
+checks.forEach(function(ck){
+  var y=ck.querySelector('.y'),n=ck.querySelector('.n');
+  y.onclick=function(){y.setAttribute('aria-pressed','true');n.setAttribute('aria-pressed','false');update()};
+  n.onclick=function(){n.setAttribute('aria-pressed','true');y.setAttribute('aria-pressed','false');update()};
+});
+
+/* ---- fuel readout ---- */
+var eighths=['E','⅛','¼','⅜','½','⅝','¾','⅞','F'];
+var fuel=document.getElementById('fuel');
+fuel.oninput=function(){
+  document.getElementById('fuelval').textContent=eighths[fuel.value];
+  fuel.setAttribute('aria-valuetext',eighths[fuel.value]+' tank');
+};
+
+/* ---- damage pins ---- */
+var carbox=document.getElementById('carbox'),dmgN=1;
+carbox.addEventListener('click',function(e){
+  if(e.target.closest('.pin'))return;
+  var r=carbox.getBoundingClientRect();
+  var x=((e.clientX-r.left)/r.width*100).toFixed(1),
+      y=((e.clientY-r.top)/r.height*100).toFixed(1);
+  dmgN++;
+  var b=document.createElement('button');
+  b.className='pin';b.textContent=dmgN;b.style.left=x+'%';b.style.top=y+'%';
+  b.setAttribute('aria-label','Damage '+dmgN+': new mark');
+  carbox.appendChild(b);
+  var li=document.createElement('div');
+  li.className='dmg-item';
+  li.innerHTML='<span class="k">'+dmgN+'</span> New mark · logged just now · photo required <button aria-label="Remove">✕</button>';
+  li.querySelector('button').onclick=function(){li.remove();b.remove()};
+  document.getElementById('dmglist').appendChild(li);
+});
+
+/* ---- signature pad ---- */
+var pad=document.getElementById('pad'),ctx=pad.getContext('2d'),drawing=false,signed=false;
+function sizePad(){
+  var r=pad.getBoundingClientRect(),d=devicePixelRatio||1;
+  pad.width=r.width*d;pad.height=r.height*d;ctx.scale(d,d);
+  ctx.lineWidth=2.4;ctx.lineCap='round';ctx.strokeStyle='#101826';
+}
+sizePad();addEventListener('resize',sizePad);
+function pos(e){var r=pad.getBoundingClientRect(),t=e.touches?e.touches[0]:e;
+  return[t.clientX-r.left,t.clientY-r.top]}
+function start(e){drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p[0],p[1]);e.preventDefault()}
+function move(e){if(!drawing)return;var p=pos(e);ctx.lineTo(p[0],p[1]);ctx.stroke();
+  if(!signed){signed=true;update()} e.preventDefault()}
+function end(){drawing=false}
+pad.addEventListener('pointerdown',start);pad.addEventListener('pointermove',move);
+addEventListener('pointerup',end);
+document.getElementById('clearSig').onclick=function(){
+  ctx.clearRect(0,0,pad.width,pad.height);signed=false;update()};
+
+/* ---- readiness ---- */
+function update(){
+  var done=refreshChecks(),need=[];
+  if(done<checks.length)need.push((checks.length-done)+' checks');
+  if(!signed)need.push('signature');
+  pad.classList.toggle('signed',signed);
+  document.getElementById('sigstat').textContent=signed?'SIGNED':'AWAITING SIGNATURE';
+  document.getElementById('sigmsg').textContent=signed?'Captured — stored with timestamp + device ID':'Sign above to continue';
+  document.getElementById('sigmsg').classList.toggle('ok',signed);
+  var btn=document.getElementById('handBtn'),ready=document.getElementById('ready');
+  if(need.length){btn.disabled=true;
+    ready.innerHTML='<b>'+need.length+' item'+(need.length>1?'s':'')+' left:</b> '+need.join(' · ')}
+  else{btn.disabled=false;
+    ready.innerHTML='<b>Ready.</b> Keys → Amina · buffer starts on confirm'}
+}
+update();
+document.getElementById('handBtn').onclick=function(){
+  this.textContent='Handed over ✓';this.disabled=true;
+  document.querySelector('.steps i.now').className='done';
+  document.querySelectorAll('.steps i')[2].className='now';
+};
+</script>
+</body>
+</html>

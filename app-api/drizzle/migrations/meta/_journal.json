@@ -1,0 +1,188 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1784321665730,
+      "tag": "0000_striped_lockjaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784323198180,
+      "tag": "0001_rapid_zarek",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784326582562,
+      "tag": "0002_late_harry_osborn",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784330531414,
+      "tag": "0003_secret_xavin",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1784351619738,
+      "tag": "0004_slippery_azazel",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1784355408275,
+      "tag": "0005_harsh_rocket_racer",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784357295921,
+      "tag": "0006_kind_wrecking_crew",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1784358158243,
+      "tag": "0007_awesome_tenebrous",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1784358967311,
+      "tag": "0008_warm_jocasta",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1784364434469,
+      "tag": "0009_concerned_marvel_apes",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1784367457603,
+      "tag": "0010_blushing_cerebro",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1784370780954,
+      "tag": "0011_swift_phantom_reporter",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1784371212278,
+      "tag": "0012_lowly_medusa",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1784442837811,
+      "tag": "0013_lookup_value_retiring",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1784446400000,
+      "tag": "0014_policy_studio_drafts",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1784462880250,
+      "tag": "0015_lookup_type_parent",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1784470800000,
+      "tag": "0016_organization_hierarchy_foundation",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1784474400000,
+      "tag": "0017_hierarchy_invariants_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1784478000000,
+      "tag": "0018_organization_scope_consistency",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1784481600000,
+      "tag": "0019_policy_scope_binding",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1784485200000,
+      "tag": "0020_organization_hierarchy_levels",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1784488800000,
+      "tag": "0021_organization_metrics_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1784492400000,
+      "tag": "0022_decision_scope_provenance",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1784496000000,
+      "tag": "0023_booking_policy_provenance",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1784503600000,
+      "tag": "0024_domain_decision_shadow",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1784507200000,
+      "tag": "0025_domain_decision_selector",
+      "breakpoints": true
+    }
+  ]
+}

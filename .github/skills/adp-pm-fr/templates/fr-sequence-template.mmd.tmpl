@@ -1,0 +1,28 @@
+sequenceDiagram
+    actor Actor as "Primary actor"
+    participant UI as "User interface or API client"
+    participant Auth as "Authorization or policy service"
+    participant System as "Domain system"
+    participant Store as "Record store"
+    participant Audit as "Audit or evidence history"
+    Actor->>UI: Trigger behavior
+    UI->>Auth: Check permission or policy gate
+    alt Permission denied
+        Auth-->>UI: Deny request
+        UI->>Audit: Record denied attempt when required
+        UI-->>Actor: Show rejection reason
+    else Permission allowed
+        Auth-->>UI: Allow request
+        Actor->>UI: Provide required inputs
+        UI->>System: Submit behavior request
+        System->>System: Validate business rules and state
+        alt Invalid input or state
+            System-->>UI: Return validation reasons
+            UI-->>Actor: Show required correction
+        else Valid request
+            System->>Store: Create or update record
+            System->>Audit: Record audit evidence
+            System-->>UI: Return observable outcome
+            UI-->>Actor: Show confirmation
+        end
+    end

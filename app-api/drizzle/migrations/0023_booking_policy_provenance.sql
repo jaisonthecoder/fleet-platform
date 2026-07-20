@@ -1,0 +1,1 @@
+ALTER TABLE "fleet"."booking" ADD COLUMN "policy_provenance" jsonb DEFAULT '{}'::jsonb NOT NULL;

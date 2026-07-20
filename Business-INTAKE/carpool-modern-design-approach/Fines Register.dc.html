@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:#F5F3EC; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;">
+  <div style="width:64px;flex:none;background:#0B3D5C;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:8px;">
+    <a href="Home.dc.html" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;text-decoration:none;"><div style="display:flex;gap:2px;"><div style="width:4px;height:16px;background:#E2A33D;"></div><div style="width:4px;height:16px;background:#fff;"></div><div style="width:4px;height:16px;background:#E2A33D;"></div></div></a>
+    <a href="Booking%20%26%20Consent.dc.html" title="Booking &amp; consent" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">BK</a>
+    <a href="Handover%20%26%20Return.dc.html" title="Handover &amp; return" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">HR</a>
+    <a href="Approval%20Inbox.dc.html" title="Approval inbox" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">AP</a>
+    <a href="Entitlement%20Decision.dc.html" title="Entitlement decision" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">EN</a>
+    <a href="Fleet%20Command%20Console.dc.html" title="Command console" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">CC</a>
+    <a href="Fines%20Register.dc.html" title="Fines register" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:#E2A33D;color:#10181F;">FR</a>
+    <a href="Policy%20Engine%20Authoring.dc.html" title="Policy engine" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">PE</a>
+    <div title="Executive dashboard — not yet built" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font:700 12px 'IBM Plex Sans',sans-serif;color:#4d6a7d;">EX</div>
+  </div>
+  <div style="flex:1;background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;min-width:0;">
+
+  <div style="display:flex;flex-direction:column;border-bottom:1px solid #10181F1f;background:#fff;">
+    <div style="padding:10px 48px 0;font:500 12px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">Wayfinder <span style="margin:0 6px;">/</span> Operational <span style="margin:0 6px;">/</span> Fines &amp; Black Points</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 48px 20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;"><div style="display:flex;gap:3px;"><div style="width:5px;height:20px;background:#0B3D5C;"></div><div style="width:5px;height:20px;background:#E2A33D;"></div><div style="width:5px;height:20px;background:#0B3D5C;"></div></div>
+      <span style="font:700 18px 'IBM Plex Sans',sans-serif;">Wayfinder</span></a>
+      <span style="font:500 14px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-left:8px;">Fines &amp; Black Points · GS Pool</span>
+    </div>
+    <div style="display:flex;gap:2px;background:#F5F3EC;border-radius:4px;padding:3px;">
+      <button onClick="{{ setTabAll }}" style="border:none;padding:9px 18px;border-radius:3px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ allTabBg }};color:{{ allTabFg }};">All ({{ totalCount }})</button>
+      <button onClick="{{ setTabUnresolved }}" style="border:none;padding:9px 18px;border-radius:3px;font:600 14px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ unresolvedTabBg }};color:{{ unresolvedTabFg }};">Unresolved ({{ unresolvedCount }})</button>
+    </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:460px 1fr;flex:1;">
+
+    <!-- Register list -->
+    <div style="background:#fff;border-right:1px solid #10181F1a;overflow-y:auto;">
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+        <div onClick="{{ r.select }}" style="padding:20px 26px;border-bottom:1px solid #10181F14;cursor:pointer;background:{{ r.rowBg }};border-left:4px solid {{ r.rowAccent }};">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+            <span style="font:700 15px 'IBM Plex Sans',sans-serif;color:#0B3D5C;">{{ r.plate }}</span>
+            <span style="font:700 16px 'IBM Plex Sans',sans-serif;">{{ r.amountLabel }}</span>
+          </div>
+          <div style="font-size:17px;font-weight:600;margin-bottom:6px;">{{ r.driver }}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;color:#5b6572;">{{ r.date }} · {{ r.violation }}</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;background:{{ r.statusBg }};color:{{ r.statusColor }};padding:4px 10px 4px 7px;border-radius:3px;font:600 11px 'IBM Plex Sans',sans-serif;"><span style="width:6px;height:6px;background:{{ r.statusColor }};border-radius:50%;"></span>{{ r.statusLabel }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Detail -->
+    <div style="padding:48px 56px;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:36px;">
+        <div>
+          <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:10px;">{{ selected.violation }}</div>
+          <h1 style="font-size:32px;margin:0 0 6px;font-weight:700;">{{ selected.driver }}</h1>
+          <p style="font-size:16px;color:#5b6572;margin:0;">{{ selected.plate }} · {{ selected.date }}</p>
+        </div>
+        <div style="text-align:right;flex:none;white-space:nowrap;">
+          <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">Amount</div>
+          <div style="font:700 44px 'IBM Plex Sans',sans-serif;color:#0B3D5C;white-space:nowrap;">{{ selected.amountLabel }}</div>
+        </div>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Auto-attribution</div>
+      <div style="background:#fff;border:1px solid #10181F1a;padding:22px 26px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="width:8px;height:8px;background:#1F7A4D;border-radius:50%;"></span>
+          <span style="font-size:16px;font-weight:600;">Booking {{ selected.bookingRef }} active at time of violation</span>
+        </div>
+        <div style="font-size:14px;color:#5b6572;">Attributed to driver of record — no manual lookup required.</div>
+      </div>
+
+      <div style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Recovery pipeline</div>
+      <div style="display:flex;gap:2px;background:#10181F1a;border:1px solid #10181F1a;margin-bottom:32px;">
+        <sc-for list="{{ selected.pipeline }}" as="p" hint-placeholder-count="4">
+          <div style="flex:1;background:{{ p.bg }};padding:16px 18px;">
+            <div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.05em;text-transform:uppercase;color:{{ p.labelColor }};margin-bottom:6px;">{{ p.name }}</div>
+            <div style="font-size:13px;color:{{ p.subColor }};">{{ p.detail }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ selected.showEscalation }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;gap:10px;background:#B33F3F14;border:1px solid #B33F3F40;color:#B33F3F;padding:16px 20px;border-radius:3px;margin-bottom:32px;font-size:15px;">
+          <span style="width:8px;height:8px;background:#B33F3F;border-radius:50%;flex:none;"></span>
+          {{ selected.escalationText }}
+        </div>
+      </sc-if>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;background:#10181F1a;border:1px solid #10181F1a;margin-bottom:36px;">
+        <div style="background:#fff;padding:22px 26px;"><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">Fines, rolling 12 months</div><div style="font:700 30px 'IBM Plex Sans',sans-serif;">{{ selected.finesCount }}</div></div>
+        <div style="background:#fff;padding:22px 26px;"><div style="font:600 11px 'IBM Plex Sans',sans-serif;letter-spacing:0.06em;text-transform:uppercase;color:#5b6572;margin-bottom:8px;">Black points</div><div style="font:700 30px 'IBM Plex Sans',sans-serif;color:{{ selected.pointsColor }};">{{ selected.blackPoints }}</div></div>
+      </div>
+
+      <div style="display:flex;gap:14px;">
+        <button onClick="{{ dispute }}" style="flex:1;background:#fff;color:#5b6572;border:1.5px solid #10181F33;padding:16px;font:600 15px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Mark disputed</button>
+        <button onClick="{{ markRecovered }}" style="flex:1;background:#0B3D5C;color:#fff;border:none;padding:16px;font:600 15px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Mark recovered</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#B33F3F"/><rect x="25" y="30" width="50" height="10" fill="#fff"/><rect x="25" y="48" width="30" height="10" fill="#fff"/></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FINES = [
+  { id: 'f1', plate: 'DXB-42198', driver: 'Ahmed Al Mazrouei', date: '02 Jul 2026', violation: 'Speeding — Sheikh Zayed Rd', amount: 600, bookingRef: 'WF-482910', finesCount: 1, blackPoints: 4, status: 'notified' },
+  { id: 'f2', plate: 'AUH-10233', driver: 'Omar Al Zaabi', date: '28 Jun 2026', violation: 'Red light violation', amount: 1000, bookingRef: 'WF-481207', finesCount: 3, blackPoints: 12, status: 'identified' },
+  { id: 'f3', plate: 'DXB-30541', driver: 'Fatima Al Suwaidi', date: '20 Jun 2026', violation: 'Parking — restricted zone', amount: 200, bookingRef: 'WF-479902', finesCount: 1, blackPoints: 0, status: 'recovered' },
+  { id: 'f4', plate: 'DXB-55871', driver: 'Mariam Al Ketbi', date: '14 Jun 2026', violation: 'Speeding — Corniche', amount: 400, bookingRef: 'WF-477310', finesCount: 2, blackPoints: 6, status: 'disputed' },
+  { id: 'f5', plate: 'AUH-10233', driver: 'Khalid Al Marzouqi', date: '05 Jun 2026', violation: 'Salik violation', amount: 150, bookingRef: 'WF-474002', finesCount: 1, blackPoints: 2, status: 'waived' },
+];
+
+const STATUS_META = {
+  identified: { label: 'IDENTIFIED', color: '#C1791F', bg: '#C1791F14' },
+  notified: { label: 'NOTIFIED', color: '#0B3D5C', bg: '#0B3D5C14' },
+  recovered: { label: 'RECOVERED', color: '#1F7A4D', bg: '#1F7A4D14' },
+  disputed: { label: 'DISPUTED', color: '#B33F3F', bg: '#B33F3F14' },
+  waived: { label: 'WAIVED', color: '#5b6572', bg: '#5b657214' },
+};
+
+class Component extends DCLogic {
+  state = {
+    tab: 'all',
+    selectedId: 'f1',
+    overrides: {},
+  };
+
+  renderVals() {
+    const s = this.state;
+    const isUnresolvedStatus = (st) => st === 'identified' || st === 'notified' || st === 'disputed';
+
+    const withStatus = FINES.map(f => ({ ...f, status: s.overrides[f.id] || f.status }));
+    const unresolvedCount = withStatus.filter(f => isUnresolvedStatus(f.status)).length;
+    const list = s.tab === 'unresolved' ? withStatus.filter(f => isUnresolvedStatus(f.status)) : withStatus;
+
+    const rows = list.map(f => {
+      const meta = STATUS_META[f.status];
+      const isSelected = s.selectedId === f.id;
+      return {
+        id: f.id, plate: f.plate, driver: f.driver, date: f.date, violation: f.violation,
+        amountLabel: 'AED ' + f.amount,
+        select: () => this.setState({ selectedId: f.id }),
+        rowBg: isSelected ? '#0B3D5C0d' : '#fff',
+        rowAccent: isSelected ? '#E2A33D' : 'transparent',
+        statusLabel: meta.label, statusColor: meta.color, statusBg: meta.bg,
+      };
+    });
+
+    const src = withStatus.find(f => f.id === s.selectedId) || withStatus[0];
+    const pipelineOrder = ['identified', 'notified', 'recovered'];
+    const activeIdx = src.status === 'disputed' || src.status === 'waived' ? -1 : pipelineOrder.indexOf(src.status);
+    const pipeline = [
+      { name: 'Identified', detail: src.date },
+      { name: 'Notified', detail: src.status === 'identified' ? 'Pending' : 'Driver notified' },
+      { name: src.status === 'waived' ? 'Waived' : 'Recovered', detail: src.status === 'recovered' ? 'Payroll instruction raised' : src.status === 'waived' ? 'Reason on file' : 'Pending' },
+    ].map((p, i) => {
+      const done = src.status === 'waived' ? i === 2 : i <= activeIdx;
+      return {
+        name: p.name, detail: p.detail,
+        bg: done ? '#0B3D5C' : '#fff',
+        labelColor: done ? '#E2A33D' : '#5b6572',
+        subColor: done ? '#cddce5' : '#9aa2ab',
+      };
+    });
+
+    return {
+      totalCount: FINES.length,
+      unresolvedCount,
+      allTabBg: s.tab === 'all' ? '#0B3D5C' : 'transparent',
+      allTabFg: s.tab === 'all' ? '#fff' : '#5b6572',
+      unresolvedTabBg: s.tab === 'unresolved' ? '#0B3D5C' : 'transparent',
+      unresolvedTabFg: s.tab === 'unresolved' ? '#fff' : '#5b6572',
+      setTabAll: () => this.setState({ tab: 'all' }),
+      setTabUnresolved: () => this.setState({ tab: 'unresolved' }),
+
+      rows,
+      selected: {
+        driver: src.driver, plate: src.plate, date: src.date, violation: src.violation,
+        amountLabel: 'AED ' + src.amount, bookingRef: src.bookingRef,
+        pipeline,
+        showEscalation: src.finesCount >= 3,
+        escalationText: '≥3 fines in rolling 12 months — HR and line manager alerted automatically.',
+        finesCount: src.finesCount,
+        blackPoints: src.blackPoints,
+        pointsColor: src.blackPoints >= 10 ? '#B33F3F' : src.blackPoints > 0 ? '#C1791F' : '#1F7A4D',
+      },
+      dispute: () => this.setState(st => ({ overrides: { ...st.overrides, [src.id]: 'disputed' } })),
+      markRecovered: () => this.setState(st => ({ overrides: { ...st.overrides, [src.id]: 'recovered' } })),
+    };
+  }
+}
+</script>
+</body>
+</html>

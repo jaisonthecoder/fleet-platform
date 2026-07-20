@@ -1,0 +1,47 @@
+# {{artifact_label}} Version Register
+
+The {{artifact_label}} is a **versioned artifact set**. The pages in this section are controlled together because they describe one baseline.
+
+Artifact set ID: `{{artifact_set_id}}`
+
+Current working version: `{{version}}`
+
+Status: `{{status}}`
+
+Owner: `{{owner_role}}`
+
+## Current Pages In The Artifact Set
+
+| Page | Purpose | Current version |
+|---|---|---|
+{{current_pages_table}}
+
+## Version History
+
+| Version | Date | Status | Baseline | Notes |
+|---|---|---|---|---|
+| {{version}} | {{date}} | {{status}} | [Frozen {{version}} snapshot](/{{artifact_slug}}/Versions/{{version}}) | {{version_notes}} |
+
+## Frozen Snapshots
+
+| Version | Snapshot | Included pages |
+|---|---|---|
+| {{version}} | [{{artifact_label}} {{version}}](/{{artifact_slug}}/Versions/{{version}}) | {{included_pages}} |
+
+## How Multi-Page Versions Work
+
+For a multi-page artifact, the version belongs to the **set**, not just one file.
+
+When any page changes materially, update the set version here and create a frozen snapshot for the new baseline.
+
+## Switching The Current Version
+
+To make an older version current again:
+
+1. Confirm which old version should become current.
+2. Restore the whole artifact set from the same commit or frozen snapshot.
+3. Update this register with the new current version and rationale.
+4. Validate wiki navigation and snapshot membership.
+5. Commit the restored set to `Wave.wiki`.
+
+Do not restore only one page from an old baseline unless this register explains the mixed-version exception.

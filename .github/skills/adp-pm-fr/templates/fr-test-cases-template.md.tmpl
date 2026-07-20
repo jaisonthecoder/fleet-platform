@@ -1,0 +1,64 @@
+# {{fr_id}} Draft Test Cases - {{behavior_name}}
+
+**Artifact owner:** `ai-product-manager`
+**QA owner / next role:** `ai-quality-engineer`
+**Package path:** `docs/02-product/FR/{{fr_slug}}/`
+**FR description:** [{{fr_slug}}-description.md]({{fr_slug}}-description.md)
+**Status:** Draft
+**Last updated:**
+
+## 1. Test Case Scope
+
+- **FR trace:** [{{fr_id}}]({{fr_slug}}-description.md)
+- **Acceptance criteria:** [{{fr_id}}.AC1]({{fr_slug}}-description.md#{{fr_anchor}}ac1---happy-path) to [{{fr_id}}.AC3]({{fr_slug}}-description.md#{{fr_anchor}}ac3---error-permission-or-exception-path)
+- **Purpose:** PM-owned draft test cases for traceability and QA planning.
+- **Not final evidence:** Final test design, automation, execution, coverage, and evidence remain owned by `ai-quality-engineer`.
+- **Playwright artifact handoff:** UI execution artifacts may be written under `output/playwright/{{fr_slug}}/` by the `playwright` skill.
+
+## 2. Draft Test Case Matrix
+
+| Test Case ID | FR / AC Trace | Test Type | Priority | Preconditions | Test Steps | Expected Result | Test Data / Fixtures | Automation Suitability | Playwright Artifacts | Owner / Next Role |
+|:-------------|:--------------|:----------|:---------|:--------------|:-----------|:----------------|:---------------------|:------------------------|:---------------------|:------------------|
+| [TC-{{fr_id}}-001](#tc-{{fr_id}}-001) | [{{fr_id}}.AC1]({{fr_slug}}-description.md#{{fr_anchor}}ac1---happy-path) | Functional / API / UI / Integration / Negative / Permission / Regression | High / Medium / Low | TBD user role, data state, tenant/terminal, source-system availability, or policy condition. | 1. TBD action. 2. TBD verification. | TBD observable result, state change, audit entry, notification, report/export, or no-change rule. | TBD records, roles, files, messages, dates, terminal, vessel, or customer data. | Automate / Manual / Exploratory / Pending QA review | `output/playwright/{{fr_slug}}/tc-{{fr_id}}-001/` | `ai-quality-engineer` |
+| [TC-{{fr_id}}-002](#tc-{{fr_id}}-002) | [{{fr_id}}.AC2]({{fr_slug}}-description.md#{{fr_anchor}}ac2---edge-or-alternate-path) | Edge / Alternate / Regression | Medium | TBD alternate valid condition. | 1. TBD action. 2. TBD verification. | TBD alternate successful outcome. | TBD | Automate / Manual / Pending QA review | `output/playwright/{{fr_slug}}/tc-{{fr_id}}-002/` | `ai-quality-engineer` |
+| [TC-{{fr_id}}-003](#tc-{{fr_id}}-003) | [{{fr_id}}.AC3]({{fr_slug}}-description.md#{{fr_anchor}}ac3---error-permission-or-exception-path) | Negative / Permission / Exception | High | TBD invalid, unauthorized, duplicate, missing, or unavailable condition. | 1. TBD attempt. 2. Verify rejection, rollback/no-change, audit, and recovery path. | TBD error, no-change rule, audit entry, retry path, or escalation behavior. | TBD | Automate / Manual / Pending QA review | `output/playwright/{{fr_slug}}/tc-{{fr_id}}-003/` | `ai-quality-engineer` |
+
+## 3. Test Case Details
+
+### TC-{{fr_id}}-001
+
+- **Trace:** [{{fr_id}}.AC1]({{fr_slug}}-description.md#{{fr_anchor}}ac1---happy-path)
+- **Expected evidence:** TBD screenshot, API response, audit entry, report/export, or state record.
+- **Data needs:** TBD.
+- **Automation note:** TBD.
+- **Playwright artifact path:** `output/playwright/{{fr_slug}}/tc-{{fr_id}}-001/`
+
+### TC-{{fr_id}}-002
+
+- **Trace:** [{{fr_id}}.AC2]({{fr_slug}}-description.md#{{fr_anchor}}ac2---edge-or-alternate-path)
+- **Expected evidence:** TBD alternate-path proof.
+- **Data needs:** TBD.
+- **Automation note:** TBD.
+- **Playwright artifact path:** `output/playwright/{{fr_slug}}/tc-{{fr_id}}-002/`
+
+### TC-{{fr_id}}-003
+
+- **Trace:** [{{fr_id}}.AC3]({{fr_slug}}-description.md#{{fr_anchor}}ac3---error-permission-or-exception-path)
+- **Expected evidence:** TBD rejection, rollback/no-change, audit, retry, or escalation proof.
+- **Data needs:** TBD.
+- **Automation note:** TBD.
+- **Playwright artifact path:** `output/playwright/{{fr_slug}}/tc-{{fr_id}}-003/`
+
+## 4. Playwright Artifact Handoff
+
+- **Artifact root:** `output/playwright/{{fr_slug}}/`
+- **Purpose:** The `playwright` skill can read or write screenshots, traces, snapshots, PDFs, and notes here when UI execution is requested.
+- **Do not embed commands by default:** Keep this file as generated test cases. Add Playwright CLI commands only when the requester explicitly asks for execution steps.
+
+## 5. QA Handoff
+
+- **Recommended final test owner:** `ai-quality-engineer`
+- **Automation candidates:**
+- **Manual / exploratory candidates:**
+- **Open test-data questions:**
+- **Residual QA risks:**

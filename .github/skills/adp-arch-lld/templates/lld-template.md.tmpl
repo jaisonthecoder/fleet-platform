@@ -1,0 +1,177 @@
+# Low-Level Design Template
+
+Use with `adp-arch-lld` when producing or updating: foundation-lld.md, module-lld-*.md, lld.md, docs/02-product/FR/fr-<nnn>/fr-<nnn>-lld.md, lld-*.drawio.
+
+This template is intentionally comprehensive. When creating an actual LLD artifact, choose the correct artifact type, complete only applicable sections, and remove or explicitly mark sections that do not apply. Do not generate empty boilerplate.
+
+Before generating the document, ask the user for required values that would otherwise be left as `TBC`, `unknown`, or `[placeholder]`. If a value cannot be provided yet, record it under Open questions with owner, due date, and impact; do not leave bare placeholders in reviewable sections.
+
+Before drafting an LLD when the stack is not explicit in upstream artifacts, ask which technologies should be used or whether the user wants a general technology-stack recommendation. Capture backend, frontend, database, ORM/data-access, connection/integration style, and runtime/deployment constraints.
+
+## Header
+
+- **Artifact owner:** `ai-solution-architect`
+- **Artifact type:** Foundational LLD / Module LLD Pack / FR-level LLD / Single-file LLD / Diagram update
+- **Source request / ticket:**
+- **Upstream artifacts:**
+- **Target path:**
+- **Last updated:**
+- **Downstream role(s):**
+
+## Purpose
+
+State why this artifact exists and what downstream decision or delivery activity it enables.
+
+## LLD Shape Decision
+
+| Option | Use? | Reason |
+| --- | --- | --- |
+| Foundational LLD | Yes / No | Shared engineering rules only; no business-module detail. |
+| Module LLD Pack | Yes / No | One pack per module, service, capability, integration, or bounded component. |
+| Multiple Module LLD Packs | Yes / No | Required when scope spans multiple modules, services, capabilities, integrations, or technologies. |
+| FR-level LLD | Yes / No | Use for `docs/02-product/FR/fr-<nnn>/fr-<nnn>-lld.md` when design scope is limited to one FR package. |
+| Single-file LLD | Yes / No | Use only when the repository convention or narrow scope justifies one document. |
+| Route to HLD | Yes / No | Use when the request is about architecture story, drivers, context, views, NFRs, ADRs, or risks. |
+| Route to Delivery Specs | Yes / No | Use when the request is about stories, acceptance criteria, test cases, implementation tasks, or AI/developer task prompts. |
+
+## Scope
+
+- **In scope:**
+- **Out of scope:**
+- **Assumptions:**
+- **Open questions:**
+
+## Technology Stack Inputs
+
+| Area | Selected technology / constraint | Source / decision owner |
+| --- | --- | --- |
+| Backend |  |  |
+| Frontend |  |  |
+| Database |  |  |
+| ORM / data access |  |  |
+| Connection / integration style |  |  |
+| Runtime / deployment |  |  |
+
+## AD Ports Context Check
+
+| Context question | Applies? | Design impact / evidence |
+| --- | --- | --- |
+| Tenant, terminal, cluster, or business-unit boundary? | Yes / No | |
+| Arabic / RTL / accessibility? | Yes / No | |
+| UAE data residency, PDPL, NESA, or audit controls? | Yes / No | |
+| Vessel, customs, port, maritime SLA, or operational window? | Yes / No | |
+| SAP, Oracle, Port Community System, or external integration? | Yes / No | |
+| Operational resilience, support ownership, or handover constraint? | Yes / No | |
+
+## AD Ports Checks
+
+- **Tenant / terminal impact:**
+- **Arabic / RTL or accessibility impact:**
+- **UAE data residency / PDPL / NESA impact:**
+- **Operational window, vessel, customs, or maritime SLA impact:**
+- **SAP / Oracle / Port Community System integration impact:**
+
+## Main Content
+
+Replace this section with the artifact-specific content. Keep decisions traceable to source evidence and avoid copying shared standards into this file.
+
+For a Foundational LLD, cover shared rules only:
+- Architecture and module boundary rules.
+- API, event, and integration contract rules.
+- Data ownership, persistence, migration, and source-of-truth rules.
+- Security, privacy, authorization, and audit rules.
+- Error handling, resilience, observability, and operational rules.
+- Deployment, configuration, environment, and rollout rules.
+- Testing, review, and evidence rules.
+
+For a Module LLD Pack, cover the module-specific design:
+- Module purpose, responsibilities, dependencies, and non-goals.
+- Components, APIs, events, workflows, sequence, and state transitions.
+- Data model, entity ownership, persistence, integrations, and contracts.
+- Validation, authorization, security, errors, resilience, and observability.
+- Configuration, deployment, rollout, migration, testing, and acceptance evidence.
+- Downstream implementation notes and links to delivery specs.
+
+For an FR-level LLD, cover only the design needed for the specific FR package:
+- Link to the FR package description file, acceptance criteria, draft test cases, `sequence.mmd`, and `sequence.drawio`.
+- Capture component boundaries, backend/frontend contract rows, data/state impact, integrations, permissions, audit, errors, observability, and rollout notes needed for that FR.
+- Link broader or reusable design decisions to module/foundation LLDs or ADRs instead of duplicating them.
+
+Do not duplicate full stories, full acceptance criteria, full test suites, implementation task breakdowns, or AI/developer prompts here. Link to delivery specs instead.
+
+### Sequence Diagrams
+
+Required for Module LLD packs when a flow is implementation-critical. Sequence diagrams are optional for simple CRUD flows where one component performs a direct create, read, update, or delete without meaningful orchestration, security decisioning, persistence boundary, storage interaction, retry, rollback, compensation, external dependency, or operational fallback.
+
+Add at least one sequence diagram for each implementation-critical flow when any of these criteria apply:
+- Multiple components or services participate.
+- A transaction, consistency, or state synchronization boundary exists.
+- An audit, authentication, authorization, or security decision occurs.
+- File or object storage is involved.
+- Import, export, or batch processing is involved.
+- Retry, rollback, idempotency, or compensation behavior matters.
+- An external identity, platform, or integration dependency participates.
+- Operational fallback, manual recovery, or degraded-mode behavior affects implementation.
+
+| Flow | Diagram file | Why required | Source requirement | Failure/alternate paths covered |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
+
+Mermaid example:
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant UI as Frontend
+    participant API as Module API
+    participant Auth as Identity / Policy Service
+    participant DB as Database
+    participant Audit as Audit Log
+    participant Store as Object Storage
+
+    User->>UI: Submit import file
+    UI->>API: POST /imports
+    API->>Auth: Validate token and permission
+    Auth-->>API: Authorized
+    API->>Store: Save uploaded object
+    Store-->>API: Object URI
+    API->>DB: Create import job in transaction
+    API->>Audit: Record import requested
+    API-->>UI: 202 Accepted with job ID
+
+    alt Storage write fails
+        API->>Audit: Record rejected import
+        API-->>UI: 503 retryable error
+    else Authorization fails
+        API->>Audit: Record denied attempt
+        API-->>UI: 403 forbidden
+    end
+```
+
+Draw.io diagrams may also be stored under `docs/03-architecture/LLD/` and linked from the table.
+
+## Entity Completion Matrix
+
+Use when the LLD includes an ERD, data model, schema, backend entity implementation, persistence model, or required entities. Detect the persistence target from repository evidence first; never hardcode MongoDB as the default.
+
+| Entity | Source Requirement | Domain Model | Storage Mapping | Keys/Identity | Relationships | Indexes/Constraints | Data Access | Service/Use Case | API Contract | API Endpoint | Tests | Frontend Model | Status | Residual Risk |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Backend/Frontend Contract Matrix
+
+Use when the LLD includes any UI/API boundary, screen/API wiring, backend endpoint, frontend feature, integration operation, or contract test. This matrix is stack-neutral and must exist before Angular, React, Vue, backend, UX, or QA skills specialize the contract.
+
+| Feature ID | Source FR/NFR | Frontend screen/workflow | Backend capability/use case | API operation or event | Request DTO | Response DTO | Validation / error states | Permission claim | Audit event | Integration dependency | Mock / MSW fixture | Backend owner | Frontend owner | Contract status | Test evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Evidence
+
+- Source evidence:
+- Validation performed:
+- Validation gaps:
+
+## Handoff
+
+- **Summary for downstream role(s):**
+- **Risks to carry forward:**
+- **Required review / approval:**

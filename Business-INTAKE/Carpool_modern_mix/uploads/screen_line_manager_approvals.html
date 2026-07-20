@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Approvals — Line Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ACTOR SCREEN · LINE MANAGER · APPROVAL INBOX
+   Queue on the left, decision panel on the right.
+   Everything needed to decide is on ONE screen — no digging.
+   ============================================================ */
+:root{
+  --bg:#f2f4f6;--surface:#fff;--ink:#101826;--mut:#5b6b7c;
+  --line:#dde4ea;--accent:#0e7f74;--accent-2:#0a5f57;--soft:#e3f2ef;
+  --warn:#b45309;--warn-bg:#fef3e2;--danger:#c0361f;--danger-bg:#fdeae5;--ok:#15803d;
+  --disp:"Space Grotesk",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;--r:14px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--disp)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.bar{position:sticky;top:0;z-index:10;background:var(--ink);color:#fff;padding:0 18px}
+.bar .in{max-width:1180px;margin:auto;display:flex;align-items:center;gap:14px;min-height:58px}
+.bar .role{font:600 10px/1 var(--mono);letter-spacing:.22em;background:var(--accent);padding:6px 10px;border-radius:6px}
+.bar h1{font:600 16px/1;margin:0}
+.bar .sla{margin-left:auto;font:500 12px var(--mono);opacity:.85}
+.bar .sla b{color:#fbbf24}
+
+.wrap{max-width:1180px;margin:auto;padding:18px;display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:960px){.wrap{grid-template-columns:400px 1fr;align-items:start}}
+
+/* Queue */
+.queue{display:grid;gap:10px}
+.qtabs{display:flex;gap:8px}
+.qtabs button{border:1.5px solid var(--line);background:#fff;border-radius:999px;
+  padding:8px 16px;font:600 12px var(--mono);color:var(--mut)}
+.qtabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.q{display:grid;gap:10px}
+.qi{position:relative;text-align:left;background:var(--surface);border:1.5px solid var(--line);
+  border-radius:var(--r);padding:14px 16px 14px 22px;display:grid;gap:6px;width:100%;
+  transition:border-color .15s,transform .15s}
+.qi::before{content:"";position:absolute;inset:12px auto 12px 0;width:5px;border-radius:0 4px 4px 0;background:var(--accent)}
+.qi.urgent::before{background:var(--warn)}
+.qi:hover{transform:translateX(3px)}
+.qi[aria-current="true"]{border-color:var(--ink);box-shadow:0 4px 18px rgb(16 24 38/.1)}
+.qi .top{display:flex;gap:10px;align-items:baseline}
+.qi .who{font-weight:600}
+.qi time{margin-left:auto;font:600 10.5px var(--mono);color:var(--mut);letter-spacing:.06em}
+.qi time.late{color:var(--warn)}
+.qi .what{font:500 12.5px/1.5 var(--mono);color:var(--mut)}
+.qi .flags{display:flex;gap:6px;flex-wrap:wrap}
+.f{font:600 10px/1 var(--mono);letter-spacing:.08em;padding:5px 9px;border-radius:999px}
+.f.ok{background:var(--soft);color:var(--accent-2)}
+.f.warn{background:var(--warn-bg);color:var(--warn)}
+
+/* Decision panel */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.ph{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center}
+.ava{width:52px;height:52px;border-radius:50%;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font:700 18px var(--disp);flex:none}
+.ph h2{margin:0;font:600 19px/1.2}
+.ph .sub{font:500 12px/1.6 var(--mono);color:var(--mut)}
+.ph .id{margin-left:auto;text-align:right;font:600 13px var(--mono)}
+.ph .id small{display:block;font-weight:500;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+
+.pbody{padding:20px 24px;display:grid;gap:18px}
+.facts{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;grid-template-columns:repeat(2,1fr)}
+@media(min-width:700px){.facts{grid-template-columns:repeat(4,1fr)}}
+.fact{background:#fff;padding:14px 16px}
+.fact .k{font:600 10px/1 var(--mono);letter-spacing:.14em;color:var(--mut)}
+.fact .v{font:600 15px/1.3;margin-top:6px}
+.fact .v small{font:500 11px var(--mono);color:var(--mut)}
+
+/* trip strip mini */
+.trip{border:1.5px solid var(--line);border-radius:12px;padding:14px 16px}
+.trip .lab{font:600 10.5px var(--mono);letter-spacing:.14em;color:var(--mut);margin-bottom:10px}
+.tl{display:flex;align-items:center;gap:0}
+.node{display:grid;gap:5px;justify-items:center;text-align:center;min-width:86px}
+.node i{width:13px;height:13px;border-radius:50%;background:var(--accent);border:3px solid var(--soft)}
+.node b{font:600 13px var(--mono)}
+.node span{font:500 10.5px var(--mono);color:var(--mut)}
+.leg{flex:1;height:3px;background:repeating-linear-gradient(90deg,var(--accent) 0 8px,transparent 8px 14px);margin:0 4px 24px}
+.leg span{display:block;text-align:center;transform:translateY(-22px);font:500 10.5px var(--mono);color:var(--mut)}
+
+/* system verdicts — the decision evidence */
+.verdicts{display:grid;gap:8px}
+.vd{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;
+  border:1.5px solid var(--line);border-radius:10px;padding:12px 14px}
+.vd.ok{border-color:color-mix(in oklab,var(--ok) 40%,var(--line));background:color-mix(in oklab,var(--soft) 60%,#fff)}
+.vd.warn{border-color:color-mix(in oklab,var(--warn) 45%,var(--line));background:var(--warn-bg)}
+.vd .ic{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;color:#fff;flex:none;margin-top:2px}
+.vd.ok .ic{background:var(--ok)}.vd.warn .ic{background:var(--warn)}
+.vd b{font-size:13.5px}
+.vd p{margin:2px 0 0;font:500 12px/1.6 var(--mono);color:var(--mut)}
+.vd p a{color:var(--accent-2);font-weight:600}
+
+/* justification quote */
+.just{border-inline-start:4px solid var(--accent);background:var(--soft);
+  border-radius:0 12px 12px 0;padding:14px 18px;font-size:14.5px;line-height:1.6}
+.just small{display:block;font:600 10.5px var(--mono);letter-spacing:.14em;color:var(--accent-2);margin-bottom:6px}
+
+/* decision bar */
+.decide{display:flex;gap:10px;flex-wrap:wrap;padding:16px 24px;border-top:1px solid var(--line);
+  background:#fafbfc;align-items:center}
+.btn{border:0;border-radius:10px;min-height:48px;padding:0 22px;font:600 14px var(--disp);
+  display:inline-flex;align-items:center;gap:9px;transition:background .15s,transform .1s}
+.btn:active{transform:translateY(1px)}
+.approve{background:var(--accent);color:#fff}
+.approve:hover{background:var(--accent-2)}
+.modify{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.modify:hover{border-color:var(--ink)}
+.decline{background:#fff;color:var(--danger);border:1.5px solid color-mix(in oklab,var(--danger) 40%,var(--line))}
+.decline:hover{background:var(--danger-bg)}
+.sodnote{margin-left:auto;font:500 11px/1.5 var(--mono);color:var(--mut);max-width:260px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,80px);background:var(--ink);color:#fff;
+  border-radius:12px;padding:14px 22px;font:600 13.5px var(--disp);display:flex;gap:10px;align-items:center;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:50}
+.toast.show{transform:translate(-50%,0)}
+.toast i{color:#6ee7b7}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="in">
+    <span class="role">LINE MANAGER</span>
+    <h1>Approvals</h1>
+    <span class="sla">SLA: decide within 24 h · oldest waiting <b>3 h 40 m</b></span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Queue -->
+  <aside class="queue" aria-label="Pending requests">
+    <div class="qtabs" role="tablist">
+      <button role="tab" aria-selected="true">Pending · 4</button>
+      <button role="tab" aria-selected="false">Decided today · 6</button>
+    </div>
+    <div class="q">
+      <button class="qi" aria-current="true">
+        <span class="top"><span class="who">Amina Khoury</span><time>3H 40M</time></span>
+        <span class="what">Patrol · Mon 13 Jul 07:30–12:00 · Kezad 280 site visit</span>
+        <span class="flags"><span class="f ok">ELIGIBLE</span><span class="f ok">CONSENT ✓</span><span class="f ok">1ST THIS WEEK</span></span>
+      </button>
+      <button class="qi urgent">
+        <span class="top"><span class="who">Omar Farsi</span><time class="late">TOMORROW 06:00</time></span>
+        <span class="what">Hiace 12-seat · crew move to Khalifa Gate 2 · 06:00–18:00</span>
+        <span class="flags"><span class="f ok">ELIGIBLE</span><span class="f warn">12H DURATION — ESCALATED</span></span>
+      </button>
+      <button class="qi">
+        <span class="top"><span class="who">Lena Haddad</span><time>1H 05M</time></span>
+        <span class="what">Land Cruiser · Thu 16 Jul 09:00–15:00 · vendor audit, Maqta</span>
+        <span class="flags"><span class="f ok">ELIGIBLE</span><span class="f ok">CONSENT ✓</span></span>
+      </button>
+      <button class="qi">
+        <span class="top"><span class="who">Yusuf Rahman</span><time>25M</time></span>
+        <span class="what">Substitute driver authorisation · for H. Rahman · 14–18 Jul</span>
+        <span class="flags"><span class="f warn">SUBSTITUTION — LIABILITY SHIFTS</span></span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Decision panel -->
+  <main class="panel" aria-label="Request BK-1211 detail">
+    <div class="ph">
+      <span class="ava">AK</span>
+      <div>
+        <h2>Amina Khoury</h2>
+        <div class="sub">EMP-20481 · Group Services · reports to you · 14 bookings YTD, 0 no-shows, 1 late return</div>
+      </div>
+      <div class="id">BK-1211<small>SUBMITTED 08:12 TODAY</small></div>
+    </div>
+
+    <div class="pbody">
+      <!-- facts -->
+      <div class="facts">
+        <div class="fact"><div class="k">VEHICLE</div><div class="v">Nissan Patrol<br><small>AD 88914 · 5 seats</small></div></div>
+        <div class="fact"><div class="k">WINDOW</div><div class="v">Mon 13 Jul<br><small>07:30 → 12:00 (4.5 h)</small></div></div>
+        <div class="fact"><div class="k">PURPOSE</div><div class="v">Site visit<br><small>2 passengers</small></div></div>
+        <div class="fact"><div class="k">EST. COST</div><div class="v">~AED 96<br><small>fuel 7.4 L + wear</small></div></div>
+      </div>
+
+      <!-- trip -->
+      <div class="trip">
+        <div class="lab">PLANNED TRIP</div>
+        <div class="tl">
+          <div class="node"><i></i><b>07:30</b><span>GS Pool<br>Mina Zayed</span></div>
+          <div class="leg"><span>52 km · E11</span></div>
+          <div class="node"><i></i><b>08:25</b><span>Kezad 280<br>site office</span></div>
+          <div class="leg"><span>52 km return</span></div>
+          <div class="node"><i></i><b>12:00</b><span>GS Pool<br>return + buffer</span></div>
+        </div>
+      </div>
+
+      <!-- system verdicts -->
+      <div class="verdicts" aria-label="System checks">
+        <div class="vd ok">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><b>Eligibility gate passed</b><p>employment active · licence valid to 02/2027 · no black-point or behaviour blocks</p></div>
+        </div>
+        <div class="vd ok">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><b>Consent v3.2 signed</b><p>08:12 · iOS · covers fines, damages, usage policy · <a href="#">view record</a></p></div>
+        </div>
+        <div class="vd ok">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <div><b>No conflicts on vehicle</b><p>previous booking ends 06:45 · 15-min buffer respected · Mulkiya + insurance current</p></div>
+        </div>
+        <div class="vd warn">
+          <span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 8v5m0 3h.01" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></span>
+          <div><b>Monday 07:30 is pool peak</b><p>GS Pool forecast 88% at pick-up · a 09:00 start would free a vehicle for the waitlist — <a href="#">suggest new time</a></p></div>
+        </div>
+      </div>
+
+      <!-- justification -->
+      <div class="just">
+        <small>BUSINESS JUSTIFICATION — SITE VISITS</small>
+        "Quarterly HSE inspection at the Kezad 280 site office with two auditors. Client contact confirmed for 09:00; need buffer for gate clearance."
+      </div>
+    </div>
+
+    <!-- decision -->
+    <div class="decide">
+      <button class="btn approve" id="ok">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="m5 13 4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Approve
+      </button>
+      <button class="btn modify">Request change</button>
+      <button class="btn decline">Decline…</button>
+      <p class="sodnote">Decision is logged with your ID. You cannot approve your own requests (SoD-01) — those route to your delegate.</p>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"><i>✓</i> Approved — Amina notified · booking BK-1211 confirmed</div>
+
+<script>
+document.querySelectorAll('.qi').forEach(function(q){
+  q.onclick=function(){
+    document.querySelectorAll('.qi').forEach(function(x){x.removeAttribute('aria-current')});
+    q.setAttribute('aria-current','true');
+  };
+});
+document.getElementById('ok').onclick=function(){
+  var t=document.getElementById('toast');
+  t.classList.add('show');
+  this.disabled=true;this.style.opacity=.6;
+  setTimeout(function(){t.classList.remove('show')},3200);
+};
+</script>
+</body>
+</html>

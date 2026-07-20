@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc", "jsx-a11y"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "jsx-a11y/prefer-tag-over-role": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["**/components/ui/**"],
+      "rules": {
+        "jsx-a11y/heading-has-content": "off",
+        "jsx-a11y/label-has-associated-control": "off",
+        "jsx-a11y/anchor-has-content": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["dist", "coverage", "node_modules"]
+}

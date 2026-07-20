@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; font-family:'IBM Plex Sans',sans-serif; background:#F5F3EC; }
+    a { color:#0B3D5C; }
+    a:hover { color:#0E5C7A; }
+    button { font-family:'IBM Plex Sans',sans-serif; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;">
+  <div style="width:64px;flex:none;background:#0B3D5C;display:flex;flex-direction:column;align-items:center;padding:18px 0;gap:8px;">
+    <a href="Home.dc.html" title="Home" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:10px;text-decoration:none;"><div style="display:flex;gap:2px;"><div style="width:4px;height:16px;background:#E2A33D;"></div><div style="width:4px;height:16px;background:#fff;"></div><div style="width:4px;height:16px;background:#E2A33D;"></div></div></a>
+    <a href="Booking%20%26%20Consent.dc.html" title="Booking &amp; consent" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:#E2A33D;color:#10181F;">BK</a>
+    <a href="Handover%20%26%20Return.dc.html" title="Handover &amp; return" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">HR</a>
+    <a href="Approval%20Inbox.dc.html" title="Approval inbox" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">AP</a>
+    <a href="Entitlement%20Decision.dc.html" title="Entitlement decision" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">EN</a>
+    <a href="Fleet%20Command%20Console.dc.html" title="Command console" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">CC</a>
+    <a href="Fines%20Register.dc.html" title="Fines register" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">FR</a>
+    <a href="Policy%20Engine%20Authoring.dc.html" title="Policy engine" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;text-decoration:none;font:700 12px 'IBM Plex Sans',sans-serif;background:transparent;color:#cddce5;">PE</a>
+    <div title="Executive dashboard — not yet built" style="width:42px;height:42px;border-radius:6px;display:flex;align-items:center;justify-content:center;font:700 12px 'IBM Plex Sans',sans-serif;color:#4d6a7d;">EX</div>
+  </div>
+  <div style="flex:1;background:#F5F3EC;color:#10181F;display:flex;flex-direction:column;min-width:0;">
+
+  <!-- Header -->
+  <div style="display:flex;flex-direction:column;border-bottom:1px solid #10181F1f;">
+    <div style="padding:10px 56px 0;font:500 12px 'IBM Plex Sans',sans-serif;color:#9aa2ab;">Wayfinder <span style="margin:0 6px;">/</span> Calm <span style="margin:0 6px;">/</span> Booking &amp; Consent</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 56px 22px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;"><div style="display:flex;gap:3px;"><div style="width:5px;height:20px;background:#0B3D5C;"></div><div style="width:5px;height:20px;background:#E2A33D;"></div><div style="width:5px;height:20px;background:#0B3D5C;"></div></div>
+      <span style="font:700 18px 'IBM Plex Sans',sans-serif;">Wayfinder</span></a>
+    </div>
+    <div style="display:flex;gap:28px;align-items:center;">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:9px;height:9px;border-radius:50%;background:{{ s.dotColor }};"></div>
+          <span style="font:600 13px 'IBM Plex Sans',sans-serif;letter-spacing:0.05em;text-transform:uppercase;color:{{ s.labelColor }};">{{ s.name }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font:500 14px 'IBM Plex Sans',sans-serif;color:#5b6572;">Ahmed Al Mazrouei · GS Pool</div>
+    </div>
+  </div>
+
+  <!-- Step 1: window -->
+  <sc-if value="{{ isStep1 }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;display:flex;justify-content:center;padding:72px 40px;">
+      <div style="width:100%;max-width:760px;">
+        <div style="font:600 14px/1 'IBM Plex Sans',sans-serif;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:14px;">Step 1 of 4</div>
+        <h1 style="font-size:38px;margin:0 0 12px;font-weight:700;">When and where do you need a car?</h1>
+        <p style="font-size:16px;color:#5b6572;margin:0 0 44px;">{{ todayLabel }} · GS Pool, Mina Zayed</p>
+
+        <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Time window</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px;">
+          <sc-for list="{{ windows }}" as="w" hint-placeholder-count="4">
+            <button onClick="{{ w.select }}" style="padding:13px 20px;border-radius:3px;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ w.bg }};color:{{ w.fg }};border:1.5px solid {{ w.border }};">{{ w.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:14px;">Vehicle category</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:56px;">
+          <sc-for list="{{ categories }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.select }}" style="padding:13px 22px;border-radius:3px;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }};border:1.5px solid {{ c.border }};">{{ c.name }}</button>
+          </sc-for>
+        </div>
+
+        <button onClick="{{ goStep2 }}" style="background:#0B3D5C;color:#fff;border:none;padding:16px 32px;font:600 16px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Search available vehicles →</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Step 2: choose vehicle -->
+  <sc-if value="{{ isStep2 }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;justify-content:center;padding:72px 40px;">
+      <div style="width:100%;max-width:860px;">
+        <div style="font:600 14px/1 'IBM Plex Sans',sans-serif;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:14px;">Step 2 of 4</div>
+        <h1 style="font-size:38px;margin:0 0 8px;font-weight:700;">Choose a vehicle</h1>
+        <p style="font-size:16px;color:#5b6572;margin:0 0 40px;">{{ selectedWindowLabel }} · {{ selectedCategoryLabel }}</p>
+
+        <sc-if value="{{ hasVehicles }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:2px;background:#10181F1a;border:1px solid #10181F1a;margin-bottom:40px;">
+            <sc-for list="{{ vehicles }}" as="v" hint-placeholder-count="2">
+              <div onClick="{{ v.select }}" style="background:#fff;padding:22px 24px;display:flex;align-items:center;gap:24px;cursor:pointer;border-left:4px solid {{ v.accent }};">
+                <div style="flex:1;">
+                  <div style="font-size:19px;font-weight:600;">{{ v.model }}</div>
+                  <div style="font:14px 'IBM Plex Sans',sans-serif;color:#5b6572;margin-top:4px;">{{ v.plate }}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;background:{{ v.statusBg }};border:1px solid {{ v.statusBorder }};color:{{ v.statusColor }};padding:5px 11px 5px 8px;border-radius:3px;font:600 12px 'IBM Plex Sans',sans-serif;flex:none;"><span style="width:7px;height:7px;background:{{ v.statusColor }};"></span>{{ v.statusLabel }}</div>
+                <div style="font:15px 'IBM Plex Sans',sans-serif;color:#10181F;flex:none;width:100px;text-align:right;">{{ v.costLabel }}</div>
+                <div style="width:22px;height:22px;border-radius:50%;border:1.5px solid {{ v.radioBorder }};background:{{ v.radioBg }};flex:none;"></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasNoVehicles }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#fff;border:1px solid #10181F1a;padding:40px;text-align:center;margin-bottom:40px;">
+            <div style="font-size:19px;font-weight:600;margin-bottom:8px;">No {{ selectedCategoryLabel }} available in this window</div>
+            <div style="font-size:15px;color:#5b6572;">Try a different category or a later time window.</div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <button onClick="{{ goStep1 }}" style="background:transparent;color:#5b6572;border:none;padding:12px 4px;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer;">← Back</button>
+          <button onClick="{{ goStep3 }}" disabled="{{ continueDisabled }}" style="background:{{ continueBg }};color:#fff;border:none;padding:16px 32px;font:600 16px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Continue to consent →</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Step 3: consent -->
+  <sc-if value="{{ isStep3 }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;justify-content:center;padding:72px 40px;">
+      <div style="width:100%;max-width:700px;">
+        <div style="font:600 14px/1 'IBM Plex Sans',sans-serif;letter-spacing:0.1em;text-transform:uppercase;color:#0B3D5C;margin-bottom:14px;">Step 3 of 4</div>
+        <h1 style="font-size:38px;margin:0 0 8px;font-weight:700;">Consent &amp; accountability</h1>
+        <p style="font-size:16px;color:#5b6572;margin:0 0 36px;">Required before this booking can be submitted for approval.</p>
+
+        <div style="background:#fff;border:1px solid #10181F1a;padding:28px 30px;margin-bottom:28px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #10181F14;font-size:15px;"><span style="color:#5b6572;">Vehicle</span><span style="font-weight:600;">{{ chosen.model }} · {{ chosen.plate }}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #10181F14;font-size:15px;"><span style="color:#5b6572;">Window</span><span style="font-weight:600;">{{ selectedWindowLabel }}, {{ todayLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;"><span style="color:#5b6572;">Policy version</span><span style="font:600 14px 'IBM Plex Sans',sans-serif;">v4.2</span></div>
+        </div>
+
+        <div style="background:#0B3D5C0d;border:1px solid #0B3D5C33;padding:24px 26px;font-size:15px;line-height:1.7;color:#10181F;margin-bottom:28px;">
+          I acknowledge that I am the driver of record for this booking, and I accept responsibility for any traffic fines, tolls, black points and damages incurred during this window. This consent is recorded against my employee ID, timestamped, and bound to this vehicle and policy version.
+        </div>
+
+        <label style="display:flex;align-items:flex-start;gap:12px;margin-bottom:28px;cursor:pointer;">
+          <input type="checkbox" checked="{{ consentChecked }}" onChange="{{ toggleConsent }}" style="width:20px;height:20px;margin-top:1px;accent-color:#0B3D5C;flex:none;"/>
+          <span style="font-size:15px;">I have read and accept the terms above.</span>
+        </label>
+
+        <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:10px;">Type your full name to sign</div>
+        <input type="text" value="{{ signatureName }}" onChange="{{ setSignature }}" placeholder="Ahmed Al Mazrouei" style="width:100%;box-sizing:border-box;padding:14px 16px;font:20px 'IBM Plex Sans',sans-serif;border:1.5px solid #10181F33;border-radius:3px;margin-bottom:40px;"/>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <button onClick="{{ goStep2 }}" style="background:transparent;color:#5b6572;border:none;padding:12px 4px;font:600 15px 'IBM Plex Sans',sans-serif;cursor:pointer;">← Back</button>
+          <button onClick="{{ confirmBooking }}" disabled="{{ confirmDisabled }}" style="background:{{ confirmBg }};color:#fff;border:none;padding:16px 32px;font:600 16px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Sign &amp; submit booking</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Step 4: confirmation -->
+  <sc-if value="{{ isStep4 }}" hint-placeholder-val="{{ false }}">
+    <div style="flex:1;display:flex;justify-content:center;padding:96px 40px;">
+      <div style="width:100%;max-width:640px;text-align:center;">
+        <div style="width:64px;height:64px;border-radius:50%;background:#1F7A4D14;border:1.5px solid #1F7A4D40;display:flex;align-items:center;justify-content:center;margin:0 auto 32px;">
+          <div style="width:14px;height:14px;background:#1F7A4D;border-radius:50%;"></div>
+        </div>
+        <div style="font:600 14px 'IBM Plex Sans',sans-serif;letter-spacing:0.1em;text-transform:uppercase;color:#1F7A4D;margin-bottom:16px;">Submitted for approval</div>
+        <h1 style="font-size:34px;margin:0 0 32px;font-weight:700;">Awaiting your line manager</h1>
+        <div style="background:#fff;border:1px solid #10181F1a;padding:32px;margin-bottom:32px;">
+          <div style="font:600 12px 'IBM Plex Sans',sans-serif;letter-spacing:0.08em;text-transform:uppercase;color:#5b6572;margin-bottom:10px;">Booking reference</div>
+          <div style="font:700 36px 'IBM Plex Sans',sans-serif;color:#0B3D5C;margin-bottom:24px;">{{ bookingRef }}</div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #10181F14;font-size:15px;"><span style="color:#5b6572;">Vehicle</span><span style="font-weight:600;">{{ chosen.model }} · {{ chosen.plate }}</span></div>
+          <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:15px;"><span style="color:#5b6572;">Window</span><span style="font-weight:600;">{{ selectedWindowLabel }}, {{ todayLabel }}</span></div>
+        </div>
+        <button onClick="{{ startOver }}" style="background:transparent;color:#0B3D5C;border:1.5px solid #0B3D5C;padding:14px 26px;font:600 15px 'IBM Plex Sans',sans-serif;border-radius:3px;cursor:pointer;">Make another booking</button>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</div>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B3D5C"/><circle cx="50" cy="50" r="24" fill="#E2A33D"/></svg></template>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const VEHICLES = [
+  { id:'v1', model:'Toyota Land Cruiser', plate:'DXB-42198', category:'SUV', cost:1.15, status:'ok' },
+  { id:'v2', model:'Toyota Camry', plate:'DXB-30541', category:'Sedan', cost:0.68, status:'ok' },
+  { id:'v3', model:'Nissan Patrol', plate:'AUH-10233', category:'SUV', cost:1.02, status:'warn' },
+  { id:'v4', model:'Hyundai H1', plate:'DXB-55871', category:'Van', cost:0.89, status:'ok' },
+];
+const WINDOWS = ['08:00 – 10:00','10:00 – 13:00','13:00 – 17:00','Full day'];
+const CATEGORIES = ['Sedan','SUV','Van','Pickup'];
+
+class Component extends DCLogic {
+  state = {
+    step: 1,
+    windowIdx: 0,
+    category: 'SUV',
+    selectedVehicleId: null,
+    consentChecked: false,
+    signatureName: '',
+    bookingRef: null,
+  };
+
+  renderVals() {
+    const s = this.state;
+    const stepNames = ['Window','Vehicle','Consent','Confirmed'];
+    const steps = stepNames.map((name, i) => ({
+      name,
+      dotColor: (i+1) < s.step ? '#1F7A4D' : (i+1) === s.step ? '#E2A33D' : '#10181F26',
+      labelColor: (i+1) === s.step ? '#10181F' : '#9aa2ab',
+    }));
+
+    const windows = WINDOWS.map((label, i) => ({
+      label,
+      select: () => this.setState({ windowIdx: i }),
+      bg: s.windowIdx === i ? '#0B3D5C' : '#fff',
+      fg: s.windowIdx === i ? '#fff' : '#10181F',
+      border: s.windowIdx === i ? '#0B3D5C' : '#10181F26',
+    }));
+
+    const categories = CATEGORIES.map((name) => ({
+      name,
+      select: () => this.setState({ category: name, selectedVehicleId: null }),
+      bg: s.category === name ? '#0B3D5C' : '#fff',
+      fg: s.category === name ? '#fff' : '#10181F',
+      border: s.category === name ? '#0B3D5C' : '#10181F26',
+    }));
+
+    const matching = VEHICLES.filter(v => v.category === s.category);
+    const statusMap = {
+      ok: { label: 'COMPLIANT', color: '#1F7A4D', bg: '#1F7A4D14', border: '#1F7A4D40' },
+      warn: { label: 'INSURANCE 9D', color: '#C1791F', bg: '#C1791F14', border: '#C1791F40' },
+    };
+    const vehicles = matching.map(v => {
+      const selected = s.selectedVehicleId === v.id;
+      const st = statusMap[v.status];
+      return {
+        id: v.id, model: v.model, plate: v.plate,
+        costLabel: 'AED ' + v.cost.toFixed(2) + '/km',
+        statusLabel: st.label, statusColor: st.color, statusBg: st.bg, statusBorder: st.border,
+        accent: selected ? '#E2A33D' : 'transparent',
+        radioBorder: selected ? '#0B3D5C' : '#10181F4d',
+        radioBg: selected ? '#0B3D5C' : 'transparent',
+        select: () => this.setState({ selectedVehicleId: v.id }),
+      };
+    });
+
+    const chosen = matching.find(v => v.id === s.selectedVehicleId) || matching[0] || VEHICLES[0];
+    const canSubmit = !!s.consentChecked && s.signatureName.trim().length > 2;
+
+    const now = new Date();
+    const todayLabel = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    return {
+      steps,
+      windows,
+      categories,
+      vehicles,
+      hasVehicles: matching.length > 0,
+      hasNoVehicles: matching.length === 0,
+      chosen: { model: chosen.model, plate: chosen.plate },
+      todayLabel,
+      selectedWindowLabel: WINDOWS[s.windowIdx],
+      selectedCategoryLabel: s.category,
+
+      isStep1: s.step === 1,
+      isStep2: s.step === 2,
+      isStep3: s.step === 3,
+      isStep4: s.step === 4,
+
+      goStep1: () => this.setState({ step: 1 }),
+      goStep2: () => this.setState({ step: 2 }),
+      goStep3: () => this.setState({ step: 3 }),
+
+      continueDisabled: !s.selectedVehicleId,
+      continueBg: s.selectedVehicleId ? '#0B3D5C' : '#10181F33',
+
+      consentChecked: s.consentChecked,
+      toggleConsent: () => this.setState(st => ({ consentChecked: !st.consentChecked })),
+      signatureName: s.signatureName,
+      setSignature: (e) => this.setState({ signatureName: e.target.value }),
+      confirmDisabled: !canSubmit,
+      confirmBg: canSubmit ? '#0B3D5C' : '#10181F33',
+      confirmBooking: () => {
+        if (!canSubmit) return;
+        const ref = 'WF-' + Math.floor(100000 + Math.random() * 900000);
+        this.setState({ step: 4, bookingRef: ref });
+      },
+      bookingRef: s.bookingRef,
+      startOver: () => this.setState({
+        step: 1, windowIdx: 0, category: 'SUV', selectedVehicleId: null,
+        consentChecked: false, signatureName: '', bookingRef: null,
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>
