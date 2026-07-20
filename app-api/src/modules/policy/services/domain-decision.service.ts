@@ -4,7 +4,7 @@ import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import { domainDecisionComparison } from '../../../common/database/schema';
 import { domainDecisionSelector } from '../../../common/database/schema';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNull, or, sql } from 'drizzle-orm';
 import type {
   DecisionProvenance,
   DomainDecisionMode,
@@ -34,9 +34,13 @@ export class DomainDecisionSelectorService {
         and(
           eq(domainDecisionSelector.organizationId, organizationId),
           eq(domainDecisionSelector.decisionKey, decisionKey),
-          isNull(domainDecisionSelector.scopeNodeId),
+          or(
+            eq(domainDecisionSelector.scopeNodeId, scopeNodeId),
+            isNull(domainDecisionSelector.scopeNodeId),
+          ),
         ),
       )
+      .orderBy(desc(sql`CASE WHEN ${domainDecisionSelector.scopeNodeId} = ${scopeNodeId} THEN 1 ELSE 0 END`))
       .limit(1);
     const row = rows[0];
     return row
@@ -51,20 +55,24 @@ export class DomainDecisionSelectorService {
   async setMode(
     organizationId: string,
     decisionKey: string,
+    scopeNodeId: string | null,
     mode: DomainDecisionMode,
     canaryPercentage = 0,
+    updatedBy?: string,
   ): Promise<void> {
-    await this.db
-      .insert(domainDecisionSelector)
-      .values({ organizationId, decisionKey, mode, canaryPercentage })
-      .onConflictDoUpdate({
-        target: [
-          domainDecisionSelector.organizationId,
-          domainDecisionSelector.decisionKey,
-          domainDecisionSelector.scopeNodeId,
-        ],
-        set: { mode, canaryPercentage, updatedAtUtc: new Date() },
-      });
+    const predicate = and(
+      eq(domainDecisionSelector.organizationId, organizationId),
+      eq(domainDecisionSelector.decisionKey, decisionKey),
+      scopeNodeId
+        ? eq(domainDecisionSelector.scopeNodeId, scopeNodeId)
+        : isNull(domainDecisionSelector.scopeNodeId),
+    );
+    const existing = await this.db.select({ id: domainDecisionSelector.id }).from(domainDecisionSelector).where(predicate).limit(1);
+    if (existing[0]) {
+      await this.db.update(domainDecisionSelector).set({ mode, canaryPercentage, updatedBy: updatedBy ?? null, revision: sql`${domainDecisionSelector.revision} + 1`, updatedAtUtc: new Date() }).where(eq(domainDecisionSelector.id, existing[0].id));
+    } else {
+      await this.db.insert(domainDecisionSelector).values({ organizationId, decisionKey, scopeNodeId, mode, canaryPercentage, updatedBy: updatedBy ?? null });
+    }
   }
 }
 
@@ -86,7 +94,7 @@ export class DomainDecisionService {
       input.request.ruleType,
       input.request.scopeNodeId,
     );
-    const mode = input.mode ?? selector.mode;
+    const mode = selector.mode;
     const fingerprint = this.fingerprint(input.request.context);
     const evaluateNew = () => this.evaluator.evaluate(input.request);
 
@@ -146,7 +154,7 @@ export class DomainDecisionService {
     const provenance: DecisionProvenance = {
       decisionKey: input.request.ruleType,
       consumer: input.consumer,
-      subjectRef: input.subjectRef,
+      subjectRef: this.fingerprint({ subjectRef: input.subjectRef }),
       correlationId: input.correlationId,
       organizationId: input.request.organizationId,
       requestedScopeNodeId: input.request.scopeNodeId,
@@ -208,7 +216,7 @@ export class DomainDecisionService {
     return {
       decision: response.decision,
       reasons: [...response.reasons].sort(),
-      route: response.route ?? null,
+      routeFingerprint: this.fingerprint({ route: response.route ?? null }),
       valueFingerprint: this.fingerprint({ value: response.value ?? null }),
       resolvedScopeNodeId: response.resolvedScopeNodeId ?? null,
       matchedRowId: response.matchedRowId ?? null,
