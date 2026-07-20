@@ -43,3 +43,9 @@ export const policyEvaluationResponseSchema = z.object({
 export type PolicyEvaluationResponse = z.infer<
   typeof policyEvaluationResponseSchema
 >;
+
+export const bookingBufferValueSchema = z.number().int().min(0).max(1440);
+export const maxBookingDurationValueSchema = z.number().min(0.25).max(24 * 30);
+export const reConsentToleranceValueSchema = z.object({
+  toleranceMinutes: z.number().int().min(0).max(60 * 24 * 30),
+});

@@ -57,9 +57,13 @@ export function isActiveStatus(status: string): boolean {
 }
 
 /** Maps a vehicle's use-category lookup code to its buffer/duration class. */
-export function vehicleClassOf(useCategoryCode: string | null | undefined): VehicleClass {
+export function vehicleClassOf(
+  useCategoryCode: string | null | undefined,
+): VehicleClass | null {
   const code = useCategoryCode?.toUpperCase();
-  return code === 'EXECUTIVE' || code === 'VIP' ? 'executive' : 'pool';
+  if (code === 'EXECUTIVE' || code === 'VIP') return 'executive';
+  if (code === 'POOL' || code === 'OPERATIONS' || code === 'DEDICATED') return 'pool';
+  return null;
 }
 
 /**

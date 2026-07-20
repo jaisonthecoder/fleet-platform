@@ -76,6 +76,7 @@ const EXPECTED_TABLES = [
   'eligibility_evaluation',
   'access_block',
   'booking',
+  'booking_policy_decision',
   'waitlist_entry',
   'booking_event',
   'consent_record',

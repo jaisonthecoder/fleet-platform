@@ -8,8 +8,12 @@ Migrate booking approval routing from runtime-built unversioned chains to a poli
 
 - Primary: Workflow and Booking Backend owners
 - Contributors: Architecture, Security/SoD, QA, SRE
-- Depends on: 8.1 and workflow-definition foundation from Phase 6
+- Depends on: 8.2A and workflow-definition foundation from Phase 6
 - Blocker: immutable workflow definition/version/deployment storage must exist
+
+## User-journey prerequisite
+
+[8.2A - Live Booking User Journey](02a-live-booking-user-journey.md) must pass before this sub-phase begins. Approval routing cannot be declared complete while `/booking` still serves static mock vehicles and synthetic booking results.
 
 ## Foundation
 

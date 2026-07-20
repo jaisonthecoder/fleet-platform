@@ -18,7 +18,8 @@ export const domainDecisionRequestSchema = z.object({
   consumer: z.string().min(1),
   subjectRef: z.string().min(1),
   correlationId: z.string().min(1),
-  mode: domainDecisionModeSchema.optional(),
+  environment: z.string().min(1).optional(),
+  timeoutMs: z.number().int().min(10).max(5000).optional(),
   request: policyEvaluationRequestSchema.extend({
     organizationId: z.string().uuid(),
     scopeNodeId: z.string().uuid(),
@@ -29,6 +30,10 @@ export type DomainDecisionRequest = z.infer<typeof domainDecisionRequestSchema>;
 
 export const decisionProvenanceSchema = z.object({
   decisionKey: z.string(),
+  environment: z.string().min(1),
+  selectorId: z.string().uuid().nullable(),
+  selectorRevision: z.number().int().positive().nullable(),
+  deploymentId: z.string().uuid().nullable(),
   consumer: z.string(),
   subjectRef: z.string(),
   correlationId: z.string(),

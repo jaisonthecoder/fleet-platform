@@ -6,8 +6,10 @@ import type { PlatformRole } from '../../../common/database/schema';
 import {
   booking,
   bookingEvent,
+  bookingPolicyDecision,
   consentLifecycleEvent,
   consentRecord,
+  hierarchyNode,
   person,
   roleAssignment,
   vehicle,
@@ -57,6 +59,14 @@ export class BookingsRepository {
 
   async insertEvent(values: typeof bookingEvent.$inferInsert, executor: Executor = this.db) {
     await executor.insert(bookingEvent).values(values);
+  }
+
+  /** Appends immutable decision provenance in the booking transaction. */
+  async insertPolicyDecision(
+    values: typeof bookingPolicyDecision.$inferInsert,
+    executor: Executor = this.db,
+  ) {
+    await executor.insert(bookingPolicyDecision).values(values).onConflictDoNothing();
   }
 
   async listEvents(bookingId: string) {
@@ -122,6 +132,52 @@ export class BookingsRepository {
       .where(eq(person.id, id))
       .limit(1);
     return rows[0];
+  }
+
+  /** Person identity and home scope used for booking authorization/pickers. */
+  async findPersonBookingProfile(id: string) {
+    const rows = await this.db
+      .select({
+        personId: person.id,
+        organizationId: person.organizationId,
+        fullName: person.fullName,
+        employeeId: person.hcmEmployeeId,
+        grade: person.grade,
+        employmentStatus: person.employmentStatus,
+        homeScopeNodeId: person.homePoolNodeId,
+        homeScopeName: hierarchyNode.name,
+        isProfessionalDriver: person.isProfessionalDriver,
+      })
+      .from(person)
+      .leftJoin(hierarchyNode, eq(hierarchyNode.id, person.homePoolNodeId))
+      .where(eq(person.id, id))
+      .limit(1);
+    return rows[0];
+  }
+
+  /** Active people in an organization for a scope-filtered booking picker. */
+  async listActiveBookingPeople(organizationId: string) {
+    return this.db
+      .select({
+        personId: person.id,
+        fullName: person.fullName,
+        employeeId: person.hcmEmployeeId,
+        grade: person.grade,
+        homeScopeNodeId: person.homePoolNodeId,
+        homeScopeName: hierarchyNode.name,
+        isProfessionalDriver: person.isProfessionalDriver,
+      })
+      .from(person)
+      .innerJoin(hierarchyNode, eq(hierarchyNode.id, person.homePoolNodeId))
+      .where(
+        and(
+          eq(person.organizationId, organizationId),
+          eq(person.employmentStatus, 'Active'),
+          isNull(hierarchyNode.validTo),
+        ),
+      )
+      .orderBy(person.fullName)
+      .limit(500);
   }
 
   /** First active holder of a platform role (optionally at a scope) — chain resolution. */
@@ -193,7 +249,12 @@ export class BookingsRepository {
    * computed from the exact same persisted reservation ranges the commit uses,
    * so availability can never disagree with the exclusion constraint (P1B-R2-1).
    */
-  async listAvailable(start: Date, end: Date, seatingCapacity?: number) {
+  async listAvailable(
+    start: Date,
+    end: Date,
+    seatingCapacity?: number,
+    authorizedNodeIds?: string[],
+  ) {
     const noOverlap = sql`NOT EXISTS (
       SELECT 1 FROM fleet.booking b
       WHERE b.vehicle_id = ${vehicle.id}
@@ -208,6 +269,15 @@ export class BookingsRepository {
     ];
     if (seatingCapacity && seatingCapacity > 0) {
       conditions.push(gte(vehicle.seatingCapacity, seatingCapacity));
+    }
+    if (authorizedNodeIds) {
+      if (authorizedNodeIds.length === 0) return [];
+      conditions.push(sql`EXISTS (
+        SELECT 1 FROM fleet.vehicle_hierarchy_assignment vha
+        WHERE vha.vehicle_id = ${vehicle.id}
+          AND vha.valid_to IS NULL
+          AND vha.node_id = ANY(${authorizedNodeIds}::uuid[])
+      )`);
     }
     return this.db
       .select({

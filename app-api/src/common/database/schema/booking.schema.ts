@@ -75,6 +75,28 @@ export const booking = fleet.table(
   ],
 );
 
+/** Append-only booking decision provenance; current JSON projection remains on booking. */
+export const bookingPolicyDecision = fleet.table(
+  'booking_policy_decision',
+  {
+    id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
+    organizationId: orgId(),
+    bookingId: uuid('booking_id').notNull().references(() => booking.id),
+    decisionKey: text('decision_key').notNull(),
+    correlationId: text('correlation_id').notNull(),
+    provenance: jsonb('provenance').notNull(),
+    recordedAtUtc: timestamp('recorded_at_utc', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex('booking_policy_decision_request_uq').on(
+      t.bookingId,
+      t.decisionKey,
+      t.correlationId,
+    ),
+    index('booking_policy_decision_booking_idx').on(t.bookingId, t.recordedAtUtc),
+  ],
+);
+
 /** Waitlist when no vehicle is available for a window (FR-BOOK-13). */
 export const waitlistEntry = fleet.table(
   'waitlist_entry',

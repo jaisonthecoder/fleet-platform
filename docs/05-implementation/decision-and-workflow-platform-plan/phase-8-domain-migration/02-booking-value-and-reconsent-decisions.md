@@ -56,3 +56,33 @@ Look for implicit defaults, duplicate fact reads, inconsistent effective time, p
 ## Exit gate
 
 8.2 passes when all three decisions use the shared adapter, have approved parity/intentional differences, persist separate lineage, handle failures explicitly and pass booking atomicity/regression gates.
+
+## Implementation status - complete
+
+- `booking-buffer`, `max-booking-duration`, and `consent-re-consent-tolerance` use the shared `DomainDecisionService` selector/shadow/canary boundary.
+- Organization, active vehicle scope, effective booking time and immutable normalized facts are derived server-side.
+- Missing vehicle scope/category and malformed/out-of-range typed policy values fail closed with stable reason codes; no numeric defaults remain.
+- Booking creation persists separate buffer/duration provenance; modification persists buffer/duration/re-consent provenance.
+- Migration `0028_booking_policy_decision_history` adds append-only, organization-consistent decision evidence so modification never erases create-time lineage.
+- Domain comparison subject and correlation references are fingerprinted; environment is persisted explicitly.
+- Consent/workflow clearing remains atomic with material modification and no workflow command is emitted by shadow evaluation.
+
+### Critique findings closed
+
+- Bounded buffer (0-240 minutes), maximum duration (0.25-168 hours), and re-consent tolerance (0-1440 minutes).
+- Unknown/missing vehicle category no longer silently maps to pool.
+- Append-only provenance history prevents current-row JSON projection from becoming the only lineage.
+- Integration teardown preserves FK order for append-only evidence.
+- Migration journal timestamp ordering fixed so `0028` applies on fresh and existing databases.
+
+### Verification evidence
+
+- Focused Booking/rules/adapter: 39 tests passed.
+- Full backend unit suite: 255 tests passed.
+- Booking live integration: 4 tests passed, including append-only buffer/duration evidence.
+- Migration through `0028`: forward and idempotency passed.
+- Typecheck, lint, dependency, organization and contract guards, and SWC build passed.
+
+Approval routing remains intentionally unchanged and is owned by sub-phase 8.3.
+
+The production `/booking` route remains a static mock until [8.2A - Live Booking User Journey](02a-live-booking-user-journey.md) passes. Backend policy migration alone does not complete the employee workflow.

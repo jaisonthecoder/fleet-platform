@@ -42,7 +42,12 @@ describe('PolicyCacheService', () => {
     await cache.set('booking-buffer', TABLE);
     const loaded = await cache.get('booking-buffer');
 
-    expect(loaded).toEqual({ table: TABLE, resolvedScopeNodeId: null });
+    expect(loaded).toEqual({
+      table: TABLE,
+      resolvedScopeNodeId: null,
+      policyRuleId: null,
+      policyVersionId: null,
+    });
     expect(
       redis.store.has(
         'pdp:rule:00000000-0000-4000-8000-000000000001:booking-buffer:default',

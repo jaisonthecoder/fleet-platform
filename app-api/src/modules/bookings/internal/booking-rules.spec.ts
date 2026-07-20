@@ -78,10 +78,12 @@ describe('booking-rules', () => {
       expect(vehicleClassOf('VIP')).toBe('executive');
     });
 
-    it('maps everything else (incl. null) to pool', () => {
+    it('maps approved pool categories and rejects unknown/missing categories', () => {
       expect(vehicleClassOf('POOL')).toBe('pool');
-      expect(vehicleClassOf(null)).toBe('pool');
-      expect(vehicleClassOf(undefined)).toBe('pool');
+      expect(vehicleClassOf('OPERATIONS')).toBe('pool');
+      expect(vehicleClassOf(null)).toBeNull();
+      expect(vehicleClassOf(undefined)).toBeNull();
+      expect(vehicleClassOf('UNKNOWN')).toBeNull();
     });
   });
 

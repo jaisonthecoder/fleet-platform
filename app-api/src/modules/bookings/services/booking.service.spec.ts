@@ -36,6 +36,7 @@ function makeBooking(over: Record<string, unknown> = {}) {
     consentRecordId: null,
     workflowInstanceId: null,
     policyVersion: 'buf-v1',
+    policyProvenance: null as unknown,
     createdAtUtc: new Date('2026-07-18T00:00:00Z'),
     updatedAtUtc: new Date('2026-07-18T00:00:00Z'),
     ...over,
@@ -49,6 +50,7 @@ class FakeRepo {
   consents: Array<Record<string, unknown>> = [];
   consentEvents: Array<Record<string, unknown>> = [];
   events: Array<Record<string, unknown>> = [];
+  policyDecisions: Array<Record<string, unknown>> = [];
   vehicleScopes = new Map<string, string>();
   private consentSeq = 0;
 
@@ -82,6 +84,9 @@ class FakeRepo {
   }
   async insertEvent(v: Record<string, unknown>) {
     this.events.push(v);
+  }
+  async insertPolicyDecision(v: Record<string, unknown>) {
+    this.policyDecisions.push(v);
   }
   async insertConsent(v: Record<string, unknown>) {
     const row = { ...v, id: `c${++this.consentSeq}` };
@@ -149,9 +154,58 @@ class FakeOutbox {
   }
 }
 
+class FakeDomainDecisions {
+  async evaluate(
+    input: {
+      consumer: string;
+      subjectRef: string;
+      correlationId: string;
+      request: {
+        organizationId: string;
+        scopeNodeId: string;
+        effectiveAtUtc: string;
+        ruleType: string;
+        context: Record<string, unknown>;
+      };
+    },
+    legacy: () => Promise<PolicyEvaluationResponse>,
+  ) {
+    const response = await legacy();
+    return {
+      response,
+      provenance: {
+        decisionKey: input.request.ruleType,
+        environment: 'default',
+        selectorId: null,
+        selectorRevision: null,
+        deploymentId: response.policyRuleId ?? null,
+        consumer: input.consumer,
+        subjectRef: input.subjectRef,
+        correlationId: input.correlationId,
+        organizationId: input.request.organizationId,
+        requestedScopeNodeId: input.request.scopeNodeId,
+        resolvedScopeNodeId: response.resolvedScopeNodeId ?? null,
+        policyVersion: response.policyVersion,
+        policyRuleId: response.policyRuleId ?? null,
+        policyVersionId: response.policyVersionId ?? null,
+        matchedRowId: response.matchedRowId ?? null,
+        decision: response.decision,
+        reasons: response.reasons,
+        effectiveAtUtc: input.request.effectiveAtUtc,
+        evaluatedAtUtc: input.request.effectiveAtUtc,
+        factFingerprint: 'test-fingerprint',
+        mode: 'legacy-only' as const,
+        source: 'legacy' as const,
+        degraded: false,
+      },
+    };
+  }
+}
+
 function build() {
   const repo = new FakeRepo();
   const pdp = new FakePdp();
+  const decisions = new FakeDomainDecisions();
   const eligibility = new FakeEligibility();
   const workflow = new FakeWorkflow();
   const audit = new FakeAudit();
@@ -161,6 +215,7 @@ function build() {
   const service = new BookingService(
     repo as never,
     pdp as never,
+    decisions as never,
     eligibility as never,
     workflow as never,
     audit as never,
@@ -182,6 +237,42 @@ describe('BookingService', () => {
     expect(dto.status).toBe('Draft');
     expect(dto.bookingNumber).toBeNull();
     expect(repo.bookings.get('b1')?.status).toBe('Draft');
+    const provenance = repo.bookings.get('b1')?.policyProvenance as Record<
+      string,
+      { decisionKey: string; source: string; factFingerprint: string }
+    >;
+    expect(provenance.bookingBuffer).toMatchObject({
+      decisionKey: 'booking-buffer',
+      source: 'legacy',
+      factFingerprint: 'test-fingerprint',
+    });
+    expect(provenance.maxBookingDuration).toMatchObject({
+      decisionKey: 'max-booking-duration',
+      source: 'legacy',
+      factFingerprint: 'test-fingerprint',
+    });
+    expect(repo.policyDecisions.map((row) => row.decisionKey).sort()).toEqual([
+      'booking-buffer',
+      'max-booking-duration',
+    ]);
+  });
+
+  it('fails closed when the vehicle category is missing', async () => {
+    const { service, repo } = build();
+    repo.vehicles.set('v1', {
+      ...repo.vehicles.get('v1'),
+      useCategoryCode: null,
+    });
+    const reasons = await reasonsOf(
+      service.create({
+        vehicleId: 'v1',
+        driverPersonId: 'd1',
+        requestedByPersonId: 'r1',
+        pickupAtUtc: '2999-01-01T08:00:00Z',
+        returnAtUtc: '2999-01-01T10:00:00Z',
+      }),
+    );
+    expect(reasons).toContain('vehicle-category-unmapped:missing');
   });
 
   it('fails closed when the vehicle has no active hierarchy scope', async () => {
@@ -279,6 +370,19 @@ describe('BookingService', () => {
     expect(dto.status).toBe('Draft');
     expect(dto.consentRecordId).toBeNull();
     expect(repo.consentEvents.some((e) => e.eventType === 'Voided')).toBe(true);
+    const provenance = repo.bookings.get('b1')?.policyProvenance as Record<
+      string,
+      { decisionKey: string; mode: string }
+    >;
+    expect(provenance.reConsentTolerance).toMatchObject({
+      decisionKey: 'consent-re-consent-tolerance',
+      mode: 'legacy-only',
+    });
+    expect(repo.policyDecisions.map((row) => row.decisionKey).sort()).toEqual([
+      'booking-buffer',
+      'consent-re-consent-tolerance',
+      'max-booking-duration',
+    ]);
   });
 
   it('a modification-requested decision returns to Draft AND clears the workflow so it can be re-submitted', async () => {

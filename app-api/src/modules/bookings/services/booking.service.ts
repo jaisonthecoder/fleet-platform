@@ -7,12 +7,15 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { OutboxService } from '../../../common/messaging/outbox.service';
+import { randomUUID } from 'node:crypto';
 import type { PlatformRole } from '../../../common/database/schema';
+import type { Principal } from '../../../common/auth/principal';
 import {
   BOOKING_REASON,
   type AvailabilityQuery,
   type AvailableVehicleDto,
   type BookingDto,
+  type BookingPersonDto,
   type BookingStatus,
   type CancelBooking,
   type CreateBooking,
@@ -23,8 +26,11 @@ import {
 } from '../../../contracts/booking.contract';
 import { EligibilityService } from '../../compliance/services/eligibility.service';
 import { PolicyEvaluatorService } from '../../policy/services/policy-evaluator.service';
+import { DomainDecisionService } from '../../policy/services/domain-decision.service';
+import type { DecisionProvenance } from '../../../contracts/domain-decision.contract';
 import type { PolicyEvaluationResponse } from '../../../contracts/policy-evaluation.contract';
 import { AuditService } from '../../platform/services/audit.service';
+import { ScopeAuthorizationService } from '../../platform/services/scope-authorization.service';
 import { WorkflowService } from '../../workflow/services/workflow.service';
 import {
   applyBuffer,
@@ -47,6 +53,12 @@ const TERMINAL: ReadonlySet<string> = new Set([
   'Expired',
   'NoShow',
 ]);
+const ON_BEHALF_ROLES = [
+  'FleetManager',
+  'ClusterFleetLead',
+  'GroupFleetLead',
+  'SystemAdmin',
+] as const satisfies readonly PlatformRole[];
 
 interface BookingDecisionContext {
   organizationId: string;
@@ -54,12 +66,7 @@ interface BookingDecisionContext {
   effectiveAtUtc: string;
 }
 
-type BookingPolicyProvenance = Record<string, {
-  policyVersion: string;
-  requestedScopeNodeId: string | null;
-  resolvedScopeNodeId: string | null;
-  reasons: string[];
-}>;
+type BookingPolicyProvenance = Record<string, DecisionProvenance | ReturnType<BookingService['provenance']>>;
 
 /**
  * Pool-vehicle booking service (M4). Owns the accountability sub-loop
@@ -82,14 +89,21 @@ export class BookingService {
   constructor(
     private readonly repo: BookingsRepository,
     private readonly pdp: PolicyEvaluatorService,
+    private readonly decisions: DomainDecisionService,
     private readonly eligibility: EligibilityService,
     private readonly workflow: WorkflowService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
+    private readonly scopeAuthorization: ScopeAuthorizationService,
   ) {}
 
   /** Creates a Draft booking (no number, reserves nothing) after buffer/duration checks. */
-  async create(input: CreateBooking, actorRef = 'system'): Promise<BookingDto> {
+  async create(
+    input: CreateBooking,
+    actorRef = 'system',
+    principal?: Principal,
+  ): Promise<BookingDto> {
+    if (principal) await this.assertCreateAuthority(input, principal);
     const pickup = new Date(input.pickupAtUtc);
     const ret = new Date(input.returnAtUtc);
     const windowReasons = validateWindow(pickup, ret, new Date());
@@ -111,10 +125,11 @@ export class BookingService {
       });
     }
 
-    const vehicleClass = vehicleClassOf(veh.useCategoryCode);
+    const vehicleClass = this.requireVehicleClass(veh.useCategoryCode);
     const decisionContext = await this.decisionContext(input.vehicleId, veh.organizationId, pickup);
-    const buffer = await this.bufferMinutes(vehicleClass, decisionContext);
-    const maxDuration = await this.maxDurationHours(vehicleClass, decisionContext);
+    const correlationId = `booking:create:${randomUUID()}`;
+    const buffer = await this.bufferMinutes(vehicleClass, decisionContext, correlationId, `vehicle:${input.vehicleId}`);
+    const maxDuration = await this.maxDurationHours(vehicleClass, decisionContext, correlationId, `vehicle:${input.vehicleId}`);
     if (durationHours(pickup, ret) > maxDuration.hours) {
       throw new BadRequestException({
         title: 'Booking exceeds maximum duration',
@@ -142,12 +157,22 @@ export class BookingService {
             passengerCount: input.passengerCount ?? null,
             policyVersion: buffer.response.policyVersion,
             policyProvenance: {
-              bookingBuffer: this.provenance(buffer.response),
-              maxBookingDuration: this.provenance(maxDuration.response),
+              bookingBuffer: buffer.provenance,
+              maxBookingDuration: maxDuration.provenance,
             },
           },
           tx,
         );
+        await Promise.all([
+          this.repo.insertPolicyDecision(
+            { organizationId: created.organizationId, bookingId: created.id, decisionKey: 'booking-buffer', correlationId, provenance: buffer.provenance },
+            tx,
+          ),
+          this.repo.insertPolicyDecision(
+            { organizationId: created.organizationId, bookingId: created.id, decisionKey: 'max-booking-duration', correlationId, provenance: maxDuration.provenance },
+            tx,
+          ),
+        ]);
         await this.repo.insertEvent(
           {
             bookingId: created.id,
@@ -436,15 +461,16 @@ export class BookingService {
       throw new ConflictException({ title: 'Vehicle not bookable', reasons: [BOOKING_REASON.vehicleNotBookable] });
     }
 
-    const vehicleClass = vehicleClassOf(veh.useCategoryCode);
+    const vehicleClass = this.requireVehicleClass(veh.useCategoryCode);
     const decisionContext = await this.decisionContext(nextVehicleId, veh.organizationId, nextPickup);
-    const buffer = await this.bufferMinutes(vehicleClass, decisionContext);
-    const maxDuration = await this.maxDurationHours(vehicleClass, decisionContext);
+    const correlationId = `booking:${id}:modify:${nextPickup.toISOString()}`;
+    const buffer = await this.bufferMinutes(vehicleClass, decisionContext, correlationId, `booking:${id}`);
+    const maxDuration = await this.maxDurationHours(vehicleClass, decisionContext, correlationId, `booking:${id}`);
     if (durationHours(nextPickup, nextRet) > maxDuration.hours) {
       throw new BadRequestException({ title: 'Booking exceeds maximum duration', reasons: [BOOKING_REASON.durationExceedsMax] });
     }
     const reservation = applyBuffer(nextPickup, nextRet, buffer.minutes);
-    const toleranceDecision = await this.reConsentToleranceMinutes(decisionContext);
+    const toleranceDecision = await this.reConsentToleranceMinutes(decisionContext, correlationId, `booking:${id}`);
     const tolerance = toleranceDecision.minutes;
     const stays = withinReConsentTolerance(
       { vehicleId: existing.vehicleId, pickup: existing.pickupAtUtc, ret: existing.returnAtUtc },
@@ -466,9 +492,9 @@ export class BookingService {
           policyVersion: buffer.response.policyVersion,
           policyProvenance: {
             ...this.provenanceObject(existing.policyProvenance),
-            bookingBuffer: this.provenance(buffer.response),
-            maxBookingDuration: this.provenance(maxDuration.response),
-            reConsentTolerance: this.provenance(toleranceDecision.response),
+            bookingBuffer: buffer.provenance,
+            maxBookingDuration: maxDuration.provenance,
+            reConsentTolerance: toleranceDecision.provenance,
           },
         };
         if (needsReConsent) {
@@ -485,6 +511,20 @@ export class BookingService {
           }
         }
         const updated = await this.repo.update(existing.id, patch, tx);
+        await Promise.all([
+          this.repo.insertPolicyDecision(
+            { organizationId: updated.organizationId, bookingId: updated.id, decisionKey: 'booking-buffer', correlationId, provenance: buffer.provenance },
+            tx,
+          ),
+          this.repo.insertPolicyDecision(
+            { organizationId: updated.organizationId, bookingId: updated.id, decisionKey: 'max-booking-duration', correlationId, provenance: maxDuration.provenance },
+            tx,
+          ),
+          this.repo.insertPolicyDecision(
+            { organizationId: updated.organizationId, bookingId: updated.id, decisionKey: 'consent-re-consent-tolerance', correlationId, provenance: toleranceDecision.provenance },
+            tx,
+          ),
+        ]);
         await this.repo.insertEvent(
           { bookingId: existing.id, eventType: 'Modified', detail: { needsReConsent, vehicleId: nextVehicleId }, actorRef },
           tx,
@@ -604,14 +644,25 @@ export class BookingService {
   }
 
   /** Vehicles available for a window — computed from the same reservation ranges. */
-  async availability(query: AvailabilityQuery): Promise<AvailableVehicleDto[]> {
+  async availability(
+    query: AvailabilityQuery,
+    principal?: Principal,
+  ): Promise<AvailableVehicleDto[]> {
     const start = new Date(query.pickupAtUtc);
     const end = new Date(query.returnAtUtc);
     const windowReasons = validateWindow(start, end, new Date());
     if (windowReasons.length) {
       throw new BadRequestException({ title: 'Invalid availability window', reasons: windowReasons });
     }
-    const rows = await this.repo.listAvailable(start, end, query.seatingCapacity);
+    const authorizedNodeIds = principal
+      ? await this.scopeAuthorization.authorizedDescendantIds(principal)
+      : undefined;
+    const rows = await this.repo.listAvailable(
+      start,
+      end,
+      query.seatingCapacity,
+      authorizedNodeIds,
+    );
     return rows.map((r) => ({
       vehicleId: r.vehicleId,
       plate: r.plate,
@@ -620,6 +671,42 @@ export class BookingService {
       seatingCapacity: r.seatingCapacity,
       fuelTypeCode: r.fuelTypeCode,
     }));
+  }
+
+  /** Active people the caller may select as requester/driver for a booking. */
+  async bookablePeople(principal: Principal): Promise<BookingPersonDto[]> {
+    if (!principal.personId) {
+      throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    }
+    const people = await this.repo.listActiveBookingPeople(principal.organizationId);
+    const canManageOthers = principal.roles.some((role) =>
+      ON_BEHALF_ROLES.includes(role.role as (typeof ON_BEHALF_ROLES)[number]),
+    );
+    const result: BookingPersonDto[] = [];
+    for (const person of people) {
+      if (!person.homeScopeNodeId || !person.homeScopeName) continue;
+      const isSelf = person.personId === principal.personId;
+      if (
+        !isSelf &&
+        (!canManageOthers ||
+          !(await this.scopeAuthorization.canRolesAtScope(
+            principal,
+            ON_BEHALF_ROLES,
+            person.homeScopeNodeId,
+          )))
+      ) continue;
+      result.push({
+        personId: person.personId,
+        fullName: person.fullName,
+        employeeId: person.employeeId,
+        grade: person.grade,
+        homeScopeNodeId: person.homeScopeNodeId,
+        homeScopeName: person.homeScopeName,
+        isProfessionalDriver: person.isProfessionalDriver,
+        isSelf,
+      });
+    }
+    return result;
   }
 
   /** Returns a booking by id. */
@@ -643,16 +730,38 @@ export class BookingService {
     return row;
   }
 
-  private async bufferMinutes(vehicleClass: VehicleClass, decisionContext: BookingDecisionContext) {
-    const response = await this.pdp.evaluate({ ...decisionContext, ruleType: 'booking-buffer', context: { vehicleClass } });
-    if (response.decision !== 'VALUE' || typeof response.value !== 'number') throw this.invalidPolicyValue('booking-buffer', response);
-    return { minutes: response.value, response };
+  private async bufferMinutes(vehicleClass: VehicleClass, decisionContext: BookingDecisionContext, correlationId: string, subjectRef: string) {
+    const request = { ...decisionContext, ruleType: 'booking-buffer', context: { vehicleClass } };
+    const result = await this.decisions.evaluate(
+      { consumer: 'bookings', subjectRef, correlationId, request },
+      () => this.pdp.evaluate(request),
+    );
+    const response = result.response;
+    if (
+      response.decision !== 'VALUE' ||
+      typeof response.value !== 'number' ||
+      !Number.isInteger(response.value) ||
+      response.value < 0 ||
+      response.value > 240
+    ) throw this.invalidPolicyValue('booking-buffer', response);
+    return { minutes: response.value, response, provenance: result.provenance };
   }
 
-  private async maxDurationHours(vehicleClass: VehicleClass, decisionContext: BookingDecisionContext) {
-    const response = await this.pdp.evaluate({ ...decisionContext, ruleType: 'max-booking-duration', context: { vehicleClass } });
-    if (response.decision !== 'VALUE' || typeof response.value !== 'number') throw this.invalidPolicyValue('max-booking-duration', response);
-    return { hours: response.value, response };
+  private async maxDurationHours(vehicleClass: VehicleClass, decisionContext: BookingDecisionContext, correlationId: string, subjectRef: string) {
+    const request = { ...decisionContext, ruleType: 'max-booking-duration', context: { vehicleClass } };
+    const result = await this.decisions.evaluate(
+      { consumer: 'bookings', subjectRef, correlationId, request },
+      () => this.pdp.evaluate(request),
+    );
+    const response = result.response;
+    if (
+      response.decision !== 'VALUE' ||
+      typeof response.value !== 'number' ||
+      !Number.isFinite(response.value) ||
+      response.value < 0.25 ||
+      response.value > 168
+    ) throw this.invalidPolicyValue('max-booking-duration', response);
+    return { hours: response.value, response, provenance: result.provenance };
   }
 
   private async approvalRoute(hours: number, decisionContext: BookingDecisionContext) {
@@ -661,11 +770,22 @@ export class BookingService {
     return { route: response.route, response };
   }
 
-  private async reConsentToleranceMinutes(decisionContext: BookingDecisionContext) {
-    const response = await this.pdp.evaluate({ ...decisionContext, ruleType: 'consent-re-consent-tolerance', context: {} });
+  private async reConsentToleranceMinutes(decisionContext: BookingDecisionContext, correlationId: string, subjectRef: string) {
+    const request = { ...decisionContext, ruleType: 'consent-re-consent-tolerance', context: {} };
+    const result = await this.decisions.evaluate(
+      { consumer: 'bookings', subjectRef, correlationId, request },
+      () => this.pdp.evaluate(request),
+    );
+    const response = result.response;
     const value = response.value as { toleranceMinutes?: number } | undefined;
-    if (response.decision !== 'VALUE' || typeof value?.toleranceMinutes !== 'number') throw this.invalidPolicyValue('consent-re-consent-tolerance', response);
-    return { minutes: value.toleranceMinutes, response };
+    if (
+      response.decision !== 'VALUE' ||
+      typeof value?.toleranceMinutes !== 'number' ||
+      !Number.isInteger(value.toleranceMinutes) ||
+      value.toleranceMinutes < 0 ||
+      value.toleranceMinutes > 1_440
+    ) throw this.invalidPolicyValue('consent-re-consent-tolerance', response);
+    return { minutes: value.toleranceMinutes, response, provenance: result.provenance };
   }
 
   /** Derives policy organization/scope from the persisted vehicle assignment. */
@@ -689,6 +809,18 @@ export class BookingService {
 
   private invalidPolicyValue(ruleType: string, response: PolicyEvaluationResponse): UnprocessableEntityException {
     return new UnprocessableEntityException({ title: 'Policy returned an invalid typed result', reasons: [`policy-result-invalid:${ruleType}`, ...response.reasons] });
+  }
+
+  /** Requires a governed vehicle category before policy fact assembly. */
+  private requireVehicleClass(code: string | null | undefined): VehicleClass {
+    const vehicleClass = vehicleClassOf(code);
+    if (!vehicleClass) {
+      throw new UnprocessableEntityException({
+        title: 'Vehicle category is not configured for booking policy',
+        reasons: [`vehicle-category-unmapped:${code ?? 'missing'}`],
+      });
+    }
+    return vehicleClass;
   }
 
   private toDto(row: BookingRow): BookingDto {

@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
+  check,
   index,
   integer,
   jsonb,
@@ -82,6 +83,7 @@ export const domainDecisionComparison = fleet.table(
     id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
     organizationId: orgId(),
     decisionKey: text('decision_key').notNull(),
+    environment: text('environment').notNull().default('default'),
     consumer: text('consumer').notNull(),
     subjectRef: text('subject_ref').notNull(),
     correlationId: text('correlation_id').notNull(),
@@ -99,6 +101,14 @@ export const domainDecisionComparison = fleet.table(
     comparedAtUtc: timestamp('compared_at_utc', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    uniqueIndex('domain_decision_comparison_request_uq').on(
+      t.organizationId,
+      t.environment,
+      t.decisionKey,
+      t.consumer,
+      t.correlationId,
+      t.factFingerprint,
+    ),
     index('domain_decision_comparison_key_idx').on(
       t.organizationId,
       t.decisionKey,
@@ -113,23 +123,30 @@ export const domainDecisionSelector = fleet.table(
   {
     id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
     organizationId: orgId(),
+    environment: text('environment').notNull().default('default'),
     decisionKey: text('decision_key').notNull(),
     scopeNodeId: uuid('scope_node_id').references(() => hierarchyNode.id),
     mode: text('mode').notNull().default('legacy-only'),
     canaryPercentage: integer('canary_percentage').notNull().default(0),
+    comparisonSamplePercentage: integer('comparison_sample_percentage').notNull().default(100),
     revision: integer('revision').notNull().default(1),
     updatedBy: text('updated_by'),
     ...timestamps(),
   },
   (t) => [
-    uniqueIndex('domain_decision_selector_org_key_scope_uq').on(
+    uniqueIndex('domain_decision_selector_org_env_key_scope_uq').on(
       t.organizationId,
+      t.environment,
       t.decisionKey,
       sql`coalesce(${t.scopeNodeId}, '00000000-0000-0000-0000-000000000000'::uuid)`,
     ),
     check(
       'domain_decision_selector_canary_range',
       sql`${t.canaryPercentage} >= 0 AND ${t.canaryPercentage} <= 100`,
+    ),
+    check(
+      'domain_decision_selector_sample_range',
+      sql`${t.comparisonSamplePercentage} >= 0 AND ${t.comparisonSamplePercentage} <= 100`,
     ),
   ],
 );

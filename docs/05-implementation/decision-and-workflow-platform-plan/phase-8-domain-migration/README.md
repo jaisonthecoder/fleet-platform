@@ -25,7 +25,8 @@ Every sub-phase follows: implement -> focused/full verification -> independent a
 | 8.0 | [00-baseline-and-worktree-reconciliation.md](00-baseline-and-worktree-reconciliation.md) | Current edits, consumers, contracts and golden behavior frozen | O6 |
 | 8.1 | [01-shared-decision-adapter-provenance-and-shadow.md](01-shared-decision-adapter-provenance-and-shadow.md) | Shared scoped decision adapter, selector, comparison and provenance contracts | 8.0 |
 | 8.2 | [02-booking-value-and-reconsent-decisions.md](02-booking-value-and-reconsent-decisions.md) | Buffer, duration and re-consent migrated without silent fallback | 8.1 |
-| 8.3 | [03-booking-approval-workflow-migration.md](03-booking-approval-workflow-migration.md) | Booking route decision and immutable workflow definition pinned | 8.1, workflow foundation |
+| 8.2A | [02a-live-booking-user-journey.md](02a-live-booking-user-journey.md) | Employee self-booking and Fleet Manager on-behalf journey connected to live backend | 8.2 |
+| 8.3 | [03-booking-approval-workflow-migration.md](03-booking-approval-workflow-migration.md) | Booking route decision and immutable workflow definition pinned | 8.2A, workflow foundation |
 | 8.4 | [04-compliance-and-eligibility-gate.md](04-compliance-and-eligibility-gate.md) | Authoritative fail-closed eligibility with structural hard-block boundary | 8.1 |
 | 8.5 | [05-entitlement-and-approval-workflow.md](05-entitlement-and-approval-workflow.md) | Separate eligibility/route provenance and pinned workflow | 8.1, workflow foundation |
 | 8.6 | [06-fines-and-black-point-decisions.md](06-fines-and-black-point-decisions.md) | Event-time thresholds/timeframes, no hardcoded defaults | 8.1 |
@@ -40,7 +41,8 @@ Every sub-phase follows: implement -> focused/full verification -> independent a
 flowchart TB
   B["8.0 Baseline"] --> A["8.1 Shared adapter/shadow/provenance"]
   A --> BV["8.2 Booking values/re-consent"]
-  A --> BW["8.3 Booking workflow"]
+  BV --> BJ["8.2A Live Booking journey"]
+  BJ --> BW["8.3 Booking workflow"]
   A --> C["8.4 Compliance eligibility"]
   A --> E["8.5 Entitlement/workflow"]
   A --> F["8.6 Fines/black points"]
@@ -50,6 +52,7 @@ flowchart TB
   F --> U
   H --> U
   BV --> UI["8.9 Domain UI evidence"]
+  BJ --> UI
   BW --> UI
   C --> UI
   E --> UI

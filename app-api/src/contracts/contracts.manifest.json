@@ -220,10 +220,13 @@
     "PolicyDecision",
     "PolicyEvaluationRequest",
     "PolicyEvaluationResponse",
+    "bookingBufferValueSchema",
+    "maxBookingDurationValueSchema",
     "policyDecisionSchema",
     "policyEvaluationRequestSchema",
     "policyEvaluationResponseSchema",
-    "policyScopeSchema"
+    "policyScopeSchema",
+    "reConsentToleranceValueSchema"
   ],
   "policy-rules.contract.ts": [
     "DECISION_GATED_RULE_TYPES",

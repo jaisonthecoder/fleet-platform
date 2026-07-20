@@ -37,6 +37,10 @@ export const BOOKING_REASON = {
   reConsentRequired: 'booking-re-consent-required',
   terminal: 'booking-already-terminal',
   extendNotLater: 'booking-extend-must-be-later',
+  onBehalfNotAllowed: 'booking-on-behalf-not-allowed',
+  driverNotAllowed: 'booking-driver-not-allowed',
+  personInactive: 'booking-person-inactive',
+  personScopeMissing: 'booking-person-scope-missing',
 } as const;
 
 /** Create a draft booking (FR-BOOK-01). Times are ISO-8601 UTC instants. */
@@ -143,6 +147,18 @@ export interface AvailableVehicleDto {
   useCategoryCode: string | null;
   seatingCapacity: number | null;
   fuelTypeCode: string | null;
+}
+
+/** Lightweight active-person option for self/on-behalf booking. */
+export interface BookingPersonDto {
+  personId: string;
+  fullName: string;
+  employeeId: string;
+  grade: string | null;
+  homeScopeNodeId: string;
+  homeScopeName: string;
+  isProfessionalDriver: boolean;
+  isSelf: boolean;
 }
 
 /** A committed consent record pointer. */

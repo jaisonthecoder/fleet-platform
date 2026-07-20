@@ -1,9 +1,8 @@
 import { createHash } from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
-import { domainDecisionComparison } from '../../../common/database/schema';
-import { domainDecisionSelector } from '../../../common/database/schema';
+import { domainDecisionComparison, domainDecisionSelector, hierarchyNode } from '../../../common/database/schema';
 import { and, desc, eq, isNull, or, sql } from 'drizzle-orm';
 import type {
   DecisionProvenance,
@@ -14,41 +13,57 @@ import type {
 import type { PolicyEvaluationResponse } from '../../../contracts/policy-evaluation.contract';
 import { FAIL_SAFE_ESCALATE_REASON } from '../internal/decision-table';
 import { PolicyEvaluatorService } from './policy-evaluator.service';
+import { AuditService } from '../../platform/services/audit.service';
 
 export type LegacyDecisionEvaluator = () => Promise<PolicyEvaluationResponse>;
 
 /** Central deterministic selector; persisted configuration replaces this map in cutover. */
 @Injectable()
 export class DomainDecisionSelectorService {
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDatabase) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly db: DrizzleDatabase,
+    private readonly audit: AuditService,
+  ) {}
 
   async config(
     organizationId: string,
     decisionKey: string,
     scopeNodeId: string,
-  ): Promise<{ mode: DomainDecisionMode; canaryPercentage: number }> {
+    environment = 'default',
+  ): Promise<{ id: string | null; revision: number | null; mode: DomainDecisionMode; canaryPercentage: number; comparisonSamplePercentage: number }> {
+    const target = await this.db
+      .select({ path: hierarchyNode.path })
+      .from(hierarchyNode)
+      .where(and(eq(hierarchyNode.id, scopeNodeId), eq(hierarchyNode.organizationId, organizationId)))
+      .limit(1);
+    if (!target[0]) return { id: null, revision: null, mode: 'legacy-only', canaryPercentage: 0, comparisonSamplePercentage: 0 };
     const rows = await this.db
-      .select()
+      .select({ selector: domainDecisionSelector, path: hierarchyNode.path })
       .from(domainDecisionSelector)
+      .leftJoin(hierarchyNode, eq(hierarchyNode.id, domainDecisionSelector.scopeNodeId))
       .where(
         and(
           eq(domainDecisionSelector.organizationId, organizationId),
+          eq(domainDecisionSelector.environment, environment),
           eq(domainDecisionSelector.decisionKey, decisionKey),
           or(
-            eq(domainDecisionSelector.scopeNodeId, scopeNodeId),
             isNull(domainDecisionSelector.scopeNodeId),
+            sql`${hierarchyNode.path} @> ${target[0].path}::ltree`,
           ),
         ),
       )
-      .orderBy(desc(sql`CASE WHEN ${domainDecisionSelector.scopeNodeId} = ${scopeNodeId} THEN 1 ELSE 0 END`))
+      .orderBy(desc(sql`coalesce(nlevel(${hierarchyNode.path}), -1)`))
       .limit(1);
-    const row = rows[0];
+    const row = rows[0]?.selector;
     return row
       ? {
+          id: row.id,
+          revision: row.revision,
           mode: row.mode as DomainDecisionMode,
           canaryPercentage: row.canaryPercentage,
+          comparisonSamplePercentage: row.comparisonSamplePercentage,
         }
-      : { mode: 'legacy-only', canaryPercentage: 0 };
+      : { id: null, revision: null, mode: 'legacy-only', canaryPercentage: 0, comparisonSamplePercentage: 0 };
   }
 
   /** Persists a deterministic organization-default selector (audited API arrives in 8.10). */
@@ -56,29 +71,36 @@ export class DomainDecisionSelectorService {
     organizationId: string,
     decisionKey: string,
     scopeNodeId: string | null,
+    environment: string,
     mode: DomainDecisionMode,
     canaryPercentage = 0,
+    comparisonSamplePercentage = 100,
     updatedBy?: string,
   ): Promise<void> {
-    const predicate = and(
-      eq(domainDecisionSelector.organizationId, organizationId),
-      eq(domainDecisionSelector.decisionKey, decisionKey),
-      scopeNodeId
-        ? eq(domainDecisionSelector.scopeNodeId, scopeNodeId)
-        : isNull(domainDecisionSelector.scopeNodeId),
-    );
-    const existing = await this.db.select({ id: domainDecisionSelector.id }).from(domainDecisionSelector).where(predicate).limit(1);
-    if (existing[0]) {
-      await this.db.update(domainDecisionSelector).set({ mode, canaryPercentage, updatedBy: updatedBy ?? null, revision: sql`${domainDecisionSelector.revision} + 1`, updatedAtUtc: new Date() }).where(eq(domainDecisionSelector.id, existing[0].id));
-    } else {
-      await this.db.insert(domainDecisionSelector).values({ organizationId, decisionKey, scopeNodeId, mode, canaryPercentage, updatedBy: updatedBy ?? null });
-    }
+    await this.db.transaction(async (tx) => {
+      const predicate = and(
+        eq(domainDecisionSelector.organizationId, organizationId),
+        eq(domainDecisionSelector.environment, environment),
+        eq(domainDecisionSelector.decisionKey, decisionKey),
+        scopeNodeId ? eq(domainDecisionSelector.scopeNodeId, scopeNodeId) : isNull(domainDecisionSelector.scopeNodeId),
+      );
+      const existing = await tx.select().from(domainDecisionSelector).where(predicate).limit(1);
+      const before = existing[0] ?? null;
+      const rows = before
+        ? await tx.update(domainDecisionSelector).set({ mode, canaryPercentage, comparisonSamplePercentage, updatedBy: updatedBy ?? null, revision: sql`${domainDecisionSelector.revision} + 1`, updatedAtUtc: new Date() }).where(eq(domainDecisionSelector.id, before.id)).returning()
+        : await tx.insert(domainDecisionSelector).values({ organizationId, decisionKey, scopeNodeId, environment, mode, canaryPercentage, comparisonSamplePercentage, updatedBy: updatedBy ?? null }).returning();
+      await this.audit.record(
+        { organizationId, actorRef: updatedBy ?? 'system', action: 'DOMAIN_DECISION_SELECTOR_CHANGED', entityRef: `decision-selector:${rows[0].id}`, before, after: rows[0] },
+        tx,
+      );
+    });
   }
 }
 
 /** Effect-free domain decision adapter with privacy-minimized shadow comparison. */
 @Injectable()
 export class DomainDecisionService {
+  private readonly logger = new Logger(DomainDecisionService.name);
   constructor(
     private readonly evaluator: PolicyEvaluatorService,
     private readonly selector: DomainDecisionSelectorService,
@@ -93,24 +115,30 @@ export class DomainDecisionService {
       input.request.organizationId,
       input.request.ruleType,
       input.request.scopeNodeId,
+      input.environment ?? 'default',
     );
     const mode = selector.mode;
+    const startedAt = Date.now();
     const fingerprint = this.fingerprint(input.request.context);
-    const evaluateNew = () => this.evaluator.evaluate(input.request);
+    const timeoutMs = input.timeoutMs ?? 500;
+    const evaluateNew = () => this.withTimeout(
+      this.evaluator.evaluate(input.request),
+      timeoutMs,
+    );
 
     if (mode === 'legacy-only') {
       if (!legacy) throw new Error(`legacy evaluator required:${input.request.ruleType}`);
-      const response = await legacy();
-      return this.result(input, mode, 'legacy', response, fingerprint);
+      const response = await this.withTimeout(legacy(), timeoutMs);
+      return this.result(input, selector, 'legacy', response, fingerprint);
     }
 
     if (mode === 'new-only') {
-      return this.result(input, mode, 'new', await evaluateNew(), fingerprint);
+      return this.result(input, selector, 'new', await evaluateNew(), fingerprint);
     }
 
     if (!legacy) throw new Error(`legacy evaluator required for ${mode}:${input.request.ruleType}`);
     const [legacySettled, newSettled] = await Promise.allSettled([
-      legacy(),
+      this.withTimeout(legacy(), timeoutMs),
       evaluateNew(),
     ]);
     const legacyResult = legacySettled.status === 'fulfilled' ? legacySettled.value : null;
@@ -120,24 +148,34 @@ export class DomainDecisionService {
       this.bucket(input.correlationId) < selector.canaryPercentage;
     const primaryUsesNew =
       mode === 'new-primary-with-legacy-shadow' || canaryUsesNew;
-    await this.recordComparison(
-      input,
-      mode,
-      fingerprint,
-      legacyResult,
-      newResult,
-      legacySettled.status === 'rejected' ? legacySettled.reason : null,
-      newSettled.status === 'rejected' ? newSettled.reason : null,
-    );
+    if (
+      legacySettled.status === 'rejected' ||
+      newSettled.status === 'rejected' ||
+      this.bucket(`${input.correlationId}:comparison`) <
+      selector.comparisonSamplePercentage
+    ) {
+      await this.recordComparison(
+        input,
+        mode,
+        fingerprint,
+        legacyResult,
+        newResult,
+        legacySettled.status === 'rejected' ? legacySettled.reason : null,
+        newSettled.status === 'rejected' ? newSettled.reason : null,
+      );
+    }
 
     const primary = primaryUsesNew ? newResult : legacyResult;
     const primaryError = primaryUsesNew
       ? newSettled.status === 'rejected' && newSettled.reason
       : legacySettled.status === 'rejected' && legacySettled.reason;
     if (!primary) throw primaryError || new Error('primary decision unavailable');
+    this.logger.log(
+      `domain decision key=${input.request.ruleType} consumer=${input.consumer} mode=${mode} source=${primaryUsesNew ? 'new' : 'legacy'} durationMs=${Date.now() - startedAt}`,
+    );
     return this.result(
       input,
-      mode,
+      selector,
       primaryUsesNew ? 'new' : 'legacy',
       primary,
       fingerprint,
@@ -146,15 +184,19 @@ export class DomainDecisionService {
 
   private result(
     input: DomainDecisionRequest,
-    mode: DomainDecisionMode,
+    selector: { id: string | null; revision: number | null; mode: DomainDecisionMode },
     source: 'legacy' | 'new',
     response: PolicyEvaluationResponse,
     factFingerprint: string,
   ): DomainDecisionResult {
     const provenance: DecisionProvenance = {
       decisionKey: input.request.ruleType,
+      environment: input.environment ?? 'default',
+      selectorId: selector.id,
+      selectorRevision: selector.revision,
+      deploymentId: response.policyRuleId ?? null,
       consumer: input.consumer,
-      subjectRef: this.fingerprint({ subjectRef: input.subjectRef }),
+      subjectRef: input.subjectRef,
       correlationId: input.correlationId,
       organizationId: input.request.organizationId,
       requestedScopeNodeId: input.request.scopeNodeId,
@@ -168,7 +210,7 @@ export class DomainDecisionService {
       effectiveAtUtc: input.request.effectiveAtUtc,
       evaluatedAtUtc: new Date().toISOString(),
       factFingerprint,
-      mode,
+      mode: selector.mode,
       source,
       degraded: response.reasons.includes(FAIL_SAFE_ESCALATE_REASON),
     };
@@ -194,9 +236,10 @@ export class DomainDecisionService {
     await this.db.insert(domainDecisionComparison).values({
       organizationId: input.request.organizationId,
       decisionKey: input.request.ruleType,
+      environment: input.environment ?? 'default',
       consumer: input.consumer,
-      subjectRef: input.subjectRef,
-      correlationId: input.correlationId,
+      subjectRef: this.fingerprint({ subjectRef: input.subjectRef }),
+      correlationId: this.fingerprint({ correlationId: input.correlationId }),
       requestedScopeNodeId: input.request.scopeNodeId,
       resolvedScopeNodeId:
         newResult?.resolvedScopeNodeId ?? legacyResult?.resolvedScopeNodeId ?? null,
@@ -209,13 +252,15 @@ export class DomainDecisionService {
       newPolicyVersion: newResult?.policyVersion ?? null,
       legacyErrorCode: this.errorCode(legacyError),
       newErrorCode: this.errorCode(newError),
-    });
+    }).onConflictDoNothing();
   }
 
   private normalize(response: PolicyEvaluationResponse) {
     return {
       decision: response.decision,
-      reasons: [...response.reasons].sort(),
+      reasonFingerprints: response.reasons
+        .map((reason) => this.fingerprint({ reason }))
+        .sort(),
       routeFingerprint: this.fingerprint({ route: response.route ?? null }),
       valueFingerprint: this.fingerprint({ value: response.value ?? null }),
       resolvedScopeNodeId: response.resolvedScopeNodeId ?? null,
@@ -234,12 +279,40 @@ export class DomainDecisionService {
     ) % 100;
   }
 
+  /** Bounds pure decision evaluation so shadow/canary cannot hang domain work. */
+  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    try {
+      return await Promise.race([
+        promise,
+        new Promise<never>((_, reject) => {
+          timer = setTimeout(
+            () => reject(new Error('domain-decision-timeout')),
+            timeoutMs,
+          );
+        }),
+      ]);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
   private fingerprint(context: Record<string, unknown>): string {
-    const canonical = JSON.stringify(
-      Object.keys(context)
-        .sort()
-        .map((key) => [key, context[key]]),
-    );
+    const canonical = JSON.stringify(this.canonicalize(context));
     return createHash('sha256').update(canonical).digest('hex');
+  }
+
+  /** Deep stable canonicalization: sorted object keys and omitted undefined values. */
+  private canonicalize(value: unknown): unknown {
+    if (Array.isArray(value)) return value.map((item) => this.canonicalize(item));
+    if (value && typeof value === 'object') {
+      return Object.fromEntries(
+        Object.entries(value as Record<string, unknown>)
+          .filter(([, item]) => item !== undefined)
+          .sort(([left], [right]) => left.localeCompare(right))
+          .map(([key, item]) => [key, this.canonicalize(item)]),
+      );
+    }
+    return value;
   }
 }

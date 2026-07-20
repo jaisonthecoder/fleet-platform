@@ -8,6 +8,7 @@ import {
   DomainDecisionSelectorService,
   DomainDecisionService,
 } from './services/domain-decision.service';
+import { PlatformModule } from '../platform/platform.module';
 
 /**
  * PDP core (controller-less): the decision evaluator + rule registry + Redis
@@ -18,6 +19,7 @@ import {
  * not a correctness requirement for Phase 1.
  */
 @Module({
+  imports: [PlatformModule],
   providers: [
     PolicyEvaluatorService,
     PolicyRegistryService,

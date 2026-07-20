@@ -114,6 +114,7 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
       await db.execute(sql`DELETE FROM fleet.outbox_event WHERE aggregate_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.workflow_step WHERE workflow_instance_id IN (SELECT id FROM fleet.workflow_instance WHERE subject_ref = ${`booking:${id}`})`);
       await db.execute(sql`DELETE FROM fleet.workflow_instance WHERE subject_ref = ${`booking:${id}`}`);
+      await db.execute(sql`DELETE FROM fleet.booking_policy_decision WHERE booking_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.booking WHERE id = ${id}`);
     }
     await db.execute(sql`DELETE FROM fleet.eligibility_evaluation WHERE driver_person_id = ${driverId}`);
@@ -142,6 +143,14 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
     const drafted = await bookings.get(id);
     expect(drafted.status).toBe('Draft');
     expect(drafted.bookingNumber).toBeNull();
+    const decisionRows = await db.execute(sql`
+      SELECT decision_key FROM fleet.booking_policy_decision
+      WHERE booking_id = ${id} ORDER BY decision_key
+    `) as unknown as Array<{ decision_key: string }>;
+    expect(decisionRows.map((row) => row.decision_key)).toEqual([
+      'booking-buffer',
+      'max-booking-duration',
+    ]);
 
     const reserved = await bookings.signConsent(id, { driverPersonId: driverId, consentDocumentVersion: 'consent-v0' });
     expect(reserved.status).toBe('PendingApproval');
