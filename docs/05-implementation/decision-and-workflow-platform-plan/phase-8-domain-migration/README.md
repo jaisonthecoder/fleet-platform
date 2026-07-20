@@ -29,6 +29,7 @@ Every sub-phase follows: implement -> focused/full verification -> independent a
 | 8.3 | [03-booking-approval-workflow-migration.md](03-booking-approval-workflow-migration.md) | Booking route decision and immutable workflow definition pinned | 8.2A, workflow foundation |
 | 8.4 | [04-compliance-and-eligibility-gate.md](04-compliance-and-eligibility-gate.md) | Authoritative fail-closed eligibility with structural hard-block boundary | 8.1 |
 | 8.5 | [05-entitlement-and-approval-workflow.md](05-entitlement-and-approval-workflow.md) | Separate eligibility/route provenance and pinned workflow | 8.1, workflow foundation |
+| 8.5A | [05a-live-dedicated-vehicle-journey.md](05a-live-dedicated-vehicle-journey.md) | Employee/Fleet Manager dedicated request, consent, allocation and BSD journey connected to live backend | 8.5 |
 | 8.6 | [06-fines-and-black-point-decisions.md](06-fines-and-black-point-decisions.md) | Event-time thresholds/timeframes, no hardcoded defaults | 8.1 |
 | 8.7 | [07-handover-fuel-advisory.md](07-handover-fuel-advisory.md) | Advisory fuel decision with historical provenance | 8.1 |
 | 8.8 | [08-alert-ladders-unused-rules-and-seeds.md](08-alert-ladders-unused-rules-and-seeds.md) | Missing consumers implemented or unused rules retired explicitly | 8.4-8.7 |
@@ -45,17 +46,18 @@ flowchart TB
   BJ --> BW["8.3 Booking workflow"]
   A --> C["8.4 Compliance eligibility"]
   A --> E["8.5 Entitlement/workflow"]
+  E --> EJ["8.5A Live Dedicated journey"]
   A --> F["8.6 Fines/black points"]
   A --> H["8.7 Handover fuel"]
   C --> U["8.8 Alerts/unused rules"]
-  E --> U
+  EJ --> U
   F --> U
   H --> U
   BV --> UI["8.9 Domain UI evidence"]
   BJ --> UI
   BW --> UI
   C --> UI
-  E --> UI
+  EJ --> UI
   F --> UI
   H --> UI
   UI --> R["8.10 Shadow/canary/cutover"]

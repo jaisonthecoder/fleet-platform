@@ -4,6 +4,8 @@
 
 Migrate dedicated-vehicle eligibility and entitlement approval routing with authoritative facts, separate provenance and immutable workflow-definition pinning.
 
+Backend migration alone does not complete the business journey. [8.5A - Live Dedicated Vehicle Journey](05a-live-dedicated-vehicle-journey.md) is required for the employee request, approval evidence, consent, Fleet Manager allocation and BSD user flows.
+
 ## Owners and dependencies
 
 - Primary: Entitlement and Workflow Backend owners
@@ -46,3 +48,5 @@ Check eligibility proxy facts, provenance overwrite, runtime-built definitions, 
 ## Exit gate
 
 8.5 passes when separate decisions and workflow definitions are fully attributable, parity/SoD/delegation/consent tests pass and selectors can roll new requests back without affecting in-flight instances.
+
+The complete dedicated-vehicle capability is not user-complete until 8.5A passes.
