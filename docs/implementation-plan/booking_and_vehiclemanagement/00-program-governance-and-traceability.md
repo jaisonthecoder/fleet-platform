@@ -25,6 +25,15 @@ Freeze the complete Vehicle Management, Pool Booking and Dedicated Entitlement s
 
 ## Business scenarios inventory
 
+### Vendor & Lease Management
+
+- Fusion-linked and manually verified vendor onboarding.
+- Vendor compliance documents, commercial terms, integration/access and Procurement approval.
+- Vendor Master list/detail, evidence-based scorecards and active contracts.
+- Lease contracts, vehicle coverage, renewal ladder and no-silent-renewal controls.
+- Contract-vs-invoice discrepancies owned by Finance + Procurement.
+- Off-hire initiation, condition, penalty, vendor acknowledgement, return and closure.
+
 ### Vehicle Management
 
 Owned, leased, transfer-in and lease-replacement onboarding; bulk migration; identity/classification; hierarchy/location; lifecycle; booking-pool inclusion; assigned/dedicated driver; ownership/lease/vendor; documents; compliance; maintenance; off-hire/sold/decommissioned; telematics/device/GPS; key custody; inter-node transfer; history; completeness; scoped list/detail; import exceptions.
@@ -53,6 +62,11 @@ Before implementation ask the user for:
 Mockup review produces a signed decision log: adopted, adapted to Wayfinder, rejected as conflicting, or deferred.
 
 ## Open decision register
+
+- D6 Procurement source authority, source keys, conflict precedence and sync direction blocks live I3 automation.
+- D1 tracker ownership affects off-hire tracker return for lessor-installed devices; platform-owned T1 trackers follow the existing transfer registry.
+- D16 professional-driver liability affects vendor/employer recovery, not Vendor Master creation.
+- D19 toll recharge remains outside vendor onboarding but affects later reconciliation/recovery.
 
 Track at minimum: D3/D6–D14 and D18–D24 relevant to vehicle classification, entitlement, booking duration, consent tolerance, emergency booking, cross-node booking, personal use, utilization and cost. Each entry has owner, due date, safe temporary behavior and blocked features.
 

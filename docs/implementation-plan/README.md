@@ -37,6 +37,7 @@ Two detailed engineering sub-plans decompose docs 02 and 03 into **one file per 
 
 - **[backend/](backend/README.md)** — NestJS phased plan: Phase 0 Foundation → Phase 1 MVP (Blocks A–G) → Phase 2 Scale & Automate → Phase 3 Intelligence & International. Derived from [03_Backend_Design.md](03_Backend_Design.md); Phase 1 grounded in `../startup-doccs/03_Phase1_MVP_PRD_ADPorts.md`, Phases 2–3 opened to `../startup-doccs/02_Fleet_Management_Platform_PRD_v3.0.md`.
 - **[database/](database/README.md)** — PostgreSQL + TimescaleDB phased plan: schema delta, migrations, indexes, constraints, and retention per phase, same 0→3 sequence. Derived from [02_Database_Design.md](02_Database_Design.md).
+- **[booking_and_vehiclemanagement/](booking_and_vehiclemanagement/README.md)** — dedicated end-to-end program for Vehicle Management, Pool Booking, Dedicated Vehicle Entitlements, Handover/Return and supporting operations. Covers DB + backend + frontend together and requires a user-supplied, reviewed mockup set before each UI phase starts.
 
 ## Source documents (candidate inputs)
 

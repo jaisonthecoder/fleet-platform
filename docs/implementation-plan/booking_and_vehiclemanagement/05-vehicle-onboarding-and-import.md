@@ -1,8 +1,14 @@
-# Phase V1 — Vehicle Onboarding, Acquisition and Bulk Import
+# Phase 5 (V1) — Vehicle Onboarding, Acquisition and Bulk Import
 
 ## Objective
 
 Deliver a live Fleet Manager/Data Steward onboarding journey for one or many vehicles, with scenario-dependent fields, validation, hierarchy assignment, evidence, review and activation.
+
+## Dependencies
+
+- Phase 2 Vendor Master for vendor selection.
+- Phase 3 active Lease Contract for leased/replacement scenarios.
+- Owned onboarding may proceed without a vendor; leased activation may not.
 
 ## Mandatory mockup gate — ask before implementation
 
@@ -40,9 +46,19 @@ Scenario cards explain required records. A step rail shows status. Fields are se
 
 Extend/verify vehicle identity, ownership, lease/vendor, hierarchy assignment, lifecycle history, documents, device pairing, commercial references, onboarding draft/revision, evidence and import batch/row/dedup tables. Preserve immutable history and organization consistency.
 
+Replace the current loose commercial seams before leased activation:
+
+- `vehicle.vendor_id` becomes an organization-consistent FK to an Active vendor.
+- Replace/free-text `lease_contract_ref` as the authority with `lease_contract_id` FK; keep source reference as a display/audit projection only.
+- Leased vehicle requires one effective `lease_contract_vehicle` link; owned vehicle cannot accidentally carry leased-only contract fields.
+- Lease replacement links old/new vehicles, source contract version and off-hire case without rewriting original history.
+- Bulk import rows with unresolved vendor/contract are quarantined for Data Steward resolution; never auto-create placeholder Active vendors/contracts.
+
 ## Backend/API
 
 Draft/create/update/validate/review/activate APIs; scenario rules; VIN/plate duplicate checks; reference-data validation; organization/scope authorization; vendor/lease validation; booking-pool structural restrictions; document preconditions; import upload, mapping, validate, deduplicate, resolve and sign-off; audit/outbox.
+
+Vendor/contract validation loads Phase 2/3 records server-side and checks organization, category=LESSOR where required, Active status, effective dates, contract capacity/coverage and source freshness/manual exception. Client-provided names/references are never accepted as authority.
 
 ## Frontend
 

@@ -17,6 +17,7 @@ Freeze the cross-domain contracts and database invariants required before Vehicl
 - Person roles are scoped and effective-dated.
 - Requester, beneficiary, driver, approver, allocator, handover actor and on-behalf-of person are separate fields.
 - Cross-organization references are rejected by composite constraints.
+- Vendor, contract, vehicle and hierarchy references carry the same organization; leased vehicles cannot reference cross-org vendors/contracts.
 
 ## Shared lifecycle contracts
 
@@ -24,6 +25,7 @@ Freeze the cross-domain contracts and database invariants required before Vehicl
 - Booking-pool inclusion is independent of lifecycle but constrained by lifecycle/body type/compliance.
 - Booking, entitlement, handover and workflow states use stable enums/codes.
 - History is append-only; current tables are projections.
+- Vendor, contract, renewal, discrepancy and off-hire lifecycles use stable states and immutable approved versions.
 - Effective dates/timezone and concurrency revision are explicit.
 
 ## Shared evidence/provenance
@@ -43,11 +45,16 @@ Freeze the cross-domain contracts and database invariants required before Vehicl
 - Dedicated allocation prevents conflicting active entitlements.
 - Device pairing, substitute-driver and BSD windows do not overlap illegally.
 - Cross-table organization consistency.
+- Active leased vehicle references exactly one Active lessor and one effective lease contract; contract vehicle windows cannot overlap.
+- Approved vendor/contract terms and source invoice lines are immutable; corrections append versions/events.
+- Vendor external IDs, TRN/trade licence and contract references follow approved organization/jurisdiction uniqueness rules.
 - Append-only state/evidence tables protected against mutation where required.
 
 ## API conventions
 
 RFC-7807 errors with stable reasons; Zod/class-validator input schemas; optimistic revisions; idempotency keys for commands; typed pagination/filtering; correlation IDs; server-side authorization; no direct `fetch` in React components.
+
+External systems are accessed only through ports/adapters. Source field provenance (`sourceSystem`, `externalId`, `sourceRevision`, `syncedAtUtc`, freshness) is explicit. OCR values are proposals until human-confirmed. Secrets and bank data never enter general DTOs/logs.
 
 ## Frontend foundations
 

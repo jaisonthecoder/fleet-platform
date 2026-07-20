@@ -1,4 +1,4 @@
-# Phase V2 — Vehicle Registry, Search and Detail
+# Phase 6 (V2) — Vehicle Registry, Search and Detail
 
 ## Objective
 
