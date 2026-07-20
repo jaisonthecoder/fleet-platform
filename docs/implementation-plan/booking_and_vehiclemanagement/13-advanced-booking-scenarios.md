@@ -18,6 +18,7 @@ Do not combine these into one generic dialog.
 
 - Waitlist is Phase 1 MVP.
 - Recurring and break-glass are full-PRD/Phase 2 unless sponsor explicitly promotes them.
+- Both remain feature-flagged OFF in Phase 1. Emergency uses decision D17.
 - Cross-node is configuration/policy gated (D24).
 - No-show/late event capture is foundational; behavior scoring automation is later.
 
@@ -25,9 +26,13 @@ Do not combine these into one generic dialog.
 
 Scope/window/category/party facts, ordered fairness policy, eligibility recheck, cancellation/early-return trigger, time-boxed offer, consent recapture, accept/decline/expire and audit. Never auto-confirm without driver consent.
 
+Fairness uses an immutable policy version stored on each entry/offer (FIFO/priority/other approved model). Policy changes apply to new entries only unless an audited migration is approved; no silent retroactive re-ranking.
+
 ## Recurring series
 
 Pattern/timezone/end/count, one approval as policy permits, occurrence generation, per-occurrence availability/eligibility, exceptions/cancel occurrence/series, policy/version semantics and DST/calendar boundaries.
+
+Store RFC 5545-compatible recurrence and generating IANA timezone. Test spring-forward/fall-back, ambiguous/nonexistent local times, month-end and holiday/calendar behavior; UAE no-DST does not remove international obligations.
 
 ## Emergency break-glass
 

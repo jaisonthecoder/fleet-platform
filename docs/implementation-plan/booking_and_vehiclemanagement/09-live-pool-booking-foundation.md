@@ -24,6 +24,8 @@ FleetManager/ClusterFleetLead/GroupFleetLead (and explicitly approved operationa
 
 Professional/non-employee and substitute drivers use governed records and time windows. Line Manager approval and Fleet Manager preparation are later phases.
 
+Phase 1 treats Professional/Substitute drivers as data-model-only unless D16/release scope is approved. The normal picker includes active employees in the actor's authorized closure. Phase 2 driver selection filters approved professional/substitute records by effective availability and eligibility policy.
+
 ## UI architecture
 
 New `features/booking/` route slice with genuine wizard state: WINDOW → VEHICLE → CONSENT → CONFIRMED. URL/route-state supports refresh-safe draft continuation where approved. No hard-coded vehicle arrays or occupancy bars.
@@ -35,6 +37,9 @@ New `features/booking/` route slice with genuine wizard state: WINDOW → VEHICL
 - Server validates requester/beneficiary/driver organization, active status, scope and role authority.
 - Create Draft command ignores spoofed actor IDs and binds authenticated actor.
 - Idempotency key protects duplicate draft creation.
+- Persist `requestedByPersonId` (authenticated actor), `beneficiaryPersonId` (person receiving the booking) and `driverPersonId` separately. Self-booking may have all equal; on-behalf never collapses them in audit/evidence.
+- SystemAdmin is read/audit/export only for operational booking and cannot create/approve solely by SystemAdmin role.
+- On-behalf creation notifies beneficiary and driver with creator/window/purpose. Driver consent remains mandatory. If beneficiary acceptance is required, state is `PendingBeneficiaryAcceptance` until accept/decline.
 
 ## Database
 
@@ -47,6 +52,8 @@ Typed contracts/hooks, wizard reducer, accessible stepper, unsaved-change guard,
 ## Tests
 
 Employee cannot book for another; scoped Fleet Manager can; sibling/out-of-org denied; inactive person denied; driver/beneficiary separation; refresh/idempotency; role changes; EN/AR/RTL; 320px/wide; mock constants absent from production route.
+
+Add forged actor IDs, beneficiary notification/acceptance, outside-closure Fleet Manager, SystemAdmin operational denial and consent signed by a person other than current driver.
 
 ## Rollback
 

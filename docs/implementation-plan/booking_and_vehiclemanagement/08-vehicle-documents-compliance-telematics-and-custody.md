@@ -16,9 +16,13 @@ Mulkiya/registration, insurance, lease, maintenance and configured documents; im
 
 SimulatorSource in Phase 1; device inventory, effective pairing, live telemetry, GPS freshness, odometer and trip attachment. No tracker is explicit. Telematics values never silently overwrite manual custody/inspection data; discrepancies retain both values.
 
+Phase 1 exit gate is simulator-only. Aggregator/DirectVendorSource hardware ingestion remains Phase 2 W2 behind the same contract.
+
 ## Key custody
 
 Key inventory/cabinet, custody issue/return/lost/duplicate, actor/time/booking/vehicle, append-only log. Handover requires available custody record; lost key starts an exception workflow.
+
+Custody access: key manager/scoped Fleet roles see authorized logs; Driver sees own custody only; other employees do not. Sensitive reads are audited. Retention/archive follows Legal/Records decision; lost-key/incident evidence is never silently deleted.
 
 ## Database
 

@@ -12,6 +12,8 @@ Request: Approval Inbox queue/evidence/decision; delegated/on-behalf banner; SLA
 
 `booking-approval-chain` resolves at booking scope/effective time via shared adapter. Start one immutable workflow definition/deployment; persist route, workflow version, requested/resolved scope and policy provenance. Line Manager or active one-hop delegate; cross-node additional owning Fleet Lead where policy allows; emergency route belongs B5.
 
+Persist policy rule/version/deployment and workflow definition/deployment/version IDs on approval evidence. SLA expiry creates an escalation task for the configured role and never auto-approves. Existing instances remain pinned after policy/workflow changes.
+
 ## SoD/authorization
 
 Requester/actor cannot approve; SystemAdmin cannot approve; delegate evidence records decided-by/on-behalf-of; task assignment and scope checked server-side at decision time. Fleet Manager booking on behalf does not make that Fleet Manager the approver by default.
@@ -24,6 +26,8 @@ Pending/Decided queue, SLA, evidence card, policy reasons, consent status, reque
 
 Queue of approved/upcoming handovers by managed scope; vehicle preparation, assignment/mediation where permitted, compliance/custody readiness and notifications. No silent vehicle substitution.
 
+Material changes use an explicit workflow cancellation command with revision/idempotency. If a decision committed or a non-cancellable task is in progress, modification returns conflict and keeps the original booking unchanged; no orphan task.
+
 ## Database/backend
 
 Pinned workflow deployment/version, task/effect idempotency, delegation fields, route provenance, append-only decisions, scheduled escalation, audit/outbox. Query APIs for inbox and preparation queue.
@@ -31,6 +35,8 @@ Pinned workflow deployment/version, task/effect idempotency, delegation fields, 
 ## Tests
 
 All route variants; active/expired delegation; self-approval; duplicate submit/decision; concurrent approvers; SLA escalation; request change; cross-node; actor separation; shadow evaluates twice but workflow starts once; rollback selector; UI accessibility/RTL/E2E.
+
+Approval delegation tests are distinct from operational on-behalf booking. Verify pinned versions, cancellation-vs-decision race, no auto-approval on SLA and one terminal domain effect/outbox.
 
 ## Rollback
 

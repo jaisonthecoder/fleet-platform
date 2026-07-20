@@ -22,8 +22,22 @@
 4. `07_Page_Functional_Specifications.md` and `06_UX_Design_System_v2.md`.
 5. Approved phase mockups supplied by the user.
 6. Current source behavior, used as implementation baseline rather than business authority.
+7. `app-ui/developer-docs/design-system.md` and current component-library plan as the Wayfinder implementation baseline.
+8. `docs/05-implementation/decision-and-workflow-platform-plan/` for Organization, Policy, Workflow, authorization and provenance foundations.
 
 Conflicts are logged and escalated. Never resolve D1–D24 or legal/policy ambiguity by guessing.
+
+## 2.1 External foundation evidence gate
+
+Phase 1 validates, imports and links evidence from the existing foundation program; it does not reimplement it. Before domain phases start, confirm:
+
+- Organization hierarchy/scope APIs, organization consistency and authorized closure are green.
+- Policy scoped evaluation, immutable versions, decision provenance and selector/rollback are green.
+- Workflow definition/version/task/timer and exactly-once domain-command boundaries are approved.
+- HCM employee/status/manager/leave source contract and freshness behavior are approved for the target environment.
+- Compliance/eligibility, fines/black-points, dashboards, audit/outbox and notification foundations have named adoption owners.
+
+If an external foundation is incomplete, the dependent phase is blocked or runs in an explicitly documented simulator/manual mode with safe failure behavior.
 
 ## 3. Phase map
 
@@ -75,14 +89,37 @@ flowchart LR
 For every phase:
 
 1. Request and receive its detailed mockups before UI design.
-2. Compare mockups with business requirements/current source; log conflicts and open decisions.
-3. Update the phase document and contracts before code.
-4. Implement DB → backend → frontend in the smallest complete vertical slices.
-5. Run focused and full verification.
-6. Run one rigorous adversarial critique/gap analysis.
-7. Fix all critical/high findings.
-8. Update this package and repository memory.
-9. Report completion and ask for the next phase’s mockups before starting it.
+2. Create/update `mockups/<phase>/mockup-review.md` with source files, states, decisions and gaps.
+3. **Delivery does not begin until the user explicitly confirms “Mockups approved — proceed” and the approval date/reference is recorded.**
+4. Compare mockups with business requirements/current source; log conflicts and open decisions.
+5. Update the phase document and contracts before code.
+6. Implement DB → backend → frontend in the smallest complete vertical slices.
+7. Run focused and full verification.
+8. Run one rigorous adversarial critique/gap analysis.
+9. Fix all critical/high findings.
+10. Update this package and repository memory.
+11. Report completion and ask for the next phase’s mockups before starting it.
+
+## 5.1 EN/AR/RTL and responsive strategy
+
+- Primary journey/page mockups require EN and AR/RTL evidence; supporting dialogs may be derived from the approved Wayfinder system and documented in mockup review.
+- Browser gates: 320px mobile, 768px tablet, 1024px desktop and 1440px wide desktop; no overlap or horizontal page overflow.
+- RTL checks: logical spacing, mirrored navigation/chevrons, correct table/step order, overlays inheriting `dir`, Arabic input direction and focus order.
+- Automated axe/Playwright checks on every implemented route; manual NVDA + Chrome on Windows for booking, approvals, vendor/vehicle wizards and handover. VoiceOver is required where a supported macOS test device exists.
+- Keyboard coverage includes Tab/Shift+Tab, Escape, Enter/Space, Arrow keys, Home/End where components use those patterns, visible focus and focus restoration.
+- Status is never color-only; targets are at least 44px on touch layouts.
+
+## 5.2 Design-system/component gate
+
+Mockups are adapted to current Wayfinder tokens and shared components, not copied into isolated custom CSS. Each mockup review lists required components and availability. Missing primitives are built/tested in the component library before the feature page. Design deviations record reason, owner and accessibility impact.
+
+## 5.3 Critical path and release boundaries
+
+- Vendor/Lease phases 2–4 are **Phase 2 product scope** from the startup roadmap, but Vendor Master/manual contract foundations are critical prerequisites for production leased-vehicle onboarding. Owned-vehicle onboarding may proceed independently after Phase 1.
+- Phase 4 delivers off-hire contracts/read models and initiation; production completion is enabled only after Phase 7 lifecycle, Phase 8 custody/device/document and Phase 16 condition-return evidence pass.
+- Phase 6 may show compliance/GPS placeholders only as typed lazy states; live compliance/device data lands with Phase 8.
+- Phase 1 telematics is simulator-first. Aggregator/direct hardware sources remain Phase 2 and use the same adapter contract.
+- Recurring, break-glass and active professional/substitute-driver workflows remain Phase 2 unless sponsor changes scope through governance.
 
 ## 6. Current-state correction
 

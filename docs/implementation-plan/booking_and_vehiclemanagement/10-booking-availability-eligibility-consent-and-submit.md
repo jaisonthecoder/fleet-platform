@@ -20,6 +20,16 @@ Server derives authorized scope/people and queries only lifecycle-active, bookin
 
 Run driver+vehicle gate before results/selection confirmation. Fail safe on stale/unavailable facts. Explain employment/licence/black-points/behaviour/vehicle registration/insurance blocks with stable remediation reasons. No UI-only eligibility.
 
+| Block | Owner/remedy |
+| --- | --- |
+| Employment inactive/HCM stale | HR/HCM owner; user cannot override |
+| Licence missing/expired | Driver submits renewal; HR verifies source/evidence |
+| Black points overdue | HR/Legal process and traffic-source verification |
+| Behaviour block | HR-confirmed review; Fleet/System Admin cannot override |
+| Registration/Mulkiya | Fleet Manager + Procurement renewal |
+| Insurance | Insurance Lead + Fleet Manager certificate renewal |
+| PDP unavailable | Fail-safe deny/escalation with retry; no local allow |
+
 ## Draft/consent ordering
 
 The recommended business flow is logically select → consent → confirm; implementation may create a server Draft before consent for idempotency, but no booking number, active reservation or approval workflow exists until the consent transaction. Returning to Window/Vehicle discards or invalidates consent when material facts change.
@@ -28,9 +38,13 @@ The recommended business flow is logically select → consent → confirm; imple
 
 Versioned EN/AR text; actual driver identity; vehicle/category/window/policy; explicit agreement; timestamp/device/IP/signature ref; policy text refresh if version changes. Consent and booking number/reservation status commit atomically. No role override.
 
+One DB transaction inserts immutable consent, assigns the unique booking number, activates reservation status, appends booking/decision event, audit and `BookingSubmitted` outbox. Any failure rolls back all; workers consume the committed outbox.
+
 ## Submit/confirmation
 
 Submit starts approval exactly once, shows booking number and Pending Approval state, handover instructions, calendar action and links to My Bookings. Notification to requester/driver/approver/Fleet Manager follows transaction via outbox.
+
+Draft create, consent and submit each require a durable organization+actor+endpoint idempotency key. Concurrent/double submit returns the original workflow/booking result and never creates a second workflow.
 
 ## Waitlist entry point
 
@@ -43,6 +57,8 @@ Availability query indexes; consent/version/lifecycle evidence; atomic number/re
 ## Tests
 
 Buffer boundaries, overlap concurrency, compliance hard blocks, policy failure, category/seats, consent atomicity, version refresh, back navigation, duplicate click, no-result/waitlist, actor/driver identity, response latency/load and browser E2E.
+
+Add 1,000 concurrent overlapping reservation attempts (exactly one succeeds, others stable 409), transaction-failure rollback for consent/number/audit/outbox and duplicate submit workflow count=1.
 
 ## Rollback
 

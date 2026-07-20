@@ -20,9 +20,17 @@ Explicit include/exclude command, independent of history. Structural exclusions 
 
 From/to organization scope, effective time, approver, reason and impact preview. Expire prior assignment and open new assignment atomically. Preserve booking/entitlement/history; block or coordinate active bookings, dedicated allocation, maintenance, keys, tracker and policy bindings. Cross-cluster transfers require appropriate Fleet Lead authority.
 
+- Block transfer during Active/InUse booking/handover, conflicting maintenance/off-hire, active dedicated allocation or unresolved issued keys.
+- Approved future and PendingApproval bookings require explicit migrate/cancel resolution; Completed history never blocks and never changes scope.
+- Cross-cluster transfer requires source and destination Fleet Lead approval; no self-approval.
+- Scope/organization attribution is pinned at event/handover time. Later transfer never rewrites historical booking/policy/cost evidence.
+- Destination policies apply only to future decisions; existing provenance remains immutable.
+
 ## Maintenance/off-hire
 
 Schedule maintenance, downtime, vendor/work reference, costs and status; physical workshop execution remains external. Maintenance excludes availability. Off-hire captures lease terms, documents, return condition and replacement linkage.
+
+Maintenance effective windows cannot overlap illegally. Scheduling locks/checks booking, allocation and handover windows; conflicts identify the blocking record/window. Planned/corrective/force-majeure classification feeds versioned vendor scorecards.
 
 ## Database
 

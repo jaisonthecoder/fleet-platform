@@ -33,6 +33,8 @@ Contract: `Draft -> PendingApproval -> Active -> RenewalReview -> Renewed | OffH
 
 Every amendment creates a new immutable contract version; never overwrite terms used by past invoices/off-hire cases.
 
+Contract versions use non-overlapping effective ranges. Renewal activation closes v1 and opens v2 atomically. A permitted gap means no active contract and blocks leased activation/booking. Invoices/off-hire cases reference the version effective at event date; historical variances are never recalculated after amendment.
+
 ## Database
 
 - `lease_contract`: organization, vendor, stable ref, source/PO refs, status, active version, revision.
@@ -57,6 +59,10 @@ Variance resolution uses a bounded workflow/PDP SoD rule:
 - Rationale and evidence are mandatory; accept/write-off/credit/rebill outcomes are stable codes.
 - FX conversion uses a recorded rate/source/date; never compare unlike currencies directly.
 - Every transition is append-only, audited and idempotent.
+
+I2 ingest deduplicates on approved source identity (minimum supplier ID + invoice number + invoice date plus source revision/hash). Replay links to the original and alerts Finance; it does not duplicate variance/payment evidence.
+
+FX evidence stores rate, source, date and lookup/reference ID at variance creation. Past variances are never recalculated. Alternate FX creates immutable override evidence and required approval.
 
 ## Frontend
 

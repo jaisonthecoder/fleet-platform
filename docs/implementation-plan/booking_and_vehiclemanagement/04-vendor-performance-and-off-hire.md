@@ -53,6 +53,7 @@ Rules:
 
 - Initiation by Procurement or authorized Fleet lead.
 - Vehicle becomes `OffHirePending` only through guarded domain transaction.
+- Transition is rejected while vehicle is InUse/active handover. Active trip must return/abort first; future bookings and dedicated allocations are resolved explicitly from impact preview.
 - Condition report and photos are immutable/versioned.
 - Penalty uses the exact approved contract version effective at initiation.
 - Vendor acknowledgement via portal/integration or Procurement-recorded evidence.
@@ -88,6 +89,8 @@ Evidence links:
 - Return checklist references key custody logs, critical document returns and telematics-device unpair/return records from Phase 8.
 - Contract vehicle link receives `lease_ended_at_utc`, closure reason and off-hire case ID.
 - Platform-owned trackers are unpaired/returned to platform inventory; lessor-owned devices follow signed D1 terms.
+
+`off_hire_return_checklist` uses versioned item definitions (`itemType`, required condition, evidence type, owning phase). Phase 4 can implement initiation without guessing custody details; Phase 8/16 register concrete key/device/document/condition codes before production completion is enabled.
 
 ## Backend/API and workflow
 

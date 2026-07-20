@@ -14,6 +14,17 @@ Mockups are not the Pool Booking wizard. Dedicated requests remain a distinct ro
 
 Employee self-request; authorized Fleet Manager/HR support on behalf where business approves and inside scope; line manager/Fleet Lead/CEO later. Requester, beneficiary and assigned driver are separate. SoD prevents self-approval.
 
+Scenario matrix (each row has distinct authorization, consent and cost evidence):
+
+| Request | Driver option | Requester | Beneficiary consent | Driver evidence | Cost owner |
+| --- | --- | --- | --- | --- | --- |
+| Self | Without driver | Employee | Beneficiary/driver signs | Employee eligibility | Beneficiary cost centre |
+| On behalf | Without driver | Fleet/approved HR role | Beneficiary/driver signs | Beneficiary eligibility | Named cost centre |
+| Self | With professional driver | Employee | Beneficiary acknowledges; driver signs driver consent | D16-gated professional record | Named cost centre/vendor terms |
+| On behalf | With professional driver | Fleet/approved HR role | Beneficiary acknowledges; driver signs | D16-gated, scope/effective availability | Named cost centre/vendor terms |
+
+Professional/substitute workflows remain disabled in Phase 1; data model only until D16 and Phase 2 scope pass.
+
 ## Request fields
 
 Long-term/temporary; with/without driver; duration/start/end; organization scope/location; vehicle class preference; cost centre; business justification; operational pattern/sites; professional-driver details/evidence where applicable; supporting documents.
@@ -21,6 +32,8 @@ Long-term/temporary; with/without driver; duration/start/end; organization scope
 ## Eligibility
 
 `dedicated-vehicle-eligibility` uses current HR grade/role/employment, request type/duration/scope and approved exceptions. Result is Allow/Deny/Escalate with eligible class and reasons. Fail safe. Eligibility is evidence, not allocation.
+
+Eligibility is pinned at submission. Allocation rechecks employment, licence/driver evidence and policy if approval age exceeds configured threshold (proposed 30 days) or material facts changed. A stale Allow never guarantees allocation.
 
 ## UI flow
 
@@ -33,6 +46,8 @@ Entitlement requester/beneficiary/driver separation, request data, evidence, pol
 ## Tests
 
 Grade/role boundaries, long-term/temporary, with/without driver, professional driver, self/on-behalf scope, inactive/out-org, policy failure, duplicate request, SoD, evidence, EN/AR/RTL/responsive.
+
+Add every scenario-matrix row, beneficiary/driver consent mismatch, D16-disabled active flow and eligibility recheck after long approval delay.
 
 ## Rollback
 

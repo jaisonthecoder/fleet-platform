@@ -12,6 +12,8 @@ Request: Fleet Manager handover queue; identity/eligibility/consent banner; walk
 
 Approved booking or active allocated entitlement; actor manages scope; vehicle/driver eligibility current; consent present; vehicle compliant/not maintenance; key available; no conflicting handover. Revalidate at release time.
 
+Exact release gates: booking status Approved (or entitlement allocation Active); consent linked/current; driver/vehicle eligibility Allow; vehicle lifecycle Active and not maintenance/off-hire; current assignment/scope authorized; key custody Available; no active handover. Failures return stable reason plus remediation. SLA escalation never auto-releases.
+
 ## Handover capture
 
 Identity, booking/allocation, checks, start odometer/fuel, telematics comparison, existing/new damage, assets, location, signature/condition acknowledgment, key issue. State transitions to In Use and trip can attach.
@@ -20,9 +22,15 @@ Identity, booking/allocation, checks, start odometer/fuel, telematics comparison
 
 End odometer/fuel, telematics comparison, condition/damage diff, location, key return/lost, late/early flags, expected vs actual consumption, fuel deviation policy (advisory), booking completion or dedicated/BSD continuation. Never overwrite telemetry/manual evidence.
 
+Odometer reconciliation stores both readings. If telematics is fresh (default <4h), compare with manual; deviation above configured threshold creates advisory exception. If stale/absent, accept manual with source absence evidence. Neither source overwrites the other.
+
 ## Damage/accountability
 
 Pins/photos/notes, carried vs new, immutable evidence, actor/time, fine/toll/damage attribution windows, second-review SoD where investigation follows assignment.
+
+Damage/fine/toll attribution windows are Phase 0 Legal/Policy decisions with owner and version. Until approved, the system records evidence and routes to review; it does not auto-assign liability.
+
+Authenticated session/person plus immutable signature/condition evidence is the baseline. Stronger PIN/biometric/video assurance requires Legal/Security approval and device support; do not claim touchscreen capture alone proves identity.
 
 ## Offline/degraded
 
@@ -35,6 +43,8 @@ Handover/return records, inspection items, damage evidence, odometer/fuel pairs,
 ## Tests
 
 Preconditions, concurrent release, eligibility expiry after approval, odometer conflict, fuel deviation, damage diff, lost key, late/early, alternate location, idempotency, storage failure, audit, tablet/RTL/browser.
+
+Add cancellation while handover Active (blocked/abort workflow), signature-person mismatch, attribution outside policy window and telematics fresh/stale/absent reconciliation.
 
 ## Rollback
 

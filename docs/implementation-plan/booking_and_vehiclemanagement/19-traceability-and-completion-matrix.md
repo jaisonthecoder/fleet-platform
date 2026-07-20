@@ -8,6 +8,30 @@ Prevent partial delivery from being reported as complete. Maintain this matrix d
 
 A capability is complete only when DB, BE, FE, authorization, audit/provenance, tests, mockup evidence, operations and rollback are all complete or explicitly not applicable.
 
+Status vocabulary:
+
+- **Live:** DB/BE/FE, authorization, audit/provenance, tests, operations and rollback meet the phase exit gate.
+- **Partial:** identified parts exist; missing parts and completion phase are named.
+- **Planned:** scope/contracts/mockup gate approved; code not started.
+- **Blocked:** human decision, foundation or approved mockup prevents implementation; blocker/owner/due-before-phase recorded.
+- **Not started:** in scope but design/mockup gate not yet complete.
+- **Deferred:** explicitly outside current release with target phase/feature flag.
+
+Every implemented row links mockup review path/status (`Pending`, `Supplied`, `Approved`, `N/A`), migration/source, tests, critique, screenshot/browser evidence, observability and rollback artifact. “Partial” without a named completion phase is invalid.
+
+## External foundation matrix
+
+| Foundation | Owner program | Required by | Evidence/status |
+| --- | --- | --- | --- |
+| Organization hierarchy/scope | Organization O0–O6 | All scoped resources/actions | Link verified build/test evidence |
+| Policy PAP/PDP/PEP/provenance | Decision platform | Booking, eligibility, entitlement, compliance, advisory rules | Link immutable version/eval tests |
+| Durable workflow/delegation/timers | Workflow platform | Approval/off-hire/discrepancy/exception flows | Link pinned-instance/effect-once tests |
+| HCM employee/manager/status/leave | I1 adapter | Eligibility, approvers, BSD | Contract/freshness/degraded evidence |
+| Compliance/eligibility | Existing compliance module + Phase 8 adoption | Availability, handover, allocation | Hard-block/alert tests |
+| Fines/black-points/accidents | Existing fines module + integration | Eligibility/accountability/reporting | Attribution/recovery evidence |
+| Operational dashboards | Dashboards module + Phase 17 | Pilot operations/KPIs | Scope/load/definition evidence |
+| Audit/outbox/notifications | Platform foundation + Phase 17 | All mutations/effects | Atomicity/dedup/DLQ evidence |
+
 ## Vendor & Lease Management matrix
 
 | Capability | Business refs | Phase | DB | BE/API | FE | Source/integration | Tests/ops | Status |
@@ -62,7 +86,7 @@ A capability is complete only when DB, BE, FE, authorization, audit/provenance, 
 | Cancel/early return | FR-BOOK-16/19 | B4 | Partial | Request actions | Release/waitlist |
 | Waitlist | FR-BOOK-13 | B5 | Schema partial | Request flow | Fairness/race |
 | Recurring | FR-BOOK-17 | B5 Phase 2 | Missing | Request series | DST/occurrences |
-| Emergency | FR-BOOK-21 | B5 Phase 2 | Missing/D20 | Request break-glass | Abuse/post-review |
+| Emergency | FR-BOOK-21 | B5 Phase 2 | Blocked by D17; feature off | Pending break-glass review | Abuse/post-review |
 | Cross-node | FR-BOOK-22/CLU-05 | B5 | Missing/D24 | Request ownership | Scope/approval |
 | No-show/late | FR-BOOK-15 | B4/B5 | Partial | Request evidence | Utilization/events |
 
@@ -90,6 +114,16 @@ Track identity/eligibility/consent, inspection, odometer/fuel, damage baseline/d
 
 Maintain actor/capability, status/action, reason-code/localization, event/outbox, notification, data-retention, accessibility viewport, integration failure, selector/canary and rollout/rollback matrices.
 
+Add explicit rows/evidence for:
+
+- Fleet Manager preparation/handover queue.
+- Compliance hard-block and expiry ladders.
+- Fines/black-point/accident attribution and recovery handoff.
+- Employee/Fleet/Executive dashboards and KPI definitions.
+- Consent template/signature/retention governance.
+- HCM freshness and BSD leave handling.
+- Mock/sample data leak prevention.
+
 ## Phase gate checklist
 
 - Detailed mockups requested and approved before that UI phase.
@@ -101,6 +135,18 @@ Maintain actor/capability, status/action, reason-code/localization, event/outbox
 - Docs and repository memory updated.
 - Live browser evidence captured.
 - Rollback proven.
+
+## Tests and verification of the matrix
+
+- Automated link, contract and traceability checks reject missing phase/evidence references.
+- Reviewer samples every `Live` row against source, migration, API, route, test result, screenshot, alert/runbook and rollback artifact.
+- `Partial`, `Blocked` and `Deferred` rows require completion phase/owner and cannot satisfy the program exit gate.
+- Mockup status is reconciled with `mockups/<phase>/mockup-review.md` and explicit user approval.
+- Independent final critique checks requirement omissions, unsafe assumptions, source authority, scope/SoD, in-flight state, privacy, operations and support.
+
+## Rollback governance
+
+The matrix itself is version-controlled evidence. Capability rollback never changes a `Live` row silently: mark the capability degraded/rolled back, link incident/change record, selector/feature-flag state, in-flight workflow handling, retained data/evidence and re-enable criteria. Historical completion evidence remains immutable.
 
 ## Program exit gate
 

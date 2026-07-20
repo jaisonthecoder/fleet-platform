@@ -53,6 +53,8 @@ Record and approve all fields below in the project ADR/decision register:
 
 I3 integration and automatic activation remain disabled until this record is signed. Manual Mode may proceed with explicit source label, Data Steward verification and Procurement dual control.
 
+Default safe outage behavior before D6 approval: I3-sourced records are read-only last-known-good and visibly stale; new/changed I3-linked vendors cannot auto-activate. A dual-controlled Manual Mode exception creates a separately source-labelled record and queues reconciliation. It never writes back to I3 until direction is approved.
+
 ## Actors and SoD
 
 - System Admin: configure integration/profile and initiate a record, but cannot approve their own vendor.
@@ -126,6 +128,10 @@ Use a separate `/api/v1/vendor-portal` surface and vendor-scoped identity claim/
 
 Every query filters organization + vendor ID derived from authentication, not path/body. Admin impersonation is prohibited; support-assisted actions use explicit on-behalf-of audit. Portal actions log source, vendor, actor, IP/device, correlation and evidence hash.
 
+`Principal.vendorId` is resolved from effective `vendor_portal_access` after authentication. Any supplied vendor ID is ignored or must equal Principal vendor and is rejected otherwise. Parent/subsidiary sharing requires an explicit vendor-group grant, never name inference.
+
+Portal disputes/attachments are append-only and resolved rather than deleted. They carry a Legal/Records-approved retention class (proposed seven years, inactive until signed); archive visibility and destruction are separate controls.
+
 ## Frontend
 
 Routes:
@@ -147,6 +153,8 @@ Follow the mockup closely: source cards, supplier lookup, category segmented con
 ## Tests
 
 Source contract tests, duplicate races, manual/Fusion conflict, required documents, OCR confidence/human confirmation, dual control, role/cost masking, portal isolation, cross-org denial, optimistic concurrency, audit/outbox atomicity, source outage/replay/idempotency, EN/AR/RTL/a11y/browser.
+
+OCR stores per-field confidence and model/version. `>=0.95` may prefill as “verify”; lower confidence is review-required. Every field still requires explicit human confirm/override and confidence never bypasses approval.
 
 Include vendor suspension with active contracts/vehicles, blocked new contract/renewal, dual-controlled manual source bypass, cross-vendor portal enumeration, dispute attachment isolation and stale-source activation denial.
 

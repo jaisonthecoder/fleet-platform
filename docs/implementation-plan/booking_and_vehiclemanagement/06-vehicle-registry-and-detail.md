@@ -24,6 +24,12 @@ Fleet Manager (pool), Fleet Leads (cluster/group), Data Steward, Procurement/Fin
 
 Header identity and booking-pool status. Tabs: Overview; Ownership & Lease; Compliance & Documents; Telematics & GPS; Maintenance; Lifecycle History. Overview includes classification, current state, current driver/custody, hierarchy path, utilization, GPS state/map, risk counters and actions.
 
+Phase 6 may render typed `NotAvailableYet`/`NoTracker`/`NoData` states for modules completed in Phase 8; it must not fabricate healthy compliance or GPS values.
+
+GPS/map rules: show source timestamp and stale age; explicit No Tracker/Offline/Faulty states; exact location only for authorized Fleet/Telematics roles, coarse masking where Privacy requires; read-only MapLibre; cached last-known remains visibly stale.
+
+Field masking is server-side. Finance receives approved costs; Procurement lease/vendor terms; Fleet operational fields; Employee own assigned/available fields only. Sensitive detail access is audited.
+
 ## Database/read models
 
 Add indexed search/read projections if query plans require them. Resolve current effective hierarchy/device/driver/custody/documents/booking state without N+1. Keep source tables authoritative.
@@ -39,6 +45,8 @@ Real `/fleet` and `/fleet/:id` (or inspector) routes. Shared Vehicle & Pool Find
 ## Tests
 
 Scope isolation, role masking, query plans/latency, no-tracker/no-doc/no-driver, active booking, dedicated/reserve/maintenance states, stale telemetry, mobile/RTL, keyboard table/inspector, contract and E2E.
+
+Add exact/coarse/no-GPS states and prove unauthorized cost/payment fields are absent from responses, not merely hidden.
 
 ## Rollback
 

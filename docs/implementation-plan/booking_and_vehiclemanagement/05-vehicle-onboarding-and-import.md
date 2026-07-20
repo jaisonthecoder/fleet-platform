@@ -34,7 +34,9 @@ Do not implement UI until mockup decisions are logged against FR-INV-01/05/07/08
 
 ## UI flow
 
-1. Acquisition scenario.
+One five-step wizard branches from Step 1; it is not five separate wizards:
+
+1. Acquisition scenario (Owned / Leased / Transfer-in / Lease replacement).
 2. Identity/classification: plate, VIN/chassis, make/model/trim/year/colour, body/use category, seating, fuel/transmission/efficiency.
 3. Hierarchy/operational: cluster/pool/location, assignment model, booking-pool inclusion, assigned/professional driver.
 4. Ownership/lease, documents, compliance and telematics.
@@ -53,12 +55,23 @@ Replace the current loose commercial seams before leased activation:
 - Leased vehicle requires one effective `lease_contract_vehicle` link; owned vehicle cannot accidentally carry leased-only contract fields.
 - Lease replacement links old/new vehicles, source contract version and off-hire case without rewriting original history.
 - Bulk import rows with unresolved vendor/contract are quarantined for Data Steward resolution; never auto-create placeholder Active vendors/contracts.
+- Quarantine uses a separate import-row/quarantine table, never the live vehicle table. Reason codes, source row and candidate matches are retained. Data Steward SLA is 2 working days; unresolved vendor/contract escalates to Procurement. Only resolved/signed-off rows enter activation.
+- Ownership scenario is immutable after activation. Owned/Leased conversion is a governed commercial/lifecycle amendment with impact preview, not a field edit.
 
 ## Backend/API
 
 Draft/create/update/validate/review/activate APIs; scenario rules; VIN/plate duplicate checks; reference-data validation; organization/scope authorization; vendor/lease validation; booking-pool structural restrictions; document preconditions; import upload, mapping, validate, deduplicate, resolve and sign-off; audit/outbox.
 
 Vendor/contract validation loads Phase 2/3 records server-side and checks organization, category=LESSOR where required, Active status, effective dates, contract capacity/coverage and source freshness/manual exception. Client-provided names/references are never accepted as authority.
+
+### Lease replacement continuity
+
+- Link old vehicle, new vehicle, active contract version and off-hire case.
+- New vehicle receives its own documents/compliance/device/key evidence; no old evidence is copied as current.
+- Future bookings/entitlements on the old vehicle appear in impact preview and are reassigned only through explicit commands retaining original references; otherwise owners are notified and cases replanned.
+- In-use booking blocks final old-vehicle off-hire until return/abort.
+- Platform-owned tracker is effectively unpaired/repaired; lessor-owned device follows D1.
+- Key/custody, insurance and booking-pool activation occur only after the replacement is compliant and old/new effective windows are valid.
 
 ## Frontend
 
@@ -67,6 +80,8 @@ New explicit Vehicle Management routes/components, typed hooks, resumable wizard
 ## Tests
 
 Every scenario; duplicate VIN/plate; invalid references; cross-scope denial; incomplete activation; buses/equipment excluded from booking; import 2,000+ rows; dedup; concurrent activation; audit/outbox; EN/AR/RTL; keyboard; responsive.
+
+Include ownership-change rejection, quarantine non-leakage/SLA, replacement with active/future booking and entitlement, tracker/key handoff and no historical evidence copy.
 
 ## Rollback
 
