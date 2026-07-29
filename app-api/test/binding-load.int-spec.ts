@@ -4,9 +4,10 @@ import type { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { sql } from 'drizzle-orm';
 import { AppModule } from '../src/app.module';
+import type { Principal } from '../src/common/auth/principal';
 import { DRIZZLE } from '../src/common/database/database.constants';
 import type { DrizzleDatabase } from '../src/common/database/database.module';
-import { hierarchyNode, person, vehicle } from '../src/common/database/schema';
+import { DEFAULT_ORGANIZATION_ID, hierarchyNode, person, vehicle, vehicleHierarchyAssignment } from '../src/common/database/schema';
 import { BookingService } from '../src/modules/bookings/services/booking.service';
 import { EligibilityService } from '../src/modules/compliance/services/eligibility.service';
 
@@ -33,6 +34,7 @@ describe('Phase 1 binding load/concurrency (1G — requires DB + Redis)', () => 
   let driverId = '';
   let managerId = '';
   let vehicleId = '';
+  let driverPrincipal: Principal;
   const bookingIds: string[] = [];
 
   const CONCURRENCY = 30;
@@ -55,25 +57,38 @@ describe('Phase 1 binding load/concurrency (1G — requires DB + Redis)', () => 
     managerId = manager.id;
     const [driver] = await db
       .insert(person)
-      .values({ hcmEmployeeId: `ld-drv-${suffix}`, fullName: `Drv ${suffix}`, employmentStatus: 'Active', licenceExpiry: '2999-01-01', lineManagerPersonId: managerId })
+      .values({ hcmEmployeeId: `ld-drv-${suffix}`, fullName: `Drv ${suffix}`, employmentStatus: 'Active', licenceExpiry: '2999-01-01', lineManagerPersonId: managerId, homePoolNodeId: poolNode })
       .returning({ id: person.id });
     driverId = driver.id;
+    driverPrincipal = {
+      organizationId: DEFAULT_ORGANIZATION_ID,
+      userId: null,
+      personId: driverId,
+      entraObjectId: null,
+      email: `binding-${suffix}@example.test`,
+      roles: [{ role: 'Employee', scopeNodeId: poolNode }],
+      isDevLogin: true,
+    };
     const [veh] = await db
       .insert(vehicle)
       .values({ plate: `LD-${suffix}`, chassisVin: `VIN-LD-${suffix}`, bodyTypeCode: 'SEDAN', useCategoryCode: 'POOL', mulkiyaExpiry: '2999-01-01', insuranceExpiry: '2999-01-01', lifecycleStatus: 'Active', bookingPoolFlag: true })
       .returning({ id: vehicle.id });
     vehicleId = veh.id;
+    await db.insert(vehicleHierarchyAssignment).values({ vehicleId, nodeId: poolNode });
   });
 
   afterAll(async () => {
     for (const id of bookingIds) {
+      await db.execute(sql`DELETE FROM fleet.booking_command_ledger WHERE result_booking_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.consent_lifecycle_event WHERE booking_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.consent_record WHERE booking_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.booking_event WHERE booking_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.outbox_event WHERE aggregate_id = ${id}`);
+      await db.execute(sql`DELETE FROM fleet.booking_policy_decision WHERE booking_id = ${id}`);
       await db.execute(sql`DELETE FROM fleet.booking WHERE id = ${id}`);
     }
     await db.execute(sql`DELETE FROM fleet.eligibility_evaluation WHERE driver_person_id = ${driverId}`);
+    await db.execute(sql`DELETE FROM fleet.vehicle_hierarchy_assignment WHERE vehicle_id = ${vehicleId}`);
     await db.execute(sql`DELETE FROM fleet.vehicle WHERE id = ${vehicleId}`);
     await db.execute(sql`DELETE FROM fleet.person WHERE id IN (${driverId}, ${managerId})`);
     await db.execute(sql`DELETE FROM fleet.hierarchy_node WHERE id = ${poolNode}`);
@@ -84,20 +99,31 @@ describe('Phase 1 binding load/concurrency (1G — requires DB + Redis)', () => 
     // Every draft targets the SAME vehicle + identical window ⇒ all overlap.
     const drafts = await Promise.all(
       Array.from({ length: CONCURRENCY }, async () => {
-        const dto = await bookings.create({
-          vehicleId,
-          driverPersonId: driverId,
-          requestedByPersonId: driverId,
-          pickupAtUtc: '2999-03-01T08:00:00.000Z',
-          returnAtUtc: '2999-03-01T10:00:00.000Z',
-        });
+        const dto = await bookings.create(
+          {
+            vehicleId,
+            driverPersonId: driverId,
+            requestedByPersonId: driverId,
+            pickupAtUtc: '2999-03-01T08:00:00.000Z',
+            returnAtUtc: '2999-03-01T10:00:00.000Z',
+          },
+          `person:${driverId}`,
+          driverPrincipal,
+          `binding-load-${randomUUID()}`,
+        );
         bookingIds.push(dto.id);
         return dto.id;
       }),
     );
 
     const results = await Promise.allSettled(
-      drafts.map((id) => bookings.signConsent(id, { driverPersonId: driverId, consentDocumentVersion: 'consent-v0' })),
+      drafts.map((id) => bookings.signConsent(
+        id,
+        { driverPersonId: driverId, consentDocumentVersion: 'booking-consent-test-v1' },
+        `person:${driverId}`,
+        driverPrincipal,
+        `binding-consent-${randomUUID()}`,
+      )),
     );
     const winners = results.filter((r) => r.status === 'fulfilled');
     const losers = results.filter((r) => r.status === 'rejected');

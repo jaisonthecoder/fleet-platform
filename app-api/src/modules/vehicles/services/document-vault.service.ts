@@ -38,4 +38,9 @@ export class DocumentVaultService {
     });
     return doc;
   }
+
+  /** Lists every document version held for a vehicle. */
+  async listDocuments(vehicleId: string) {
+    return this.repo.listDocuments(vehicleId);
+  }
 }

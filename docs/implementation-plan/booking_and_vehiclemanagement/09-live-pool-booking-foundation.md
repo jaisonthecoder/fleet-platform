@@ -4,11 +4,11 @@
 
 Replace the static `/booking` mock with a real backend-connected booking foundation while preserving the approved mockup’s content density and Wayfinder visual language.
 
-## Mandatory mockup gate — ask before implementation
+## Mandatory mockup gate — resolved
 
-Request the detailed booking mockups before any UI edit: Employee self-booking; Fleet Manager booking on behalf; driver/beneficiary selector; 4-step wizard; time quick-picks/custom range; vehicle category/passengers/destination/purpose; mobile/tablet; all validation/loading/error/blocked states; EN/AR.
+Approved on 2026-07-21. Follow `mockups/21-booking-employee-book-a-vehicle.png` for Employee self-booking and `mockups/23-booking-create-on-behalf.png` for the Fleet operational variant. Follow `mockups/mockup-review.md`, `mockups/mockup-implementation-spec.md` and `mockups/derived-screen-contracts.md` for approved loading, error, consent, confirmation, responsive and EN/AR/RTL states.
 
-Mockups remain untouched reference artifacts. Build new source components only.
+Mockups remain untouched reference artifacts. Preserve their content hierarchy and interaction composition inside the existing shell; build new source components only and replace every sample value with authorized API data.
 
 ## Actors and authority
 

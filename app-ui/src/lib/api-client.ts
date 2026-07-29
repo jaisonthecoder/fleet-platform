@@ -58,6 +58,20 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const apiClient = {
   get: <T>(path: string, init?: RequestInit) =>
     request<T>(path, { ...init, method: 'GET' }),
+  /** GET returning the raw response body as text (e.g. CSV export). */
+  getText: async (path: string, init?: RequestInit): Promise<string> => {
+    const url = path.startsWith('http') ? path : `${env.apiBaseUrl}${path}`
+    const response = await fetch(url, {
+      ...init,
+      method: 'GET',
+      headers: { ...(await authHeaders()), ...init?.headers },
+    })
+    if (!response.ok) {
+      if (response.status === 401) notifyUnauthorized()
+      throw new ApiRequestError(response.status, response.statusText)
+    }
+    return response.text()
+  },
   post: <T>(path: string, body?: unknown, init?: RequestInit) =>
     request<T>(path, {
       ...init,

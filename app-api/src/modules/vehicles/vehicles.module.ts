@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '../config/config.module';
 import { PlatformModule } from '../platform/platform.module';
+import { VendorsModule } from '../vendors/vendors.module';
 import { VehicleController } from './controllers/vehicle.controller';
 import { VehicleRepository } from './repositories/vehicle.repository';
 import { DocumentVaultService } from './services/document-vault.service';
@@ -13,7 +14,7 @@ import { VehicleService } from './services/vehicle.service';
  * and transactional `VehicleChanged` events (MessagingModule is global).
  */
 @Module({
-  imports: [PlatformModule, ConfigModule],
+  imports: [PlatformModule, ConfigModule, VendorsModule],
   controllers: [VehicleController],
   providers: [VehicleRepository, VehicleService, DocumentVaultService, TransferService],
   exports: [VehicleService],

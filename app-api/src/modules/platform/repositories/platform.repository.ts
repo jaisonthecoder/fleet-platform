@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, gte, isNull, lte } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import {
@@ -9,6 +9,7 @@ import {
   person,
   roleAssignment,
   sodException,
+  workflowInstance,
 } from '../../../common/database/schema';
 import { DEFAULT_ORGANIZATION_ID } from '../../../common/database/schema';
 
@@ -54,6 +55,34 @@ export class PlatformRepository {
   async insertDelegation(values: typeof delegation.$inferInsert) {
     const rows = await this.db.insert(delegation).values(values).returning();
     return rows[0];
+  }
+
+  /** Resolves an active one-hop delegation in the workflow instance organization. */
+  async findActiveWorkflowDelegation(input: {
+    workflowInstanceId: string;
+    delegatorPersonId: string;
+    delegatePersonId: string;
+    requestType: string;
+    at: Date;
+  }) {
+    const rows = await this.db
+      .select({ id: delegation.id })
+      .from(delegation)
+      .innerJoin(
+        workflowInstance,
+        eq(workflowInstance.organizationId, delegation.organizationId),
+      )
+      .where(and(
+        eq(workflowInstance.id, input.workflowInstanceId),
+        eq(delegation.delegatorPersonId, input.delegatorPersonId),
+        eq(delegation.delegatePersonId, input.delegatePersonId),
+        eq(delegation.requestType, input.requestType),
+        eq(delegation.oneHopOnly, true),
+        lte(delegation.validFrom, input.at),
+        gte(delegation.validTo, input.at),
+      ))
+      .limit(1);
+    return rows[0] ?? null;
   }
 
   /** Most-recent audit entries (Internal Audit read-only view). */

@@ -9,6 +9,14 @@ import { defineConfig } from 'vitest/config'
 // CORS (CORS_ORIGINS), so browser calls with a Bearer token are allowed.
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    port: 3175,
+    strictPort: true,
+  },
+  preview: {
+    port: 3175,
+    strictPort: true,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -17,6 +25,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    maxWorkers: 4,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],

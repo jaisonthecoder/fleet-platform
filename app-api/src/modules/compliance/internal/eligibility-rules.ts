@@ -1,3 +1,5 @@
+import { isVehicleBookable } from '../../../common/domain/vehicle-bookability';
+
 /** Facts the eligibility gate evaluates (loaded from person + vehicle + blocks). */
 export interface EligibilityInputs {
   today: Date;
@@ -38,6 +40,8 @@ export function hardBlockCheck(i: EligibilityInputs): HardBlockResult {
   if (i.hasActiveBlock) reasons.push(`access-blocked:${i.blockReason ?? 'unknown'}`);
   if (isExpired(i.licenceExpiry, i.today)) reasons.push('licence-expired');
   if (i.employmentStatus !== 'Active') reasons.push('employment-inactive');
-  if (i.vehicleLifecycle !== 'Active' || !i.bookingPoolFlag) reasons.push('vehicle-not-bookable');
+  if (!isVehicleBookable(i.vehicleLifecycle, i.bookingPoolFlag)) {
+    reasons.push('vehicle-not-bookable');
+  }
   return { blocked: reasons.length > 0, reasons };
 }

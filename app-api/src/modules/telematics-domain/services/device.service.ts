@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { toDbException } from '../../../common/database/pg-error';
-import type { DeviceDto, PairDevice, RegisterDevice } from '../../../contracts/telematics.contract';
+import type {
+  DeviceDto,
+  PairDevice,
+  RegisterDevice,
+  VehicleDeviceDto,
+} from '../../../contracts/telematics.contract';
 import { AuditService } from '../../platform/services/audit.service';
 import { TelematicsRepository } from '../repositories/telematics.repository';
 
@@ -79,5 +84,23 @@ export class DeviceService {
   async list(): Promise<DeviceDto[]> {
     const devices = await this.repo.listDevices();
     return devices.map((d) => ({ id: d.id, identifier: d.identifier, status: d.status }));
+  }
+
+  /** The GPS device currently paired to a vehicle, or null when unpaired. */
+  async getVehicleDevice(vehicleId: string): Promise<VehicleDeviceDto | null> {
+    const row = await this.repo.currentDeviceForVehicle(vehicleId);
+    if (!row) return null;
+    return {
+      deviceId: row.device.id,
+      identifier: row.device.identifier,
+      model: row.device.model,
+      firmware: row.device.firmware,
+      sim: row.device.sim,
+      status: row.device.status,
+      lastHealthAt: row.device.lastHealthAt
+        ? row.device.lastHealthAt.toISOString()
+        : null,
+      pairedSince: row.pairedSince ? row.pairedSince.toISOString() : null,
+    };
   }
 }

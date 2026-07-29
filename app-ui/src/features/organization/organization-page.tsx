@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Archive,
@@ -50,6 +50,9 @@ import {
   useRetireHierarchyNode,
 } from './hooks/use-organization'
 import { HierarchyLevelStrip } from './hierarchy-level-strip'
+import { LocationPicker } from './location-picker'
+import { levelTone } from './level-tones'
+import { forwardGeocode } from './geocoding'
 
 /** Read-only organization workspace; guarded writes arrive after hierarchy invariants are proven. */
 export function OrganizationPage() {
@@ -59,7 +62,8 @@ export function OrganizationPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [dialog, setDialog] = useState<'create' | 'rename' | 'move' | 'retire' | 'reactivate' | null>(null)
   const [retiredId, setRetiredId] = useState<string | null>(null)
-  const [form, setForm] = useState({ code: '', name: '', nameAr: '', reason: '', targetParentId: '' })
+  const [form, setForm] = useState({ code: '', name: '', nameAr: '', reason: '', targetParentId: '', latitude: '', longitude: '', address: '' })
+  const skipForwardGeocodeRef = useRef(false)
   const createNode = useCreateHierarchyNode()
   const renameNode = useRenameHierarchyNode()
   const retireNode = useRetireHierarchyNode()
@@ -72,6 +76,30 @@ export function OrganizationPage() {
     if (!workspace.data || expanded.size > 0) return
     setExpanded(new Set(workspace.data.hierarchy.map((node) => node.id)))
   }, [workspace.data, expanded.size])
+
+  // Two-way geocoding: an address typed in the create dialog auto-locates on the
+  // map (debounced). The reverse direction (map click -> address) is guarded so
+  // it does not re-trigger a forward lookup.
+  useEffect(() => {
+    if (dialog !== 'create' && dialog !== 'rename') return
+    if (skipForwardGeocodeRef.current) {
+      skipForwardGeocodeRef.current = false
+      return
+    }
+    const query = form.address.trim()
+    if (query.length < 4) return
+    const handle = setTimeout(() => {
+      void forwardGeocode(query).then((result) => {
+        if (!result) return
+        setForm((value) => ({
+          ...value,
+          latitude: String(result.latitude),
+          longitude: String(result.longitude),
+        }))
+      })
+    }, 800)
+    return () => clearTimeout(handle)
+  }, [form.address, dialog])
 
   const rows = useMemo(
     () => flattenOrganizationTree(workspace.data?.hierarchy ?? [], expanded),
@@ -109,6 +137,14 @@ export function OrganizationPage() {
   if (!workspace.data) return null
 
   const { organization, quality } = workspace.data
+  const levelByCode = new Map(workspace.data.levels.map((level) => [level.code, level]))
+  const levelName = (node: { levelCode: string; levelLabel: string }) => {
+    const level = levelByCode.get(node.levelCode)
+    return level ? (isArabic ? level.labelAr : level.labelEn) : node.levelLabel
+  }
+  const childLevel = selected
+    ? workspace.data.levels.find((level) => level.position === selected.levelIndex + 1) ?? null
+    : null
   const handleTreeKeyDown = (
     event: KeyboardEvent<HTMLDivElement>,
     node: OrganizationHierarchyNode & { depth: number },
@@ -140,6 +176,9 @@ export function OrganizationPage() {
       nameAr: kind === 'rename' ? selected?.nameAr ?? '' : '',
       reason: '',
       targetParentId: '',
+      latitude: kind === 'rename' && selected?.latitude != null ? String(selected.latitude) : '',
+      longitude: kind === 'rename' && selected?.longitude != null ? String(selected.longitude) : '',
+      address: kind === 'rename' ? selected?.address ?? '' : '',
     })
     setDialog(kind)
   }
@@ -154,13 +193,20 @@ export function OrganizationPage() {
     if (!selected || !dialog) return
     try {
       if (dialog === 'create') {
+        if (!childLevel) {
+          notify.danger(t('organization.noChildLevel'))
+          return
+        }
         await createNode.mutateAsync({
           parentId: selected.id,
           code: form.code.trim().toUpperCase(),
           name: form.name.trim(),
           nameAr: form.nameAr.trim(),
-          levelCode: nextLevelCode(selected.levelCode),
-          levelLabel: nextLevelLabel(selected.levelLabel),
+          levelCode: childLevel.code,
+          levelLabel: childLevel.labelEn,
+          latitude: form.latitude ? Number(form.latitude) : null,
+          longitude: form.longitude ? Number(form.longitude) : null,
+          address: form.address.trim() || null,
           reason: form.reason.trim(),
         })
         notify.ok(t('organization.nodeCreated'))
@@ -171,6 +217,9 @@ export function OrganizationPage() {
             expectedRevision: selected.revision,
             name: form.name.trim(),
             nameAr: form.nameAr.trim(),
+            latitude: form.latitude ? Number(form.latitude) : null,
+            longitude: form.longitude ? Number(form.longitude) : null,
+            address: form.address.trim() || null,
             reason: form.reason.trim(),
           },
         })
@@ -206,7 +255,7 @@ export function OrganizationPage() {
   const pending = createNode.isPending || renameNode.isPending || retireNode.isPending || moveNode.isPending || reactivateNode.isPending
   const invalid =
     !form.reason.trim() ||
-    (dialog === 'create' && (!form.code.trim() || !form.name.trim() || !form.nameAr.trim())) ||
+    (dialog === 'create' && (!childLevel || !form.code.trim() || !form.name.trim() || !form.nameAr.trim())) ||
     (dialog === 'rename' && (!form.name.trim() || !form.nameAr.trim())) ||
     (dialog === 'move' && (!form.targetParentId || impact.isLoading || !impact.data)) ||
     (dialog === 'retire' && (impact.isLoading || impact.data?.blocking !== false))
@@ -239,19 +288,20 @@ export function OrganizationPage() {
         <StatCard label={t('organization.homeScopeGaps')} value={String(quality.peopleWithoutHomeScope)} icon={Users} iconTone={quality.peopleWithoutHomeScope === 0 ? 'ok' : 'warn'} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_460px]">
         <section className="overflow-hidden rounded-[3px] border border-border bg-card">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
             <div>
               <p className="eyebrow">{organization.code} · v{organization.revision}</p>
               <h2 className="mt-1 text-base font-bold">{t('organization.structure')}</h2>
             </div>
-            <div className="flex items-center gap-6 text-end text-[10px] font-bold uppercase text-muted-foreground"><span>{t('organization.vehicles')}</span><span>{t('organization.users')}</span></div>
+            <div className="text-end text-[10px] font-bold uppercase text-muted-foreground">{t('organization.vehicles')} · {t('organization.users')}</div>
           </div>
-          <div role="tree" aria-label={t('organization.structure')} className="divide-y divide-border">
+          <div role="tree" aria-label={t('organization.structure')} className="flex flex-col gap-1.5 p-3">
             {rows.map((node) => {
               const open = expanded.has(node.id)
               const label = isArabic ? node.nameAr : node.name
+              const tone = levelTone(node.levelIndex)
               return (
                 <div
                   key={node.id}
@@ -264,8 +314,8 @@ export function OrganizationPage() {
                   onFocus={() => setSelectedId(node.id)}
                   onKeyDown={(event) => handleTreeKeyDown(event, node, open)}
                   className={cn(
-                    'flex min-h-12 items-center gap-2 px-3 transition-colors',
-                    selected?.id === node.id ? 'bg-brand-soft' : 'hover:bg-surface-hover',
+                    'flex min-h-12 items-center gap-2 rounded-[3px] border border-border border-s-2 px-3 transition-colors',
+                    selected?.id === node.id ? 'border-s-signal bg-signal/5' : 'hover:bg-surface-hover',
                   )}
                   style={{ paddingInlineStart: `${12 + node.depth * 24}px` }}
                 >
@@ -284,9 +334,10 @@ export function OrganizationPage() {
                       {open ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4 rtl:rotate-180" />}
                     </button>
                   ) : <span className="size-8" />}
-                  <button type="button" onClick={() => setSelectedId(node.id)} className="flex min-w-0 flex-1 items-center justify-between gap-3 py-2 text-start">
-                    <span className="min-w-0"><span className="block truncate text-sm font-bold">{label}</span><span className="font-data text-[11px] text-muted-foreground">{node.code}</span></span>
-                    <span className="flex shrink-0 items-center gap-3"><StatusChip tone="neutral" label={node.levelCode} /><span className="w-10 text-end font-data text-xs">{node.vehicleCount}</span><span className="w-10 text-end font-data text-xs">{node.userCount}</span></span>
+                  <button type="button" onClick={() => setSelectedId(node.id)} className="flex min-w-0 flex-1 items-center gap-3 py-2 text-start">
+                    <span className={cn('shrink-0 rounded-[3px] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide', tone.soft, tone.text)}>{levelName(node)}</span>
+                    <span className="min-w-0 flex-1"><span className="block truncate text-sm font-bold">{label}</span><span className="font-data text-[11px] text-muted-foreground">{node.code}</span></span>
+                    <span className="shrink-0 font-data text-xs tabular-nums text-muted-foreground">{node.vehicleCount} · {node.userCount}</span>
                   </button>
                 </div>
               )
@@ -299,6 +350,8 @@ export function OrganizationPage() {
           detail={detail.data ?? null}
           organizationName={organization.name}
           isArabic={isArabic}
+          canAddChild={Boolean(childLevel)}
+          levelName={selected ? levelName(selected) : ''}
           onCreate={() => openDialog('create')}
           onRename={() => openDialog('rename')}
           onMove={() => openDialog('move')}
@@ -313,7 +366,7 @@ export function OrganizationPage() {
             {retired.data.map((node) => (
               <div key={node.id} className="flex items-center justify-between gap-3 rounded-[3px] border border-border p-3">
                 <div className="min-w-0"><p className="truncate text-sm font-bold">{isArabic ? node.nameAr : node.name}</p><p className="font-data text-xs text-muted-foreground">{node.code} · v{node.revision}</p></div>
-                <Button size="sm" variant="secondary" onClick={() => { setRetiredId(node.id); setForm({ code: '', name: '', nameAr: '', reason: '', targetParentId: '' }); setDialog('reactivate') }}>{t('organization.reactivate')}</Button>
+                <Button size="sm" variant="secondary" onClick={() => { setRetiredId(node.id); setForm({ code: '', name: '', nameAr: '', reason: '', targetParentId: '', latitude: '', longitude: '', address: '' }); setDialog('reactivate') }}>{t('organization.reactivate')}</Button>
               </div>
             ))}
           </div>
@@ -331,12 +384,44 @@ export function OrganizationPage() {
             </DialogDescription>
           </DialogHeader>
           {dialog === 'create' ? (
-            <Field label={t('organization.code')}><Input value={form.code} onChange={(event) => setForm((value) => ({ ...value, code: event.target.value.toUpperCase() }))} /></Field>
+            <>
+              <Field label={t('organization.code')}><Input value={form.code} onChange={(event) => setForm((value) => ({ ...value, code: event.target.value.toUpperCase() }))} /></Field>
+              {childLevel
+                ? <p className="text-xs text-muted-foreground">{t('organization.childLevelHint', { level: isArabic ? childLevel.labelAr : childLevel.labelEn })}</p>
+                : <p className="text-xs text-warning">{t('organization.noChildLevel')}</p>}
+            </>
           ) : null}
           {dialog === 'create' || dialog === 'rename' ? (
             <>
               <Field label={t('organization.nameEn')}><Input value={form.name} onChange={(event) => setForm((value) => ({ ...value, name: event.target.value }))} /></Field>
               <Field label={t('organization.nameAr')}><Input dir="rtl" value={form.nameAr} onChange={(event) => setForm((value) => ({ ...value, nameAr: event.target.value }))} /></Field>
+            </>
+          ) : null}
+          {dialog === 'create' || dialog === 'rename' ? (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label={t('organization.latitude')}><Input inputMode="decimal" placeholder="24.4539" value={form.latitude} onChange={(event) => setForm((value) => ({ ...value, latitude: event.target.value }))} /></Field>
+                <Field label={t('organization.longitude')}><Input inputMode="decimal" placeholder="54.3773" value={form.longitude} onChange={(event) => setForm((value) => ({ ...value, longitude: event.target.value }))} /></Field>
+              </div>
+              <Field label={t('organization.address')}><Input value={form.address} onChange={(event) => setForm((value) => ({ ...value, address: event.target.value }))} /></Field>
+              <div className="grid gap-1.5 text-sm font-bold">
+                <span>{t('organization.pickOnMap')}</span>
+                <LocationPicker
+                  latitude={form.latitude ? Number(form.latitude) : null}
+                  longitude={form.longitude ? Number(form.longitude) : null}
+                  label={t('organization.pickOnMap')}
+                  onChange={(loc) => {
+                    if (loc.address !== undefined) skipForwardGeocodeRef.current = true
+                    setForm((value) => ({
+                      ...value,
+                      latitude: String(loc.latitude),
+                      longitude: String(loc.longitude),
+                      address: loc.address ?? value.address,
+                    }))
+                  }}
+                />
+                <span className="text-xs font-normal text-muted-foreground">{t('organization.mapHint')}</span>
+              </div>
             </>
           ) : null}
           {dialog === 'move' ? (
@@ -368,13 +453,13 @@ export function OrganizationPage() {
   )
 }
 
-function NodeDetails({ node, detail, organizationName, isArabic, onCreate, onRename, onMove, onRetire }: { node: OrganizationHierarchyNode | null; detail: OrganizationNodeDetail | null; organizationName: string; isArabic: boolean; onCreate: () => void; onRename: () => void; onMove: () => void; onRetire: () => void }) {
+function NodeDetails({ node, detail, organizationName, isArabic, canAddChild, levelName, onCreate, onRename, onMove, onRetire }: { node: OrganizationHierarchyNode | null; detail: OrganizationNodeDetail | null; organizationName: string; isArabic: boolean; canAddChild: boolean; levelName: string; onCreate: () => void; onRename: () => void; onMove: () => void; onRetire: () => void }) {
   const { t } = useTranslation()
   const history = useHierarchyHistory(node?.id ?? null)
   if (!node) return <EmptyState title={t('organization.noNodes')} description={t('organization.noNodesBody')} />
   return (
     <aside className="h-fit rounded-[3px] border border-border bg-card p-5">
-      <p className="eyebrow">{node.levelCode}</p>
+      <p className="eyebrow">{levelName}</p>
       <h2 className="mt-1 text-lg font-bold">{isArabic ? node.nameAr : node.name}</h2>
       <p className="mt-1 font-data text-xs text-muted-foreground">{node.code}{node.parentName ? ` · ${t('organization.parent')}: ${node.parentName}` : ''}</p>
       <div className="mt-4 grid grid-cols-3 divide-x divide-border border-y border-border py-3 rtl:divide-x-reverse">
@@ -382,16 +467,19 @@ function NodeDetails({ node, detail, organizationName, isArabic, onCreate, onRen
         <Metric label={t('organization.users')} value={node.userCount} />
         <Metric label={t('organization.utilization')} value={`${node.utilizationPercent}%`} />
       </div>
-      <dl className="mt-5 space-y-3 text-sm">
+      <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <Detail label={t('organization.code')} value={node.code} mono />
         <Detail label={t('organization.organization')} value={organizationName} />
-        <Detail label={t('organization.level')} value={`${node.levelLabel} · ${node.levelIndex}`} />
-        <Detail label={t('organization.path')} value={node.path} mono />
+        <Detail label={t('organization.level')} value={`${levelName} · ${node.levelIndex}`} />
         <Detail label={t('organization.children')} value={String(node.childCount)} />
         <Detail label={t('organization.revision')} value={String(node.revision)} />
+        {node.latitude != null ? <Detail label={t('organization.latitude')} value={String(node.latitude)} mono /> : null}
+        {node.longitude != null ? <Detail label={t('organization.longitude')} value={String(node.longitude)} mono /> : null}
+        <Detail label={t('organization.path')} value={node.path} mono wide />
+        {node.address ? <Detail label={t('organization.address')} value={node.address} wide /> : null}
       </dl>
-      <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-        <Button variant="secondary" onClick={onCreate}><Plus />{t('organization.addChild')}</Button>
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <Button variant="secondary" disabled={!canAddChild} onClick={onCreate}><Plus />{t('organization.addChild')}</Button>
         <Button variant="secondary" onClick={onRename}><Pencil />{t('organization.rename')}</Button>
         {node.parentId ? <Button variant="secondary" onClick={onMove}><MoveRight />{t('organization.move')}</Button> : null}
         <Button variant="destructive" onClick={onRetire}><Archive />{t('organization.retire')}</Button>
@@ -425,16 +513,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   return <label className="grid gap-1.5 text-sm font-bold"><span>{label}</span>{children}</label>
 }
 
-function nextLevelCode(levelCode: string): string {
-  return ({ GROUP: 'CLUSTER', CLUSTER: 'POOL', POOL: 'LOCATION' } as Record<string, string>)[levelCode] ?? 'LOCATION'
-}
-
-function nextLevelLabel(levelLabel: string): string {
-  return ({ Group: 'Cluster', Cluster: 'Pool', Pool: 'Location' } as Record<string, string>)[levelLabel] ?? 'Location'
-}
-
-function Detail({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return <div><dt className="text-xs font-bold text-muted-foreground">{label}</dt><dd className={cn('mt-0.5 break-words', mono && 'font-data')}>{value}</dd></div>
+function Detail({ label, value, mono, wide }: { label: string; value: string; mono?: boolean; wide?: boolean }) {
+  return <div className={cn(wide && 'col-span-2')}><dt className="text-xs font-bold text-muted-foreground">{label}</dt><dd className={cn('mt-0.5 break-words', mono && 'font-data')}>{value}</dd></div>
 }
 
 function qualityReason(reason: string, t: (key: string, options?: Record<string, unknown>) => string): string {

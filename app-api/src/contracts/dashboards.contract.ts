@@ -56,6 +56,11 @@ export interface EntitlementInventoryRow {
 export interface EntitlementInventoryTile {
   allocated: number;
   pendingApproval: number;
+  awaitingConsent: number;
+  returned: number;
+  expired: number;
+  bsdActive: number;
+  bsdConflict: number;
   byCategory: EntitlementInventoryRow[];
 }
 

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import type { LivePositionDto } from '../../../contracts/telematics.contract';
+import type {
+  LiveFleetPositionDto,
+  LivePositionDto,
+} from '../../../contracts/telematics.contract';
 import { AuditService } from '../../platform/services/audit.service';
 import { TelematicsRepository } from '../repositories/telematics.repository';
 
@@ -34,8 +37,42 @@ export class LiveMapService {
       lon: latest?.lon ?? null,
       speed: latest?.speed ?? null,
       ignition: latest?.ignition ?? null,
+      odometer: latest?.odometer ?? null,
+      fuelLevel: latest?.fuelLevel ?? null,
+      dtcCodes: latest?.dtcCodes ?? null,
+      deviceHealth: latest?.deviceHealth ?? null,
       at: at ? at.toISOString() : null,
       online,
     };
+  }
+
+  /** Latest position per scoped vehicle for the fleet live map (bulk, audited). */
+  async getFleetLive(
+    organizationId: string | undefined,
+    authorizedNodeIds: string[] | undefined,
+    includeUnassigned: boolean,
+    actorRef = 'system',
+  ): Promise<LiveFleetPositionDto[]> {
+    const rows = await this.repo.latestPerVehicle(
+      organizationId,
+      authorizedNodeIds,
+      includeUnassigned,
+    );
+    // D4: bulk location access is logged once per read.
+    await this.audit.record({
+      actorRef,
+      action: 'TELEMATICS_LIVE_FLEET_ACCESS',
+      entityRef: 'fleet',
+    });
+    const nowMs = Date.now();
+    return rows.map((row) => ({
+      vehicleId: row.vehicleId,
+      plate: row.plate,
+      lat: row.lat,
+      lon: row.lon,
+      speed: row.speed,
+      at: row.time ? row.time.toISOString() : null,
+      online: row.time ? nowMs - row.time.getTime() < FRESHNESS_MS : false,
+    }));
   }
 }

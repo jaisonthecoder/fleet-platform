@@ -7,7 +7,7 @@ import { WorkflowService } from './workflow.service';
 class FakeRepo {
   instances = new Map<
     string,
-    { id: string; workflowType: string; subjectRef: string; currentStep: number; status: string }
+    { id: string; organizationId: string; workflowType: string; subjectRef: string; currentStep: number; status: string; definitionDeploymentId: string; stateVersion: number }
   >();
   steps = new Map<
     string,
@@ -21,18 +21,35 @@ class FakeRepo {
       decision: string | null;
       reason: string | null;
       slaDueAt: Date | null;
+      stateVersion: number;
     }
   >();
+  delegations: Array<{
+    organizationId: string;
+    delegatorPersonId: string;
+    delegatePersonId: string;
+    requestType: string;
+    validFrom: Date;
+    validTo: Date;
+    oneHopOnly: boolean;
+  }> = [];
   private seq = 0;
 
-  async createInstance(input: { workflowType: string; subjectRef: string }) {
+  async ensureDeployment() {
+    return 'deployment-1';
+  }
+
+  async createInstance(input: { workflowType: string; subjectRef: string; definitionDeploymentId: string }) {
     const id = `wf-${++this.seq}`;
     this.instances.set(id, {
       id,
       workflowType: input.workflowType,
       subjectRef: input.subjectRef,
+      organizationId: 'org-1',
       currentStep: 0,
       status: 'Pending',
+      definitionDeploymentId: input.definitionDeploymentId,
+      stateVersion: 1,
     });
     return id;
   }
@@ -50,6 +67,7 @@ class FakeRepo {
         decision: null,
         reason: null,
         slaDueAt: step.slaDueAt,
+        stateVersion: 1,
       });
     });
   }
@@ -81,6 +99,24 @@ class FakeRepo {
     instance.status = input.status;
   }
 
+  async findActiveDelegation(input: {
+    organizationId: string;
+    delegatorPersonId: string;
+    delegatePersonId: string;
+    requestType: string;
+    at: Date;
+  }) {
+    return this.delegations.find((delegation) =>
+      delegation.organizationId === input.organizationId &&
+      delegation.delegatorPersonId === input.delegatorPersonId &&
+      delegation.delegatePersonId === input.delegatePersonId &&
+      delegation.requestType === input.requestType &&
+      delegation.oneHopOnly &&
+      delegation.validFrom <= input.at &&
+      delegation.validTo >= input.at,
+    );
+  }
+
   async findOverduePendingSteps(now: Date) {
     return [...this.steps.values()]
       .filter((step) => {
@@ -107,7 +143,25 @@ describe('WorkflowService', () => {
     const repo = new FakeRepo();
     const escalate = jest.fn().mockResolvedValue('sw-1');
     const escalation = { escalate } as unknown as EscalationService;
-    const service = new WorkflowService(repo as unknown as WorkflowRepository, escalation);
+    const delegations = {
+      activeForWorkflow: (input: {
+        workflowInstanceId: string;
+        delegatorPersonId: string;
+        delegatePersonId: string;
+        requestType: string;
+        at: Date;
+      }) => {
+        const instance = repo.instances.get(input.workflowInstanceId)!;
+        return repo.findActiveDelegation({
+          organizationId: instance.organizationId,
+          delegatorPersonId: input.delegatorPersonId,
+          delegatePersonId: input.delegatePersonId,
+          requestType: input.requestType,
+          at: input.at,
+        });
+      },
+    };
+    const service = new WorkflowService(repo as unknown as WorkflowRepository, escalation, delegations as never);
     return { service, repo, escalate };
   };
 
@@ -155,7 +209,16 @@ describe('WorkflowService', () => {
   });
 
   it('records a delegated decision "on behalf of" the assignee (SoD-06)', async () => {
-    const { service } = makeService();
+    const { service, repo } = makeService();
+    repo.delegations.push({
+      organizationId: 'org-1',
+      delegatorPersonId: 'mgr1',
+      delegatePersonId: 'delegate1',
+      requestType: 'entitlement-approval',
+      validFrom: new Date(Date.now() - 60_000),
+      validTo: new Date(Date.now() + 60_000),
+      oneHopOnly: true,
+    });
     const started = await service.start({
       workflowType: 'entitlement-approval',
       subjectRef: 'ENT-1',
@@ -169,6 +232,54 @@ describe('WorkflowService', () => {
     expect(result.status).toBe('Approved');
     expect(result.steps[0]!.decidedByPersonId).toBe('delegate1');
     expect(result.steps[0]!.onBehalfOfPersonId).toBe('mgr1');
+  });
+
+  it('rejects an expired delegated decision', async () => {
+    const { service, repo } = makeService();
+    repo.delegations.push({
+      organizationId: 'org-1',
+      delegatorPersonId: 'mgr1',
+      delegatePersonId: 'delegate1',
+      requestType: 'booking-approval',
+      validFrom: new Date(Date.now() - 120_000),
+      validTo: new Date(Date.now() - 60_000),
+      oneHopOnly: true,
+    });
+    const started = await service.start({
+      workflowType: 'booking-approval',
+      subjectRef: 'BK-EXPIRED',
+      steps: [{ assigneePersonId: 'mgr1' }],
+    });
+
+    await expect(service.decide(started.id, {
+      actorPersonId: 'delegate1',
+      decision: 'APPROVED',
+      onBehalfOfPersonId: 'mgr1',
+    })).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('rejects a delegated decision from another organization', async () => {
+    const { service, repo } = makeService();
+    repo.delegations.push({
+      organizationId: 'org-2',
+      delegatorPersonId: 'mgr1',
+      delegatePersonId: 'delegate1',
+      requestType: 'booking-approval',
+      validFrom: new Date(Date.now() - 60_000),
+      validTo: new Date(Date.now() + 60_000),
+      oneHopOnly: true,
+    });
+    const started = await service.start({
+      workflowType: 'booking-approval',
+      subjectRef: 'BK-CROSS-ORG',
+      steps: [{ assigneePersonId: 'mgr1' }],
+    });
+
+    await expect(service.decide(started.id, {
+      actorPersonId: 'delegate1',
+      decision: 'APPROVED',
+      onBehalfOfPersonId: 'mgr1',
+    })).rejects.toBeInstanceOf(ForbiddenException);
   });
 
   it('forbids a decision by someone who is not the assignee', async () => {

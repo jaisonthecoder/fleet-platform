@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 export interface SegmentedOption {
   value: string
   label: string
+  disabled?: boolean
 }
 
 interface SegmentedProps {
@@ -11,6 +12,7 @@ interface SegmentedProps {
   onValueChange: (value: string) => void
   className?: string
   'aria-label'?: string
+  'aria-describedby'?: string
 }
 
 /**
@@ -23,11 +25,13 @@ export function Segmented({
   onValueChange,
   className,
   'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
 }: SegmentedProps) {
   return (
     <div
       role="tablist"
       aria-label={ariaLabel}
+      aria-describedby={ariaDescribedBy}
       className={cn(
         'inline-flex gap-1 rounded-[3px] bg-surface-2 p-1',
         className,
@@ -41,9 +45,10 @@ export function Segmented({
             type="button"
             role="tab"
             aria-selected={active}
+            disabled={option.disabled}
             onClick={() => onValueChange(option.value)}
             className={cn(
-              'rounded-[2px] px-4 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
+              'rounded-[2px] px-4 py-2 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-45',
               active
                 ? 'bg-brand text-brand-foreground'
                 : 'text-muted-foreground hover:text-foreground',

@@ -100,6 +100,21 @@ export class LookupService {
     return tree ? buildLookupTree(flat) : flat;
   }
 
+  /** Returns active lookup codes with server-owned rule metadata for domain validation. */
+  async getValueRules(
+    typeCode: string,
+  ): Promise<Array<{ code: string; metadata: Record<string, unknown> | null }>> {
+    const type = await this.requireType(typeCode);
+    const rows = await this.repo.listActiveValues(type.id);
+    return rows.map((row) => ({
+      code: row.code,
+      metadata:
+        row.metadata && typeof row.metadata === 'object'
+          ? (row.metadata as Record<string, unknown>)
+          : null,
+    }));
+  }
+
   /** Cascading children of a parent value within a type. */
   async getChildren(typeCode: string, parentCode: string): Promise<LookupValueDto[]> {
     const flat = await this.getValues(typeCode);

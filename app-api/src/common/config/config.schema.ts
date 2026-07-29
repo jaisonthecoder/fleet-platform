@@ -38,6 +38,11 @@ export const envSchema = z.object({
   API_PORT: z.coerce.number().int().positive().default(3000),
   API_GLOBAL_PREFIX: z.string().default('api'),
   CORS_ORIGINS: z.string().default('http://localhost:5173'),
+  BOOKING_LOCAL_DUMMY_CONSENT_ENABLED: boolFromEnv(false),
+  BOOKING_LOCAL_DUMMY_CONSENT_VERSION: z.string().optional(),
+  BOOKING_LOCAL_DUMMY_CONSENT_EFFECTIVE_AT_UTC: z.string().optional(),
+  BOOKING_LOCAL_DUMMY_CONSENT_EN: z.string().optional(),
+  BOOKING_LOCAL_DUMMY_CONSENT_AR: z.string().optional(),
 
   // PDP deployable + budgets
   PDP_PORT: z.coerce.number().int().positive().default(3001),

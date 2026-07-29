@@ -196,6 +196,24 @@ export class OrganizationRepository {
     return rows[0];
   }
 
+  /** Propagates a renamed level's English label to every node that carries it. */
+  async syncNodeLevelLabels(
+    organizationId: string,
+    levelCode: string,
+    levelLabel: string,
+    executor: DrizzleDatabase,
+  ) {
+    await executor
+      .update(hierarchyNode)
+      .set({ levelLabel })
+      .where(
+        and(
+          eq(hierarchyNode.organizationId, organizationId),
+          eq(hierarchyNode.levelCode, levelCode),
+        ),
+      );
+  }
+
   /** Reorders hierarchy levels using temporary positions inside one transaction. */
   async reorderLevels(
     organizationId: string,
@@ -281,11 +299,22 @@ export class OrganizationRepository {
     return rows[0];
   }
 
-  /** Renames a node with optimistic revision protection. */
-  async renameNode(id: string, revision: number, name: string, nameAr: string, executor: DrizzleDatabase) {
+  /** Renames a node (and optionally its location) with optimistic revision protection. */
+  async renameNode(
+    id: string,
+    revision: number,
+    name: string,
+    nameAr: string,
+    location: { latitude?: number | null; longitude?: number | null; address?: string | null },
+    executor: DrizzleDatabase,
+  ) {
+    const values: Partial<typeof hierarchyNode.$inferInsert> = { name, nameAr };
+    if (location.latitude !== undefined) values.latitude = location.latitude;
+    if (location.longitude !== undefined) values.longitude = location.longitude;
+    if (location.address !== undefined) values.address = location.address;
     const rows = await executor
       .update(hierarchyNode)
-      .set({ name, nameAr })
+      .set(values)
       .where(and(eq(hierarchyNode.id, id), eq(hierarchyNode.revision, revision)))
       .returning();
     return rows[0];

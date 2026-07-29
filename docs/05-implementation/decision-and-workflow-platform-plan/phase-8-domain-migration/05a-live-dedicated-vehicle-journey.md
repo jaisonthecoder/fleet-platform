@@ -6,6 +6,8 @@ Replace the placeholder/static entitlement experience with production-backed Way
 
 This is not a trip booking variation. It is an effective-dated entitlement/allocation lifecycle governed by `dedicated-vehicle-eligibility`, `entitlement-approval-chain`, mandatory consent and organization hierarchy scope.
 
+The active code-aware delivery sequence is the [Dedicated Vehicle Implementation Plan](../../orchestration/fleet-operations-core/dedicated-vehicle-implementation-plan/README.md), DEDICATED-00 through DEDICATED-06. This document remains the complete journey contract; the phase pack controls implementation order, gates and evidence.
+
 ## Owners and dependencies
 
 - Primary: Entitlement Backend and React Frontend owners
@@ -31,12 +33,31 @@ This is not a trip booking variation. It is an effective-dated entitlement/alloc
 4. Enter dates/duration, organization location, business unit, cost centre, justification category and detailed justification.
 5. Attach supporting evidence where required.
 6. Run eligibility using authoritative HR/person facts and organization scope.
-7. Review eligible vehicle classes/options and estimated cost.
+7. Review eligible vehicle classes/options and estimated cost, then optionally record a preferred currently eligible Vehicle and/or a free-text preference note.
 8. Create Draft and submit to approval.
 9. Track approval chain and remediation/modification requests.
 10. Assigned driver signs versioned digital consent.
 11. Fleet Manager allocates a specific eligible vehicle.
 12. Request remains visible through allocation, expiry, cancellation, return and BSD windows.
+
+### Requester Vehicle preference
+
+The requester does not reserve or select the final allocated Vehicle. After the eligibility preview identifies permitted classes and currently eligible options, the request form may capture both optional preference inputs:
+
+- `preferred_vehicle_id`: a dropdown limited to currently eligible Vehicles returned by the server for the approved class, scope and effective window;
+- `preference_note`: free text, maximum 500 characters, for non-binding operational preferences such as `I'd prefer a Toyota Fortuner if available` or `Left-hand drive preferred - driving on E11`.
+
+The dropdown must show safe Employee-visible facts only: make/model, class, fuel type and safe pool/location summary. It must not expose VIN, Vendor/lease terms, compliance evidence, cost, another person's assignment or future confidential allocation details.
+
+Both fields are preferences, not allocation commands or guarantees. Submission stores the preference and the eligibility evidence observed at that time. Fleet Manager allocation re-evaluates live scope, compliance, availability, exclusivity and policy, then may allocate the preferred Vehicle, a policy-permitted equivalent inside the approved class/equivalence rules, or return the request for modification. Equivalent substitution cannot widen the approved entitlement. The final decision and any variance from the preference are auditable. API/DTO contracts use `preferredVehicleId` for request preference and reserve `vehicleId` for the final Fleet allocation.
+
+Binding requirements:
+
+- `DED-PREF-01` - When eligibility returns permitted Vehicle classes, the Dedicated Vehicle service shall allow the requester to select at most one currently eligible Vehicle as a non-binding preference.
+- `DED-PREF-02` - When the requester enters a preference note, the Dedicated Vehicle service shall accept no more than 500 characters and shall treat the note as non-binding allocation context.
+- `DED-PREF-03` - When the eligibility result becomes stale or the request materially changes, the Dedicated Vehicle service shall revalidate or clear a preferred Vehicle that is no longer eligible.
+- `DED-PREF-04` - When Fleet allocates a Vehicle different from the stored preferred Vehicle, the Dedicated Vehicle service shall record the allocated Vehicle and a governed variance reason without rewriting the original preference.
+- `DED-PREF-05` - The Dedicated Vehicle user interface shall state that Vehicle preferences are not guaranteed and that Fleet makes the final allocation after approval and consent.
 
 ### Fleet Manager on-behalf request
 
@@ -73,6 +94,8 @@ Replace the overloaded `request_type` meaning with additive fields:
 - `duration_mode`: `LongTerm | Temporary`.
 - `driver_mode`: `WithDriver | WithoutDriver`.
 - `professional_driver_person_id` nullable and required for WithDriver.
+- `preferred_vehicle_id` nullable, organization-scoped and retained as original request evidence; it never represents allocation.
+- `preference_note` nullable, maximum 500 characters and treated as non-binding operational context.
 - `requested_by_person_id` separate from `requester_person_id`.
 - `organization_id`, `location_node_id` and effective scope validated by composite FKs.
 - `eligibility_provenance` and `approval_route_provenance` stored separately.
@@ -109,6 +132,7 @@ Published workflow instances remain immutable. Resubmission starts a new pinned 
 - `GET /api/v1/entitlements/people?search=&scopeId=` - scoped active requester/driver picker.
 - `GET /api/v1/entitlements/justification-categories` - governed reference data.
 - `POST /api/v1/entitlements/eligibility-preview` - side-effect-free typed eligibility + eligible classes/options.
+- Eligibility preview returns a bounded, Employee-safe `eligibleVehicleOptions` projection for the optional preference dropdown; this is not an availability hold.
 - Existing create/get/list/submit endpoints updated to bind actor and organization server-side.
 - `PATCH /api/v1/entitlements/:id` for Draft/ModificationRequested edits with revision.
 - `POST /api/v1/entitlements/:id/request-modification` for workflow outcome.
@@ -145,6 +169,7 @@ Mockup-aligned request form with:
 - Governed justification category and detailed text.
 - Attachments.
 - Eligibility check and eligible vehicle/class results.
+- Optional eligible-Vehicle preference dropdown plus optional preference note, with an explicit `not guaranteed` message.
 - Review and Submit action.
 
 ### `/{lang}/entitlements/:id`
@@ -168,6 +193,7 @@ Fleet Manager can select an eligible vehicle, assign professional driver, captur
 - Initial/loading and field-level validation.
 - Eligibility checking, allowed, denied, stale-facts and service unavailable.
 - No eligible vehicles.
+- Preferred Vehicle became ineligible/stale; clear the preference, preserve the note and explain that Fleet will allocate an eligible equivalent.
 - Draft saved and revision conflict.
 - Pending approval with SLA/step status.
 - Modification requested with approver comment.
@@ -195,6 +221,8 @@ Fleet Manager can select an eligible vehicle, assign professional driver, captur
 - Self vs. authorized on-behalf submission.
 - Cross-organization/scope denial.
 - Orthogonal duration/driver combinations.
+- Preferred Vehicle omitted, valid, stale, foreign-scope, no longer compliant and replaced by an auditable equivalent.
+- Preference-note empty, boundary length, over-length, EN/AR and unsafe markup rendering.
 - D8 allow/deny/stale/missing facts and scoped inheritance.
 - Separate eligibility/route provenance and append-only history.
 - SoD-02/SoD-05, delegation, timeout, no approver and modify/resubmit.

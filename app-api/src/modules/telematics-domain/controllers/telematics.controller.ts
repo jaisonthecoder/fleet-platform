@@ -19,6 +19,7 @@ import { AlertService } from '../services/alert.service';
 import { DeviceService } from '../services/device.service';
 import { LiveMapService } from '../services/live-map.service';
 import { TripService } from '../services/trip.service';
+import { ScopeAuthorizationService } from '../../platform/services/scope-authorization.service';
 
 const actorRef = (p?: Principal): string => p?.personId ?? p?.entraObjectId ?? 'system';
 const FLEET_ROLES = ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'SystemAdmin'] as const;
@@ -39,6 +40,7 @@ export class TelematicsController {
     private readonly trips: TripService,
     private readonly alerts: AlertService,
     private readonly liveMap: LiveMapService,
+    private readonly scope: ScopeAuthorizationService,
   ) {}
 
   @Get('devices')
@@ -79,6 +81,36 @@ export class TelematicsController {
   @Get('vehicles/:id/telemetry/live')
   live(@Param('id') id: string, @CurrentUser() p: Principal) {
     return this.liveMap.getLive(id, actorRef(p));
+  }
+
+  @Roles(...FLEET_ROLES)
+  @Get('telematics/live')
+  async fleetLive(@CurrentUser() p: Principal) {
+    const [authorizedNodeIds, includeUnassigned] = await Promise.all([
+      this.scope.authorizedDescendantIds(p, FLEET_ROLES),
+      this.scope.hasRootRole(p, FLEET_ROLES),
+    ]);
+    return this.liveMap.getFleetLive(
+      p.organizationId,
+      authorizedNodeIds,
+      includeUnassigned,
+      actorRef(p),
+    );
+  }
+
+  @Get('vehicles/:id/device')
+  async vehicleDevice(@Param('id') id: string) {
+    return { device: await this.devices.getVehicleDevice(id) };
+  }
+
+  @Get('vehicles/:id/alerts')
+  vehicleAlerts(@Param('id') id: string) {
+    return this.alerts.listForVehicle(id);
+  }
+
+  @Get('vehicles/:id/trips')
+  vehicleTrips(@Param('id') id: string) {
+    return this.trips.listForVehicle(id);
   }
 
   @Get('telematics/alerts')

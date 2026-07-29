@@ -3,9 +3,14 @@ import { ComplianceModule } from '../compliance/compliance.module';
 import { PlatformModule } from '../platform/platform.module';
 import { PolicyCoreModule } from '../policy/policy-core.module';
 import { WorkflowModule } from '../workflow/workflow.module';
+import { ConsentAdministrationModule } from '../consent-administration/consent-administration.module';
 import { BookingsController } from './controllers/bookings.controller';
 import { BookingsRepository } from './repositories/bookings.repository';
 import { BookingService } from './services/booking.service';
+import {
+  ConsentTemplateProvider,
+  GovernedConsentTemplateProvider,
+} from './services/consent-template.provider';
 
 /**
  * Pool-vehicle booking (M4). The correctness-critical core loop: search →
@@ -15,9 +20,16 @@ import { BookingService } from './services/booking.service';
  * (Platform); `OutboxService` is global (MessagingModule).
  */
 @Module({
-  imports: [PlatformModule, ComplianceModule, PolicyCoreModule, WorkflowModule],
+  imports: [PlatformModule, ComplianceModule, PolicyCoreModule, WorkflowModule, ConsentAdministrationModule],
   controllers: [BookingsController],
-  providers: [BookingsRepository, BookingService],
+  providers: [
+    BookingsRepository,
+    BookingService,
+    {
+      provide: ConsentTemplateProvider,
+      useClass: GovernedConsentTemplateProvider,
+    },
+  ],
   exports: [BookingService],
 })
 export class BookingsModule {}

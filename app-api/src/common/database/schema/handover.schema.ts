@@ -1,6 +1,8 @@
 import { sql } from 'drizzle-orm';
 import {
   boolean,
+  check,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -66,6 +68,28 @@ export const handover = fleet.table(
   (t) => [
     uniqueIndex('handover_booking_uq').on(t.bookingId),
     index('handover_vehicle_idx').on(t.vehicleId),
+  ],
+);
+
+/** Durable replay ledger for Fleet Handover open/return commands. */
+export const handoverCommandLedger = fleet.table(
+  'handover_command_ledger',
+  {
+    id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
+    organizationId: orgId(),
+    actorPersonId: uuid('actor_person_id').notNull(),
+    commandType: text('command_type').notNull(),
+    idempotencyKey: text('idempotency_key').notNull(),
+    payloadSha256: text('payload_sha256').notNull(),
+    resultHandoverId: uuid('result_handover_id').references(() => handover.id),
+    resultBody: jsonb('result_body'),
+    ...timestamps(),
+  },
+  (t) => [
+    uniqueIndex('handover_command_key_uq').on(t.organizationId, t.actorPersonId, t.commandType, t.idempotencyKey),
+    index('handover_command_result_idx').on(t.resultHandoverId),
+    foreignKey({ columns: [t.organizationId, t.actorPersonId], foreignColumns: [person.organizationId, person.id], name: 'handover_command_actor_org_fk' }),
+    check('handover_command_payload_sha256_valid', sql`${t.payloadSha256} ~ '^[0-9a-f]{64}$'`),
   ],
 );
 

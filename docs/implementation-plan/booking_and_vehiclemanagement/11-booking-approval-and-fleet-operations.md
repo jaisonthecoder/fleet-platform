@@ -4,9 +4,11 @@
 
 Deliver the approval route and Fleet Manager operational queues after a booking is submitted, with immutable workflow/version/scope evidence and exactly-once effects.
 
-## Mandatory mockup gate — ask before implementation
+## Mandatory mockup gate — resolved
 
-Request: Approval Inbox queue/evidence/decision; delegated/on-behalf banner; SLA/escalation; request-change/decline reasons; Fleet Manager booking queue/day preparation; on-behalf booking indicators; assignment/mediation states; mobile/RTL.
+Approved on 2026-07-21. Follow `mockups/25-booking-approvals-inbox.png` for the approval master-detail queue, fact strip, verdict stack, justification and action-bar composition. Delegated/on-behalf, SLA/escalation, action outcomes, empty/error, responsive and EN/AR/RTL states are approved for derivation under `mockups/derived-screen-contracts.md` and `mockups/mockup-review.md`.
+
+The pool-peak verdict shown in the image is displayed only when a verified forecasting contract exists; otherwise its region is explicitly unavailable and no percentage is fabricated.
 
 ## Approval policy/workflow
 

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { entitlementRequestTypeSchema } from './entitlement.contract';
 
 /**
  * The complete Phase-1 PDP rule-type registry (12 governed rule types + the
@@ -64,8 +65,12 @@ export const entitlementApprovalChainInput = z.object({
 });
 
 export const dedicatedVehicleEligibilityInput = z.object({
-  gradeEligible: z.boolean().optional(),
   grade: z.string().optional(),
+  employmentStatus: z.string().optional(),
+  requestType: entitlementRequestTypeSchema.optional(),
+  driverOption: z.enum(['WithDriver', 'WithoutDriver']).optional(),
+  justificationCategory: z.string().optional(),
+  durationDays: z.number().int().positive().optional(),
 });
 
 export const driverEligibilityGateInput = z.object({

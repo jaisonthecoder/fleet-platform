@@ -17,13 +17,13 @@ const mePerson = {
   grade: 'G12',
   employmentStatus: 'Active',
   homePoolNodeId: null,
-  roles: [{ role: 'FleetManager', scopeNodeId: 's1', scopeName: 'Mina Zayed' }],
+  roles: [{ role: 'Employee', scopeNodeId: 's1', scopeName: 'Mina Zayed' }],
 }
 
 /** Signs in via the dev-login stand-in and mocks the backend `/me`. */
-function authenticate() {
+function authenticate(roles = mePerson.roles) {
   setDevCredential('p1')
-  server.use(http.get('/api/v1/me', () => HttpResponse.json(mePerson)))
+  server.use(http.get('/api/v1/me', () => HttpResponse.json({ ...mePerson, roles })))
 }
 
 function renderApp(initialPath = '/') {
@@ -63,11 +63,40 @@ describe('Application shell (authenticated)', () => {
     ).toBeVisible()
   })
 
-  it('shows the coming-soon placeholder for unbuilt areas', async () => {
-    authenticate()
-    renderApp('/en/approvals')
+  it('renders live Fleet operations without calling audit-only reconciliation', async () => {
+    let reconciliationCalls = 0
+    authenticate([
+      { role: 'FleetManager', scopeNodeId: 's1', scopeName: 'Mina Zayed' },
+    ])
+    server.use(
+      http.get('/api/v1/operations/overview', () => HttpResponse.json({ scope: { id: 'all', label: 'All pools' }, generatedAt: '2026-07-28T12:00:00Z', summary: { availableVehicles: 8, totalVehicles: 10, bookingsToday: 3, activeBookings: 2, attentionCount: 1, complianceAttentionCount: 1, utilizationPercent: 20, utilizationChangePercent: 0 }, availability: { available: 8, inUse: 2, reserved: 0, unavailable: 0 }, attentionItems: [], upcomingBookings: [] })),
+      http.get('/api/v1/dashboards/entitlement-inventory', () => HttpResponse.json({ allocated: 4, pendingApproval: 2, awaitingConsent: 1, returned: 3, expired: 0, bsdActive: 1, bsdConflict: 0, byCategory: [] })),
+      http.get('/api/v1/entitlements/reconciliation', () => { reconciliationCalls += 1; return HttpResponse.json({ detectedAtUtc: '2026-07-28T12:00:00Z', findingCount: 0, findings: [], metrics: {}, unavailableMetrics: [] }) }),
+    )
+    renderApp('/en/operations')
 
-    expect(await screen.findByText('Coming soon')).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Operations dashboard' })).toBeVisible()
+    expect(await screen.findByRole('heading', { name: 'Dedicated Vehicle health' })).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Dedicated reconciliation' })).not.toBeInTheDocument()
+    expect(reconciliationCalls).toBe(0)
+  })
+
+  it('renders read-only reconciliation for SystemAdmin without Fleet mutation modules', async () => {
+    authenticate([
+      { role: 'SystemAdmin', scopeNodeId: 's1', scopeName: 'Mina Zayed' },
+    ])
+    server.use(
+      http.get('/api/v1/operations/overview', () => HttpResponse.json({ scope: { id: 'all', label: 'All pools' }, generatedAt: '2026-07-28T12:00:00Z', summary: { availableVehicles: 8, totalVehicles: 10, bookingsToday: 3, activeBookings: 2, attentionCount: 1, complianceAttentionCount: 1, utilizationPercent: 20, utilizationChangePercent: 0 }, availability: { available: 8, inUse: 2, reserved: 0, unavailable: 0 }, attentionItems: [], upcomingBookings: [] })),
+      http.get('/api/v1/dashboards/entitlement-inventory', () => HttpResponse.json({ allocated: 4, pendingApproval: 2, awaitingConsent: 1, returned: 3, expired: 0, bsdActive: 1, bsdConflict: 0, byCategory: [] })),
+      http.get('/api/v1/entitlements/reconciliation', () => HttpResponse.json({ detectedAtUtc: '2026-07-28T12:00:00Z', findingCount: 1, findings: [{ reasonCode: 'allocated-entitlement-missing-active-allocation', entitlementRef: 'entitlement:opaque-1', vehicleRef: null, relatedRef: null, detectedAtUtc: '2026-07-28T12:00:00Z', recommendedOwner: 'FleetOperations' }], metrics: {}, unavailableMetrics: [] })),
+    )
+    renderApp('/en/operations')
+
+    expect(await screen.findByRole('heading', { name: 'Dedicated reconciliation' })).toBeVisible()
+    expect(screen.getByText('Allocated request has no active allocation')).toBeVisible()
+    expect(screen.queryByRole('heading', { name: 'Upcoming Bookings' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Attention queue' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Dedicated allocation/i })).not.toBeInTheDocument()
   })
 
   it('shows a 404 for unknown routes', async () => {
@@ -77,6 +106,13 @@ describe('Application shell (authenticated)', () => {
     expect(
       await screen.findByRole('heading', { name: 'Page not found' }),
     ).toBeVisible()
+  })
+
+  it('denies an Employee direct access to Fleet Handover', async () => {
+    authenticate()
+    renderApp('/en/handover')
+
+    expect(await screen.findByRole('heading', { name: 'Access restricted' })).toBeVisible()
   })
 })
 
@@ -120,7 +156,7 @@ describe('Authentication gate', () => {
             fullName: 'Dev User',
             email: 'dev@example.com',
             grade: 'G12',
-            roles: [{ role: 'FleetManager', scopeName: 'Mina Zayed' }],
+            roles: [{ role: 'Employee', scopeName: 'Mina Zayed' }],
           },
         ]),
       ),

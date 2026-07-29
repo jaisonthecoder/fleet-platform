@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   date,
+  doublePrecision,
   index,
   integer,
   jsonb,
@@ -33,7 +34,7 @@ export const organization = fleet.table(
   ],
 );
 
-/** Organization-specific hierarchy level taxonomy and display order (max five). */
+/** Organization-specific hierarchy level taxonomy and display order (unbounded N levels). */
 export const organizationHierarchyLevel = fleet.table(
   'organization_hierarchy_level',
   {
@@ -59,7 +60,7 @@ export const organizationHierarchyLevel = fleet.table(
     ),
     check(
       'organization_hierarchy_level_position_range',
-      sql`${t.position} >= 0 AND ${t.position} < 5`,
+      sql`${t.position} >= 0`,
     ),
     check('organization_hierarchy_level_revision_positive', sql`${t.revision} > 0`),
   ],
@@ -82,6 +83,10 @@ export const hierarchyNode = fleet.table(
     name: text('name').notNull(),
     /** Arabic display name (bilingual org tree, ADR-009); `name` is the English name. */
     nameAr: text('name_ar').notNull(),
+    /** Optional geo point + postal address so a node can be pinned on a map. */
+    latitude: doublePrecision('latitude'),
+    longitude: doublePrecision('longitude'),
+    address: text('address'),
     path: ltree('path').notNull(),
     validFrom: timestamp('valid_from', { withTimezone: true }).notNull().defaultNow(),
     validTo: timestamp('valid_to', { withTimezone: true }),
@@ -98,6 +103,14 @@ export const hierarchyNode = fleet.table(
     check(
       'hierarchy_node_valid_window',
       sql`${t.validTo} IS NULL OR ${t.validTo} > ${t.validFrom}`,
+    ),
+    check(
+      'hierarchy_node_latitude_range',
+      sql`${t.latitude} IS NULL OR (${t.latitude} >= -90 AND ${t.latitude} <= 90)`,
+    ),
+    check(
+      'hierarchy_node_longitude_range',
+      sql`${t.longitude} IS NULL OR (${t.longitude} >= -180 AND ${t.longitude} <= 180)`,
     ),
   ],
 );

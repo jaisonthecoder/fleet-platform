@@ -1,18 +1,21 @@
 import {
   BadgeCheck,
-  BellRing,
   Building2,
   CalendarDays,
-  ClipboardCheck,
+  CalendarPlus,
   Database,
   FileWarning,
+  FileCheck2,
   Gauge,
+  Handshake,
+  House,
   Inbox,
   KeyRound,
-  LineChart,
+  CarFront,
+  MapPinned,
   Plug,
-  ScrollText,
   Settings,
+  ShieldAlert,
   SlidersHorizontal,
   Users,
   type LucideIcon,
@@ -44,57 +47,123 @@ export interface NavItem {
  * for the actors who can reach them (RBAC affordance — the backend still enforces).
  */
 export const navItems: NavItem[] = [
-  // Operations
-  { segment: 'booking', icon: CalendarDays, labelKey: 'nav.booking', group: 'operations' },
-  { segment: 'handover', icon: KeyRound, labelKey: 'nav.handover', group: 'operations' },
-  { segment: 'approvals', icon: Inbox, labelKey: 'nav.approvals', group: 'operations' },
-  { segment: 'entitlements', icon: BadgeCheck, labelKey: 'nav.entitlements', group: 'operations' },
-  { segment: 'console', icon: Gauge, labelKey: 'nav.console', group: 'operations' },
-  { segment: 'fines', icon: FileWarning, labelKey: 'nav.fines', group: 'operations' },
+  // Employee
   {
-    segment: 'executive',
-    icon: LineChart,
-    labelKey: 'nav.executive',
+    segment: 'home',
+    icon: House,
+    labelKey: 'nav.home',
     group: 'operations',
+    roles: ['Employee', 'SubstituteDriver', 'ProfessionalDriver'],
+    end: true,
+  },
+  {
+    segment: 'booking',
+    icon: CalendarDays,
+    labelKey: 'nav.bookVehicle',
+    group: 'operations',
+    roles: ['Employee', 'SubstituteDriver', 'ProfessionalDriver'],
+  },
+  {
+    segment: 'dedicated-vehicle',
+    icon: BadgeCheck,
+    labelKey: 'nav.dedicatedVehicle',
+    group: 'operations',
+    roles: ['Employee', 'ProfessionalDriver'],
+  },
+
+  // Fleet Manager
+  {
+    segment: 'operations',
+    icon: Gauge,
+    labelKey: 'nav.opsDashboard',
+    group: 'operations',
+    roles: ['Approver', 'Delegate', 'FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'Executive', 'InternalAudit', 'SystemAdmin'],
+    end: true,
+  },
+  {
+    segment: 'handover',
+    icon: KeyRound,
+    labelKey: 'nav.handover',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+  },
+  {
+    segment: 'bookings/create',
+    icon: CalendarPlus,
+    labelKey: 'nav.createBooking',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
     disabled: true,
   },
-
-  // Governance
   {
-    segment: 'data-quality',
-    icon: ClipboardCheck,
-    labelKey: 'nav.dataQuality',
-    group: 'governance',
-    roles: ['DataSteward', 'SystemAdmin'],
+    segment: 'approvals',
+    icon: Inbox,
+    labelKey: 'nav.bookingApprovals',
+    group: 'operations',
+    roles: ['Approver', 'Delegate', 'FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'ClusterCEO'],
   },
   {
-    segment: 'audit',
-    icon: ScrollText,
-    labelKey: 'nav.audit',
-    group: 'governance',
-    roles: ['InternalAudit', 'SystemAdmin'],
+    segment: 'booking-preparation',
+    icon: KeyRound,
+    labelKey: 'nav.bookingPreparation',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+  },
+  {
+    segment: 'dedicated-allocation',
+    icon: CarFront,
+    labelKey: 'nav.dedicatedAllocation',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+  },
+  {
+    segment: 'vehicles',
+    icon: CarFront,
+    labelKey: 'nav.vehicleManagement',
+    group: 'operations',
+    roles: [
+      'FleetManager',
+      'ClusterFleetLead',
+      'GroupFleetLead',
+      'DataSteward',
+    ],
+    end: true,
+  },
+  {
+    segment: 'compliance',
+    icon: ShieldAlert,
+    labelKey: 'nav.complianceAlerts',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+  },
+  {
+    segment: 'fines',
+    icon: FileWarning,
+    labelKey: 'nav.fines',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+  },
+  {
+    segment: 'live-map',
+    icon: MapPinned,
+    labelKey: 'nav.liveMap',
+    group: 'operations',
+    roles: ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
   },
 
-  // Administration
+  // Administrator
   {
     segment: 'admin',
     icon: Settings,
-    labelKey: 'nav.adminHome',
+    labelKey: 'nav.adminConsole',
     group: 'administration',
     roles: ['SystemAdmin'],
     end: true,
   },
   {
-    segment: 'admin/reference-data',
-    icon: Database,
-    labelKey: 'nav.referenceData',
-    group: 'administration',
-    roles: ['DataSteward', 'SystemAdmin'],
-  },
-  {
     segment: 'admin/access',
     icon: Users,
-    labelKey: 'nav.access',
+    labelKey: 'nav.usersAccess',
     group: 'administration',
     roles: ['SystemAdmin'],
   },
@@ -108,21 +177,35 @@ export const navItems: NavItem[] = [
   {
     segment: 'admin/policy',
     icon: SlidersHorizontal,
-    labelKey: 'nav.policyStudio',
+    labelKey: 'nav.policiesRules',
     group: 'administration',
     roles: ['SystemAdmin'],
+  },
+  {
+    segment: 'admin/consents',
+    icon: FileCheck2,
+    labelKey: 'nav.consentManagement',
+    group: 'administration',
+    roles: ['SystemAdmin', 'DataSteward'],
+  },
+  {
+    segment: 'admin/vendors-leases',
+    icon: Handshake,
+    labelKey: 'nav.vendorsLeases',
+    group: 'administration',
+    roles: ['SystemAdmin', 'Procurement', 'DataSteward'],
+  },
+  {
+    segment: 'admin/reference-data',
+    icon: Database,
+    labelKey: 'nav.lookupManagement',
+    group: 'administration',
+    roles: ['DataSteward', 'SystemAdmin'],
   },
   {
     segment: 'admin/integrations',
     icon: Plug,
-    labelKey: 'nav.integrations',
-    group: 'administration',
-    roles: ['SystemAdmin'],
-  },
-  {
-    segment: 'admin/notifications',
-    icon: BellRing,
-    labelKey: 'nav.notifications',
+    labelKey: 'nav.systemIntegrations',
     group: 'administration',
     roles: ['SystemAdmin'],
   },
@@ -137,5 +220,5 @@ export const NAV_GROUPS: NavGroup[] = [
 
 /** Nav items the given principal is allowed to see (role-filtered). */
 export function navFor(me: Me | null): NavItem[] {
-  return navItems.filter((item) => hasAnyRole(me, item.roles ?? []))
+  return navItems.filter((item) => !item.disabled && hasAnyRole(me, item.roles ?? []))
 }

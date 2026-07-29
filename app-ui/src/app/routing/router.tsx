@@ -41,9 +41,46 @@ const BookVehiclePage = lazy(() =>
     default: m.BookVehiclePage,
   })),
 )
+const DedicatedVehiclePage = lazy(() =>
+  import('@/features/dedicated-vehicle/dedicated-vehicle-page').then((m) => ({
+    default: m.DedicatedVehiclePage,
+  })),
+)
+const DedicatedAllocationPage = lazy(() =>
+  import('@/features/dedicated-vehicle/dedicated-allocation-page').then((m) => ({ default: m.DedicatedAllocationPage })),
+)
+const OperationsPage = lazy(() =>
+  import('@/features/operations/operations-page').then((m) => ({ default: m.OperationsPage })),
+)
+const BookingApprovalsPage = lazy(() =>
+  import('@/features/approvals/booking-approvals-page').then((m) => ({ default: m.BookingApprovalsPage })),
+)
+const BookingPreparationPage = lazy(() =>
+  import('@/features/approvals/booking-preparation-page').then((m) => ({ default: m.BookingPreparationPage })),
+)
 const HandoverPage = lazy(() =>
   import('@/features/handover/handover-page').then((m) => ({
     default: m.HandoverPage,
+  })),
+)
+const VehicleOnboardingPage = lazy(() =>
+  import('@/features/vehicles/vehicle-onboarding-page').then((m) => ({
+    default: m.VehicleOnboardingPage,
+  })),
+)
+const VehicleManagementPage = lazy(() =>
+  import('@/features/vehicles/vehicle-management-page').then((m) => ({
+    default: m.VehicleManagementPage,
+  })),
+)
+const VehicleImportPage = lazy(() =>
+  import('@/features/vehicles/vehicle-import-page').then((m) => ({
+    default: m.VehicleImportPage,
+  })),
+)
+const LiveMapPage = lazy(() =>
+  import('@/features/telematics/live-map-page').then((m) => ({
+    default: m.LiveMapPage,
   })),
 )
 const ReferenceDataPage = lazy(() =>
@@ -61,9 +98,17 @@ const PolicyStudioPage = lazy(() =>
     default: m.PolicyStudioPage,
   })),
 )
+const ConsentAdministrationPage = lazy(() =>
+  import('@/features/consent-administration/consent-administration-page').then((m) => ({ default: m.ConsentAdministrationPage })),
+)
 const OrganizationPage = lazy(() =>
   import('@/features/organization/organization-page').then((m) => ({
     default: m.OrganizationPage,
+  })),
+)
+const VendorsPage = lazy(() =>
+  import('@/features/vendors/vendors-page').then((m) => ({
+    default: m.VendorsPage,
   })),
 )
 const ComingSoonPage = lazy(() =>
@@ -145,10 +190,124 @@ export const appRoutes: RouteObject[] = [
         ),
         children: [
           { index: true, element: <IndexRedirect /> },
+          { path: 'home', element: page(<HomePage />) },
           { path: 'design', element: page(<DesignShowcasePage />) },
           { path: 'book-sample', element: page(<BookingSamplePage />) },
-          { path: 'booking', element: page(<BookVehiclePage />) },
-          { path: 'handover', element: page(<HandoverPage />) },
+          {
+            path: 'booking',
+            element: (
+              <RequireRole roles={['Employee', 'SubstituteDriver', 'ProfessionalDriver']}>
+                {page(<BookVehiclePage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'dedicated-vehicle',
+            element: (
+              <RequireRole roles={['Employee', 'ProfessionalDriver']}>
+                {page(<DedicatedVehiclePage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'approvals',
+            element: (
+              <RequireRole roles={['Approver', 'Delegate', 'FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'ClusterCEO']}>
+                {page(<BookingApprovalsPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'booking-preparation',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<BookingPreparationPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'dedicated-allocation',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<DedicatedAllocationPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'handover',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<HandoverPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'vehicles',
+            element: (
+              <RequireRole
+                roles={[
+                  'FleetManager',
+                  'ClusterFleetLead',
+                  'GroupFleetLead',
+                  'DataSteward',
+                ]}
+              >
+                {page(<VehicleManagementPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'vehicles/onboard',
+            element: (
+              <RequireRole
+                roles={[
+                  'FleetManager',
+                  'ClusterFleetLead',
+                  'GroupFleetLead',
+                  'DataSteward',
+                ]}
+              >
+                {page(<VehicleOnboardingPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'vehicles/import',
+            element: (
+              <RequireRole
+                roles={[
+                  'FleetManager',
+                  'ClusterFleetLead',
+                  'GroupFleetLead',
+                  'DataSteward',
+                ]}
+              >
+                {page(<VehicleImportPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'vehicle-onboarding',
+            element: <LocaleRedirect to="vehicles/onboard" />,
+          },
+          {
+            path: 'live-map',
+            element: (
+              <RequireRole
+                roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}
+              >
+                {page(<LiveMapPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'operations',
+            element: (
+              <RequireRole roles={['Approver', 'Delegate', 'FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'Executive', 'InternalAudit', 'SystemAdmin']}>
+                {page(<OperationsPage />)}
+              </RequireRole>
+            ),
+          },
           // Administration: reference data (lookups) is built (U1).
           {
             path: 'admin/reference-data',
@@ -175,10 +334,26 @@ export const appRoutes: RouteObject[] = [
             ),
           },
           {
+            path: 'admin/consents',
+            element: (
+              <RequireRole roles={['SystemAdmin', 'DataSteward']}>
+                {page(<ConsentAdministrationPage />)}
+              </RequireRole>
+            ),
+          },
+          {
             path: 'admin/organization',
             element: (
               <RequireRole roles={['SystemAdmin']}>
                 {page(<OrganizationPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'admin/vendors-leases',
+            element: (
+              <RequireRole roles={['SystemAdmin', 'Procurement', 'DataSteward']}>
+                {page(<VendorsPage />)}
               </RequireRole>
             ),
           },
@@ -189,15 +364,37 @@ export const appRoutes: RouteObject[] = [
                 item.group === 'operations' &&
                 !item.disabled &&
                 item.segment !== 'booking' &&
-                item.segment !== 'handover',
+                item.segment !== 'dedicated-vehicle' &&
+                item.segment !== 'handover' &&
+                item.segment !== 'vehicles' &&
+                item.segment !== 'home' &&
+                item.segment !== 'approvals' &&
+                item.segment !== 'booking-preparation' &&
+                item.segment !== 'dedicated-allocation' &&
+                item.segment !== 'live-map' &&
+                item.segment !== 'operations',
             )
             .map((item) => ({
               path: item.segment,
-              element: page(<ComingSoonPage />),
+              element: (
+                <RequireRole roles={item.roles ?? []}>
+                  {page(<ComingSoonPage />)}
+                </RequireRole>
+              ),
             })),
           // Governance + administration areas are role-guarded (placeholder until built).
           ...navItems
-            .filter((item) => item.group !== 'operations' && !item.disabled && item.segment !== 'admin/reference-data' && item.segment !== 'admin/access' && item.segment !== 'admin/policy' && item.segment !== 'admin/organization')
+            .filter(
+              (item) =>
+                item.group !== 'operations' &&
+                !item.disabled &&
+                item.segment !== 'admin/reference-data' &&
+                item.segment !== 'admin/access' &&
+                item.segment !== 'admin/policy' &&
+                item.segment !== 'admin/consents' &&
+                item.segment !== 'admin/organization' &&
+                item.segment !== 'admin/vendors-leases',
+            )
             .map((item) => ({
               path: item.segment,
               element: (

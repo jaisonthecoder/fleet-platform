@@ -39,11 +39,11 @@ describe('roles helpers', () => {
 })
 
 describe('resolveLanding', () => {
-  it('sends each actor to its landing, most-privileged first', () => {
+  it('sends each actor to a role-appropriate module, most-privileged first', () => {
     expect(resolveLanding(me(['SystemAdmin', 'DataSteward']))).toBe('admin')
-    expect(resolveLanding(me(['DataSteward']))).toBe('data-quality')
-    expect(resolveLanding(me(['InternalAudit']))).toBe('audit')
-    expect(resolveLanding(me(['FleetManager']))).toBe('')
-    expect(resolveLanding(null)).toBe('')
+    expect(resolveLanding(me(['DataSteward']))).toBe('vehicles')
+    expect(resolveLanding(me(['FleetManager']))).toBe('operations')
+    expect(resolveLanding(me(['Employee']))).toBe('home')
+    expect(resolveLanding(null)).toBe('home')
   })
 })

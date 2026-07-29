@@ -1,5 +1,6 @@
 import { sql } from 'drizzle-orm';
 import {
+  check,
   index,
   integer,
   jsonb,
@@ -10,7 +11,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { fleet, orgId, timestamps } from './_shared';
-import { person } from './platform.schema';
+import { hierarchyNode, person } from './platform.schema';
 import { vehicle } from './vehicle.schema';
 
 /** Booking lifecycle. The active subset reserves the vehicle (exclusion). */
@@ -50,6 +51,9 @@ export const booking = fleet.table(
     vehicleId: uuid('vehicle_id').notNull().references(() => vehicle.id),
     driverPersonId: uuid('driver_person_id').notNull().references(() => person.id),
     requestedByPersonId: uuid('requested_by_person_id').notNull().references(() => person.id),
+    beneficiaryPersonId: uuid('beneficiary_person_id').references(() => person.id),
+    bookingScopeNodeId: uuid('booking_scope_node_id').references(() => hierarchyNode.id),
+    revision: integer('revision').notNull().default(1),
     status: bookingStatusEnum('status').notNull().default('Draft'),
     pickupAtUtc: timestamp('pickup_at_utc', { withTimezone: true }).notNull(),
     returnAtUtc: timestamp('return_at_utc', { withTimezone: true }).notNull(),
@@ -72,6 +76,34 @@ export const booking = fleet.table(
     index('booking_vehicle_status_idx').on(t.vehicleId, t.status),
     index('booking_driver_idx').on(t.driverPersonId),
     index('booking_requested_by_idx').on(t.requestedByPersonId),
+    index('booking_beneficiary_idx').on(t.beneficiaryPersonId),
+    index('booking_scope_status_idx').on(t.bookingScopeNodeId, t.status),
+    check('booking_revision_positive', sql`${t.revision} > 0`),
+  ],
+);
+
+/** Durable command result ledger for retry-safe Booking mutations. */
+export const bookingCommandLedger = fleet.table(
+  'booking_command_ledger',
+  {
+    id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
+    organizationId: orgId(),
+    actorPersonId: uuid('actor_person_id').notNull().references(() => person.id),
+    commandType: text('command_type').notNull(),
+    idempotencyKey: text('idempotency_key').notNull(),
+    payloadHash: text('payload_hash').notNull(),
+    resultBookingId: uuid('result_booking_id').references(() => booking.id),
+    result: jsonb('result'),
+    ...timestamps(),
+  },
+  (t) => [
+    uniqueIndex('booking_command_ledger_key_uq').on(
+      t.organizationId,
+      t.actorPersonId,
+      t.commandType,
+      t.idempotencyKey,
+    ),
+    index('booking_command_ledger_result_idx').on(t.resultBookingId),
   ],
 );
 

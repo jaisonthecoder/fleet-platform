@@ -4,15 +4,15 @@
 
 Implement all advanced booking scenarios explicitly required by the full PRD while respecting Phase 1/Phase 2 release boundaries and unresolved policy decisions.
 
-## Mandatory mockup gates — ask separately before each scenario
+## Mandatory mockup gates — emergency supplied; remaining scenarios unresolved
 
 1. Waitlist enrollment/status/offer/expiry/re-consent.
 2. Recurring series creator/calendar/occurrences/exceptions.
-3. Emergency break-glass form, warning, post-hoc review.
+3. Emergency break-glass form is supplied as `mockups/24-booking-create-emergency-breakglass.png`; confirmation and post-hoc review remain derived only after B5 scope decisions approve implementation.
 4. Cross-node vehicle results/ownership approvals.
 5. No-show/late-return evidence and Fleet Manager mediation.
 
-Do not combine these into one generic dialog.
+Do not combine these into one generic dialog. Screen `24` does not authorize emergency delivery in BOOKING-00 through BOOKING-06; its release remains governed by the B5 decisions below.
 
 ## Release boundaries
 

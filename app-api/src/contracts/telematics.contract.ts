@@ -54,12 +54,39 @@ export interface TripDto {
   endedAt: string | null;
 }
 
+/** The GPS device currently paired to a vehicle (null when none). */
+export interface VehicleDeviceDto {
+  deviceId: string;
+  identifier: string;
+  model: string | null;
+  firmware: string | null;
+  sim: string | null;
+  status: string;
+  lastHealthAt: string | null;
+  pairedSince: string | null;
+}
+
 export interface LivePositionDto {
   vehicleId: string;
   lat: number | null;
   lon: number | null;
   speed: number | null;
   ignition: boolean | null;
+  odometer: number | null;
+  fuelLevel: number | null;
+  dtcCodes: string[] | null;
+  deviceHealth: unknown;
+  at: string | null;
+  online: boolean;
+}
+
+/** One vehicle's latest position for the fleet live map. */
+export interface LiveFleetPositionDto {
+  vehicleId: string;
+  plate: string;
+  lat: number | null;
+  lon: number | null;
+  speed: number | null;
   at: string | null;
   online: boolean;
 }

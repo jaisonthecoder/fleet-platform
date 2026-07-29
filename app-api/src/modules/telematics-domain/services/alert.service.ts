@@ -29,6 +29,10 @@ export class AlertService {
     return this.repo.listAlerts();
   }
 
+  listForVehicle(vehicleId: string) {
+    return this.repo.listAlertsForVehicle(vehicleId);
+  }
+
   async acknowledge(id: string): Promise<{ ok: true }> {
     await this.repo.acknowledgeAlert(id);
     return { ok: true };

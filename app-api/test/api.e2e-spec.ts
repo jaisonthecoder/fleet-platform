@@ -16,6 +16,7 @@ describe('API health (e2e)', () => {
   let app: NestFastifyApplication;
   let db: DrizzleDatabase;
   const personId = randomUUID();
+  const fleetPersonId = randomUUID();
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -39,11 +40,24 @@ describe('API health (e2e)', () => {
       role: 'Employee',
       scopeNodeId: 'a0000000-0000-4000-8000-000000000003',
     });
+    await db.insert(person).values({
+      id: fleetPersonId,
+      hcmEmployeeId: `e2e-fleet-${fleetPersonId}`,
+      fullName: 'E2E Fleet Manager',
+      employmentStatus: 'Active',
+    });
+    await db.insert(roleAssignment).values({
+      personId: fleetPersonId,
+      role: 'FleetManager',
+      scopeNodeId: 'a0000000-0000-4000-8000-000000000003',
+    });
   });
 
   afterAll(async () => {
     await db.delete(roleAssignment).where(eq(roleAssignment.personId, personId));
+    await db.delete(roleAssignment).where(eq(roleAssignment.personId, fleetPersonId));
     await db.delete(person).where(eq(person.id, personId));
+    await db.delete(person).where(eq(person.id, fleetPersonId));
     await app.close();
   });
 
@@ -61,11 +75,20 @@ describe('API health (e2e)', () => {
     expect(response.statusCode).toBe(401);
   });
 
-  it('GET /api/v1/operations/overview returns the typed read model when authenticated', async () => {
+  it('GET /api/v1/operations/overview denies an authenticated Employee', async () => {
     const response = await app.inject({
       method: 'GET',
       url: '/api/v1/operations/overview?scopeId=a0000000-0000-4000-8000-000000000003',
       headers: { 'x-dev-person-id': personId },
+    });
+    expect(response.statusCode).toBe(403);
+  });
+
+  it('GET /api/v1/operations/overview returns the typed read model to Fleet', async () => {
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/v1/operations/overview?scopeId=a0000000-0000-4000-8000-000000000003',
+      headers: { 'x-dev-person-id': fleetPersonId },
     });
 
     expect(response.statusCode).toBe(200);

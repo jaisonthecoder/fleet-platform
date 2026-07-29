@@ -31,6 +31,7 @@ const raw = import.meta.env
  * `VITE_API_BASE_URL`, then `/api`.
  */
 function resolveApiBaseUrl(): string | undefined {
+  if (raw.MODE === 'test') return '/api'
   const full = raw.VITE_API_URL?.trim()
   if (full) return full.replace(/\/+$/, '').replace(/\/v1$/i, '')
   return raw.VITE_API_BASE_URL

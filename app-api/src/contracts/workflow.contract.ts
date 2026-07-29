@@ -25,12 +25,15 @@ export type DecideStep = z.infer<typeof decideStepSchema>;
 
 /** One step in a workflow view. */
 export interface WorkflowStepView {
+  id: string;
   sequence: number;
   assigneePersonId: string | null;
   decidedByPersonId: string | null;
   onBehalfOfPersonId: string | null;
   decision: StepDecision | null;
   reason: string | null;
+  stateVersion: number;
+  slaDueAt: string | null;
 }
 
 /** A workflow instance projection returned to callers/tests. */
@@ -40,5 +43,7 @@ export interface WorkflowView {
   subjectRef: string;
   currentStep: number;
   status: WorkflowStatus;
+  definitionDeploymentId: string;
+  stateVersion: number;
   steps: WorkflowStepView[];
 }

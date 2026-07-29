@@ -63,6 +63,21 @@
   --shadow-rest:
     0 1px 2px rgba(16, 24, 31, 0.06), 0 1px 3px rgba(16, 24, 31, 0.05);
   --shadow-raised: 0 16px 40px -14px rgba(16, 24, 31, 0.24);
+  /* Layered shadow for the floating sidebar island (detached rounded panel). */
+  --shadow-float:
+    0 1px 2px rgba(16, 24, 31, 0.08), 0 10px 24px -10px rgba(16, 24, 31, 0.22),
+    0 28px 56px -20px rgba(16, 24, 31, 0.26);
+
+  /* Page hero — navy wayfinding banner (title block on every page). The angle is
+     a token so it can mirror under RTL (see the hero component's `rtl:` variant). */
+  --hero-gradient-angle: 135deg;
+  --hero-gradient: linear-gradient(
+    var(--hero-gradient-angle),
+    #0e4a6b 0%,
+    #0b3d5c 55%,
+    #0a3350 100%
+  );
+  --hero-foreground: #ffffff;
 
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
 }
@@ -111,6 +126,17 @@
 
   --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.35);
   --shadow-raised: 0 16px 40px -14px rgba(0, 0, 0, 0.55);
+  --shadow-float:
+    0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 24px -10px rgba(0, 0, 0, 0.5),
+    0 28px 56px -20px rgba(0, 0, 0, 0.55);
+
+  --hero-gradient: linear-gradient(
+    var(--hero-gradient-angle),
+    #12557a 0%,
+    #0e4a6b 55%,
+    #0b3d5c 100%
+  );
+  --hero-foreground: #ffffff;
 }
 
 @theme inline {

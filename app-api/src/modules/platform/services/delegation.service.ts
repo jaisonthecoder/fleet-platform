@@ -16,4 +16,15 @@ export class DelegationService {
       validTo: new Date(input.validTo),
     });
   }
+
+  /** Validates one active, organization-bound, one-hop workflow delegation. */
+  async activeForWorkflow(input: {
+    workflowInstanceId: string;
+    delegatorPersonId: string;
+    delegatePersonId: string;
+    requestType: string;
+    at: Date;
+  }) {
+    return this.repo.findActiveWorkflowDelegation(input);
+  }
 }

@@ -60,7 +60,7 @@ export class PolicyEvaluatorService {
     effectiveAt = new Date(),
   ): Promise<{ table: DecisionTable; resolvedScopeNodeId: string | null; policyRuleId: string | null; policyVersionId: string | null } | null> {
     const cached = await this.cache.get(ruleType, organizationId, scopeNodeId);
-    if (cached) {
+    if (cached?.policyVersionId) {
       return cached;
     }
 
@@ -82,6 +82,8 @@ export class PolicyEvaluatorService {
       );
       return fromDb;
     }
+
+    if (cached) return cached;
 
     const seeded = this.registry.getActive(ruleType);
     if (seeded) {

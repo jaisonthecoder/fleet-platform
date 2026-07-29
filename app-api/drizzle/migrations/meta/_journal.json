@@ -204,6 +204,195 @@
       "when": 1784518000000,
       "tag": "0028_booking_policy_decision_history",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1784690800000,
+      "tag": "0029_vehicle_onboarding_pool_default",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1784694400000,
+      "tag": "0030_vehicle_onboarding_lookups",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1784698000000,
+      "tag": "0031_vehicle_onboarding_lookup_baseline",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1784718093550,
+      "tag": "0032_vendor_master_lease_contracts",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1784720000000,
+      "tag": "0033_entitlement_driver_option",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1784723600000,
+      "tag": "0034_vehicle_vendor_governance",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1784800000000,
+      "tag": "0035_vendor_approval_sod",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1784803600000,
+      "tag": "0036_vendor_document_vault",
+      "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1784807200000,
+      "tag": "0037_vendor_document_lineage_guard",
+      "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1784810800000,
+      "tag": "0038_vendor_onboarding_profile",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1784814400000,
+      "tag": "0039_hierarchy_levels_unbounded",
+      "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1784818000000,
+      "tag": "0040_hierarchy_node_location",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1784821600000,
+      "tag": "0041_hierarchy_node_single_address",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1784825200000,
+      "tag": "0042_vendor_approval_worklist",
+      "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1784828800000,
+      "tag": "0043_vehicle_vendor_health_hold",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1784836008999,
+      "tag": "0044_booking_command_baseline",
+      "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1784839600000,
+      "tag": "0045_workflow_approval_lineage",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1784966400000,
+      "tag": "0046_entitlement_request_baseline",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1784970000000,
+      "tag": "0047_dedicated_manual_policy_baseline",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1784973600000,
+      "tag": "0048_entitlement_eligibility_preview_evidence",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1785056400000,
+      "tag": "0049_entitlement_allocation_exclusivity",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1785060000000,
+      "tag": "0050_entitlement_lifecycle_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1785063600000,
+      "tag": "0051_bsd_pool_window_governance",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1785067200000,
+      "tag": "0052_entitlement_hardening_evidence",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1785308400000,
+      "tag": "0053_handover_command_replay",
+      "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1785394800000,
+      "tag": "0054_governed_consent_registry",
+      "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1785398400000,
+      "tag": "0055_consent_content_immutability",
+      "breakpoints": true
     }
   ]
 }

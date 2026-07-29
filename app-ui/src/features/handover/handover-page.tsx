@@ -1,502 +1,202 @@
-import { useMemo, useRef, useState } from 'react'
-import { Camera, KeyRound, X } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { useEffect, useRef, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Check, KeyRound, RefreshCw, TriangleAlert } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { PageHeader } from '@/components/ui/page-header'
 import { Slider } from '@/components/ui/slider'
-import { Segmented } from '@/components/ui/segmented'
-import { StatusChip } from '@/components/ui/status-chip'
+import { ApiRequestError } from '@/lib/api-client'
+import { useAuth } from '@/features/auth/auth-context'
 import {
-  DamageMarker,
-  type DamageMark,
-} from '@/components/patterns/damage-marker'
-import {
-  SignaturePad,
-  type SignaturePadHandle,
-} from '@/components/patterns/signature-pad'
-import { CameraCapture } from '@/components/patterns/camera-capture'
-import { useConfirm } from '@/hooks/use-confirm'
-import { notify } from '@/hooks/use-toast'
+  getHandoverWorklist,
+  openHandover,
+  returnHandover,
+  type Handover,
+  type HandoverCaptureInput,
+  type HandoverWorkItem,
+} from './handover.contract'
 
-type Verdict = 'pass' | 'fail' | undefined
+const CHECKS = ['body', 'tyres', 'lights', 'assets', 'cabin'] as const
 
-const CHECKLIST = [
-  {
-    id: 'body',
-    label: 'Body panels & glass',
-    sub: 'no new damage vs last return record',
-  },
-  {
-    id: 'tyres',
-    label: 'Tyres & spare',
-    sub: 'tread visual · pressure warning light off',
-  },
-  { id: 'lights', label: 'Lights & indicators', sub: 'head, brake, hazard' },
-  {
-    id: 'assets',
-    label: 'On-vehicle assets',
-    sub: 'Salik tag · Darb tag · fuel card FC-2291 · first-aid kit',
-  },
-  {
-    id: 'cabin',
-    label: 'Cabin condition',
-    sub: 'clean · no personal items from previous booking',
-  },
-]
-
-const EIGHTHS = ['E', '⅛', '¼', '⅜', '½', '⅝', '¾', '⅞', 'F']
-const CONDITIONS = ['Good', 'Minor wear', 'Damage noted']
-
-const initialMarks: DamageMark[] = [
-  {
-    id: 'existing-1',
-    x: 24,
-    y: 22,
-    note: 'Scratch · front-left wing',
-    photos: [],
-    existing: true,
-  },
-]
-
-/** Fleet-manager Handover & Return: inspection, readings, condition capture, signature. */
+/** Live Fleet custody register, release capture, return reconciliation, and receipt. */
 export function HandoverPage() {
-  const confirm = useConfirm()
-  const signatureRef = useRef<SignaturePadHandle>(null)
+  const { t, i18n } = useTranslation()
+  const { me } = useAuth()
+  const queryClient = useQueryClient()
+  const locale = i18n.resolvedLanguage ?? i18n.language
+  const worklist = useQuery({ queryKey: ['handover', 'worklist'], queryFn: getHandoverWorklist })
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [odometer, setOdometer] = useState('')
+  const [fuel, setFuel] = useState(8)
+  const [keyRef, setKeyRef] = useState('')
+  const [signerName, setSignerName] = useState('')
+  const [condition, setCondition] = useState('')
+  const [damageRegion, setDamageRegion] = useState('')
+  const [damageNote, setDamageNote] = useState('')
+  const [checks, setChecks] = useState<Record<string, boolean>>({})
+  const [validation, setValidation] = useState<string | null>(null)
+  const [receipt, setReceipt] = useState<Handover | null>(null)
+  const commandKeys = useRef({ open: crypto.randomUUID(), return: crypto.randomUUID() })
+  const selected = worklist.data?.find((item) => item.bookingId === selectedId) ?? worklist.data?.[0] ?? null
+  const isReturn = selected?.phase === 'ActiveCustody'
+  const expectedSigner = isReturn ? me?.fullName ?? '' : selected?.driverName ?? ''
 
-  const [mode, setMode] = useState<'handover' | 'return'>('handover')
-  const [odometer, setOdometer] = useState('48213')
-  const [fuel, setFuel] = useState(7)
-  const [keyConfirmed, setKeyConfirmed] = useState(false)
-  const [checks, setChecks] = useState<Record<string, Verdict>>({
-    body: 'pass',
-    tyres: 'pass',
-  })
-  const [marks, setMarks] = useState<DamageMark[]>(initialMarks)
-  const [condition, setCondition] = useState<string | null>(null)
-  const [vehiclePhotos, setVehiclePhotos] = useState<string[]>([])
-  const [cameraOpen, setCameraOpen] = useState(false)
-  const [signed, setSigned] = useState(false)
-
-  const isReturn = mode === 'return'
-  const decided = CHECKLIST.filter((c) => checks[c.id]).length
-  const fuelPct = (fuel / 8) * 100
-  const fuelTone = fuel <= 1 ? 'danger' : fuel <= 3 ? 'warn' : 'ok'
-  const fuelColor =
-    fuelTone === 'danger'
-      ? 'bg-destructive'
-      : fuelTone === 'warn'
-        ? 'bg-warning'
-        : 'bg-success'
-
-  const outstanding = useMemo(() => {
-    const items: string[] = []
-    if (decided < CHECKLIST.length)
-      items.push(`${CHECKLIST.length - decided} checks`)
-    if (!keyConfirmed) items.push('key')
-    if (isReturn && !condition) items.push('condition')
-    if (!signed) items.push('signature')
-    return items
-  }, [decided, keyConfirmed, isReturn, condition, signed])
-
-  const canSubmit = outstanding.length === 0
-
-  const setVerdict = (id: string, verdict: Verdict) =>
-    setChecks((prev) => ({ ...prev, [id]: verdict }))
-
-  const submit = async () => {
-    if (!canSubmit) return
-    const ok = await confirm({
-      title: isReturn ? 'Confirm return?' : 'Hand over keys?',
-      description: isReturn
-        ? 'Reconciliation will be logged against this booking.'
-        : 'The buffer starts on confirm and the trip becomes active.',
-      confirmLabel: isReturn ? 'Confirm return' : 'Hand over',
-    })
-    if (!ok) return
-    notify.ok(
-      isReturn
-        ? 'Return recorded — reconciliation logged'
-        : 'Handover recorded — trip active',
-    )
-    setKeyConfirmed(false)
-    setSigned(false)
-    signatureRef.current?.clear()
+  useEffect(() => {
+    setOdometer('')
+    setFuel(8)
+    setKeyRef('')
+    setSignerName('')
+    setCondition('')
+    setDamageRegion('')
+    setDamageNote('')
     setChecks({})
-    setCondition(null)
+    setValidation(null)
+    setReceipt(null)
+    commandKeys.current = { open: crypto.randomUUID(), return: crypto.randomUUID() }
+  }, [selected?.bookingId])
+
+  const command = useMutation({
+    mutationFn: ({ item, input }: { item: HandoverWorkItem; input: HandoverCaptureInput }) =>
+      item.phase === 'ActiveCustody'
+        ? returnHandover(item, input, commandKeys.current.return)
+        : openHandover(item, input, commandKeys.current.open),
+    onSuccess: async (result) => {
+      setReceipt(result)
+      await queryClient.invalidateQueries({ queryKey: ['handover', 'worklist'] })
+      await queryClient.invalidateQueries({ queryKey: ['booking'] })
+    },
+  })
+
+  /** Validates the capture and invokes the correct custody command. */
+  function submit() {
+    if (!selected) return
+    const reading = Number(odometer)
+    const allChecks = CHECKS.every((check) => checks[check])
+    const signerMatches = signerName.trim().toLocaleLowerCase(locale) === expectedSigner.trim().toLocaleLowerCase(locale)
+    if (!Number.isFinite(reading) || reading < 0 || !allChecks || !keyRef.trim() || !signerMatches || (isReturn && !condition.trim())) {
+      setValidation(t('handover.validation'))
+      return
+    }
+    setValidation(null)
+    command.mutate({
+      item: selected,
+      input: {
+        odometer: reading,
+        fuelEighths: fuel,
+        keyRef: keyRef.trim(),
+        signatureRef: `typed-name:${crypto.randomUUID()}`,
+        checklist: CHECKS.map((item) => ({ item, pass: true })),
+        condition: condition.trim() || undefined,
+        damageRegion: damageRegion.trim() || undefined,
+        damageNote: damageNote.trim() || undefined,
+      },
+    })
   }
 
+  if (worklist.isLoading) return <p className="py-16 text-center text-sm text-muted-foreground">{t('handover.loading')}</p>
+  if (worklist.isError) return (
+    <div role="alert" className="border border-destructive/30 bg-destructive/5 p-5">
+      <p>{t('handover.loadError')}</p>
+      <Button className="mt-3" variant="secondary" onClick={() => void worklist.refetch()}><RefreshCw />{t('common.retry')}</Button>
+    </div>
+  )
+
   return (
-    <div className="space-y-6 pb-28">
-      {/* Header row: title + Handover/Return toggle */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="eyebrow mb-1.5">Fleet Manager · GS Pool</p>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Handover &amp; return
-          </h1>
-        </div>
-        <Segmented
-          aria-label="Handover or return"
-          options={[
-            { value: 'handover', label: 'Handover' },
-            { value: 'return', label: 'Return' },
-          ]}
-          value={mode}
-          onValueChange={(v) => setMode(v as 'handover' | 'return')}
-        />
-      </div>
-
-      {/* Navy vehicle / booking strip */}
-      <div className="rounded-[3px] bg-brand px-5 py-4 text-brand-foreground">
-        <div className="flex flex-wrap items-center gap-x-9 gap-y-3">
-          <StripFact label="Booking" value="BK-1204" mono />
-          <StripFact label="Vehicle" value="Nissan Patrol · AD 88914" />
-          <StripFact label="Driver" value="Amina Khoury" />
-          <span className="ms-auto inline-flex items-center gap-2 rounded-[3px] border border-white/25 bg-white/10 px-3 py-1.5 text-[13px] font-semibold">
-            <span className="size-2 rounded-full bg-[#7fd39c]" />
-            GPS ONLINE
-          </span>
-        </div>
-        <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.06em] text-[#8fa9b8]">
-          <span className="text-[#7fd39c]">✓</span>
-          Eligibility gate passed · No blocks · Consent v3.2 signed 08:12
-        </div>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        {/* LEFT — checklist, readings, key */}
-        <div className="space-y-4">
-          <section className="rounded-[3px] border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-5 py-4">
-              <h2 className="text-base font-bold">Walkaround inspection</h2>
-              <span className="eyebrow">
-                {decided} of {CHECKLIST.length}
-              </span>
-            </div>
-            <div className="space-y-2.5 p-5">
-              {CHECKLIST.map((item) => {
-                const verdict = checks[item.id]
-                return (
-                  <div
-                    key={item.id}
-                    className={cn(
-                      'flex items-center justify-between gap-3 rounded-[3px] border p-3',
-                      verdict === 'pass' && 'border-success/40 bg-success/10',
-                      verdict === 'fail' &&
-                        'border-destructive/40 bg-destructive/10',
-                      !verdict && 'border-border',
-                    )}
-                  >
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold">{item.label}</div>
-                      <div className="mt-0.5 text-[11.5px] text-muted-foreground">
-                        {item.sub}
-                      </div>
-                    </div>
-                    <div className="flex shrink-0 gap-1.5">
-                      <VerdictButton
-                        active={verdict === 'pass'}
-                        tone="pass"
-                        onClick={() => setVerdict(item.id, 'pass')}
-                      >
-                        PASS
-                      </VerdictButton>
-                      <VerdictButton
-                        active={verdict === 'fail'}
-                        tone="fail"
-                        onClick={() => setVerdict(item.id, 'fail')}
-                      >
-                        FAIL
-                      </VerdictButton>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-
-          <section className="rounded-[3px] border border-border bg-card">
-            <div className="flex items-center justify-between border-b border-border px-5 py-4">
-              <h2 className="text-base font-bold">Odometer &amp; fuel</h2>
-              <StatusChip tone="ok" label="Telematics matched" />
-            </div>
-            <div className="grid gap-5 p-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="odo" className="eyebrow mb-2 block">
-                  {isReturn ? 'Ending odometer' : 'Starting odometer'}
-                </label>
-                <div className="flex">
-                  <Input
-                    id="odo"
-                    inputMode="numeric"
-                    value={odometer}
-                    onChange={(e) => setOdometer(e.target.value)}
-                    className="h-12 rounded-e-none font-data text-lg"
-                  />
-                  <span className="grid place-items-center rounded-e-[3px] border border-s-0 border-input bg-surface-2 px-3 text-sm font-semibold text-muted-foreground">
-                    km
-                  </span>
+    <div className="space-y-5 pb-24">
+      <PageHeader eyebrow={t('handover.eyebrow')} title={t('handover.title')} description={t('handover.subtitle')} />
+      {!worklist.data?.length ? (
+        <p className="border border-border bg-card p-10 text-center text-sm text-muted-foreground">{t('handover.empty')}</p>
+      ) : (
+        <div className="grid min-h-[650px] border border-border bg-card lg:grid-cols-[340px_1fr]">
+          <aside className="border-b border-border lg:border-b-0 lg:border-e" aria-label={t('handover.register')}>
+            {worklist.data.map((item) => (
+              <button key={item.bookingId} type="button" onClick={() => setSelectedId(item.bookingId)} className={`block w-full border-b border-border p-4 text-start ${selected?.bookingId === item.bookingId ? 'bg-brand/5' : 'hover:bg-muted'}`}>
+                <div className="flex items-start justify-between gap-2">
+                  <strong><bdi>{item.bookingNumber}</bdi></strong>
+                  <Badge variant="secondary">{t(`handover.phase.${item.phase}`)}</Badge>
                 </div>
-                <p className="mt-2 text-[11.5px] text-muted-foreground">
-                  Telematics reads{' '}
-                  <span className="font-data font-semibold text-brand">
-                    48,213 km
-                  </span>{' '}
-                  · manual entry within tolerance
-                </p>
-              </div>
-              <div>
-                <label htmlFor="fuel" className="eyebrow mb-2 block">
-                  Fuel level — {EIGHTHS[fuel]}
-                </label>
-                <Slider
-                  id="fuel"
-                  min={0}
-                  max={8}
-                  step={1}
-                  value={[fuel]}
-                  onValueChange={(v) => setFuel(v[0])}
-                  aria-label="Fuel level"
-                />
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-surface-2">
-                  <div
-                    className={cn('h-full rounded-full', fuelColor)}
-                    style={{ width: `${fuelPct}%` }}
-                  />
-                </div>
-                <div className="mt-1 flex justify-between font-data text-[11px] text-muted-foreground">
-                  <span>E</span>
-                  <span>½</span>
-                  <span>F · est. 68 L</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="rounded-[3px] border border-border bg-card p-5">
-            <div className="eyebrow mb-3">Key</div>
-            <Button
-              variant={keyConfirmed ? 'default' : 'secondary'}
-              onClick={() => setKeyConfirmed((v) => !v)}
-              className={cn(keyConfirmed && 'bg-success hover:bg-success/90')}
-            >
-              <KeyRound className="size-4" />
-              {keyConfirmed
-                ? `${isReturn ? 'Return' : 'Issue'} confirmed`
-                : `Confirm key ${isReturn ? 'return' : 'issue'}`}
-            </Button>
-
-            {isReturn ? (
-              <div className="mt-5">
-                <div className="eyebrow mb-2">Condition on return</div>
-                <Segmented
-                  aria-label="Condition on return"
-                  options={CONDITIONS.map((c) => ({ value: c, label: c }))}
-                  value={condition ?? ''}
-                  onValueChange={setCondition}
-                />
-                {Math.abs(fuel - 5) / 8 > 0.2 ? (
-                  <div className="mt-3 flex items-center gap-2 rounded-[3px] border border-warning/40 bg-warning/10 px-3 py-2 text-[13px] text-warning">
-                    <span className="size-2 rounded-full bg-warning" />
-                    Fuel deviation exceeds ±20% — flagged for review, not
-                    blocking.
-                  </div>
-                ) : null}
-              </div>
-            ) : null}
-          </section>
-        </div>
-
-        {/* RIGHT — condition capture, vehicle photos, signature */}
-        <div className="space-y-4">
-          <section className="rounded-[3px] border border-border bg-card">
-            <div className="border-b border-border px-5 py-4">
-              <h2 className="text-base font-bold">Condition capture</h2>
-              <p className="mt-0.5 text-[12.5px] text-muted-foreground">
-                Tap the diagram to pin any damage; attach a photo as evidence.
-              </p>
-            </div>
-            <div className="p-5">
-              <DamageMarker marks={marks} onChange={setMarks} />
-            </div>
-          </section>
-
-          <section className="rounded-[3px] border border-border bg-card p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <div className="eyebrow">
-                Vehicle photos — {isReturn ? 'return' : 'handover'}
-              </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setCameraOpen(true)}
-              >
-                <Camera className="size-4" />
-                Capture
-              </Button>
-            </div>
-            {vehiclePhotos.length === 0 ? (
-              <p className="rounded-[3px] border border-dashed border-border bg-surface-2 px-3 py-4 text-center text-sm text-muted-foreground">
-                No photos yet — capture the vehicle from the device camera.
-              </p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {vehiclePhotos.map((photo, i) => (
-                  <span
-                    key={i}
-                    className="relative size-20 overflow-hidden rounded-[3px] border border-border"
-                  >
-                    <img
-                      src={photo}
-                      alt={`Vehicle ${isReturn ? 'return' : 'handover'} ${i + 1}`}
-                      className="size-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      aria-label={`Remove vehicle photo ${i + 1}`}
-                      onClick={() =>
-                        setVehiclePhotos((prev) =>
-                          prev.filter((_, j) => j !== i),
-                        )
-                      }
-                      className="absolute end-0 top-0 grid size-5 place-items-center bg-destructive text-destructive-foreground"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="rounded-[3px] border border-border bg-card p-5">
-            <div className="mb-2 flex items-center justify-between">
-              <div className="eyebrow">
-                Signature — {isReturn ? 'Fleet Manager' : 'Amina Khoury'}
-              </div>
-              <button
-                type="button"
-                onClick={() => signatureRef.current?.clear()}
-                className="text-[13px] font-semibold text-muted-foreground hover:text-foreground"
-              >
-                Clear
+                <p className="mt-2 text-sm"><bdi>{item.vehiclePlate}</bdi> · {item.driverName}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.pickupAtUtc))}</p>
               </button>
-            </div>
-            <SignaturePad
-              ref={signatureRef}
-              signerName={isReturn ? 'Fleet Manager' : 'Amina Khoury'}
-              onSignedChange={setSigned}
-            />
-            <p className="mt-1.5 text-[13px] font-semibold text-muted-foreground">
-              {signed ? (
-                <span className="text-success">
-                  Signed — stored with timestamp + device ID
-                </span>
-              ) : (
-                'Sign above to continue'
-              )}
-            </p>
-            <div className="mt-3 rounded-[3px] bg-brand-soft px-3.5 py-3 text-[12.5px] leading-relaxed text-brand">
-              ✓ Booking consent v3.2 already on file (08:12, iOS) — this
-              signature covers{' '}
-              <b>condition acceptance at {isReturn ? 'return' : 'handover'}</b>{' '}
-              only.
-            </div>
-          </section>
+            ))}
+          </aside>
+          {selected && (
+            <section className="min-w-0" aria-label={t('handover.capture')}>
+              <header className="border-b border-border bg-brand p-5 text-brand-foreground">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+                  <Fact label={t('handover.booking')} value={selected.bookingNumber} />
+                  <Fact label={t('handover.vehicle')} value={selected.vehiclePlate} />
+                  <Fact label={t('handover.driver')} value={selected.driverName} />
+                  <Fact label={t('handover.scope')} value={selected.scopeName ?? t('booking.notAvailable')} />
+                </div>
+              </header>
+              <div className="grid gap-5 p-5 xl:grid-cols-2">
+                <section className="border border-border p-4">
+                  <h2 className="font-bold">{t('handover.inspection')}</h2>
+                  <div className="mt-3 space-y-2">
+                    {CHECKS.map((check) => (
+                      <label key={check} className="flex items-center gap-3 border border-border p-3 text-sm">
+                        <Checkbox checked={checks[check] ?? false} onCheckedChange={(value) => setChecks((current) => ({ ...current, [check]: value === true }))} />
+                        {t(`handover.checks.${check}`)}
+                      </label>
+                    ))}
+                  </div>
+                </section>
+                <section className="border border-border p-4">
+                  <h2 className="font-bold">{t('handover.capture')}</h2>
+                  <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <Label htmlFor="handover-odometer">{t(isReturn ? 'handover.endOdometer' : 'handover.startOdometer')}</Label>
+                      <Input id="handover-odometer" className="mt-2" inputMode="numeric" value={odometer} onChange={(event) => setOdometer(event.target.value)} />
+                    </div>
+                    <div>
+                      <Label htmlFor="handover-key">{t(isReturn ? 'handover.keyReturn' : 'handover.keyIssue')}</Label>
+                      <Input id="handover-key" className="mt-2" value={keyRef} onChange={(event) => setKeyRef(event.target.value)} />
+                    </div>
+                  </div>
+                  <Label htmlFor="handover-fuel" className="mt-4 block">{t('handover.fuel', { value: fuel })}</Label>
+                  <Slider id="handover-fuel" className="mt-3" min={0} max={8} step={1} value={[fuel]} onValueChange={(value) => setFuel(value[0] ?? 0)} />
+                  {isReturn && <div className="mt-4"><Label htmlFor="handover-condition">{t('handover.condition')}</Label><Input id="handover-condition" className="mt-2" value={condition} onChange={(event) => setCondition(event.target.value)} /></div>}
+                  <div className="mt-4"><Label htmlFor="handover-damage-region">{t('handover.damageRegion')}</Label><Input id="handover-damage-region" className="mt-2" value={damageRegion} onChange={(event) => setDamageRegion(event.target.value)} /></div>
+                  <div className="mt-4"><Label htmlFor="handover-damage-note">{t('handover.damageNote')}</Label><Input id="handover-damage-note" className="mt-2" value={damageNote} onChange={(event) => setDamageNote(event.target.value)} /></div>
+                  <div className="mt-4"><Label htmlFor="handover-signer">{t('handover.signer', { name: expectedSigner })}</Label><Input id="handover-signer" className="mt-2" value={signerName} onChange={(event) => setSignerName(event.target.value)} /></div>
+                </section>
+              </div>
+              {validation && <p role="alert" className="mx-5 text-sm text-destructive">{validation}</p>}
+              {command.isError && <p role="alert" className="mx-5 text-sm text-destructive">{command.error instanceof ApiRequestError && command.error.status === 409 ? t('handover.stale') : t('handover.actionError')}</p>}
+              {receipt && <Receipt value={receipt} />}
+              <div className="mt-5 flex justify-end border-t border-border p-4">
+                <Button size="lg" disabled={command.isPending} onClick={submit}><KeyRound />{t(isReturn ? 'handover.confirmReturn' : 'handover.confirmOpen')}</Button>
+              </div>
+            </section>
+          )}
         </div>
-      </div>
-
-      {/* Readiness action bar */}
-      <div className="sticky bottom-0 -mx-5 border-t border-border bg-background/95 px-5 py-3 backdrop-blur md:-mx-[34px] md:px-[34px]">
-        <div className="mx-auto flex w-full items-center gap-4">
-          <span className="text-[13px] font-semibold text-muted-foreground">
-            {canSubmit ? (
-              <span>
-                <span className="text-foreground">Ready.</span> Keys →{' '}
-                {isReturn ? 'pool' : 'Amina'} · buffer starts on confirm
-              </span>
-            ) : (
-              <span>
-                <span className="text-foreground">
-                  {outstanding.length} item{outstanding.length > 1 ? 's' : ''}{' '}
-                  left:
-                </span>{' '}
-                {outstanding.join(' · ')}
-              </span>
-            )}
-          </span>
-          <Button
-            className="ms-auto"
-            size="lg"
-            disabled={!canSubmit}
-            onClick={submit}
-          >
-            {isReturn ? 'Confirm return' : 'Hand over keys'}
-          </Button>
-        </div>
-      </div>
-
-      <CameraCapture
-        open={cameraOpen}
-        onOpenChange={setCameraOpen}
-        onCapture={(dataUrl) => setVehiclePhotos((prev) => [...prev, dataUrl])}
-        title="Photograph the vehicle"
-        description={`Capture the vehicle at ${isReturn ? 'return' : 'handover'}.`}
-      />
-    </div>
-  )
-}
-
-function StripFact({
-  label,
-  value,
-  mono,
-}: {
-  label: string
-  value: string
-  mono?: boolean
-}) {
-  return (
-    <div>
-      <div className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8fa9b8]">
-        {label}
-      </div>
-      <div
-        className={cn('mt-1 text-[19px] font-semibold', mono && 'font-data')}
-      >
-        {value}
-      </div>
-    </div>
-  )
-}
-
-function VerdictButton({
-  active,
-  tone,
-  onClick,
-  children,
-}: {
-  active: boolean
-  tone: 'pass' | 'fail'
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={cn(
-        'min-h-9 min-w-[52px] rounded-[3px] border font-data text-[12px] font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring',
-        !active &&
-          'border-input bg-card text-muted-foreground hover:bg-surface-hover',
-        active && tone === 'pass' && 'border-success bg-success text-white',
-        active &&
-          tone === 'fail' &&
-          'border-destructive bg-destructive text-white',
       )}
-    >
-      {children}
-    </button>
+    </div>
+  )
+}
+
+/** Displays one operational fact while isolating identifiers in RTL. */
+function Fact({ label, value }: { label: string; value: string }) {
+  return <div><span className="block text-xs text-brand-foreground/60">{label}</span><strong className="mt-1 block"><bdi>{value}</bdi></strong></div>
+}
+
+/** Renders the persisted custody completion receipt and advisory flags. */
+function Receipt({ value }: { value: Handover }) {
+  const { t } = useTranslation()
+  return (
+    <section role="status" className="mx-5 border border-success/40 bg-success/5 p-4">
+      <div className="flex items-center gap-2 font-bold text-success"><Check className="size-4" />{t(`handover.receipt.${value.phase}`)}</div>
+      <div className="mt-3 grid gap-2 text-sm sm:grid-cols-3">
+        <span>{t('handover.receipt.odometer')}: <bdi>{value.endOdometer ?? value.startOdometer}</bdi></span>
+        <span>{t('handover.receipt.fuel')}: {value.endFuelEighths ?? value.startFuelEighths}/8</span>
+        <span>{t('handover.receipt.damage')}: {value.damage.length}</span>
+      </div>
+      {(value.fuelDeviationFlagged || value.odometerConflict || value.lateReturn) && <p className="mt-3 flex items-center gap-2 text-sm text-warning"><TriangleAlert className="size-4" />{t('handover.receipt.review')}</p>}
+    </section>
   )
 }

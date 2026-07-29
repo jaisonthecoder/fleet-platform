@@ -84,18 +84,18 @@ export class PolicyRegistryService {
       version: 'phase1-entitlement-approval-chain-v1',
       scope: 'group',
       rows: [
-        { when: { requestType: 'permanent' }, decision: 'ROUTE_TO', reasons: ['chain-permanent'], route: ['LineManager', 'FleetManager', 'ClusterFleetLead', 'ClusterCEO'] },
+        { when: { requestType: 'LongTerm' }, decision: 'ROUTE_TO', reasons: ['chain-long-term'], route: ['LineManager', 'FleetManager', 'ClusterFleetLead', 'ClusterCEO'] },
       ],
       default: { decision: 'ROUTE_TO', reasons: ['chain-entitlement-default'], route: ['LineManager', 'FleetManager', 'ClusterCEO'] },
     });
 
-    // 6. dedicated-vehicle-eligibility — ALLOW/DENY, DENY default (D8 fixture).
+    // 6. dedicated-vehicle-eligibility — DB/manual Policy Studio configuration is authoritative.
     this.register({
       ruleType: 'dedicated-vehicle-eligibility',
-      version: 'fixture-dedicated-vehicle-eligibility-v1',
+      version: 'fallback-dedicated-vehicle-deny-v1',
       scope: 'group',
-      rows: [{ when: { gradeEligible: true }, decision: 'ALLOW', reasons: ['dedicated-grade-eligible'] }],
-      default: { decision: 'DENY', reasons: ['dedicated-not-eligible'] },
+      rows: [],
+      default: { decision: 'DENY', reasons: ['dedicated-policy-configuration-unavailable'] },
     });
 
     // 7. driver-eligibility-gate — composite ALLOW/DENY, DENY default (config).

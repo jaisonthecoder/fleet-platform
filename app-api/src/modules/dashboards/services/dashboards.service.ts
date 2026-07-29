@@ -48,7 +48,10 @@ export class DashboardsService {
       requestedScopeId,
     );
     if (!scopeId) {
-      return { nodeIds: null, vehicleIds: null };
+      return {
+        nodeIds: null,
+        vehicleIds: await this.repo.vehicleIdsInOrganization(principal.organizationId),
+      };
     }
     const nodeIds = await this.hierarchy.scopeSubtree(
       scopeId,
@@ -63,6 +66,9 @@ export class DashboardsService {
   /** The real operations overview read model (replaces the Phase-0 mock). */
   async operationsOverview(principal: Principal, requestedScopeId?: string): Promise<OperationsOverview> {
     const { vehicleIds, scopeId } = await this.resolveScope(principal, requestedScopeId);
+    const detailedOperations = principal.roles.some(({ role }) =>
+      ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'].includes(role),
+    );
     const total = await this.repo.countVehicles(vehicleIds);
     const unavailable = await this.repo.countUnavailableVehicles(vehicleIds);
     const inUse = await this.repo.countVehiclesWithBookingStatus(vehicleIds, ['Active']);
@@ -72,26 +78,29 @@ export class DashboardsService {
     const bookingsToday = await this.repo.countBookingsInWindow(vehicleIds, start, end);
     const activeBookings = await this.repo.countVehiclesWithBookingStatus(vehicleIds, ['Active']);
     const compliance = await this.repo.complianceCounts(vehicleIds);
-    const activeBlocks = await this.repo.countActiveBlocks();
+    const activeBlocks = await this.repo.countActiveBlocks(principal.organizationId);
     const complianceAttentionCount = compliance.expiringSoon + compliance.expired + activeBlocks;
 
-    const expiring = await this.repo.expiringItems(vehicleIds, 5);
+    const expiring = detailedOperations ? await this.repo.expiringItems(vehicleIds, 5) : [];
     const attentionItems: OperationsOverview['attentionItems'] = [];
     for (const item of expiring) {
       const plate = await this.repo.plateOf(item.subjectRef);
       attentionItems.push({
         id: item.id,
         level: item.status === 'Expired' ? 'danger' : 'warning',
-        title: `${item.itemType} ${item.status === 'Expired' ? 'expired' : 'expiring soon'}`,
-        detail: `${plate}${item.expiryDate ? ` · ${item.expiryDate}` : ''}`,
-        action: 'Review vehicle',
+        kind: 'compliance',
+        itemType: item.itemType,
+        subjectLabel: plate,
+        status: item.status === 'Expired' ? 'Expired' : 'ExpiringSoon',
+        expiryDate: item.expiryDate,
+        count: null,
       });
     }
-    if (activeBlocks > 0) {
-      attentionItems.push({ id: 'access-blocks', level: 'danger', title: `${activeBlocks} active access block(s)`, detail: 'Drivers blocked platform-wide', action: 'Review blocks' });
+    if (detailedOperations && activeBlocks > 0) {
+      attentionItems.push({ id: 'access-blocks', level: 'danger', kind: 'access-block', itemType: null, subjectLabel: null, status: null, expiryDate: null, count: activeBlocks });
     }
 
-    const upcoming = await this.repo.upcomingBookings(vehicleIds, 5);
+    const upcoming = detailedOperations ? await this.repo.upcomingBookings(vehicleIds, 5) : [];
     const upcomingBookings: OperationsOverview['upcomingBookings'] = [];
     for (const b of upcoming) {
       const plate = await this.repo.plateOf(b.vehicleId);
@@ -153,13 +162,13 @@ export class DashboardsService {
   async complianceHeatMap(principal: Principal, requestedScopeId?: string): Promise<ComplianceHeatMapTile> {
     const { vehicleIds } = await this.resolveScope(principal, requestedScopeId);
     const counts = await this.repo.complianceCounts(vehicleIds);
-    const activeBlocks = await this.repo.countActiveBlocks();
+    const activeBlocks = await this.repo.countActiveBlocks(principal.organizationId);
     return { ...counts, activeBlocks };
   }
 
   async entitlementInventory(principal: Principal, requestedScopeId?: string): Promise<EntitlementInventoryTile> {
     const { nodeIds } = await this.resolveScope(principal, requestedScopeId);
-    return this.repo.entitlementInventory(nodeIds);
+    return this.repo.entitlementInventory(principal.organizationId, nodeIds);
   }
 
   async telematicsCoverage(principal: Principal, requestedScopeId?: string): Promise<TelematicsCoverageTile> {

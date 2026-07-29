@@ -5,12 +5,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { createHash } from 'node:crypto';
+import type { DrizzleDatabase } from '../../../common/database/database.module';
 import { OutboxService } from '../../../common/messaging/outbox.service';
 import {
   type AddDamage,
   type DamagePinDto,
   HANDOVER_REASON,
   type HandoverDto,
+  type HandoverWorkItemDto,
   type KeyLogDto,
   type OpenHandover,
   type RecordReturn,
@@ -18,6 +21,8 @@ import {
 import { BookingService } from '../../bookings/services/booking.service';
 import { PolicyEvaluatorService } from '../../policy/services/policy-evaluator.service';
 import { AuditService } from '../../platform/services/audit.service';
+import { ScopeAuthorizationService } from '../../platform/services/scope-authorization.service';
+import type { Principal } from '../../../common/auth/principal';
 import {
   isLateReturn,
   isOdometerConflict,
@@ -45,24 +50,63 @@ export class HandoverService {
     private readonly bookings: BookingService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
+    private readonly scopeAuthorization: ScopeAuthorizationService,
   ) {}
 
+  /** Returns the Fleet-scoped custody register without unrelated employee facts. */
+  async worklist(principal: Principal): Promise<HandoverWorkItemDto[]> {
+    if (!principal.personId) throw new ForbiddenException({ title: 'User not linked', reasons: ['handover-scope-not-authorized'] });
+    if (!principal.roles.some(({ role }) => ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'].includes(role))) {
+      throw new ForbiddenException({ title: 'Fleet Handover role required', reasons: ['handover-fleet-role-required'] });
+    }
+    const authorizedNodeIds = await this.scopeAuthorization.authorizedDescendantIds(
+      principal,
+      ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+    );
+    const rows = await this.repo.listWorklist(principal.organizationId, authorizedNodeIds);
+    return rows.map((row) => ({
+      bookingId: row.bookingId,
+      bookingNumber: row.bookingNumber!,
+      handoverId: row.handoverId,
+      phase: row.bookingStatus === 'Active' ? 'ActiveCustody' : 'AwaitingHandover',
+      vehicleId: row.vehicleId,
+      vehiclePlate: row.vehiclePlate,
+      driverPersonId: row.driverPersonId,
+      driverName: row.driverName,
+      pickupAtUtc: row.pickupAtUtc.toISOString(),
+      returnAtUtc: row.returnAtUtc.toISOString(),
+      scopeName: row.scopeName,
+    }));
+  }
+
   /** Opens a handover for an approved booking and moves the booking to Active. */
-  async open(input: OpenHandover, actorRef = 'system'): Promise<HandoverDto> {
-    const booking = await this.bookings.get(input.bookingId);
+  async open(input: OpenHandover, principal: Principal, idempotencyKey: string): Promise<HandoverDto> {
+    const booking = await this.bookings.get(input.bookingId, principal);
+    const actorRef = await this.authorizeBooking(principal, booking.bookingScopeNodeId);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadSha256 = createHash('sha256').update(JSON.stringify(input)).digest('hex');
+    const prior = await this.repo.findCommand(principal.organizationId, actorRef, 'OPEN', commandKey);
+    if (prior) {
+      if (prior.payloadSha256 !== payloadSha256) throw new ConflictException({ title: 'Idempotency key was reused', reasons: [HANDOVER_REASON.idempotencyReused] });
+      if (!prior.resultHandoverId || !prior.resultBody) throw new ConflictException({ title: 'Handover command is in progress', reasons: [HANDOVER_REASON.commandInProgress] });
+      return prior.resultBody as unknown as HandoverDto;
+    }
     if (booking.status !== 'Approved') {
       throw new ConflictException({ title: 'Booking is not approved for handover', reasons: [HANDOVER_REASON.bookingNotApproved] });
     }
     if (input.employeePersonId !== booking.driverPersonId) {
       throw new ForbiddenException({ title: 'Employee does not match the booking driver', reasons: [HANDOVER_REASON.employeeMismatch] });
     }
-    if (await this.repo.findByBooking(input.bookingId)) {
+    if (await this.repo.findByBooking(input.bookingId, principal.organizationId)) {
       throw new ConflictException({ title: 'Handover already open', reasons: [HANDOVER_REASON.alreadyOpen] });
     }
 
     const created = await this.repo.transaction(async (tx) => {
+      const command = await this.repo.claimCommand({ organizationId: principal.organizationId, actorPersonId: actorRef, commandType: 'OPEN', idempotencyKey: commandKey, payloadSha256 }, tx);
+      if (!command) throw new ConflictException({ title: 'Handover command is in progress', reasons: [HANDOVER_REASON.commandInProgress] });
       const row = await this.repo.insert(
         {
+          organizationId: principal.organizationId,
           bookingId: booking.id,
           vehicleId: booking.vehicleId,
           driverPersonId: booking.driverPersonId,
@@ -84,7 +128,7 @@ export class HandoverService {
         );
       }
       await this.repo.insertKeyLog(
-        { vehicleId: booking.vehicleId, handoverId: row.id, custodyState: 'Issued', keyRef: input.keyIssueRef ?? null, personId: booking.driverPersonId },
+        { organizationId: principal.organizationId, vehicleId: booking.vehicleId, handoverId: row.id, custodyState: 'Issued', keyRef: input.keyIssueRef ?? null, personId: booking.driverPersonId },
         tx,
       );
       await this.audit.record(
@@ -95,20 +139,30 @@ export class HandoverService {
         { aggregateType: 'handover', aggregateId: row.id, eventType: 'HandoverCompleted', payload: { handoverId: row.id, bookingId: booking.id } },
         tx,
       );
-      return row;
+      await this.bookings.markPickedUpInTransaction(booking.id, actorRef, tx);
+      const dto = await this.toDto(row, tx);
+      await this.repo.completeCommand(command.id, row.id, dto, tx);
+      return { row, dto };
     });
-
-    await this.bookings.markPickedUp(booking.id, actorRef);
-    return this.toDto(created);
+    return created.dto;
   }
 
   /** Records the return: reconciliation, odometer-conflict + late flags, keys; completes the booking. */
-  async recordReturn(id: string, input: RecordReturn, actorRef = 'system'): Promise<HandoverDto> {
-    const existing = await this.require(id);
+  async recordReturn(id: string, input: RecordReturn, principal: Principal, idempotencyKey: string): Promise<HandoverDto> {
+    const existing = await this.require(id, principal.organizationId);
+    const booking = await this.bookings.get(existing.bookingId, principal);
+    const actorRef = await this.authorizeBooking(principal, booking.bookingScopeNodeId);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadSha256 = createHash('sha256').update(JSON.stringify({ id, input })).digest('hex');
+    const prior = await this.repo.findCommand(principal.organizationId, actorRef, 'RETURN', commandKey);
+    if (prior) {
+      if (prior.payloadSha256 !== payloadSha256) throw new ConflictException({ title: 'Idempotency key was reused', reasons: [HANDOVER_REASON.idempotencyReused] });
+      if (!prior.resultHandoverId || !prior.resultBody) throw new ConflictException({ title: 'Handover command is in progress', reasons: [HANDOVER_REASON.commandInProgress] });
+      return prior.resultBody as unknown as HandoverDto;
+    }
     if (existing.phase === 'Returned') {
       throw new ConflictException({ title: 'Handover already returned', reasons: [HANDOVER_REASON.alreadyReturned] });
     }
-    const booking = await this.bookings.get(existing.bookingId);
     if (booking.status !== 'Active') {
       throw new ConflictException({ title: 'Booking is not active for return', reasons: [HANDOVER_REASON.bookingNotActive] });
     }
@@ -132,6 +186,8 @@ export class HandoverService {
     const lateReturn = isLateReturn(returnedAt, new Date(booking.returnAtUtc));
 
     const updated = await this.repo.transaction(async (tx) => {
+      const command = await this.repo.claimCommand({ organizationId: principal.organizationId, actorPersonId: actorRef, commandType: 'RETURN', idempotencyKey: commandKey, payloadSha256 }, tx);
+      if (!command) throw new ConflictException({ title: 'Handover command is in progress', reasons: [HANDOVER_REASON.commandInProgress] });
       const row = await this.repo.update(
         id,
         {
@@ -160,7 +216,7 @@ export class HandoverService {
         );
       }
       await this.repo.insertKeyLog(
-        { vehicleId: existing.vehicleId, handoverId: id, custodyState: 'Returned', keyRef: input.keyReturnRef ?? null, personId: existing.driverPersonId },
+        { organizationId: principal.organizationId, vehicleId: existing.vehicleId, handoverId: id, custodyState: 'Returned', keyRef: input.keyReturnRef ?? null, personId: existing.driverPersonId },
         tx,
       );
       await this.audit.record(
@@ -171,16 +227,19 @@ export class HandoverService {
         { aggregateType: 'handover', aggregateId: id, eventType: 'ReturnCompleted', payload: { handoverId: id, bookingId: existing.bookingId, lateReturn, fuelDeviationFlagged: fuel.flagged } },
         tx,
       );
-      return row;
+      await this.bookings.markReturnedInTransaction(existing.bookingId, actorRef, lateReturn, tx);
+      const dto = await this.toDto(row, tx);
+      await this.repo.completeCommand(command.id, row.id, dto, tx);
+      return { row, dto };
     });
-
-    await this.bookings.markReturned(existing.bookingId, actorRef, lateReturn);
-    return this.toDto(updated);
+    return updated.dto;
   }
 
   /** Adds a single damage pin to an existing handover. */
-  async addDamage(id: string, input: AddDamage, actorRef = 'system'): Promise<DamagePinDto> {
-    await this.require(id);
+  async addDamage(id: string, input: AddDamage, principal: Principal): Promise<DamagePinDto> {
+    const handover = await this.require(id, principal.organizationId);
+    const booking = await this.bookings.get(handover.bookingId, principal);
+    const actorRef = await this.authorizeBooking(principal, booking.bookingScopeNodeId);
     return this.repo.transaction(async (tx) => {
       const pin = await this.repo.insertDamage(
         { handoverId: id, x: String(input.x), y: String(input.y), region: input.region, templateVersion: input.templateVersion, photoRef: input.photoRef ?? null, note: input.note ?? null, state: input.state },
@@ -199,7 +258,9 @@ export class HandoverService {
   }
 
   /** The key custody log for a vehicle. */
-  async keys(vehicleId: string): Promise<KeyLogDto[]> {
+  async keys(vehicleId: string, principal: Principal): Promise<KeyLogDto[]> {
+    const scopeNodeId = await this.repo.findVehicleScope(vehicleId, principal.organizationId);
+    await this.authorizeBooking(principal, scopeNodeId);
     const rows = await this.repo.listKeys(vehicleId);
     return rows.map((r) => ({
       id: r.id,
@@ -213,18 +274,43 @@ export class HandoverService {
   }
 
   /** A handover projection with its damage pins. */
-  async get(id: string): Promise<HandoverDto> {
-    return this.toDto(await this.require(id));
+  async get(id: string, principal: Principal): Promise<HandoverDto> {
+    const handover = await this.require(id, principal.organizationId);
+    const booking = await this.bookings.get(handover.bookingId, principal);
+    await this.authorizeBooking(principal, booking.bookingScopeNodeId);
+    return this.toDto(handover);
   }
 
   // ---- internals -------------------------------------------------------------
 
-  private async require(id: string): Promise<HandoverRow> {
-    const row = await this.repo.findById(id);
+  private async require(id: string, organizationId?: string): Promise<HandoverRow> {
+    const row = organizationId
+      ? await this.repo.findByIdInOrganization(id, organizationId)
+      : await this.repo.findById(id);
     if (!row) {
       throw new NotFoundException({ title: 'Unknown handover', reasons: [`handover-not-found:${id}`] });
     }
     return row;
+  }
+
+  /** Requires a linked Fleet Principal at the Booking/Vehicle hierarchy scope. */
+  private async authorizeBooking(principal: Principal, scopeNodeId: string | null): Promise<string> {
+    if (!principal.personId || !scopeNodeId) {
+      throw new ForbiddenException({ title: 'Handover scope is not authorized', reasons: ['handover-scope-not-authorized'] });
+    }
+    await this.scopeAuthorization.assertRolesAtScope(
+      principal,
+      ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'],
+      scopeNodeId,
+    );
+    return principal.personId;
+  }
+
+  /** Requires a bounded durable command key for direct service callers too. */
+  private requireIdempotencyKey(value?: string): string {
+    const key = value?.trim();
+    if (!key || key.length < 8 || key.length > 200) throw new BadRequestException({ title: 'A valid Idempotency-Key is required', reasons: [HANDOVER_REASON.idempotencyRequired] });
+    return key;
   }
 
   private async fuelDeviationThresholdPercent(): Promise<number> {
@@ -247,8 +333,8 @@ export class HandoverService {
     };
   }
 
-  private async toDto(row: HandoverRow): Promise<HandoverDto> {
-    const damage = await this.repo.listDamage(row.id);
+  private async toDto(row: HandoverRow, executor?: DrizzleDatabase): Promise<HandoverDto> {
+    const damage = await this.repo.listDamage(row.id, executor);
     return {
       id: row.id,
       bookingId: row.bookingId,

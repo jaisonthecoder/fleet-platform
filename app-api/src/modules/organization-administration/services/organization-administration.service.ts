@@ -69,12 +69,6 @@ export class OrganizationAdministrationService {
     actorRef: string,
   ) {
     const levels = await this.repo.listLevels(organizationId);
-    if (levels.length >= 5) {
-      throw new ConflictException({
-        title: 'Maximum hierarchy levels reached',
-        reasons: ['hierarchy-level-limit:5'],
-      });
-    }
     try {
       const created = await this.repo.transaction(async (tx) => {
         const row = await this.repo.insertLevel(
@@ -114,6 +108,9 @@ export class OrganizationAdministrationService {
     return this.repo.transaction(async (tx) => {
       const updated = await this.repo.updateLevel(levelId, organizationId, input.expectedRevision, input.labelEn, input.labelAr, tx);
       if (!updated) throw this.revisionConflict(input.expectedRevision, 0);
+      // Level labels are denormalised onto every node for fast scope reads; keep
+      // those copies in lock-step so a rename reflects across the whole platform.
+      await this.repo.syncNodeLevelLabels(organizationId, updated.code, updated.labelEn, tx);
       await this.audit.record(
         { organizationId, actorRef, action: 'HIERARCHY_LEVEL_UPDATED', entityRef: `hierarchy-level:${levelId}`, after: updated, reason: input.reason },
         tx,
@@ -292,6 +289,9 @@ export class OrganizationAdministrationService {
       userCount: metric.userCount,
       utilizedVehicleCount: metric.utilizedVehicleCount,
       utilizationPercent: vehicleCount > 0 ? Math.round((metric.utilizedVehicleCount / vehicleCount) * 100) : 0,
+      latitude: row.latitude ?? null,
+      longitude: row.longitude ?? null,
+      address: row.address ?? null,
       children: [],
     };
     return {
@@ -318,6 +318,23 @@ export class OrganizationAdministrationService {
     actorRef: string,
   ) {
     const parent = await this.requireNode(input.parentId, organizationId);
+    // Derive the child level from the organization's own N-level taxonomy so node
+    // depth always matches configured levels (never a hard-coded ladder), and the
+    // denormalised label is authoritative rather than trusted from the client.
+    const levels = await this.repo.listLevels(organizationId);
+    const childLevel = levels.find((level) => level.position === parent.levelIndex + 1);
+    if (!childLevel) {
+      throw new ConflictException({
+        title: 'No hierarchy level is configured beneath the parent',
+        reasons: [`hierarchy-no-child-level:${parent.levelIndex + 1}`],
+      });
+    }
+    if (input.levelCode !== childLevel.code) {
+      throw new ConflictException({
+        title: 'Hierarchy level does not match the configured taxonomy',
+        reasons: [`hierarchy-level-mismatch:expected-${childLevel.code}:actual-${input.levelCode}`],
+      });
+    }
     const pathComponent = input.code.toLowerCase().replaceAll('-', '_');
     try {
       return await this.repo.transaction(async (tx) => {
@@ -327,10 +344,13 @@ export class OrganizationAdministrationService {
             parentId: parent.id,
             code: input.code,
             levelIndex: parent.levelIndex + 1,
-            levelLabel: input.levelLabel,
-            levelCode: input.levelCode,
+            levelLabel: childLevel.labelEn,
+            levelCode: childLevel.code,
             name: input.name,
             nameAr: input.nameAr,
+            latitude: input.latitude ?? null,
+            longitude: input.longitude ?? null,
+            address: input.address ?? null,
             path: `${parent.path}.${pathComponent}`,
           },
           tx,
@@ -388,6 +408,7 @@ export class OrganizationAdministrationService {
           input.expectedRevision,
           input.name,
           input.nameAr,
+          { latitude: input.latitude, longitude: input.longitude, address: input.address },
           tx,
         );
         if (!updated) throw this.revisionConflict(input.expectedRevision, before.revision);
@@ -625,6 +646,9 @@ export class OrganizationAdministrationService {
                   100,
               )
             : 0,
+        latitude: row.latitude ?? null,
+        longitude: row.longitude ?? null,
+        address: row.address ?? null,
         children: [],
       });
     }

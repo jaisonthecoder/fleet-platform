@@ -20,12 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-} from '@/components/ui/sheet'
+import { Drawer } from '@/components/patterns/drawer'
 import { StatusChip } from '@/components/ui/status-chip'
 import { StatCard } from '@/components/patterns/stat-card'
 import { EmptyState } from '@/components/patterns/empty-state'
@@ -215,17 +210,31 @@ function ManageUserSheet({ user, onClose }: ManageUserSheetProps) {
   }
 
   return (
-    <Sheet open={user !== null} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="right" className="flex w-full max-w-md flex-col gap-0 p-0 sm:max-w-lg">
-        <div className="border-b border-border px-6 py-5">
-          <p className="eyebrow mb-1">Identity · Manage access</p>
-          <SheetTitle className="text-lg font-bold">{user?.name ?? ''}</SheetTitle>
-          <SheetDescription className="mt-1 text-sm text-muted-foreground">
-            {user ? `${user.employeeId}${user.email ? ` · ${user.email}` : ''}` : ''}
-          </SheetDescription>
+    <Drawer
+      open={user !== null}
+      onOpenChange={(open) => !open && onClose()}
+      eyebrow="Identity · Manage access"
+      title={user?.name ?? ''}
+      description={user ? `${user.employeeId}${user.email ? ` · ${user.email}` : ''}` : ''}
+      width="lg"
+      bodyClassName="space-y-6"
+      footer={
+        <div className="flex items-center justify-between gap-2">
+          {hasAccount ? (
+            <Button variant={suspended ? 'default' : 'secondary'} onClick={() => void onStatus()}>
+              {suspended ? 'Reactivate account' : 'Suspend account'}
+            </Button>
+          ) : (
+            <span className="self-center text-xs text-muted-foreground">
+              No login account yet — nothing to suspend.
+            </span>
+          )}
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
         </div>
-
-        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
+      }
+    >
           {/* Current roles */}
           <section className="space-y-2">
             <h3 className="text-sm font-semibold text-foreground">Current roles</h3>
@@ -329,24 +338,7 @@ function ManageUserSheet({ user, onClose }: ManageUserSheetProps) {
               {assign.isPending ? 'Assigning…' : 'Save assignment'}
             </Button>
           </section>
-        </div>
-
-        <div className="flex justify-between gap-2 border-t border-border px-6 py-4">
-          {hasAccount ? (
-            <Button variant={suspended ? 'default' : 'secondary'} onClick={() => void onStatus()}>
-              {suspended ? 'Reactivate account' : 'Suspend account'}
-            </Button>
-          ) : (
-            <span className="self-center text-xs text-muted-foreground">
-              No login account yet — nothing to suspend.
-            </span>
-          )}
-          <Button variant="ghost" onClick={onClose}>
-            Close
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+    </Drawer>
   )
 }
 
@@ -463,7 +455,7 @@ export function AccessManagementPage() {
         description="Every person in the HR directory is listed here, whether or not they have signed in yet. Assign hierarchy-scoped roles (Segregation-of-Duties enforced on the server), review who has access, and suspend or reactivate sign-in accounts."
         action={
           <Button
-            variant="secondary"
+            variant="railGhost"
             disabled={(accessReview.data?.length ?? 0) === 0}
             onClick={() => downloadCsv('access-review.csv', accessReview.data ?? [])}
           >

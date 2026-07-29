@@ -36,22 +36,27 @@ export class ScopeAuthorizationService {
         const scope = byId.get(assignment.scopeNodeId);
         return Boolean(
           scope &&
-            (scope.id === target.id || target.path.startsWith(`${scope.path}.`)),
+          (scope.id === target.id || target.path.startsWith(`${scope.path}.`)),
         );
       });
     return Boolean(allowed);
   }
 
   /** Node IDs under any active role scope, excluding context-only ancestors. */
-  async authorizedDescendantIds(principal: Principal): Promise<string[]> {
+  async authorizedDescendantIds(
+    principal: Principal,
+    roles?: readonly PlatformRole[],
+  ): Promise<string[]> {
     const nodes = await this.repo.listHierarchy(principal.organizationId);
     const scopes = principal.roles
+      .filter((assignment) => !roles || roles.includes(assignment.role))
       .map((role) => nodes.find((node) => node.id === role.scopeNodeId))
       .filter((node): node is (typeof nodes)[number] => Boolean(node));
     return nodes
       .filter((node) =>
         scopes.some(
-          (scope) => node.id === scope.id || node.path.startsWith(`${scope.path}.`),
+          (scope) =>
+            node.id === scope.id || node.path.startsWith(`${scope.path}.`),
         ),
       )
       .map((node) => node.id);
@@ -62,20 +67,25 @@ export class ScopeAuthorizationService {
     principal: Principal,
     roles: readonly PlatformRole[],
   ): Promise<void> {
+    if (await this.hasRootRole(principal, roles)) return;
+    throw new ForbiddenException({
+      title: 'Organization-wide scope is required',
+      reasons: ['organization-root-scope-required'],
+    });
+  }
+
+  /** Whether one allowed role is assigned at an organization root. */
+  async hasRootRole(
+    principal: Principal,
+    roles: readonly PlatformRole[],
+  ): Promise<boolean> {
     const nodes = await this.repo.listHierarchy(principal.organizationId);
     const roots = new Set(
       nodes.filter((node) => node.parentId === null).map((node) => node.id),
     );
-    if (
-      !principal.roles.some(
-        (assignment) =>
-          roles.includes(assignment.role) && roots.has(assignment.scopeNodeId),
-      )
-    ) {
-      throw new ForbiddenException({
-        title: 'Organization-wide scope is required',
-        reasons: ['organization-root-scope-required'],
-      });
-    }
+    return principal.roles.some(
+      (assignment) =>
+        roles.includes(assignment.role) && roots.has(assignment.scopeNodeId),
+    );
   }
 }

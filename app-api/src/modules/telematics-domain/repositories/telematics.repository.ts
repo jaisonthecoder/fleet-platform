@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import {
@@ -9,6 +9,7 @@ import {
   telemetry,
   trip,
   vehicle,
+  vehicleHierarchyAssignment,
 } from '../../../common/database/schema';
 
 type Executor = Pick<DrizzleDatabase, 'insert' | 'update'>;
@@ -45,6 +46,17 @@ export class TelematicsRepository {
     const rows = await this.db
       .select()
       .from(devicePairing)
+      .where(and(eq(devicePairing.vehicleId, vehicleId), isNull(devicePairing.validTo)))
+      .limit(1);
+    return rows[0];
+  }
+
+  /** The device currently paired to a vehicle, with its registry details. */
+  async currentDeviceForVehicle(vehicleId: string) {
+    const rows = await this.db
+      .select({ pairedSince: devicePairing.validFrom, device })
+      .from(devicePairing)
+      .innerJoin(device, eq(device.id, devicePairing.deviceId))
       .where(and(eq(devicePairing.vehicleId, vehicleId), isNull(devicePairing.validTo)))
       .limit(1);
     return rows[0];
@@ -89,6 +101,24 @@ export class TelematicsRepository {
     return this.db.select().from(telematicsAlert).orderBy(desc(telematicsAlert.raisedAt)).limit(limit);
   }
 
+  async listAlertsForVehicle(vehicleId: string, limit = 50) {
+    return this.db
+      .select()
+      .from(telematicsAlert)
+      .where(eq(telematicsAlert.vehicleId, vehicleId))
+      .orderBy(desc(telematicsAlert.raisedAt))
+      .limit(limit);
+  }
+
+  async listTripsForVehicle(vehicleId: string, limit = 50) {
+    return this.db
+      .select()
+      .from(trip)
+      .where(eq(trip.vehicleId, vehicleId))
+      .orderBy(desc(trip.startedAt))
+      .limit(limit);
+  }
+
   async acknowledgeAlert(id: string) {
     await this.db.update(telematicsAlert).set({ acknowledgedAt: new Date() }).where(eq(telematicsAlert.id, id));
   }
@@ -102,6 +132,49 @@ export class TelematicsRepository {
       .orderBy(desc(telemetry.time))
       .limit(1);
     return rows[0];
+  }
+
+  /** Latest position per scoped vehicle (one row each) for the fleet live map. */
+  async latestPerVehicle(
+    organizationId?: string,
+    authorizedNodeIds?: string[],
+    includeUnassigned = false,
+  ) {
+    if (authorizedNodeIds && authorizedNodeIds.length === 0) return [];
+    return this.db
+      .selectDistinctOn([telemetry.vehicleId], {
+        vehicleId: telemetry.vehicleId,
+        plate: vehicle.plate,
+        lat: telemetry.lat,
+        lon: telemetry.lon,
+        speed: telemetry.speed,
+        time: telemetry.time,
+      })
+      .from(telemetry)
+      .innerJoin(vehicle, eq(vehicle.id, telemetry.vehicleId))
+      .leftJoin(
+        vehicleHierarchyAssignment,
+        and(
+          eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
+          isNull(vehicleHierarchyAssignment.validTo),
+        ),
+      )
+      .where(
+        and(
+          organizationId
+            ? eq(vehicle.organizationId, organizationId)
+            : undefined,
+          authorizedNodeIds
+            ? or(
+                inArray(vehicleHierarchyAssignment.nodeId, authorizedNodeIds),
+                includeUnassigned
+                  ? isNull(vehicleHierarchyAssignment.id)
+                  : undefined,
+              )
+            : undefined,
+        ),
+      )
+      .orderBy(telemetry.vehicleId, desc(telemetry.time));
   }
 
   /** Inserts a raw telemetry point (used by tests / the ingest path). */

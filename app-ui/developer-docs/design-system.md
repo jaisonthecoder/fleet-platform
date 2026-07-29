@@ -220,6 +220,22 @@ The same tokens/components render at different densities — **the language neve
 
 ## 8. Signature patterns (reusable, specified once)
 
+- **Page hero** *(registered global pattern — every page)* — the navy `--hero-gradient` banner at the
+  top of the content area, `rounded-[10px]`, layered shadow, white text: a **gold marker bar → gold
+  eyebrow (scope/register) → large title → description → context/date line**, with primary/secondary
+  actions on the inline-end side (`signal` gold + `railGhost` translucent-white variants). The
+  **context/date line** (calendar icon + full localized date, e.g. "Friday, 24 July 2026") is shown on
+  **every** page (operational users think in days-of-week); hide only on cinematic dashboards. Gradient
+  angle + vignette mirror under RTL. Single component: `components/ui/page-header.tsx` (`PageHeader`).
+- **Progress stepper** — horizontal step rail for multi-step flows (Search → Choose vehicle → Consent →
+  Confirmed): numbered circles connected by rules; **done = green with check, current = navy filled,
+  pending = muted outline**; the line fills as steps complete. Mirrors in RTL.
+- **Booking pass** — the confirmation "ticket" card: navy header with booking number + QR, a
+  pickup→return **route timeline**, then a vehicle / destination / key-collection / date grid. Reused
+  wherever a confirmed booking is shown.
+- **Request eligibility + approval chain** — paired cards: an **automated-eligibility checklist**
+  (green-check statements with one-line reasons) beside a **vertical approval chain** (numbered actors
+  with role + state: SUBMITTED / LINE MANAGER / ENDORSE / POLICY GATE) and the confirm control.
 - **Status chip** — icon + label pill; tones ok/warn/danger/info/neutral. Never colour-only.
 - **Signal-bar card** — a card with a slim start-edge colour bar encoding state (like painted berth markings).
 - **Availability strip** — the day's vehicle slots as a berth-occupancy bar: time flows start→end

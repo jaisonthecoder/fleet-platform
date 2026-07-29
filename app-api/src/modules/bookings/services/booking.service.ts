@@ -7,21 +7,30 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { OutboxService } from '../../../common/messaging/outbox.service';
+import type { DrizzleDatabase } from '../../../common/database/database.module';
 import { randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import type { PlatformRole } from '../../../common/database/schema';
 import type { Principal } from '../../../common/auth/principal';
+import { isVehicleBookable } from '../../../common/domain/vehicle-bookability';
 import {
   BOOKING_REASON,
   type AvailabilityQuery,
+  type AvailabilityTimelineDto,
+  type AvailabilityTimelineQuery,
   type AvailableVehicleDto,
+  type BookingContextDto,
   type BookingDto,
   type BookingPersonDto,
   type BookingStatus,
+  type BookingApprovalWorkItemDto,
+  type BookingPreparationItemDto,
   type CancelBooking,
   type CreateBooking,
   type DecideBooking,
   type ExtendBooking,
   type ModifyBooking,
+  type MyBookingDto,
   type SignConsent,
 } from '../../../contracts/booking.contract';
 import { EligibilityService } from '../../compliance/services/eligibility.service';
@@ -44,6 +53,7 @@ import {
 } from '../internal/booking-rules';
 import { toDbException } from '../internal/pg-error';
 import { BookingsRepository } from '../repositories/bookings.repository';
+import { ConsentTemplateProvider } from './consent-template.provider';
 
 type BookingRow = NonNullable<Awaited<ReturnType<BookingsRepository['findById']>>>;
 const TERMINAL: ReadonlySet<string> = new Set([
@@ -57,8 +67,8 @@ const ON_BEHALF_ROLES = [
   'FleetManager',
   'ClusterFleetLead',
   'GroupFleetLead',
-  'SystemAdmin',
 ] as const satisfies readonly PlatformRole[];
+const BOOKING_PEOPLE_LIMIT = 100;
 
 interface BookingDecisionContext {
   organizationId: string;
@@ -67,6 +77,19 @@ interface BookingDecisionContext {
 }
 
 type BookingPolicyProvenance = Record<string, DecisionProvenance | ReturnType<BookingService['provenance']>>;
+
+type TimelineSegment = AvailabilityTimelineDto['rows'][number]['segments'][number];
+
+/** Appends one non-empty segment and merges adjacent segments with the same state. */
+function appendTimelineSegment(segments: TimelineSegment[], start: Date, end: Date, state: TimelineSegment['state']) {
+  if (end <= start) return;
+  const previous = segments.at(-1);
+  if (previous?.state === state && previous.endAtUtc === start.toISOString()) {
+    previous.endAtUtc = end.toISOString();
+    return;
+  }
+  segments.push({ startAtUtc: start.toISOString(), endAtUtc: end.toISOString(), state });
+}
 
 /**
  * Pool-vehicle booking service (M4). Owns the accountability sub-loop
@@ -95,6 +118,7 @@ export class BookingService {
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
     private readonly scopeAuthorization: ScopeAuthorizationService,
+    private readonly consentTemplates: ConsentTemplateProvider,
   ) {}
 
   /** Creates a Draft booking (no number, reserves nothing) after buffer/duration checks. */
@@ -102,8 +126,36 @@ export class BookingService {
     input: CreateBooking,
     actorRef = 'system',
     principal?: Principal,
+    idempotencyKey?: string,
   ): Promise<BookingDto> {
-    if (principal) await this.assertCreateAuthority(input, principal);
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId) {
+      throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    }
+    const actorPersonId = actor.personId;
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = createHash('sha256').update(JSON.stringify(input)).digest('hex');
+    const prior = await this.repo.findCommand(
+      actor.organizationId,
+      actorPersonId,
+      'CREATE_DRAFT',
+      commandKey,
+    );
+    if (prior) {
+      if (prior.payloadHash !== payloadHash) {
+        throw new ConflictException({
+          title: 'Idempotency key was reused with a different payload',
+          reasons: ['booking-idempotency-key-reused'],
+        });
+      }
+      if (!prior.resultBookingId) {
+        throw new ConflictException({
+          title: 'Booking command is still in progress',
+          reasons: ['booking-command-in-progress'],
+        });
+      }
+      return this.getInternal(prior.resultBookingId);
+    }
     const pickup = new Date(input.pickupAtUtc);
     const ret = new Date(input.returnAtUtc);
     const windowReasons = validateWindow(pickup, ret, new Date());
@@ -118,10 +170,24 @@ export class BookingService {
         reasons: [`fk-violation:vehicle:${input.vehicleId}`],
       });
     }
-    if (!veh.bookingPoolFlag) {
+    await this.assertCreateAuthority(input, actor, veh.organizationId);
+    if (!isVehicleBookable(veh.lifecycleStatus, veh.bookingPoolFlag)) {
       throw new ConflictException({
         title: 'Vehicle not bookable',
         reasons: [BOOKING_REASON.vehicleNotBookable],
+      });
+    }
+    if (veh.assignmentModel === 'Dedicated' && !await this.repo.isWithinActiveBsdWindow(input.vehicleId, pickup, ret)) {
+      throw new ConflictException({ title: 'Dedicated Vehicle is outside its Pool return window', reasons: [BOOKING_REASON.vehicleUnavailable] });
+    }
+    if (
+      input.passengerCount !== undefined &&
+      veh.seatingCapacity !== null &&
+      input.passengerCount > veh.seatingCapacity
+    ) {
+      throw new ConflictException({
+        title: 'Vehicle capacity is insufficient',
+        reasons: [BOOKING_REASON.vehicleCapacityInsufficient],
       });
     }
 
@@ -137,15 +203,42 @@ export class BookingService {
       });
     }
     const reservation = applyBuffer(pickup, ret, buffer.minutes);
+    if (await this.repo.hasActiveOverlap(input.vehicleId, reservation.start, reservation.end)) {
+      throw new ConflictException({
+        title: 'Vehicle is no longer available',
+        reasons: [BOOKING_REASON.vehicleUnavailable],
+      });
+    }
 
     try {
       return await this.repo.transaction(async (tx) => {
+        const command = await this.repo.claimCommand(
+          {
+            organizationId: actor.organizationId,
+            actorPersonId,
+            commandType: 'CREATE_DRAFT',
+            idempotencyKey: commandKey,
+            payloadHash,
+          },
+          tx,
+        );
+        if (!command) {
+          throw new ConflictException({
+            title: 'Booking command is already being processed',
+            reasons: ['booking-command-in-progress'],
+          });
+        }
         const created = await this.repo.insert(
           {
             organizationId: decisionContext.organizationId,
             vehicleId: input.vehicleId,
             driverPersonId: input.driverPersonId,
             requestedByPersonId: input.requestedByPersonId,
+            beneficiaryPersonId:
+              input.requestedByPersonId === input.driverPersonId
+                ? input.driverPersonId
+                : null,
+            bookingScopeNodeId: decisionContext.scopeNodeId,
             status: 'Draft',
             pickupAtUtc: pickup,
             returnAtUtc: ret,
@@ -191,7 +284,9 @@ export class BookingService {
           },
           tx,
         );
-        return this.toDto(created);
+        const dto = this.toDto(created);
+        await this.repo.completeCommand(command.id, created.id, dto, tx);
+        return dto;
       });
     } catch (error) {
       throw toDbException(error);
@@ -204,13 +299,60 @@ export class BookingService {
    * runs first (denial logged, no override). The exclusion constraint fires here
    * on a concurrent overlap — rolling back consent + number together (409).
    */
-  async signConsent(id: string, input: SignConsent, actorRef = 'system'): Promise<BookingDto> {
+  async signConsent(
+    id: string,
+    input: SignConsent,
+    actorRef = 'system',
+    principal?: Principal,
+    idempotencyKey?: string,
+  ): Promise<BookingDto> {
     const existing = await this.require(id);
+    const actor = this.authenticatedPrincipal(principal);
+    await this.assertConsentAuthority(existing, actor);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = createHash('sha256')
+      .update(JSON.stringify({ bookingId: id, ...input }))
+      .digest('hex');
+    const prior = await this.repo.findCommand(
+      actor.organizationId,
+      actor.personId!,
+      'SIGN_CONSENT',
+      commandKey,
+    );
+    if (prior) {
+      if (prior.payloadHash !== payloadHash) {
+        throw new ConflictException({
+          title: 'Idempotency key was reused with a different payload',
+          reasons: ['booking-idempotency-key-reused'],
+        });
+      }
+      if (!prior.resultBookingId) {
+        throw new ConflictException({
+          title: 'Booking command is still in progress',
+          reasons: ['booking-command-in-progress'],
+        });
+      }
+      return this.getInternal(prior.resultBookingId);
+    }
     if (existing.status !== 'Draft') {
       throw new ConflictException({ title: 'Booking is not a draft', reasons: [BOOKING_REASON.notDraft] });
     }
     if (input.driverPersonId !== existing.driverPersonId) {
       throw new BadRequestException({ title: 'Consent driver mismatch', reasons: [BOOKING_REASON.driverMismatch] });
+    }
+    const expectedTemplate = await this.consentTemplates.current(actor.organizationId);
+    if (!expectedTemplate) {
+      throw new ConflictException({
+        title: 'Booking consent template is unavailable',
+        reasons: [BOOKING_REASON.consentTemplateUnavailable],
+      });
+    }
+    if (input.consentDocumentVersion !== expectedTemplate.version) {
+      throw new ConflictException({
+        title: 'Booking consent version changed',
+        reasons: [BOOKING_REASON.consentVersionChanged],
+        consent: expectedTemplate,
+      });
     }
 
     // Hard gate BEFORE reserving — zero bookings on expired documents. The gate
@@ -235,9 +377,53 @@ export class BookingService {
     }
 
     const veh = await this.repo.findVehicle(existing.vehicleId);
+    if (!veh || !isVehicleBookable(veh.lifecycleStatus, veh.bookingPoolFlag)) {
+      throw new ConflictException({
+        title: 'Vehicle not bookable',
+        reasons: [BOOKING_REASON.vehicleNotBookable],
+      });
+    }
     const bookingNumber = generateBookingNumber();
     try {
       return await this.repo.transaction(async (tx) => {
+        const effectiveTemplate = await this.consentTemplates.current(actor.organizationId);
+        if (!effectiveTemplate || effectiveTemplate.version !== input.consentDocumentVersion) {
+          throw new ConflictException({
+            title: 'Booking consent version changed',
+            reasons: [BOOKING_REASON.consentVersionChanged],
+            consent: effectiveTemplate,
+          });
+        }
+        const command = await this.repo.claimCommand(
+          {
+            organizationId: actor.organizationId,
+            actorPersonId: actor.personId!,
+            commandType: 'SIGN_CONSENT',
+            idempotencyKey: commandKey,
+            payloadHash,
+          },
+          tx,
+        );
+        if (!command) {
+          throw new ConflictException({
+            title: 'Booking command is already being processed',
+            reasons: ['booking-command-in-progress'],
+          });
+        }
+        const lockedBooking = await this.repo.findByIdForUpdate(existing.id, tx);
+        if (!lockedBooking || lockedBooking.status !== 'Draft') {
+          throw new ConflictException({ title: 'Booking state changed', reasons: [BOOKING_REASON.notDraft] });
+        }
+        const lockedVehicle = await this.repo.findVehicleForUpdate(existing.vehicleId, tx);
+        if (!lockedVehicle || !isVehicleBookable(lockedVehicle.lifecycleStatus, lockedVehicle.bookingPoolFlag)) {
+          throw new ConflictException({ title: 'Vehicle not bookable', reasons: [BOOKING_REASON.vehicleNotBookable] });
+        }
+        if (lockedVehicle.assignmentModel === 'Dedicated' && !await this.repo.isWithinActiveBsdWindow(existing.vehicleId, existing.reservationStart, existing.reservationEnd, tx)) {
+          throw new ConflictException({ title: 'Dedicated Vehicle is outside its Pool return window', reasons: [BOOKING_REASON.vehicleUnavailable] });
+        }
+        if (await this.repo.hasActiveOverlap(existing.vehicleId, existing.reservationStart, existing.reservationEnd, tx)) {
+          throw new ConflictException({ title: 'Vehicle is no longer available', reasons: [BOOKING_REASON.vehicleUnavailable] });
+        }
         const consent = await this.repo.insertConsent(
           {
             bookingId: existing.id,
@@ -247,7 +433,7 @@ export class BookingService {
             windowStart: existing.pickupAtUtc,
             windowEnd: existing.returnAtUtc,
             policyVersion: existing.policyVersion,
-            consentDocumentVersion: input.consentDocumentVersion,
+            consentDocumentVersion: effectiveTemplate.version,
             signatureRef: input.signatureRef ?? null,
             ip: input.ip ?? null,
             device: input.device ?? null,
@@ -285,7 +471,9 @@ export class BookingService {
           },
           tx,
         );
-        return this.toDto(reserved);
+        const dto = this.toDto(reserved);
+        await this.repo.completeCommand(command.id, reserved.id, dto, tx);
+        return dto;
       });
     } catch (error) {
       throw toDbException(error);
@@ -293,18 +481,25 @@ export class BookingService {
   }
 
   /** Routes a reserved booking to its approval chain (line manager / PDP chain). */
-  async submit(id: string, actorRef = 'system'): Promise<BookingDto> {
+  async submit(
+    id: string,
+    actorRef = 'system',
+    principal?: Principal,
+    idempotencyKey?: string,
+  ): Promise<BookingDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = this.commandPayloadHash(id, {});
+    const replay = await this.replayCommand(actor, 'SUBMIT', commandKey, payloadHash);
+    if (replay) return replay;
     const existing = await this.require(id);
+    await this.assertMutationAuthority(existing, actor);
     if (existing.status !== 'PendingApproval') {
       throw new ConflictException({ title: 'Booking is not reserved', reasons: [BOOKING_REASON.notReserved] });
     }
     if (!existing.consentRecordId) {
       throw new ConflictException({ title: 'Consent is required', reasons: [BOOKING_REASON.consentRequired] });
     }
-    if (existing.workflowInstanceId) {
-      return this.toDto(existing);
-    }
-
     const vehicle = await this.repo.findVehicle(existing.vehicleId);
     if (!vehicle) throw new BadRequestException({ title: 'Unknown vehicle', reasons: [`fk-violation:vehicle:${existing.vehicleId}`] });
     const decisionContext = await this.decisionContext(existing.vehicleId, vehicle.organizationId, existing.pickupAtUtc);
@@ -331,17 +526,53 @@ export class BookingService {
       });
     }
 
-    const view = await this.workflow.start({
-      workflowType: 'booking-approval',
-      subjectRef: `booking:${existing.id}`,
-      slaMinutes: 24 * 60,
-      steps: approvers.map((assigneePersonId) => ({ assigneePersonId })),
-    });
-
     try {
       return await this.repo.transaction(async (tx) => {
+        const command = await this.repo.claimCommand(
+          {
+            organizationId: actor.organizationId,
+            actorPersonId: actor.personId!,
+            commandType: 'SUBMIT',
+            idempotencyKey: commandKey,
+            payloadHash,
+          },
+          tx,
+        );
+        if (!command) throw this.commandInProgress();
+        const locked = await this.repo.findByIdForUpdate(existing.id, tx);
+        if (!locked) {
+          throw new NotFoundException({ title: 'Unknown booking', reasons: [`booking-not-found:${id}`] });
+        }
+        if (locked.workflowInstanceId) {
+          const dto = this.toDto(locked);
+          await this.repo.completeCommand(command.id, locked.id, dto, tx);
+          return dto;
+        }
+        if (locked.status !== 'PendingApproval' || !locked.consentRecordId) {
+          throw new ConflictException({ title: 'Booking is not reserved', reasons: [BOOKING_REASON.notReserved] });
+        }
+        const view = await this.workflow.start(
+          {
+            workflowType: 'booking-approval',
+            subjectRef: `booking:${locked.id}`,
+            slaMinutes: 24 * 60,
+            steps: approvers.map((assigneePersonId) => ({ assigneePersonId })),
+          },
+          tx,
+        );
+        await this.repo.insertApprovalRoute({
+          bookingId: locked.id,
+          workflowInstanceId: view.id,
+          definitionDeploymentId: view.definitionDeploymentId,
+          steps: view.steps.map((step) => ({
+            id: step.id,
+            assigneePersonId: step.assigneePersonId,
+            sequence: step.sequence,
+            slaDueAt: step.slaDueAt ? new Date(step.slaDueAt) : null,
+          })),
+        }, tx);
         const updated = await this.repo.update(
-          existing.id,
+          locked.id,
           {
             workflowInstanceId: view.id,
             policyProvenance: this.mergeProvenance(
@@ -353,14 +584,16 @@ export class BookingService {
           tx,
         );
         await this.repo.insertEvent(
-          { bookingId: existing.id, eventType: 'SubmittedForApproval', detail: { workflowId: view.id, approvers }, actorRef },
+          { bookingId: locked.id, eventType: 'SubmittedForApproval', detail: { workflowId: view.id, approvers }, actorRef },
           tx,
         );
         await this.audit.record(
-          { actorRef, action: 'BOOKING_SUBMITTED', entityRef: `booking:${existing.id}`, after: { workflowId: view.id } },
+          { actorRef, action: 'BOOKING_SUBMITTED', entityRef: `booking:${locked.id}`, after: { workflowId: view.id } },
           tx,
         );
-        return this.toDto(updated);
+        const dto = this.toDto(updated);
+        await this.repo.completeCommand(command.id, updated.id, dto, tx);
+        return dto;
       });
     } catch (error) {
       throw toDbException(error);
@@ -368,7 +601,23 @@ export class BookingService {
   }
 
   /** Records an approver decision via the workflow engine and reflects it on the booking. */
-  async decide(id: string, input: DecideBooking): Promise<BookingDto> {
+  async decide(id: string, input: DecideBooking, principal?: Principal, idempotencyKey?: string): Promise<BookingDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId || actor.personId !== input.actorPersonId) {
+      throw new ForbiddenException({ title: 'Approval actor mismatch', reasons: ['approval-actor-mismatch'] });
+    }
+    const actorPersonId = actor.personId;
+    if (actor.roles.length > 0 && actor.roles.every((role) => role.role === 'SystemAdmin')) {
+      throw new ForbiddenException({ title: 'System Administrator cannot approve operational Bookings', reasons: ['booking-system-admin-operational-denied'] });
+    }
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = this.commandPayloadHash(id, input);
+    const prior = await this.repo.findDecisionCommand(actor.organizationId, actorPersonId, commandKey);
+    if (prior) {
+      if (prior.requestSha256 !== payloadHash) throw new ConflictException({ title: 'Idempotency key was reused', reasons: ['booking-idempotency-key-reused'] });
+      if (!prior.resultBookingId) throw this.commandInProgress();
+      return this.getInternal(prior.resultBookingId);
+    }
     const existing = await this.require(id);
     if (input.actorPersonId === existing.requestedByPersonId) {
       throw new ForbiddenException({ title: 'Self-approval is not permitted', reasons: [BOOKING_REASON.sodSelfApproval] });
@@ -377,62 +626,83 @@ export class BookingService {
       throw new ConflictException({ title: 'Booking is not submitted', reasons: [BOOKING_REASON.notReserved] });
     }
 
-    const view = await this.workflow.decide(existing.workflowInstanceId, {
-      actorPersonId: input.actorPersonId,
-      decision: input.decision,
-      reason: input.reason,
-      onBehalfOfPersonId: input.onBehalfOfPersonId,
-    });
-
-    let next: BookingStatus = existing.status;
-    let voidConsent = false;
-    if (view.status === 'Approved') {
-      next = 'Approved';
-    } else if (view.status === 'Rejected') {
-      next = 'Declined';
-    } else if (view.status === 'ModificationRequested') {
-      next = 'Draft';
-      voidConsent = true;
-    }
-
+    const currentStep = await this.repo.findCurrentWorkflowStep(existing.workflowInstanceId);
+    if (!currentStep) throw new ConflictException({ title: 'Workflow step missing', reasons: ['workflow-current-step-missing'] });
     try {
       return await this.repo.transaction(async (tx) => {
+        const command = await this.repo.claimDecisionCommand({
+          workflowInstanceId: existing.workflowInstanceId!,
+          workflowStepId: currentStep.id,
+          idempotencyKey: commandKey,
+          requestSha256: payloadHash,
+          decision: input.decision,
+          principalPersonId: actorPersonId,
+          actingForPersonId: input.onBehalfOfPersonId ?? null,
+        }, tx);
+        if (!command) {
+          const raced = await this.repo.findDecisionCommand(actor.organizationId, actorPersonId, commandKey, tx);
+          if (raced?.requestSha256 !== payloadHash) throw new ConflictException({ title: 'Idempotency key was reused', reasons: ['booking-idempotency-key-reused'] });
+          if (!raced?.resultBookingId) throw this.commandInProgress();
+          return this.getInternal(raced.resultBookingId);
+        }
+        const locked = await this.repo.findByIdForUpdate(id, tx);
+        if (!locked || locked.revision !== input.expectedBookingVersion) {
+          throw new ConflictException({ title: 'Booking state changed', reasons: ['booking-state-conflict'] });
+        }
+        if (locked.requestedByPersonId === actorPersonId) {
+          throw new ForbiddenException({ title: 'Self-approval is not permitted', reasons: [BOOKING_REASON.sodSelfApproval] });
+        }
+        const decisionResult = await this.workflow.decideInTransaction(locked.workflowInstanceId!, {
+          actorPersonId,
+          decision: input.decision,
+          reason: input.reason,
+          onBehalfOfPersonId: input.onBehalfOfPersonId,
+          expectedStepVersion: input.expectedStepVersion,
+        }, tx);
+        const view = decisionResult.view;
+        let next: BookingStatus = locked.status;
+        let voidConsent = false;
+        if (view.status === 'Approved') next = 'Approved';
+        else if (view.status === 'Rejected') next = 'Declined';
+        else if (view.status === 'ModificationRequested') { next = 'Draft'; voidConsent = true; }
         const patch: Partial<BookingRow> = { status: next };
         if (voidConsent) {
           patch.consentRecordId = null;
-          // Returning to Draft ends this approval cycle — clear the workflow so a
-          // re-consent + re-submit routes a FRESH chain (submit is idempotent on
-          // workflowInstanceId).
+          // Returning to Draft ends this approval cycle so re-consent and a new
+          // submit command can route a fresh chain.
           patch.workflowInstanceId = null;
-          if (existing.consentRecordId) {
+          if (locked.consentRecordId) {
             await this.repo.insertConsentEvent(
-              { bookingId: existing.id, consentRecordId: existing.consentRecordId, eventType: 'Voided', reason: 'modification-requested' },
+              { bookingId: locked.id, consentRecordId: locked.consentRecordId, eventType: 'Voided', reason: 'modification-requested' },
               tx,
             );
           }
         }
-        const updated = await this.repo.update(existing.id, patch, tx);
+        const updated = await this.repo.updateAtRevision(locked.id, input.expectedBookingVersion, patch, tx);
+        if (!updated) throw new ConflictException({ title: 'Booking state changed', reasons: ['booking-state-conflict'] });
         await this.repo.insertEvent(
-          { bookingId: existing.id, eventType: `Decision:${input.decision}`, detail: { workflowStatus: view.status }, actorRef: input.actorPersonId },
+          { bookingId: locked.id, eventType: `Decision:${input.decision}`, detail: { workflowStatus: view.status }, actorRef: actorPersonId },
           tx,
         );
         await this.audit.record(
-          { actorRef: input.actorPersonId, action: 'BOOKING_DECISION', entityRef: `booking:${existing.id}`, reason: input.reason, after: { decision: input.decision, status: next } },
+          { actorRef: actorPersonId, action: 'BOOKING_DECISION', entityRef: `booking:${locked.id}`, reason: input.reason, after: { decision: input.decision, status: next } },
           tx,
         );
         if (next === 'Approved') {
           await this.outbox.enqueue(
-            { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingConfirmed', payload: { bookingId: existing.id, bookingNumber: existing.bookingNumber } },
+            { aggregateType: 'booking', aggregateId: locked.id, eventType: 'BookingConfirmed', payload: { bookingId: locked.id, bookingNumber: locked.bookingNumber } },
             tx,
           );
         }
         if (next === 'Declined') {
           await this.outbox.enqueue(
-            { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingCancelled', payload: { bookingId: existing.id, reason: 'declined' } },
+            { aggregateType: 'booking', aggregateId: locked.id, eventType: 'BookingCancelled', payload: { bookingId: locked.id, reason: 'declined' } },
             tx,
           );
         }
-        return this.toDto(updated);
+        const dto = this.toDto(updated);
+        await this.repo.completeDecisionCommand(command.id, updated.id, dto, tx);
+        return dto;
       });
     } catch (error) {
       throw toDbException(error);
@@ -440,8 +710,20 @@ export class BookingService {
   }
 
   /** Requester modification; a material change beyond tolerance voids consent (re-consent). */
-  async modify(id: string, input: ModifyBooking, actorRef = 'system'): Promise<BookingDto> {
+  async modify(
+    id: string,
+    input: ModifyBooking,
+    actorRef = 'system',
+    principal?: Principal,
+    idempotencyKey?: string,
+  ): Promise<BookingDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = this.commandPayloadHash(id, input);
+    const replay = await this.replayCommand(actor, 'MODIFY', commandKey, payloadHash);
+    if (replay) return replay;
     const existing = await this.require(id);
+    await this.assertMutationAuthority(existing, actor);
     if (existing.status !== 'Draft' && existing.status !== 'PendingApproval') {
       throw new ConflictException({ title: 'Booking cannot be modified', reasons: [BOOKING_REASON.notDraft] });
     }
@@ -457,7 +739,7 @@ export class BookingService {
     if (!veh) {
       throw new BadRequestException({ title: 'Unknown vehicle', reasons: [`fk-violation:vehicle:${nextVehicleId}`] });
     }
-    if (!veh.bookingPoolFlag) {
+    if (!isVehicleBookable(veh.lifecycleStatus, veh.bookingPoolFlag)) {
       throw new ConflictException({ title: 'Vehicle not bookable', reasons: [BOOKING_REASON.vehicleNotBookable] });
     }
 
@@ -481,6 +763,17 @@ export class BookingService {
 
     try {
       return await this.repo.transaction(async (tx) => {
+        const command = await this.repo.claimCommand(
+          {
+            organizationId: actor.organizationId,
+            actorPersonId: actor.personId!,
+            commandType: 'MODIFY',
+            idempotencyKey: commandKey,
+            payloadHash,
+          },
+          tx,
+        );
+        if (!command) throw this.commandInProgress();
         const patch: Partial<BookingRow> = {
           vehicleId: nextVehicleId,
           pickupAtUtc: nextPickup,
@@ -510,7 +803,13 @@ export class BookingService {
             );
           }
         }
-        const updated = await this.repo.update(existing.id, patch, tx);
+        const updated = await this.repo.updateAtRevision(
+          existing.id,
+          input.expectedRevision,
+          patch,
+          tx,
+        );
+        if (!updated) throw this.revisionConflict(input.expectedRevision);
         await Promise.all([
           this.repo.insertPolicyDecision(
             { organizationId: updated.organizationId, bookingId: updated.id, decisionKey: 'booking-buffer', correlationId, provenance: buffer.provenance },
@@ -533,7 +832,9 @@ export class BookingService {
           { actorRef, action: 'BOOKING_MODIFIED', entityRef: `booking:${existing.id}`, after: { vehicleId: nextVehicleId, needsReConsent } },
           tx,
         );
-        return this.toDto(updated);
+        const dto = this.toDto(updated);
+        await this.repo.completeCommand(command.id, updated.id, dto, tx);
+        return dto;
       });
     } catch (error) {
       throw toDbException(error);
@@ -541,8 +842,20 @@ export class BookingService {
   }
 
   /** Mid-trip extension; a downstream conflict raises 409 via the exclusion (FR-BOOK-18). */
-  async extend(id: string, input: ExtendBooking, actorRef = 'system'): Promise<BookingDto> {
+  async extend(
+    id: string,
+    input: ExtendBooking,
+    actorRef = 'system',
+    principal?: Principal,
+    idempotencyKey?: string,
+  ): Promise<BookingDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = this.commandPayloadHash(id, input);
+    const replay = await this.replayCommand(actor, 'EXTEND', commandKey, payloadHash);
+    if (replay) return replay;
     const existing = await this.require(id);
+    await this.assertMutationAuthority(existing, actor);
     if (existing.status !== 'Approved' && existing.status !== 'Active') {
       throw new ConflictException({ title: 'Booking cannot be extended', reasons: [BOOKING_REASON.notReserved] });
     }
@@ -553,7 +866,24 @@ export class BookingService {
     const reservationEnd = new Date(newRet.getTime() + existing.bufferMinutes * 60_000);
     try {
       return await this.repo.transaction(async (tx) => {
-        const updated = await this.repo.update(existing.id, { returnAtUtc: newRet, reservationEnd }, tx);
+        const command = await this.repo.claimCommand(
+          {
+            organizationId: actor.organizationId,
+            actorPersonId: actor.personId!,
+            commandType: 'EXTEND',
+            idempotencyKey: commandKey,
+            payloadHash,
+          },
+          tx,
+        );
+        if (!command) throw this.commandInProgress();
+        const updated = await this.repo.updateAtRevision(
+          existing.id,
+          input.expectedRevision,
+          { returnAtUtc: newRet, reservationEnd },
+          tx,
+        );
+        if (!updated) throw this.revisionConflict(input.expectedRevision);
         await this.repo.insertEvent(
           { bookingId: existing.id, eventType: 'Extended', detail: { newReturnAtUtc: newRet.toISOString() }, actorRef },
           tx,
@@ -566,7 +896,9 @@ export class BookingService {
           { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingChanged', payload: { change: 'extended', bookingId: existing.id } },
           tx,
         );
-        return this.toDto(updated);
+        const dto = this.toDto(updated);
+        await this.repo.completeCommand(command.id, updated.id, dto, tx);
+        return dto;
       });
     } catch (error) {
       throw toDbException(error);
@@ -574,13 +906,49 @@ export class BookingService {
   }
 
   /** Cancels a booking, releasing its reservation. */
-  async cancel(id: string, input: CancelBooking, actorRef = 'system'): Promise<BookingDto> {
+  async cancel(
+    id: string,
+    input: CancelBooking,
+    actorRef = 'system',
+    principal?: Principal,
+    idempotencyKey?: string,
+  ): Promise<BookingDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const payloadHash = this.commandPayloadHash(id, input);
+    const replay = await this.replayCommand(actor, 'CANCEL', commandKey, payloadHash);
+    if (replay) return replay;
     const existing = await this.require(id);
+    await this.assertMutationAuthority(existing, actor);
     if (TERMINAL.has(existing.status)) {
       throw new ConflictException({ title: 'Booking is already terminal', reasons: [BOOKING_REASON.terminal] });
     }
+    if (existing.status === 'Active') {
+      throw new ConflictException({ title: 'Active custody must be returned through Handover', reasons: [BOOKING_REASON.activeRequiresReturn] });
+    }
     return this.repo.transaction(async (tx) => {
-      const updated = await this.repo.update(existing.id, { status: 'Cancelled' }, tx);
+      const command = await this.repo.claimCommand(
+        {
+          organizationId: actor.organizationId,
+          actorPersonId: actor.personId!,
+          commandType: 'CANCEL',
+          idempotencyKey: commandKey,
+          payloadHash,
+        },
+        tx,
+      );
+      if (!command) throw this.commandInProgress();
+      const locked = await this.repo.findByIdForUpdate(existing.id, tx);
+      if (!locked || locked.revision !== input.expectedRevision || TERMINAL.has(locked.status)) {
+        throw new ConflictException({ title: 'Booking state changed', reasons: ['booking-state-conflict'] });
+      }
+      const updated = await this.repo.updateAtRevision(
+        existing.id,
+        input.expectedRevision,
+        { status: 'Cancelled' },
+        tx,
+      );
+      if (!updated) throw this.revisionConflict(input.expectedRevision);
       await this.repo.insertEvent(
         { bookingId: existing.id, eventType: 'Cancelled', detail: { reason: input.reason ?? null }, actorRef },
         tx,
@@ -593,44 +961,52 @@ export class BookingService {
         { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingCancelled', payload: { bookingId: existing.id, reason: input.reason ?? 'cancelled' } },
         tx,
       );
-      return this.toDto(updated);
+      const dto = this.toDto(updated);
+      await this.repo.completeCommand(command.id, updated.id, dto, tx);
+      return dto;
     });
   }
 
   /** Marks an Approved booking as picked up (→ Active) — driven by the handover event. */
   async markPickedUp(id: string, actorRef = 'system'): Promise<BookingDto> {
-    const existing = await this.require(id);
-    if (existing.status !== 'Approved') {
+    return this.repo.transaction((tx) => this.markPickedUpInTransaction(id, actorRef, tx));
+  }
+
+  /** Marks an Approved Booking Active inside an owning cross-domain transaction. */
+  async markPickedUpInTransaction(id: string, actorRef: string, tx: DrizzleDatabase): Promise<BookingDto> {
+    const existing = await this.repo.findByIdForUpdate(id, tx);
+    if (!existing || existing.status !== 'Approved') {
       throw new ConflictException({ title: 'Booking is not approved for handover', reasons: [BOOKING_REASON.notReserved] });
     }
-    return this.repo.transaction(async (tx) => {
-      const updated = await this.repo.update(existing.id, { status: 'Active' }, tx);
-      await this.repo.insertEvent({ bookingId: existing.id, eventType: 'PickedUp', actorRef }, tx);
-      await this.audit.record({ actorRef, action: 'BOOKING_PICKED_UP', entityRef: `booking:${existing.id}` }, tx);
-      await this.outbox.enqueue(
-        { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingChanged', payload: { change: 'picked-up', bookingId: existing.id } },
-        tx,
-      );
-      return this.toDto(updated);
-    });
+    const updated = await this.repo.update(existing.id, { status: 'Active' }, tx);
+    await this.repo.insertEvent({ bookingId: existing.id, eventType: 'PickedUp', actorRef }, tx);
+    await this.audit.record({ actorRef, action: 'BOOKING_PICKED_UP', entityRef: `booking:${existing.id}` }, tx);
+    await this.outbox.enqueue(
+      { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingChanged', payload: { change: 'picked-up', bookingId: existing.id } },
+      tx,
+    );
+    return this.toDto(updated);
   }
 
   /** Marks an Active booking as returned (→ Completed) — driven by the return event. */
   async markReturned(id: string, actorRef = 'system', lateReturn = false): Promise<BookingDto> {
-    const existing = await this.require(id);
-    if (existing.status !== 'Active') {
+    return this.repo.transaction((tx) => this.markReturnedInTransaction(id, actorRef, lateReturn, tx));
+  }
+
+  /** Marks an Active Booking Completed inside an owning cross-domain transaction. */
+  async markReturnedInTransaction(id: string, actorRef: string, lateReturn: boolean, tx: DrizzleDatabase): Promise<BookingDto> {
+    const existing = await this.repo.findByIdForUpdate(id, tx);
+    if (!existing || existing.status !== 'Active') {
       throw new ConflictException({ title: 'Booking is not active for return', reasons: [BOOKING_REASON.notReserved] });
     }
-    return this.repo.transaction(async (tx) => {
-      const updated = await this.repo.update(existing.id, { status: 'Completed' }, tx);
-      await this.repo.insertEvent({ bookingId: existing.id, eventType: 'Returned', detail: { lateReturn }, actorRef }, tx);
-      await this.audit.record({ actorRef, action: 'BOOKING_RETURNED', entityRef: `booking:${existing.id}`, after: { lateReturn } }, tx);
-      await this.outbox.enqueue(
-        { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingChanged', payload: { change: 'returned', bookingId: existing.id, lateReturn } },
-        tx,
-      );
-      return this.toDto(updated);
-    });
+    const updated = await this.repo.update(existing.id, { status: 'Completed' }, tx);
+    await this.repo.insertEvent({ bookingId: existing.id, eventType: 'Returned', detail: { lateReturn }, actorRef }, tx);
+    await this.audit.record({ actorRef, action: 'BOOKING_RETURNED', entityRef: `booking:${existing.id}`, after: { lateReturn } }, tx);
+    await this.outbox.enqueue(
+      { aggregateType: 'booking', aggregateId: existing.id, eventType: 'BookingChanged', payload: { change: 'returned', bookingId: existing.id, lateReturn } },
+      tx,
+    );
+    return this.toDto(updated);
   }
 
   /** The booking active for a vehicle at an instant — the telematics trip-attach port (P1B-R1-1). */
@@ -648,6 +1024,12 @@ export class BookingService {
     query: AvailabilityQuery,
     principal?: Principal,
   ): Promise<AvailableVehicleDto[]> {
+    if (principal && !principal.personId) {
+      throw new ForbiddenException({
+        title: 'User not linked',
+        reasons: ['user-not-linked-to-person'],
+      });
+    }
     const start = new Date(query.pickupAtUtc);
     const end = new Date(query.returnAtUtc);
     const windowReasons = validateWindow(start, end, new Date());
@@ -666,11 +1048,69 @@ export class BookingService {
     return rows.map((r) => ({
       vehicleId: r.vehicleId,
       plate: r.plate,
+      makeCode: r.makeCode,
+      modelCode: r.modelCode,
       bodyTypeCode: r.bodyTypeCode,
       useCategoryCode: r.useCategoryCode,
       seatingCapacity: r.seatingCapacity,
       fuelTypeCode: r.fuelTypeCode,
+      locationName: r.locationName,
     }));
+  }
+
+  /** Returns scoped pool occupancy without exposing another person's Booking facts. */
+  async availabilityTimeline(
+    query: AvailabilityTimelineQuery,
+    principal: Principal,
+  ): Promise<AvailabilityTimelineDto> {
+    if (!principal.personId) {
+      throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    }
+    const start = new Date(query.startAtUtc);
+    const end = new Date(query.endAtUtc);
+    const authorizedNodeIds = await this.scopeAuthorization.authorizedDescendantIds(principal);
+    const source = await this.repo.listAvailabilityTimeline(
+      start,
+      end,
+      principal.personId,
+      authorizedNodeIds,
+    );
+    const grouped = new Map<string, typeof source>();
+    for (const row of source) {
+      const rows = grouped.get(row.vehicleId) ?? [];
+      rows.push(row);
+      grouped.set(row.vehicleId, rows);
+    }
+    const rows = [...grouped.values()].map((vehicleRows) => {
+      const first = vehicleRows[0]!;
+      const segments: TimelineSegment[] = [];
+      if (!isVehicleBookable(first.lifecycleStatus, first.bookingPoolFlag)) {
+        appendTimelineSegment(segments, start, end, 'UNAVAILABLE');
+      } else {
+        let cursor = start;
+        for (const reservation of vehicleRows) {
+          if (!reservation.reservationStart || !reservation.reservationEnd) continue;
+          const reservationStart = new Date(Math.max(start.getTime(), reservation.reservationStart.getTime()));
+          const reservationEnd = new Date(Math.min(end.getTime(), reservation.reservationEnd.getTime()));
+          appendTimelineSegment(segments, cursor, reservationStart, 'OPEN');
+          appendTimelineSegment(segments, reservationStart, reservationEnd, reservation.isOwn ? 'OWN' : 'UNAVAILABLE');
+          if (reservationEnd > cursor) cursor = reservationEnd;
+        }
+        appendTimelineSegment(segments, cursor, end, 'OPEN');
+      }
+      return {
+        vehicleId: first.vehicleId,
+        plate: first.plate,
+        makeCode: first.makeCode,
+        modelCode: first.modelCode,
+        bodyTypeCode: first.bodyTypeCode,
+        seatingCapacity: first.seatingCapacity,
+        fuelTypeCode: first.fuelTypeCode,
+        locationName: first.locationName,
+        segments,
+      };
+    });
+    return { startAtUtc: start.toISOString(), endAtUtc: end.toISOString(), rows };
   }
 
   /** Active people the caller may select as requester/driver for a booking. */
@@ -705,22 +1145,452 @@ export class BookingService {
         isProfessionalDriver: person.isProfessionalDriver,
         isSelf,
       });
+      if (result.length === BOOKING_PEOPLE_LIMIT) break;
     }
     return result;
   }
 
-  /** Returns a booking by id. */
-  async get(id: string): Promise<BookingDto> {
-    return this.toDto(await this.require(id));
+  /** Returns the caller's directly assigned or actively delegated approval tasks. */
+  async approvalWorklist(principal: Principal): Promise<BookingApprovalWorkItemDto[]> {
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId) throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    const rows = await this.repo.listApprovalWorklist(actor.personId);
+    return rows.map((row) => ({
+      bookingId: row.bookingId,
+      bookingNumber: row.bookingNumber!,
+      requesterName: row.requesterName,
+      vehicle: { plate: row.plate, makeCode: row.makeCode, modelCode: row.modelCode },
+      pickupAtUtc: row.pickupAtUtc.toISOString(),
+      returnAtUtc: row.returnAtUtc.toISOString(),
+      purpose: row.purpose,
+      passengerCount: row.passengerCount,
+      consentVersion: row.consentVersion,
+      workflowStepId: row.workflowStepId,
+      expectedBookingVersion: row.bookingVersion,
+      expectedStepVersion: row.stepVersion,
+      dueAtUtc: row.dueAtUtc?.toISOString() ?? null,
+      delegated: row.delegated,
+      evidence: { eligibility: 'VERIFIED_AT_CONSENT', consent: 'SIGNED', reservation: 'HELD', forecast: 'NOT_AVAILABLE' },
+    }));
   }
 
-  /** The append-only event log for a booking. */
-  async events(id: string) {
-    await this.require(id);
+  /** Returns the scoped read-only Fleet preparation queue. */
+  async preparationWorklist(principal: Principal): Promise<BookingPreparationItemDto[]> {
+    const actor = this.authenticatedPrincipal(principal);
+    const allowed = actor.roles.some((role) => ON_BEHALF_ROLES.includes(role.role as (typeof ON_BEHALF_ROLES)[number]));
+    if (!allowed) throw new ForbiddenException({ title: 'Fleet preparation role required', reasons: ['booking-preparation-role-required'] });
+    const scopes = await this.scopeAuthorization.authorizedDescendantIds(actor);
+    const rows = await this.repo.listPreparationWorklist(scopes);
+    return rows.map((row) => ({ ...row, bookingNumber: row.bookingNumber!, pickupAtUtc: row.pickupAtUtc.toISOString(), returnAtUtc: row.returnAtUtc.toISOString(), readiness: 'AWAITING_HANDOVER' }));
+  }
+
+  /** Returns only the authenticated person's own requested/driver Bookings. */
+  async myBookings(principal: Principal): Promise<MyBookingDto[]> {
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId) throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    const rows = await this.repo.listOwnBookings(actor.personId);
+    return rows.map((row) => ({
+      ...this.toDto(row.booking),
+      vehicle: {
+        plate: row.plate,
+        makeCode: row.makeCode,
+        modelCode: row.modelCode,
+        bodyTypeCode: row.bodyTypeCode,
+        fuelTypeCode: row.fuelTypeCode,
+        seatingCapacity: row.seatingCapacity,
+      },
+      scopeName: row.scopeName,
+      capabilities: {
+        consent: row.booking.status === 'Draft',
+        modify: row.booking.status === 'Draft' || row.booking.status === 'PendingApproval',
+        extend: row.booking.status === 'Approved' || row.booking.status === 'Active',
+        cancel: ['Draft', 'PendingApproval', 'Approved'].includes(row.booking.status),
+        returnVehicle: row.booking.status === 'Active',
+      },
+    }));
+  }
+
+  /** Returns server-authoritative Booking modes, defaults and dependency readiness. */
+  async context(principal: Principal): Promise<BookingContextDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId) {
+      throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    }
+    const people = await this.bookablePeople(actor);
+    const self = people.find((person) => person.isSelf);
+    const selfEnabled = Boolean(
+      self && await this.scopeAuthorization.canRolesAtScope(
+        actor,
+        ['Employee'],
+        self.homeScopeNodeId,
+      ),
+    );
+    const onBehalfEnabled = people.some((person) => !person.isSelf);
+    const consentTemplate = await this.consentTemplates.current(actor.organizationId);
+    return {
+      actor: {
+        personId: actor.personId,
+        fullName: self?.fullName ?? actor.email ?? actor.personId,
+        email: actor.email,
+        roles: [...new Set(actor.roles.map((assignment) => assignment.role))],
+      },
+      modes: {
+        self: {
+          enabled: selfEnabled,
+          blockingReasons: selfEnabled ? [] : ['booking-self-scope-not-authorized'],
+        },
+        onBehalf: {
+          enabled: onBehalfEnabled,
+          blockingReasons: onBehalfEnabled ? [] : [BOOKING_REASON.onBehalfNotAllowed],
+        },
+        emergency: {
+          enabled: false,
+          blockingReasons: ['booking-emergency-mode-not-approved'],
+        },
+      },
+      defaults: {
+        requestedByPersonId: actor.personId,
+        driverPersonId: actor.personId,
+        scopeNodeId: self?.homeScopeNodeId ?? null,
+        scopeName: self?.homeScopeName ?? null,
+      },
+      consent: {
+        status: consentTemplate ? 'AVAILABLE' : 'PENDING_APPROVAL',
+        version: consentTemplate?.version ?? null,
+        contentHash: consentTemplate?.contentHash ?? null,
+        effectiveAtUtc: consentTemplate?.effectiveAtUtc ?? null,
+        content: consentTemplate?.content ?? null,
+      },
+      dependencies: [
+        { key: 'vehicleAvailability', status: 'AVAILABLE' },
+        { key: 'eligibility', status: 'AVAILABLE' },
+        { key: 'consentTemplate', status: consentTemplate ? 'AVAILABLE' : 'PENDING_APPROVAL' },
+      ],
+    };
+  }
+
+  /** Returns a booking by id when the caller owns, drives or manages it. */
+  async get(id: string, principal?: Principal): Promise<BookingDto> {
+    const booking = await this.require(id);
+    await this.assertReadAuthority(booking, this.authenticatedPrincipal(principal));
+    return this.toDto(booking);
+  }
+
+  /** Returns the append-only event log when the caller may read the booking. */
+  async events(id: string, principal?: Principal) {
+    const booking = await this.require(id);
+    await this.assertReadAuthority(booking, this.authenticatedPrincipal(principal));
     return this.repo.listEvents(id);
   }
 
+  /** Returns Booking state to trusted in-process lifecycle orchestration. */
+  async getInternal(id: string): Promise<BookingDto> {
+    return this.toDto(await this.require(id));
+  }
+
   // ---- internals -------------------------------------------------------------
+
+  private async assertCreateAuthority(
+    input: CreateBooking,
+    principal: Principal,
+    vehicleOrganizationId: string,
+  ): Promise<void> {
+    if (!principal.personId) {
+      throw new ForbiddenException({
+        title: 'User not linked',
+        reasons: ['user-not-linked-to-person'],
+      });
+    }
+    if (vehicleOrganizationId !== principal.organizationId) {
+      throw new ForbiddenException({
+        title: 'Booking organization is not authorized',
+        reasons: ['booking-organization-not-authorized'],
+      });
+    }
+
+    const [requester, driver, vehicleScopeNodeId] = await Promise.all([
+      this.repo.findPersonBookingProfile(input.requestedByPersonId),
+      this.repo.findPersonBookingProfile(input.driverPersonId),
+      this.repo.findVehicleScope(input.vehicleId),
+    ]);
+    const requireActiveProfile = (
+      profile: typeof requester,
+      personId: string,
+    ): NonNullable<typeof requester> & { homeScopeNodeId: string } => {
+      if (!profile || profile.employmentStatus !== 'Active') {
+        throw new ForbiddenException({
+          title: 'Booking person is not active',
+          reasons: [`${BOOKING_REASON.personInactive}:${personId}`],
+        });
+      }
+      if (profile.organizationId !== principal.organizationId) {
+        throw new ForbiddenException({
+          title: 'Booking person organization is not authorized',
+          reasons: [`booking-person-organization-not-authorized:${personId}`],
+        });
+      }
+      if (!profile.homeScopeNodeId) {
+        throw new ForbiddenException({
+          title: 'Booking person has no authorized home scope',
+          reasons: [`${BOOKING_REASON.personScopeMissing}:${personId}`],
+        });
+      }
+      return profile as NonNullable<typeof requester> & {
+        homeScopeNodeId: string;
+      };
+    };
+    const activeRequester = requireActiveProfile(requester, input.requestedByPersonId);
+    const activeDriver = requireActiveProfile(driver, input.driverPersonId);
+    if (!vehicleScopeNodeId) {
+      throw new ForbiddenException({
+        title: 'Vehicle has no authorized hierarchy scope',
+        reasons: [`vehicle-scope-missing:${input.vehicleId}`],
+      });
+    }
+
+    const selfBooking =
+      input.requestedByPersonId === principal.personId &&
+      input.driverPersonId === principal.personId;
+    if (selfBooking) {
+      await this.scopeAuthorization.assertRolesAtScope(
+        principal,
+        ['Employee'],
+        vehicleScopeNodeId,
+      );
+      return;
+    }
+
+    const canManage = principal.roles.some((assignment) =>
+      ON_BEHALF_ROLES.includes(
+        assignment.role as (typeof ON_BEHALF_ROLES)[number],
+      ),
+    );
+    if (!canManage) {
+      throw new ForbiddenException({
+        title: 'Booking on behalf is not authorized',
+        reasons: [BOOKING_REASON.onBehalfNotAllowed],
+      });
+    }
+    await Promise.all([
+      this.scopeAuthorization.assertRolesAtScope(
+        principal,
+        ON_BEHALF_ROLES,
+        activeRequester.homeScopeNodeId,
+      ),
+      this.scopeAuthorization.assertRolesAtScope(
+        principal,
+        ON_BEHALF_ROLES,
+        activeDriver.homeScopeNodeId,
+      ),
+      this.scopeAuthorization.assertRolesAtScope(
+        principal,
+        ON_BEHALF_ROLES,
+        vehicleScopeNodeId,
+      ),
+    ]);
+  }
+
+  private async assertMutationAuthority(
+    booking: BookingRow,
+    principal: Principal,
+  ): Promise<void> {
+    if (!principal.personId) {
+      throw new ForbiddenException({
+        title: 'User not linked',
+        reasons: ['user-not-linked-to-person'],
+      });
+    }
+    if (booking.organizationId !== principal.organizationId) {
+      throw new ForbiddenException({
+        title: 'Booking organization is not authorized',
+        reasons: ['booking-organization-not-authorized'],
+      });
+    }
+
+    const vehicleScopeNodeId = await this.repo.findVehicleScope(booking.vehicleId);
+    if (!vehicleScopeNodeId) {
+      throw new ForbiddenException({
+        title: 'Vehicle has no authorized hierarchy scope',
+        reasons: [`vehicle-scope-missing:${booking.vehicleId}`],
+      });
+    }
+    if (booking.requestedByPersonId === principal.personId) {
+      await this.scopeAuthorization.assertRolesAtScope(
+        principal,
+        ['Employee'],
+        vehicleScopeNodeId,
+      );
+      return;
+    }
+
+    const canManage = principal.roles.some((assignment) =>
+      ON_BEHALF_ROLES.includes(
+        assignment.role as (typeof ON_BEHALF_ROLES)[number],
+      ),
+    );
+    if (!canManage) {
+      throw new ForbiddenException({
+        title: 'Booking mutation is not authorized',
+        reasons: [BOOKING_REASON.onBehalfNotAllowed],
+      });
+    }
+    await this.scopeAuthorization.assertRolesAtScope(
+      principal,
+      ON_BEHALF_ROLES,
+      vehicleScopeNodeId,
+    );
+  }
+
+  private async assertReadAuthority(
+    booking: BookingRow,
+    principal: Principal,
+  ): Promise<void> {
+    this.assertLinkedOrganization(booking, principal);
+    const vehicleScopeNodeId = await this.requireVehicleScope(booking.vehicleId);
+    if (
+      booking.requestedByPersonId === principal.personId ||
+      booking.driverPersonId === principal.personId
+    ) {
+      await this.scopeAuthorization.assertRolesAtScope(
+        principal,
+        ['Employee'],
+        vehicleScopeNodeId,
+      );
+      return;
+    }
+    await this.assertManagedScope(principal, vehicleScopeNodeId, 'Booking read is not authorized');
+  }
+
+  private async assertConsentAuthority(
+    booking: BookingRow,
+    principal: Principal,
+  ): Promise<void> {
+    this.assertLinkedOrganization(booking, principal);
+    if (booking.driverPersonId !== principal.personId) {
+      throw new ForbiddenException({
+        title: 'Booking consent is not authorized',
+        reasons: [BOOKING_REASON.driverMismatch],
+      });
+    }
+    await this.scopeAuthorization.assertRolesAtScope(
+      principal,
+      ['Employee'],
+      await this.requireVehicleScope(booking.vehicleId),
+    );
+  }
+
+  private assertLinkedOrganization(booking: BookingRow, principal: Principal): void {
+    if (!principal.personId) {
+      throw new ForbiddenException({
+        title: 'User not linked',
+        reasons: ['user-not-linked-to-person'],
+      });
+    }
+    if (booking.organizationId !== principal.organizationId) {
+      throw new ForbiddenException({
+        title: 'Booking organization is not authorized',
+        reasons: ['booking-organization-not-authorized'],
+      });
+    }
+  }
+
+  private async requireVehicleScope(vehicleId: string): Promise<string> {
+    const vehicleScopeNodeId = await this.repo.findVehicleScope(vehicleId);
+    if (!vehicleScopeNodeId) {
+      throw new ForbiddenException({
+        title: 'Vehicle has no authorized hierarchy scope',
+        reasons: [`vehicle-scope-missing:${vehicleId}`],
+      });
+    }
+    return vehicleScopeNodeId;
+  }
+
+  private async assertManagedScope(
+    principal: Principal,
+    vehicleScopeNodeId: string,
+    title: string,
+  ): Promise<void> {
+    if (!principal.roles.some((assignment) =>
+      ON_BEHALF_ROLES.includes(assignment.role as (typeof ON_BEHALF_ROLES)[number]))) {
+      throw new ForbiddenException({
+        title,
+        reasons: [BOOKING_REASON.onBehalfNotAllowed],
+      });
+    }
+    await this.scopeAuthorization.assertRolesAtScope(
+      principal,
+      ON_BEHALF_ROLES,
+      vehicleScopeNodeId,
+    );
+  }
+
+  private authenticatedPrincipal(principal?: Principal): Principal {
+    if (!principal) {
+      throw new ForbiddenException({
+        title: 'Authenticated principal is required',
+        reasons: ['authenticated-principal-required'],
+      });
+    }
+    return principal;
+  }
+
+  private requireIdempotencyKey(value?: string): string {
+    const key = value?.trim();
+    if (!key || key.length < 8 || key.length > 200) {
+      throw new BadRequestException({
+        title: 'A valid Idempotency-Key header is required',
+        reasons: ['booking-idempotency-key-required'],
+      });
+    }
+    return key;
+  }
+
+  private commandPayloadHash(bookingId: string, input: unknown): string {
+    return createHash('sha256')
+      .update(JSON.stringify({ bookingId, input }))
+      .digest('hex');
+  }
+
+  private async replayCommand(
+    actor: Principal,
+    commandType: string,
+    idempotencyKey: string,
+    payloadHash: string,
+  ): Promise<BookingDto | null> {
+    if (!actor.personId) {
+      throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    }
+    const prior = await this.repo.findCommand(
+      actor.organizationId,
+      actor.personId,
+      commandType,
+      idempotencyKey,
+    );
+    if (!prior) return null;
+    if (prior.payloadHash !== payloadHash) {
+      throw new ConflictException({
+        title: 'Idempotency key was reused with a different payload',
+        reasons: ['booking-idempotency-key-reused'],
+      });
+    }
+    if (!prior.resultBookingId) throw this.commandInProgress();
+    return this.getInternal(prior.resultBookingId);
+  }
+
+  private commandInProgress(): ConflictException {
+    return new ConflictException({
+      title: 'Booking command is still in progress',
+      reasons: ['booking-command-in-progress'],
+    });
+  }
+
+  private revisionConflict(expectedRevision: number): ConflictException {
+    return new ConflictException({
+      title: 'Booking was changed by another request',
+      reasons: ['booking-revision-conflict'],
+      expectedRevision,
+    });
+  }
 
   private async require(id: string): Promise<BookingRow> {
     const row = await this.repo.findById(id);
@@ -830,6 +1700,9 @@ export class BookingService {
       vehicleId: row.vehicleId,
       driverPersonId: row.driverPersonId,
       requestedByPersonId: row.requestedByPersonId,
+      beneficiaryPersonId: row.beneficiaryPersonId,
+      bookingScopeNodeId: row.bookingScopeNodeId,
+      revision: row.revision,
       status: row.status,
       pickupAtUtc: row.pickupAtUtc.toISOString(),
       returnAtUtc: row.returnAtUtc.toISOString(),

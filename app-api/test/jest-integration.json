@@ -4,6 +4,7 @@
   "testEnvironment": "node",
   "testRegex": ".*\\.int-spec\\.ts$",
   "testTimeout": 30000,
+  "setupFiles": ["<rootDir>/support/consent-test-env.ts"],
   "transform": {
     "^.+\\.(t|j)s$": [
       "@swc/jest",

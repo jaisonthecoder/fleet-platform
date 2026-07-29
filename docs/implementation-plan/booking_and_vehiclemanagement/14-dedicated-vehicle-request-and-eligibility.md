@@ -29,9 +29,11 @@ Professional/substitute workflows remain disabled in Phase 1; data model only un
 
 Long-term/temporary; with/without driver; duration/start/end; organization scope/location; vehicle class preference; cost centre; business justification; operational pattern/sites; professional-driver details/evidence where applicable; supporting documents.
 
+After eligibility, the requester may optionally select one currently eligible Vehicle from a server-projected dropdown and may enter an optional preference note of at most 500 characters, for example `I'd prefer a Toyota Fortuner if available` or `Left-hand drive preferred - driving on E11`. These inputs are non-binding preference evidence only. They do not reserve a Vehicle and do not replace Fleet Manager allocation authority. The form must state that preferences are not guaranteed; Fleet may allocate the preferred Vehicle, a policy-permitted equivalent with an auditable variance reason, or return the request for modification.
+
 ## Eligibility
 
-`dedicated-vehicle-eligibility` uses current HR grade/role/employment, request type/duration/scope and approved exceptions. Result is Allow/Deny/Escalate with eligible class and reasons. Fail safe. Eligibility is evidence, not allocation.
+`dedicated-vehicle-eligibility` uses current HR grade/role/employment, request type/duration/scope and approved exceptions. Result is Allow/Deny/Escalate with eligible class and reasons. A bounded Employee-safe eligible-Vehicle projection may populate the optional preference dropdown. Fail safe. Eligibility and preference are evidence, not allocation.
 
 Eligibility is pinned at submission. Allocation rechecks employment, licence/driver evidence and policy if approval age exceeds configured threshold (proposed 30 days) or material facts changed. A stale Allow never guarantees allocation.
 

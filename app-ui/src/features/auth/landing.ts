@@ -9,7 +9,9 @@ import { hasAnyRole } from './roles'
  */
 export function resolveLanding(me: Me | null): string {
   if (hasAnyRole(me, ['SystemAdmin'])) return 'admin'
-  if (hasAnyRole(me, ['DataSteward'])) return 'data-quality'
-  if (hasAnyRole(me, ['InternalAudit'])) return 'audit'
-  return ''
+  if (hasAnyRole(me, ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'])) {
+    return 'operations'
+  }
+  if (hasAnyRole(me, ['DataSteward'])) return 'vehicles'
+  return 'home'
 }

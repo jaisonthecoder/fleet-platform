@@ -2,6 +2,7 @@ import { http, HttpResponse, type RequestHandler } from 'msw'
 import { configHandlers } from './config'
 import { identityHandlers } from './identity'
 import { platformHandlers } from './platform'
+import { vendorHandlers } from './vendors'
 
 /**
  * Default MSW handlers. The dev-users list defaults to empty so the login page
@@ -14,4 +15,5 @@ export const handlers: RequestHandler[] = [
   ...platformHandlers,
   ...configHandlers,
   ...identityHandlers,
+  ...vendorHandlers,
 ]

@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { CurrentUser } from '../../../common/auth/auth.decorators';
+import { CurrentUser, Roles } from '../../../common/auth/auth.decorators';
 import type { Principal } from '../../../common/auth/principal';
 import { DashboardsService } from '../services/dashboards.service';
 
@@ -14,6 +14,7 @@ export class DashboardsController {
   constructor(private readonly dashboards: DashboardsService) {}
 
   /** GET /api/v1/operations/overview — the real operations read model (mock retired). */
+  @Roles('Approver', 'Delegate', 'FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'Executive', 'InternalAudit', 'SystemAdmin')
   @Get('operations/overview')
   overview(@CurrentUser() principal: Principal, @Query('scopeId') scopeId?: string) {
     return this.dashboards.operationsOverview(principal, scopeId);
@@ -39,6 +40,7 @@ export class DashboardsController {
   }
 
   /** GET /api/v1/dashboards/entitlement-inventory — dedicated allocations over the scope. */
+  @Roles('FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'Executive', 'InternalAudit', 'SystemAdmin')
   @Get('dashboards/entitlement-inventory')
   entitlementInventory(@CurrentUser() principal: Principal, @Query('scopeId') scopeId?: string) {
     return this.dashboards.entitlementInventory(principal, scopeId);

@@ -33,6 +33,9 @@ export interface OrganizationHierarchyNodeDto {
   userCount: number;
   utilizedVehicleCount: number;
   utilizationPercent: number;
+  latitude: number | null;
+  longitude: number | null;
+  address: string | null;
   children: OrganizationHierarchyNodeDto[];
 }
 
@@ -114,7 +117,7 @@ export const updateHierarchyLevelSchema = z.object({
 export type UpdateHierarchyLevel = z.infer<typeof updateHierarchyLevelSchema>;
 
 export const reorderHierarchyLevelsSchema = z.object({
-  orderedCodes: z.array(z.string().min(1)).min(1).max(5),
+  orderedCodes: z.array(z.string().min(1)).min(1),
   expectedOrganizationRevision: z.number().int().positive(),
   reason: z.string().trim().min(3).max(500),
 });
@@ -134,6 +137,9 @@ export const createHierarchyNodeSchema = z.object({
   nameAr: z.string().trim().min(1).max(160),
   levelCode: z.string().trim().min(1).max(40),
   levelLabel: z.string().trim().min(1).max(80),
+  latitude: z.number().min(-90).max(90).nullish(),
+  longitude: z.number().min(-180).max(180).nullish(),
+  address: z.string().trim().max(300).nullish(),
   reason: z.string().trim().min(3).max(500),
 });
 export type CreateHierarchyNode = z.infer<typeof createHierarchyNodeSchema>;
@@ -142,6 +148,9 @@ export const renameHierarchyNodeSchema = z.object({
   expectedRevision: z.number().int().positive(),
   name: z.string().trim().min(1).max(160),
   nameAr: z.string().trim().min(1).max(160),
+  latitude: z.number().min(-90).max(90).nullish(),
+  longitude: z.number().min(-180).max(180).nullish(),
+  address: z.string().trim().max(300).nullish(),
   reason: z.string().trim().min(3).max(500),
 });
 export type RenameHierarchyNode = z.infer<typeof renameHierarchyNodeSchema>;

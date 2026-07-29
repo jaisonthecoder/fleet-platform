@@ -30,13 +30,21 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
   const typeCode = `it-auth-type-${suffix}`;
   let scopeNodeId = '';
   let adminPersonId = '';
+  let procurementPersonId = '';
+  let fleetManagerPersonId = '';
   let plainPersonId = '';
   let createdHierarchyNodeId = '';
+  let createdVendorId = '';
+  const createdVendorDocumentIds: string[] = [];
   const moveNodeIds: string[] = [];
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
-    app = moduleRef.createNestApplication<NestFastifyApplication>(new FastifyAdapter());
+    const moduleRef = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+    app = moduleRef.createNestApplication<NestFastifyApplication>(
+      new FastifyAdapter(),
+    );
     configureApp(app);
     await app.init();
     await app.getHttpAdapter().getInstance().ready();
@@ -44,41 +52,132 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
 
     const [node] = await db
       .insert(hierarchyNode)
-      .values({ parentId: 'a0000000-0000-4000-8000-000000000003', code: `AUTH-${suffix.toUpperCase()}`, levelIndex: 3, levelLabel: 'Location', levelCode: 'LOCATION', name: `Auth Location ${suffix}`, nameAr: `موقع ${suffix}`, path: sql`${`group.ports.khalifa.auth_${suffix}`}::ltree` })
+      .values({
+        parentId: 'a0000000-0000-4000-8000-000000000003',
+        code: `AUTH-${suffix.toUpperCase()}`,
+        levelIndex: 3,
+        levelLabel: 'Location',
+        levelCode: 'LOCATION',
+        name: `Auth Location ${suffix}`,
+        nameAr: `موقع ${suffix}`,
+        path: sql`${`group.ports.khalifa.auth_${suffix}`}::ltree`,
+      })
       .returning({ id: hierarchyNode.id });
     scopeNodeId = node.id;
 
     const [admin] = await db
       .insert(person)
-      .values({ hcmEmployeeId: `it-admin-${suffix}`, fullName: `Admin ${suffix}`, employmentStatus: 'Active' })
+      .values({
+        hcmEmployeeId: `it-admin-${suffix}`,
+        fullName: `Admin ${suffix}`,
+        employmentStatus: 'Active',
+      })
       .returning({ id: person.id });
     adminPersonId = admin.id;
+    const [procurement] = await db
+      .insert(person)
+      .values({
+        hcmEmployeeId: `it-procurement-${suffix}`,
+        fullName: `Procurement ${suffix}`,
+        employmentStatus: 'Active',
+      })
+      .returning({ id: person.id });
+    procurementPersonId = procurement.id;
     const [plain] = await db
       .insert(person)
-      .values({ hcmEmployeeId: `it-plain-${suffix}`, fullName: `Plain ${suffix}`, employmentStatus: 'Active' })
+      .values({
+        hcmEmployeeId: `it-plain-${suffix}`,
+        fullName: `Plain ${suffix}`,
+        employmentStatus: 'Active',
+      })
       .returning({ id: person.id });
     plainPersonId = plain.id;
 
-    await db.insert(roleAssignment).values({ personId: adminPersonId, role: 'SystemAdmin', scopeNodeId });
-    await db.insert(lookupType).values({ code: typeCode, labelEn: 'Auth Type', labelAr: 'نوع', isSystem: false });
+    await db
+      .insert(roleAssignment)
+      .values({ personId: adminPersonId, role: 'SystemAdmin', scopeNodeId });
+    await db.insert(roleAssignment).values({
+      personId: procurementPersonId,
+      role: 'Procurement',
+      scopeNodeId,
+    });
+    const [fleetManager] = await db
+      .insert(person)
+      .values({
+        hcmEmployeeId: `it-fleet-manager-${suffix}`,
+        fullName: `Fleet Manager ${suffix}`,
+        employmentStatus: 'Active',
+      })
+      .returning({ id: person.id });
+    fleetManagerPersonId = fleetManager.id;
+    await db.insert(roleAssignment).values({
+      personId: fleetManagerPersonId,
+      role: 'FleetManager',
+      scopeNodeId,
+    });
+    await db.insert(lookupType).values({
+      code: typeCode,
+      labelEn: 'Auth Type',
+      labelAr: 'نوع',
+      isSystem: false,
+    });
   });
 
   afterAll(async () => {
+    if (createdVendorId) {
+      for (const documentId of createdVendorDocumentIds) {
+        await db.execute(
+          sql`UPDATE fleet.vendor_document SET superseded_by_id = NULL WHERE id = ${documentId}`,
+        );
+        await db.execute(
+          sql`DELETE FROM fleet.outbox_event WHERE aggregate_type = 'vendor-document' AND aggregate_id = ${documentId}`,
+        );
+        await db.execute(
+          sql`DELETE FROM fleet.vendor_document WHERE id = ${documentId}`,
+        );
+      }
+      await db.execute(
+        sql`DELETE FROM fleet.outbox_event WHERE aggregate_type = 'vendor' AND aggregate_id = ${createdVendorId}`,
+      );
+      await db.execute(
+        sql`DELETE FROM fleet.vendor WHERE id = ${createdVendorId}`,
+      );
+    }
     for (const id of moveNodeIds.reverse()) {
-      await db.execute(sql`DELETE FROM fleet.hierarchy_change_event WHERE node_id = ${id}`);
-      await db.execute(sql`DELETE FROM fleet.outbox_event WHERE aggregate_type = 'hierarchy-node' AND aggregate_id = ${id}`);
+      await db.execute(
+        sql`DELETE FROM fleet.hierarchy_change_event WHERE node_id = ${id}`,
+      );
+      await db.execute(
+        sql`DELETE FROM fleet.outbox_event WHERE aggregate_type = 'hierarchy-node' AND aggregate_id = ${id}`,
+      );
       await db.execute(sql`DELETE FROM fleet.hierarchy_node WHERE id = ${id}`);
     }
     if (createdHierarchyNodeId) {
-      await db.execute(sql`DELETE FROM fleet.hierarchy_change_event WHERE node_id = ${createdHierarchyNodeId}`);
-      await db.execute(sql`DELETE FROM fleet.outbox_event WHERE aggregate_type = 'hierarchy-node' AND aggregate_id = ${createdHierarchyNodeId}`);
-      await db.execute(sql`DELETE FROM fleet.hierarchy_node WHERE id = ${createdHierarchyNodeId}`);
+      await db.execute(
+        sql`DELETE FROM fleet.hierarchy_change_event WHERE node_id = ${createdHierarchyNodeId}`,
+      );
+      await db.execute(
+        sql`DELETE FROM fleet.outbox_event WHERE aggregate_type = 'hierarchy-node' AND aggregate_id = ${createdHierarchyNodeId}`,
+      );
+      await db.execute(
+        sql`DELETE FROM fleet.hierarchy_node WHERE id = ${createdHierarchyNodeId}`,
+      );
     }
-    await db.execute(sql`DELETE FROM fleet.role_assignment WHERE person_id IN (${adminPersonId}, ${plainPersonId})`);
-    await db.execute(sql`DELETE FROM fleet.lookup_value WHERE lookup_type_id IN (SELECT id FROM fleet.lookup_type WHERE code = ${typeCode})`);
-    await db.execute(sql`DELETE FROM fleet.lookup_type WHERE code = ${typeCode}`);
-    await db.execute(sql`DELETE FROM fleet.person WHERE id IN (${adminPersonId}, ${plainPersonId})`);
-    await db.execute(sql`DELETE FROM fleet.hierarchy_node WHERE id = ${scopeNodeId}`);
+    await db.execute(
+      sql`DELETE FROM fleet.role_assignment WHERE person_id IN (${adminPersonId}, ${procurementPersonId}, ${fleetManagerPersonId}, ${plainPersonId})`,
+    );
+    await db.execute(
+      sql`DELETE FROM fleet.lookup_value WHERE lookup_type_id IN (SELECT id FROM fleet.lookup_type WHERE code = ${typeCode})`,
+    );
+    await db.execute(
+      sql`DELETE FROM fleet.lookup_type WHERE code = ${typeCode}`,
+    );
+    await db.execute(
+      sql`DELETE FROM fleet.person WHERE id IN (${adminPersonId}, ${procurementPersonId}, ${fleetManagerPersonId}, ${plainPersonId})`,
+    );
+    await db.execute(
+      sql`DELETE FROM fleet.hierarchy_node WHERE id = ${scopeNodeId}`,
+    );
     await app.close();
   });
 
@@ -134,14 +233,28 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       quality: { healthy: false },
     });
     const workspace = allowed.json() as {
-      hierarchy: Array<{ code: string; children?: Array<{ code: string; children?: unknown[] }> }>;
+      hierarchy: Array<{
+        code: string;
+        children?: Array<{ code: string; children?: unknown[] }>;
+      }>;
     };
-    const flattenCodes = (nodes: Array<{ code: string; children?: unknown[] }>): string[] =>
+    const flattenCodes = (
+      nodes: Array<{ code: string; children?: unknown[] }>,
+    ): string[] =>
       nodes.flatMap((node) => [
         node.code,
-        ...flattenCodes((node.children ?? []) as Array<{ code: string; children?: unknown[] }>),
+        ...flattenCodes(
+          (node.children ?? []) as Array<{
+            code: string;
+            children?: unknown[];
+          }>,
+        ),
       ]);
-    expect(flattenCodes(workspace.hierarchy).includes(`AUTH-${suffix.toUpperCase()}`)).toBe(true);
+    expect(
+      flattenCodes(workspace.hierarchy).includes(
+        `AUTH-${suffix.toUpperCase()}`,
+      ),
+    ).toBe(true);
   });
 
   it('creates, previews, renames, and retires a dependency-free hierarchy node', async () => {
@@ -169,7 +282,11 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       headers: { 'x-dev-person-id': adminPersonId },
     });
     expect(impact.statusCode).toBe(200);
-    expect(impact.json()).toMatchObject({ blocking: false, childNodes: 0, roles: 0 });
+    expect(impact.json()).toMatchObject({
+      blocking: false,
+      childNodes: 0,
+      roles: 0,
+    });
 
     const rename = await app.inject({
       method: 'PATCH',
@@ -183,7 +300,10 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       },
     });
     expect(rename.statusCode).toBe(200);
-    expect(rename.json()).toMatchObject({ revision: 2, name: `Renamed Location ${suffix}` });
+    expect(rename.json()).toMatchObject({
+      revision: 2,
+      name: `Renamed Location ${suffix}`,
+    });
 
     const retire = await app.inject({
       method: 'POST',
@@ -199,15 +319,20 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       WHERE node_id = ${createdHierarchyNodeId}
       ORDER BY at_utc
     `);
-    expect((history as unknown as Array<{ action: string }>).map((row) => row.action)).toEqual([
-      'CREATED',
-      'RENAMED',
-      'RETIRED',
-    ]);
+    expect(
+      (history as unknown as Array<{ action: string }>).map(
+        (row) => row.action,
+      ),
+    ).toEqual(['CREATED', 'RENAMED', 'RETIRED']);
   });
 
   it('moves a subtree with a target-specific impact token and rewrites descendant paths', async () => {
-    const create = async (parentId: string, code: string, levelCode: string, levelLabel: string) => {
+    const create = async (
+      parentId: string,
+      code: string,
+      levelCode: string,
+      levelLabel: string,
+    ) => {
       const response = await app.inject({
         method: 'POST',
         url: '/api/v1/admin/organization/nodes',
@@ -253,7 +378,10 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       headers: { 'x-dev-person-id': adminPersonId },
     });
     expect(impact.statusCode).toBe(200);
-    const impactBody = impact.json() as { impactToken: string; childNodes: number };
+    const impactBody = impact.json() as {
+      impactToken: string;
+      childNodes: number;
+    };
     expect(impactBody.childNodes).toBe(1);
 
     const move = await app.inject({
@@ -270,10 +398,10 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
     expect(move.statusCode).toBe(201);
     expect(move.json()).toMatchObject({ parentId: targetPool, revision: 2 });
 
-    const paths = await db.execute(sql`
+    const paths = (await db.execute(sql`
       SELECT id, path::text AS path FROM fleet.hierarchy_node
       WHERE id IN (${movingLocation}, ${descendant})
-    `) as unknown as Array<{ id: string; path: string }>;
+    `)) as unknown as Array<{ id: string; path: string }>;
     const movedPath = paths.find((row) => row.id === movingLocation)?.path;
     expect(movedPath).toContain(`move_pool_${suffix}.move_loc_${suffix}`);
     expect(paths.find((row) => row.id === descendant)?.path).toBe(
@@ -309,7 +437,9 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       headers: { 'x-dev-person-id': plainPersonId },
     });
     expect(read.statusCode).toBe(200);
-    expect((read.json() as Array<{ code: string }>).map((v) => v.code)).toContain('ALPHA');
+    expect(
+      (read.json() as Array<{ code: string }>).map((v) => v.code),
+    ).toContain('ALPHA');
   });
 
   it('forbids a non-admin from creating a lookup value (403)', async () => {
@@ -320,5 +450,183 @@ describe('auth + RBAC over HTTP (integration — requires DB + Redis)', () => {
       payload: { code: 'BETA', labelEn: 'Beta', labelAr: 'بيتا' },
     });
     expect(res.statusCode).toBe(403);
+  });
+
+  it('enforces Vendor HTTP roles, status validation, and maker-checker approval', async () => {
+    const payload = {
+      legalName: `HTTP Vendor ${suffix}`,
+      categoryCode: 'LESSOR',
+      tradeLicenceNumber: `HTTP-CN-${suffix}`,
+    };
+    const denied = await app.inject({
+      method: 'POST',
+      url: '/api/v1/vendors',
+      headers: { 'x-dev-person-id': plainPersonId },
+      payload,
+    });
+    expect(denied.statusCode).toBe(403);
+
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/v1/vendors',
+      headers: { 'x-dev-person-id': adminPersonId },
+      payload,
+    });
+    expect(created.statusCode).toBe(201);
+    createdVendorId = (created.json() as { id: string }).id;
+
+    const invalidFilter = await app.inject({
+      method: 'GET',
+      url: '/api/v1/vendors?status=Bogus',
+      headers: { 'x-dev-person-id': adminPersonId },
+    });
+    expect(invalidFilter.statusCode).toBe(400);
+
+    const submitted = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/submit`,
+      headers: { 'x-dev-person-id': adminPersonId },
+      payload: { reason: 'Ready for procurement review' },
+    });
+    expect(submitted.statusCode).toBe(201);
+
+    const fleetApprovalInboxDenied = await app.inject({
+      method: 'GET',
+      url: '/api/v1/vendors/approvals',
+      headers: { 'x-dev-person-id': fleetManagerPersonId },
+    });
+    expect(fleetApprovalInboxDenied.statusCode).toBe(403);
+
+    const procurementApprovalInbox = await app.inject({
+      method: 'GET',
+      url: '/api/v1/vendors/approvals',
+      headers: { 'x-dev-person-id': procurementPersonId },
+    });
+    expect(procurementApprovalInbox.statusCode).toBe(200);
+    expect(procurementApprovalInbox.json()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          vendorId: createdVendorId,
+          assignedAuthorityRole: 'Procurement',
+          makerActorRef: adminPersonId,
+          submitterActorRef: adminPersonId,
+        }),
+      ]),
+    );
+
+    const invalidChangeRequest = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/request-change`,
+      headers: { 'x-dev-person-id': procurementPersonId },
+      payload: { reason: '' },
+    });
+    expect(invalidChangeRequest.statusCode).toBe(400);
+
+    const changeRequested = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/request-change`,
+      headers: { 'x-dev-person-id': procurementPersonId },
+      payload: { reason: 'Add the current insurance evidence.' },
+    });
+    expect(changeRequested.statusCode).toBe(201);
+    expect(changeRequested.json()).toMatchObject({ status: 'Draft' });
+
+    const resubmitted = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/submit`,
+      headers: { 'x-dev-person-id': adminPersonId },
+      payload: { reason: 'Requested change completed' },
+    });
+    expect(resubmitted.statusCode).toBe(201);
+
+    const documentCreated = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/documents`,
+      headers: { 'x-dev-person-id': adminPersonId },
+      payload: {
+        documentTypeCode: 'TRADE_LICENCE',
+        documentReference: `HTTP-DOC-${suffix}`,
+        blobRef: `vendor-documents/${createdVendorId}/trade-licence.pdf`,
+        issueDate: '2026-01-01',
+        expiryDate: '2027-01-01',
+      },
+    });
+    expect(documentCreated.statusCode).toBe(201);
+    const tradeLicenceDocumentId = (documentCreated.json() as { id: string })
+      .id;
+    createdVendorDocumentIds.push(tradeLicenceDocumentId);
+
+    const fleetDocumentReadDenied = await app.inject({
+      method: 'GET',
+      url: `/api/v1/vendors/${createdVendorId}/documents`,
+      headers: { 'x-dev-person-id': fleetManagerPersonId },
+    });
+    expect(fleetDocumentReadDenied.statusCode).toBe(403);
+
+    const adminConfirmationDenied = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/documents/${tradeLicenceDocumentId}/confirm`,
+      headers: { 'x-dev-person-id': adminPersonId },
+      payload: { confirmedMetadata: { manuallyConfirmed: true } },
+    });
+    expect(adminConfirmationDenied.statusCode).toBe(403);
+
+    const procurementConfirmation = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/documents/${tradeLicenceDocumentId}/confirm`,
+      headers: { 'x-dev-person-id': procurementPersonId },
+      payload: { confirmedMetadata: { manuallyConfirmed: true } },
+    });
+    expect(procurementConfirmation.statusCode).toBe(201);
+    expect(procurementConfirmation.json()).toMatchObject({
+      status: 'Confirmed',
+    });
+
+    for (const documentTypeCode of [
+      'LIABILITY_INSURANCE',
+      'MASTER_SERVICE_AGREEMENT',
+    ]) {
+      const requiredDocument = await app.inject({
+        method: 'POST',
+        url: `/api/v1/vendors/${createdVendorId}/documents`,
+        headers: { 'x-dev-person-id': adminPersonId },
+        payload: {
+          documentTypeCode,
+          documentReference: `HTTP-${documentTypeCode}-${suffix}`,
+          blobRef: `vendor-documents/${createdVendorId}/${documentTypeCode.toLowerCase()}.pdf`,
+          ...(documentTypeCode === 'LIABILITY_INSURANCE'
+            ? { issueDate: '2026-01-01', expiryDate: '2999-12-31' }
+            : {}),
+        },
+      });
+      expect(requiredDocument.statusCode).toBe(201);
+      const documentId = (requiredDocument.json() as { id: string }).id;
+      createdVendorDocumentIds.push(documentId);
+
+      const confirmation = await app.inject({
+        method: 'POST',
+        url: `/api/v1/vendors/${createdVendorId}/documents/${documentId}/confirm`,
+        headers: { 'x-dev-person-id': procurementPersonId },
+        payload: { confirmedMetadata: { manuallyConfirmed: true } },
+      });
+      expect(confirmation.statusCode).toBe(201);
+    }
+
+    const selfApproval = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/approve`,
+      headers: { 'x-dev-person-id': adminPersonId },
+      payload: { reason: 'Must be rejected by SoD' },
+    });
+    expect(selfApproval.statusCode).toBe(403);
+
+    const approved = await app.inject({
+      method: 'POST',
+      url: `/api/v1/vendors/${createdVendorId}/approve`,
+      headers: { 'x-dev-person-id': procurementPersonId },
+      payload: { reason: 'Procurement approved' },
+    });
+    expect(approved.statusCode).toBe(201);
+    expect(approved.json()).toMatchObject({ status: 'Active' });
   });
 });

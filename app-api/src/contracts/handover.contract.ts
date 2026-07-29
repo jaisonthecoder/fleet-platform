@@ -12,6 +12,9 @@ export const HANDOVER_REASON = {
   alreadyOpen: 'handover-already-open',
   alreadyReturned: 'handover-already-returned',
   odometerBackwards: 'handover-odometer-before-start',
+  idempotencyRequired: 'handover-idempotency-key-required',
+  idempotencyReused: 'handover-idempotency-key-reused',
+  commandInProgress: 'handover-command-in-progress',
 } as const;
 
 const fuelEighths = z.number().int().min(0).max(8);
@@ -118,4 +121,18 @@ export interface KeyLogDto {
   keyRef: string | null;
   personId: string | null;
   atUtc: string;
+}
+
+export interface HandoverWorkItemDto {
+  bookingId: string;
+  bookingNumber: string;
+  handoverId: string | null;
+  phase: 'AwaitingHandover' | 'ActiveCustody';
+  vehicleId: string;
+  vehiclePlate: string;
+  driverPersonId: string;
+  driverName: string;
+  pickupAtUtc: string;
+  returnAtUtc: string;
+  scopeName: string | null;
 }

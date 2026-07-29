@@ -31,6 +31,6 @@ import { ScopeAuthorizationService } from './services/scope-authorization.servic
     StubHcmSource,
     { provide: HCM_SOURCE, useExisting: StubHcmSource },
   ],
-  exports: [SodGuardService, ScopeAuthorizationService, AuditService, AccessService, HierarchyService, HcmSyncService],
+  exports: [SodGuardService, ScopeAuthorizationService, AuditService, AccessService, DelegationService, HierarchyService, HcmSyncService],
 })
 export class PlatformModule {}

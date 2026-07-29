@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { AuthModule } from './common/auth/auth.module';
 import { CoreConfigModule } from './common/config/config.module';
@@ -16,6 +17,7 @@ import { ConfigModule } from './modules/config/config.module';
 import { DashboardsModule } from './modules/dashboards/dashboards.module';
 import { EntitlementsModule } from './modules/entitlements/entitlements.module';
 import { FinesModule } from './modules/fines/fines.module';
+import { GeocodingModule } from './modules/geocoding/geocoding.module';
 import { HandoverModule } from './modules/handover/handover.module';
 import { HealthModule } from './modules/health/health.module';
 import { IdentityModule } from './modules/identity/identity.module';
@@ -25,11 +27,13 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { PolicyAdministrationModule } from './modules/policy-administration/policy-administration.module';
 import { TelematicsDomainModule } from './modules/telematics-domain/telematics-domain.module';
 import { VehiclesModule } from './modules/vehicles/vehicles.module';
+import { VendorsModule } from './modules/vendors/vendors.module';
 import { WorkflowModule } from './modules/workflow/workflow.module';
 
 @Module({
   imports: [
     CoreConfigModule,
+    ScheduleModule.forRoot(),
     LoggingModule,
     DatabaseModule,
     RedisModule,
@@ -38,12 +42,14 @@ import { WorkflowModule } from './modules/workflow/workflow.module';
     NotificationsModule,
     PlatformModule,
     OrganizationAdministrationModule,
+    GeocodingModule,
     ConfigModule,
     IdentityModule,
     AuthModule,
     PolicyAdministrationModule,
     WorkflowModule,
     VehiclesModule,
+    VendorsModule,
     MigrationModule,
     TelematicsDomainModule,
     ComplianceModule,

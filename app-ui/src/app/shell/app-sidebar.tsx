@@ -1,6 +1,6 @@
 import { Link, NavLink, useMatch, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Smartphone } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Smartphone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { defaultLanguage } from '@/i18n/config'
 import { BrandMark } from '@/components/brand-mark'
@@ -62,7 +62,7 @@ interface SidebarItemProps {
   collapsed: boolean
 }
 
-/** One nav entry: icon-only tile when compact, icon + label row when expanded. */
+/** One nav entry: icon-in-tile row (labelled when expanded, icon-only when compact). */
 function SidebarItem({ item, base, collapsed }: SidebarItemProps) {
   const { t } = useTranslation()
   const { segment, icon: Icon, labelKey, end, disabled } = item
@@ -72,18 +72,29 @@ function SidebarItem({ item, base, collapsed }: SidebarItemProps) {
   const match = useMatch({ path: to, end: end ?? false })
   const isActive = !!match && !disabled
 
+  const iconTile = (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'grid size-[28px] shrink-0 place-items-center rounded-[6px] transition-colors',
+        isActive ? 'bg-black/10' : 'bg-white/[0.06]',
+      )}
+    >
+      <Icon className="size-[16px]" />
+    </span>
+  )
+
+  const rowClass = cn(
+    'flex items-center rounded-[8px] transition-colors',
+    collapsed ? 'w-11 justify-center py-2' : 'gap-3 px-2.5 py-2',
+  )
+
   if (disabled) {
     const content = (
-      <div
-        aria-disabled="true"
-        className={cn(
-          'flex items-center rounded-[2px] text-rail-muted/45',
-          collapsed ? 'size-11 justify-center' : 'h-[38px] gap-[11px] px-3',
-        )}
-      >
-        <Icon aria-hidden="true" className="size-[17px] shrink-0" />
+      <div aria-disabled="true" className={cn(rowClass, 'text-rail-muted/40')}>
+        {iconTile}
         {collapsed ? null : (
-          <span className="text-[13.5px] font-semibold">{label}</span>
+          <span className="text-[13.5px] font-normal">{label}</span>
         )}
       </div>
     )
@@ -101,18 +112,17 @@ function SidebarItem({ item, base, collapsed }: SidebarItemProps) {
       to={to}
       aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'flex items-center rounded-[2px] transition-colors',
-        collapsed ? 'size-11 justify-center' : 'h-[38px] gap-[11px] px-3',
+        rowClass,
         isActive
-          ? 'bg-signal font-bold text-signal-foreground'
-          : 'font-semibold text-rail-muted hover:bg-white/10 hover:text-rail-foreground',
+          ? 'bg-signal text-signal-foreground'
+          : 'text-rail-muted hover:bg-white/[0.08] hover:text-rail-foreground',
       )}
     >
-      <Icon aria-hidden="true" className="size-[17px] shrink-0" />
+      {iconTile}
       {collapsed ? (
         <span className="sr-only">{label}</span>
       ) : (
-        <span className="text-[13.5px]">{label}</span>
+        <span className="text-[13.5px] font-normal">{label}</span>
       )}
     </Link>
   )
@@ -236,17 +246,34 @@ export function AppSidebar() {
   const { lang } = useParams()
   const { me } = useAuth()
   const base = `/${lang ?? defaultLanguage}`
-  const { collapsed } = useSidebar()
+  const { collapsed, toggle } = useSidebar()
   const items = navFor(me)
 
   return (
     <aside
       aria-label={t('nav.section')}
       className={cn(
-        'sticky top-0 z-40 hidden h-screen shrink-0 flex-col overflow-hidden border-e border-border bg-rail text-rail-foreground transition-[width] duration-200 ease-out md:flex',
+        'sticky top-3 z-40 m-3 hidden h-[calc(100vh-1.5rem)] shrink-0 flex-col overflow-visible rounded-[10px] bg-rail text-rail-foreground shadow-[var(--shadow-float)] transition-[width] duration-200 ease-out md:flex',
         collapsed ? 'w-[72px]' : 'w-64',
       )}
     >
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={
+          collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')
+        }
+        aria-expanded={!collapsed}
+        title={`${collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')} (Ctrl/⌘ B)`}
+        className="absolute end-0 top-[74px] z-50 grid size-7 place-items-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-colors hover:bg-surface-hover hover:text-foreground ltr:translate-x-1/2 rtl:-translate-x-1/2 [&_svg]:size-[15px]"
+      >
+        {collapsed ? (
+          <ChevronRight aria-hidden="true" className="rtl:rotate-180" />
+        ) : (
+          <ChevronLeft aria-hidden="true" className="rtl:rotate-180" />
+        )}
+      </button>
+
       <SidebarBrand collapsed={collapsed} />
 
       <nav

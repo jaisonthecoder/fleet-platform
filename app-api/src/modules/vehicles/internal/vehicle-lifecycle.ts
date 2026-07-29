@@ -20,7 +20,7 @@ const ALLOWED_TRANSITIONS: Record<VehicleLifecycleStatus, VehicleLifecycleStatus
 };
 
 /** Lifecycle states in which a vehicle can be booked (still gated by pool flag + compliance). */
-export const BOOKABLE_LIFECYCLE: VehicleLifecycleStatus = 'Active';
+export { BOOKABLE_VEHICLE_LIFECYCLE as BOOKABLE_LIFECYCLE } from '../../../common/domain/vehicle-bookability';
 
 /** Returns true if a lifecycle transition is permitted. */
 export function canTransition(

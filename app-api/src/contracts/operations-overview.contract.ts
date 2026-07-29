@@ -3,9 +3,12 @@ import { z } from 'zod';
 export const attentionItemSchema = z.object({
   id: z.string(),
   level: z.enum(['danger', 'warning', 'info']),
-  title: z.string(),
-  detail: z.string(),
-  action: z.string(),
+  kind: z.enum(['compliance', 'access-block']),
+  itemType: z.string().nullable(),
+  subjectLabel: z.string().nullable(),
+  status: z.enum(['ExpiringSoon', 'Expired']).nullable(),
+  expiryDate: z.string().nullable(),
+  count: z.number().int().nonnegative().nullable(),
 });
 
 export const upcomingBookingSchema = z.object({

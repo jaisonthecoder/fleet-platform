@@ -113,9 +113,30 @@ describe('dashboards read models (integration — requires DB + Redis)', () => {
     expect(tile.coveragePercent).toBe(0);
   });
 
+  it('serves the expanded scope-aware Dedicated inventory contract', async () => {
+    const tile = await dashboards.entitlementInventory(principal('FleetManager'), poolNode);
+    expect(tile).toEqual(expect.objectContaining({
+      allocated: expect.any(Number),
+      pendingApproval: expect.any(Number),
+      awaitingConsent: expect.any(Number),
+      returned: expect.any(Number),
+      expired: expect.any(Number),
+      bsdActive: expect.any(Number),
+      bsdConflict: expect.any(Number),
+      byCategory: expect.any(Array),
+    }));
+  });
+
   it('serves the real operations overview conforming to the contract (mock retired)', async () => {
     const overview = await dashboards.operationsOverview(principal('FleetManager'), poolNode);
     expect(operationsOverviewSchema.safeParse(overview).success).toBe(true);
     expect(overview.summary.totalVehicles).toBe(1);
+  });
+
+  it('returns aggregate-only operations to Executive readers', async () => {
+    const overview = await dashboards.operationsOverview(principal('Executive'), poolNode);
+    expect(overview.summary.totalVehicles).toBe(1);
+    expect(overview.attentionItems).toEqual([]);
+    expect(overview.upcomingBookings).toEqual([]);
   });
 });

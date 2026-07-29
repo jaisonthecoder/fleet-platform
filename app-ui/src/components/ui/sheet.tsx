@@ -12,9 +12,11 @@ function SheetContent({
   className,
   children,
   side = 'left',
+  closeLabel = 'Close',
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   side?: 'left' | 'right'
+  closeLabel?: string
 }) {
   return (
     <DialogPrimitive.Portal>
@@ -28,9 +30,9 @@ function SheetContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-md p-1 text-muted-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+        <DialogPrimitive.Close className="absolute end-4 top-4 rounded-md p-1 text-muted-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
           <X className="size-4" />
-          <span className="sr-only">Close</span>
+          <span className="sr-only">{closeLabel}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>

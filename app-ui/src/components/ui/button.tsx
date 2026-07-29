@@ -15,6 +15,8 @@ const buttonVariants = cva(
         signal: 'bg-signal text-signal-foreground hover:bg-signal-strong',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        railGhost:
+          'border border-white/25 bg-white/5 text-white hover:bg-white/15',
       },
       size: {
         default: 'h-9 px-3',

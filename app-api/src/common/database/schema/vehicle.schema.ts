@@ -3,6 +3,7 @@ import {
   type AnyPgColumn,
   boolean,
   date,
+  foreignKey,
   index,
   integer,
   numeric,
@@ -14,6 +15,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { fleet, orgId, timestamps } from './_shared';
 import { hierarchyNode, person } from './platform.schema';
+import { leaseContract, vendor } from './vendor.schema';
 
 /** Seven lifecycle states — "where the vehicle is in its life" (FR-INV-02). */
 export const vehicleLifecycleStatusEnum = pgEnum('fleet_vehicle_lifecycle_status', [
@@ -80,6 +82,7 @@ export const vehicle = fleet.table(
     monthlyRental: numeric('monthly_rental', { precision: 14, scale: 2 }),
     currency: text('currency').notNull().default('AED'),
     vendorId: uuid('vendor_id'),
+    leaseContractId: uuid('lease_contract_id'),
     leaseContractRef: text('lease_contract_ref'),
     depreciationRate: numeric('depreciation_rate', { precision: 6, scale: 3 }),
     // Compliance & documents
@@ -95,7 +98,17 @@ export const vehicle = fleet.table(
     // Operational state
     lifecycleStatus: vehicleLifecycleStatusEnum('lifecycle_status').notNull().default('Active'),
     operationalStatus: vehicleOperationalStatusEnum('operational_status'),
-    bookingPoolFlag: boolean('booking_pool_flag').notNull().default(true),
+    bookingPoolFlag: boolean('booking_pool_flag').notNull().default(false),
+    vendorHealthHold: boolean('vendor_health_hold').notNull().default(false),
+    vendorHealthHoldReason: text('vendor_health_hold_reason'),
+    vendorHealthPreviousOperationalStatus:
+      vehicleOperationalStatusEnum('vendor_health_previous_operational_status'),
+    vendorHealthPreviousBookingPoolFlag: boolean(
+      'vendor_health_previous_booking_pool_flag',
+    ),
+    vendorHealthHeldAtUtc: timestamp('vendor_health_held_at_utc', {
+      withTimezone: true,
+    }),
     lastConfirmedOdometer: numeric('last_confirmed_odometer', { precision: 12, scale: 1 }),
     nextMaintenanceDue: date('next_maintenance_due'),
     assignmentModel: vehicleAssignmentModelEnum('assignment_model').notNull().default('Pool'),
@@ -116,6 +129,21 @@ export const vehicle = fleet.table(
     index('vehicle_mulkiya_expiry_idx').on(t.mulkiyaExpiry),
     index('vehicle_insurance_expiry_idx').on(t.insuranceExpiry),
     index('vehicle_assigned_driver_idx').on(t.assignedDriverPersonId),
+    index('vehicle_vendor_idx').on(t.vendorId),
+    index('vehicle_lease_contract_idx').on(t.leaseContractId),
+    index('vehicle_vendor_health_hold_idx')
+      .on(t.organizationId, t.vendorHealthHold)
+      .where(sql`${t.vendorHealthHold} = true`),
+    foreignKey({
+      columns: [t.organizationId, t.vendorId],
+      foreignColumns: [vendor.organizationId, vendor.id],
+      name: 'vehicle_vendor_org_fk',
+    }),
+    foreignKey({
+      columns: [t.organizationId, t.leaseContractId],
+      foreignColumns: [leaseContract.organizationId, leaseContract.id],
+      name: 'vehicle_lease_contract_org_fk',
+    }),
   ],
 );
 

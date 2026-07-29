@@ -8,9 +8,11 @@ Complete the core under-two-minute booking loop through live availability, eligi
 
 V2 registry summary contract, V3 booking-pool/lifecycle, V4 compliance/telematics state, B1 actor authority, policy decision foundation.
 
-## Mandatory mockup gate — ask before implementation
+## Mandatory mockup gate — resolved
 
-Request: Window step; loading/results; buffer-unavailable/free-from; eligibility-block banner; no-results/waitlist offer; vehicle cards/recommendation; inline Consent Sheet EN/AR; policy refresh/re-consent warning; confirmed/pending-approval state; mobile stepper.
+Approved on 2026-07-21. Follow `mockups/21-booking-employee-book-a-vehicle.png` for the search, timeline and eligible-Vehicle composition. Follow `mockups/23-booking-create-on-behalf.png` when the governed on-behalf contract is enabled. Inline consent, confirmation, loading/results, eligibility denial, no-results, conflict, policy refresh, responsive and EN/AR/RTL states are approved for derivation under `mockups/derived-screen-contracts.md` and `mockups/mockup-review.md`.
+
+Recommendation, availability bars, fuel/energy estimates and other visible facts require verified backend sources. Preserve the mockup region but show an honest unavailable state rather than sample or invented data.
 
 ## Availability
 

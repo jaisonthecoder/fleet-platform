@@ -18,48 +18,68 @@ function me(roles: string[]): Me {
 const segments = (me: Me | null) => navFor(me).map((i) => i.segment)
 
 describe('navFor (role-driven nav)', () => {
-  it('shows operations items to any authenticated user', () => {
+  it('shows only the approved Employee modules to an employee', () => {
     const items = segments(me(['Employee']))
-    expect(items).toContain('booking')
-    expect(items).toContain('handover')
+    expect(items).toEqual(['home', 'booking', 'dedicated-vehicle'])
   })
 
-  it('hides governance + administration from non-privileged users', () => {
-    const items = segments(me(['Employee']))
-    expect(items).not.toContain('admin')
-    expect(items).not.toContain('admin/reference-data')
-    expect(items).not.toContain('data-quality')
-    expect(items).not.toContain('audit')
+  it('shows the approved Fleet Manager operational modules', () => {
+    expect(segments(me(['FleetManager']))).toEqual([
+      'operations',
+      'handover',
+      'approvals',
+      'booking-preparation',
+      'dedicated-allocation',
+      'vehicles',
+      'compliance',
+      'fines',
+      'live-map',
+    ])
   })
 
-  it('shows the full admin group to a System Admin', () => {
-    const items = segments(me(['SystemAdmin']))
-    expect(items).toEqual(
-      expect.arrayContaining([
-        'admin',
-        'admin/reference-data',
-        'admin/access',
-        'admin/organization',
-        'admin/policy',
-        'admin/integrations',
-        'admin/notifications',
-        'data-quality',
-        'audit',
-      ]),
-    )
+  it.each(['Approver', 'Delegate'])('shows the approval inbox to %s roles', (role) => {
+    expect(segments(me([role]))).toEqual(['operations', 'approvals'])
   })
 
-  it('shows reference-data + data-quality (not access) to a Data Steward', () => {
+  it('shows only the approval inbox to Cluster CEO', () => {
+    expect(segments(me(['ClusterCEO']))).toEqual(['approvals'])
+  })
+
+  it('shows only the approved Administrator modules to a System Admin', () => {
+    expect(segments(me(['SystemAdmin']))).toEqual([
+      'operations',
+      'admin',
+      'admin/access',
+      'admin/organization',
+      'admin/policy',
+      'admin/consents',
+      'admin/vendors-leases',
+      'admin/reference-data',
+      'admin/integrations',
+    ])
+  })
+
+  it.each(['Executive', 'InternalAudit'])('shows the read-only operations view to %s', (role) => {
+    expect(segments(me([role]))).toEqual(['operations'])
+  })
+
+  it('gives a Data Steward the governed data modules', () => {
     const items = segments(me(['DataSteward']))
+    expect(items).toContain('vehicles')
+    expect(items).toContain('admin/vendors-leases')
     expect(items).toContain('admin/reference-data')
-    expect(items).toContain('data-quality')
+    expect(items).toContain('admin/consents')
     expect(items).not.toContain('admin/access')
     expect(items).not.toContain('admin')
   })
 
-  it('shows only the audit console to an Internal Auditor', () => {
-    const items = segments(me(['InternalAudit']))
-    expect(items).toContain('audit')
-    expect(items).not.toContain('admin/reference-data')
+  it('gives Procurement access to the Vendor and lease module', () => {
+    expect(segments(me(['Procurement']))).toEqual(['admin/vendors-leases'])
+  })
+
+  it('combines approved modules when one principal holds multiple personas', () => {
+    const items = segments(me(['Employee', 'FleetManager']))
+    expect(items).toContain('booking')
+    expect(items).toContain('vehicles')
   })
 })

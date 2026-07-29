@@ -54,4 +54,31 @@ describe('ScopeAuthorizationService', () => {
       ),
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
+
+  it('excludes unrelated role scopes from a filtered descendant closure', async () => {
+    const actor = principal({ role: 'FleetManager', scopeNodeId: 'cluster-a' });
+    actor.roles.push({ role: 'Employee', scopeNodeId: 'root' });
+
+    await expect(
+      service.authorizedDescendantIds(actor, ['FleetManager']),
+    ).resolves.toEqual(['cluster-a', 'pool-a']);
+  });
+
+  it('reports hasRootRole true for an allowed role at a root node', async () => {
+    await expect(
+      service.hasRootRole(
+        principal({ role: 'SystemAdmin', scopeNodeId: 'root' }),
+        ['SystemAdmin'],
+      ),
+    ).resolves.toBe(true);
+  });
+
+  it('reports hasRootRole false for an allowed role at a non-root node', async () => {
+    await expect(
+      service.hasRootRole(
+        principal({ role: 'SystemAdmin', scopeNodeId: 'cluster-a' }),
+        ['SystemAdmin'],
+      ),
+    ).resolves.toBe(false);
+  });
 });

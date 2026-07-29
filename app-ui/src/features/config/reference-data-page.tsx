@@ -44,12 +44,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  Sheet,
   SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
 } from '@/components/ui/sheet'
+import { Drawer } from '@/components/patterns/drawer'
 import { StatusChip } from '@/components/ui/status-chip'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
@@ -308,20 +305,19 @@ function ValueSheet({
   )
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex w-full max-w-md flex-col gap-0 p-0 sm:max-w-lg">
-        <div className="border-b border-border px-6 py-5">
-          <p className="eyebrow mb-1">Reference data · {typeLabel}</p>
-          <SheetTitle className="text-lg font-bold">
-            {isEdit ? `Edit ${editing?.code}` : parentLocked ? 'Add child value' : 'Add value'}
-          </SheetTitle>
-          <SheetDescription className="mt-1 text-sm text-muted-foreground">
-            {isEdit
-              ? 'The code is immutable — historical records key on it. Labels, order, parent and lifecycle can change.'
-              : 'Business logic keys on the stable code, never the label. Both languages are required.'}
-          </SheetDescription>
-        </div>
-
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      eyebrow={`Reference data · ${typeLabel}`}
+      title={isEdit ? `Edit ${editing?.code}` : parentLocked ? 'Add child value' : 'Add value'}
+      description={
+        isEdit
+          ? 'The code is immutable — historical records key on it. Labels, order, parent and lifecycle can change.'
+          : 'Business logic keys on the stable code, never the label. Both languages are required.'
+      }
+      width="lg"
+      scrollable={false}
+    >
         <Form {...form}>
           <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
             <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
@@ -572,8 +568,7 @@ function ValueSheet({
             </div>
           </form>
         </Form>
-      </SheetContent>
-    </Sheet>
+    </Drawer>
   )
 }
 
@@ -670,20 +665,19 @@ function TypeSheet({ open, onOpenChange, editing, allTypes }: TypeSheetProps) {
   const pending = createType.isPending || updateType.isPending
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex w-full max-w-md flex-col gap-0 p-0 sm:max-w-md">
-        <div className="border-b border-border px-6 py-5">
-          <p className="eyebrow mb-1">Reference data · Master tables</p>
-          <SheetTitle className="text-lg font-bold">
-            {isEdit ? `Edit ${editing?.code}` : 'New lookup type'}
-          </SheetTitle>
-          <SheetDescription className="mt-1 text-sm text-muted-foreground">
-            {isEdit
-              ? 'Rename or re-flag this list domain. The code is immutable.'
-              : 'Create a new configurable list domain. System types cannot be created here.'}
-          </SheetDescription>
-        </div>
-
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      eyebrow="Reference data · Master tables"
+      title={isEdit ? `Edit ${editing?.code}` : 'New lookup type'}
+      description={
+        isEdit
+          ? 'Rename or re-flag this list domain. The code is immutable.'
+          : 'Create a new configurable list domain. System types cannot be created here.'
+      }
+      width="md"
+      scrollable={false}
+    >
         <Form {...form}>
           <form onSubmit={onSubmit} className="flex min-h-0 flex-1 flex-col">
             <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
@@ -801,8 +795,7 @@ function TypeSheet({ open, onOpenChange, editing, allTypes }: TypeSheetProps) {
             </div>
           </form>
         </Form>
-      </SheetContent>
-    </Sheet>
+    </Drawer>
   )
 }
 
@@ -927,19 +920,40 @@ function ImportSheet({ open, onOpenChange, typeCode }: ImportSheetProps) {
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex w-full max-w-md flex-col gap-0 p-0 sm:max-w-lg">
-        <div className="border-b border-border px-6 py-5">
-          <p className="eyebrow mb-1">Reference data · {typeCode}</p>
-          <SheetTitle className="text-lg font-bold">Import values</SheetTitle>
-          <SheetDescription className="mt-1 text-sm text-muted-foreground">
-            Paste JSON or CSV, or upload a file. Rows upsert by code. CSV header:{' '}
-            <span className="font-data">
-              code,labelEn,labelAr,descriptionEn,descriptionAr,parentCode,sortOrder
-            </span>
-          </SheetDescription>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      eyebrow={`Reference data · ${typeCode}`}
+      title="Import values"
+      description={
+        <>
+          Paste JSON or CSV, or upload a file. Rows upsert by code. CSV header:{' '}
+          <span className="font-data">
+            code,labelEn,labelAr,descriptionEn,descriptionAr,parentCode,sortOrder
+          </span>
+        </>
+      }
+      width="lg"
+      footer={
+        <div className="flex justify-end gap-2">
+          <SheetClose asChild>
+            <Button type="button" variant="secondary">
+              Cancel
+            </Button>
+          </SheetClose>
+          <Button
+            type="button"
+            onClick={() => void onImport()}
+            disabled={
+              importValues.isPending || preview.rows.length === 0 || Boolean(preview.error)
+            }
+          >
+            {importValues.isPending ? 'Importing…' : `Import ${preview.rows.length} row(s)`}
+          </Button>
         </div>
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-5">
+      }
+    >
+        <div className="space-y-4">
           <div className="flex items-center gap-2">
             <input
               ref={fileRef}
@@ -974,24 +988,7 @@ function ImportSheet({ open, onOpenChange, typeCode }: ImportSheetProps) {
             )}
           </div>
         </div>
-        <div className="flex justify-end gap-2 border-t border-border px-6 py-4">
-          <SheetClose asChild>
-            <Button type="button" variant="secondary">
-              Cancel
-            </Button>
-          </SheetClose>
-          <Button
-            type="button"
-            onClick={() => void onImport()}
-            disabled={
-              importValues.isPending || preview.rows.length === 0 || Boolean(preview.error)
-            }
-          >
-            {importValues.isPending ? 'Importing…' : `Import ${preview.rows.length} row(s)`}
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+    </Drawer>
   )
 }
 
@@ -1699,7 +1696,7 @@ export function ReferenceDataPage() {
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="secondary" disabled={!activeCode}>
+                  <Button variant="railGhost" disabled={!activeCode}>
                     <Download className="size-4" aria-hidden="true" /> Export
                   </Button>
                 </DropdownMenuTrigger>
@@ -1712,10 +1709,10 @@ export function ReferenceDataPage() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button variant="secondary" onClick={() => setImportOpen(true)} disabled={!activeCode}>
+              <Button variant="railGhost" onClick={() => setImportOpen(true)} disabled={!activeCode}>
                 <Upload className="size-4" aria-hidden="true" /> Import
               </Button>
-              <Button onClick={openAddValue} disabled={!activeCode}>
+              <Button variant="signal" onClick={openAddValue} disabled={!activeCode}>
                 <Plus className="size-4" aria-hidden="true" /> Add value
               </Button>
             </div>

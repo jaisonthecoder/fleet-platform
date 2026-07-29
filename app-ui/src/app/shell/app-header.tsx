@@ -5,8 +5,6 @@ import {
   Bell,
   Menu,
   Moon,
-  PanelLeftClose,
-  PanelLeftOpen,
   Sparkles,
   Sun,
 } from 'lucide-react'
@@ -18,9 +16,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import i18n, { supportedLanguages } from '@/i18n/config'
+import i18n, { defaultLanguage, supportedLanguages } from '@/i18n/config'
 import { useTheme } from '@/app/providers/theme-provider'
-import { useSidebar } from '@/app/providers/sidebar-provider'
 import { useAuth } from '@/features/auth/auth-context'
 import { BrandMark } from '@/components/brand-mark'
 import {
@@ -31,9 +28,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { navItems, type NavGroup } from './nav'
+import { navItems } from './nav'
 import { AppSidebarNav } from './app-sidebar'
 import { ScopeSwitcher } from '@/features/platform/components/scope-switcher'
+import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/breadcrumb'
 
 /** Shared 38×38 bordered icon-button (matches the Helm header controls). */
 const ICON_BTN =
@@ -88,56 +86,68 @@ function ThemeToggle() {
   )
 }
 
-/** Register (breadcrumb tier 2) per section; a few destinations override it. */
-const REGISTER_BY_GROUP: Record<NavGroup, string> = {
-  operations: 'nav.registers.operational',
-  governance: 'nav.registers.governance',
-  administration: 'nav.registers.administration',
-}
-const REGISTER_OVERRIDE: Record<string, string> = {
-  booking: 'nav.registers.calm',
-  console: 'nav.registers.theatrical',
-  executive: 'nav.registers.cinematic',
+/** Segment labels that override the default nav/humanized resolution. As an
+ * ancestor crumb, `admin` reads as the section ("Administration") rather than
+ * the Admin-console page; `onboard` gets a friendly label (no nav entry). */
+const SEGMENT_LABEL_KEYS: Record<string, string> = {
+  admin: 'nav.groups.administration',
+  onboard: 'nav.vehicleOnboarding',
 }
 
-/** Resolves the current screen + register from the URL for the breadcrumb. */
-function useBreadcrumb(): { register: string | null; screen: string } {
+/** Title-cases an unknown URL segment as a last-resort label (`off-hire` → `Off Hire`). */
+function humanizeSegment(segment: string): string {
+  return segment.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+/**
+ * Standard, route-driven breadcrumb trail: one crumb per URL path segment (after
+ * the `/:lang` prefix). Each ancestor crumb links to its cumulative path when
+ * that path is a real, enabled nav destination; the last crumb is the current
+ * page (non-link, `aria-current`). Labels resolve from the nav table (i18n),
+ * then a small override map, then a humanized fallback. The app name is
+ * intentionally omitted — it lives in the sidebar brand lockup.
+ */
+function useBreadcrumbTrail(): BreadcrumbItem[] {
   const { t } = useTranslation()
   const { lang } = useParams()
   const { pathname } = useLocation()
-  const prefix = `/${lang ?? ''}`
-  const rest = pathname.startsWith(prefix)
-    ? pathname.slice(prefix.length).replace(/^\/+/, '')
+  const base = `/${lang ?? defaultLanguage}`
+  const rest = pathname.startsWith(base)
+    ? pathname.slice(base.length).replace(/^\/+/, '')
     : ''
 
-  if (!rest) return { register: null, screen: t('nav.home') }
+  if (!rest) return [{ label: t('nav.home') }]
 
-  // Longest-matching nav segment (handles nested admin/* routes).
-  const item = [...navItems]
-    .filter((n) => rest === n.segment || rest.startsWith(`${n.segment}/`))
-    .sort((a, b) => b.segment.length - a.segment.length)[0]
-  if (item) {
-    return {
-      register: t(
-        REGISTER_OVERRIDE[item.segment] ?? REGISTER_BY_GROUP[item.group],
-      ),
-      screen: t(item.labelKey),
-    }
-  }
+  const segments = rest.split('/').filter(Boolean)
+  return segments.map((segment, index) => {
+    const isLast = index === segments.length - 1
+    const cumulative = segments.slice(0, index + 1).join('/')
+    const navItem = navItems.find((n) => n.segment === cumulative)
+    const overrideKey = SEGMENT_LABEL_KEYS[segment]
 
-  const first = rest.split('/')[0]
-  if (first === 'design')
-    return { register: t('nav.registers.reference'), screen: t('nav.design') }
-  if (first === 'book-sample')
-    return { register: t('nav.registers.calm'), screen: t('nav.bookingSample') }
-  return { register: null, screen: t('nav.home') }
+    // Ancestor overrides (e.g. `admin` → section) win over the page's own label.
+    const label =
+      !isLast && overrideKey
+        ? t(overrideKey)
+        : navItem
+          ? t(navItem.labelKey)
+          : overrideKey
+            ? t(overrideKey)
+            : humanizeSegment(segment)
+
+    const to =
+      !isLast && navItem && !navItem.disabled
+        ? `${base}/${cumulative}`
+        : undefined
+
+    return { label, to }
+  })
 }
 
 /** Fixed global header: breadcrumb + page title, with the action cluster. */
 export function AppHeader() {
   const { t } = useTranslation()
-  const { register, screen } = useBreadcrumb()
-  const { collapsed, toggle } = useSidebar()
+  const breadcrumbTrail = useBreadcrumbTrail()
   const { me, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -176,20 +186,6 @@ export function AppHeader() {
           </SheetContent>
         </Sheet>
 
-        {/* Desktop sidebar toggle — always in the same place, easy to find. */}
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={
-            collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')
-          }
-          aria-expanded={!collapsed}
-          title={`${collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')} (Ctrl/⌘ B)`}
-          className="hidden size-[38px] shrink-0 items-center justify-center rounded-[2px] border border-border bg-card text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground md:flex [&_svg]:size-[17px]"
-        >
-          {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
-        </button>
-
         {/* Brand only shows on mobile — on desktop it lives in the sidebar. */}
         <a
           href="#main-content"
@@ -201,15 +197,8 @@ export function AppHeader() {
           </span>
         </a>
 
-        {/* Breadcrumb eyebrow + page title. */}
-        <div className="hidden min-w-0 md:block">
-          <div className="truncate text-[10.5px] font-bold uppercase tracking-[0.08em] text-ink-3">
-            {register ?? t('common.appName')}
-          </div>
-          <div className="truncate text-[17px] font-bold tracking-[-0.01em] text-foreground">
-            {screen}
-          </div>
-        </div>
+        {/* Breadcrumb trail (group › screen). */}
+        <Breadcrumb items={breadcrumbTrail} className="hidden md:block" />
       </div>
 
       <div className="flex shrink-0 items-center gap-2">

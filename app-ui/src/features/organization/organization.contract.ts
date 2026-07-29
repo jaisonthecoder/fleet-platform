@@ -22,6 +22,9 @@ export interface OrganizationHierarchyNode {
   userCount: number
   utilizedVehicleCount: number
   utilizationPercent: number
+  latitude?: number | null
+  longitude?: number | null
+  address?: string | null
   children: OrganizationHierarchyNode[]
 }
 
@@ -47,6 +50,9 @@ const hierarchyNodeSchema: z.ZodType<OrganizationHierarchyNode> = z.lazy(() =>
     userCount: z.number().int().nonnegative(),
     utilizedVehicleCount: z.number().int().nonnegative(),
     utilizationPercent: z.number().min(0).max(100),
+    latitude: z.number().nullable().optional(),
+    longitude: z.number().nullable().optional(),
+    address: z.string().nullable().optional(),
     children: z.array(hierarchyNodeSchema),
   }),
 )
@@ -119,6 +125,9 @@ export interface CreateHierarchyNodeInput {
   nameAr: string
   levelCode: string
   levelLabel: string
+  latitude?: number | null
+  longitude?: number | null
+  address?: string | null
   reason: string
 }
 
@@ -126,6 +135,9 @@ export interface RenameHierarchyNodeInput {
   expectedRevision: number
   name: string
   nameAr: string
+  latitude?: number | null
+  longitude?: number | null
+  address?: string | null
   reason: string
 }
 

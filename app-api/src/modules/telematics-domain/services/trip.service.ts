@@ -36,6 +36,11 @@ export class TripService {
     }
   }
 
+  /** Recent trips for a vehicle (newest first). */
+  listForVehicle(vehicleId: string) {
+    return this.repo.listTripsForVehicle(vehicleId);
+  }
+
   async endTrip(tripId: string, input: EndTrip, actorRef = 'system'): Promise<TripDto> {
     const existing = await this.repo.findTrip(tripId);
     if (!existing) {

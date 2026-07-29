@@ -40,6 +40,15 @@ export class DashboardsRepository {
     return rows.map((r) => r.id);
   }
 
+  /** Lists every Vehicle owned by one organization for an authorized root view. */
+  async vehicleIdsInOrganization(organizationId: string): Promise<string[]> {
+    const rows = await this.db
+      .select({ id: vehicle.id })
+      .from(vehicle)
+      .where(eq(vehicle.organizationId, organizationId));
+    return rows.map((row) => row.id);
+  }
+
   async countVehicles(ids: string[] | null): Promise<number> {
     if (ids && ids.length === 0) {
       return 0;
@@ -136,20 +145,22 @@ export class DashboardsRepository {
     return out;
   }
 
-  async countActiveBlocks(): Promise<number> {
+  async countActiveBlocks(organizationId: string): Promise<number> {
     const rows = await this.db
       .select({ n: sql<number>`cast(count(*) as int)` })
       .from(accessBlock)
-      .where(eq(accessBlock.active, true));
+      .where(and(eq(accessBlock.organizationId, organizationId), eq(accessBlock.active, true)));
     return toInt(rows);
   }
 
   /** Entitlement counts by status + a by-category breakdown (scoped by location node). */
-  async entitlementInventory(nodeIds: string[] | null): Promise<{ allocated: number; pendingApproval: number; byCategory: Array<{ justificationCategory: string; count: number }> }> {
+  async entitlementInventory(organizationId: string, nodeIds: string[] | null): Promise<{ allocated: number; pendingApproval: number; awaitingConsent: number; returned: number; expired: number; bsdActive: number; bsdConflict: number; byCategory: Array<{ justificationCategory: string; count: number }> }> {
     if (nodeIds && nodeIds.length === 0) {
-      return { allocated: 0, pendingApproval: 0, byCategory: [] };
+      return { allocated: 0, pendingApproval: 0, awaitingConsent: 0, returned: 0, expired: 0, bsdActive: 0, bsdConflict: 0, byCategory: [] };
     }
-    const scope = nodeIds ? inArray(entitlementRequest.locationNodeId, nodeIds) : undefined;
+    const scope = nodeIds
+      ? and(eq(entitlementRequest.organizationId, organizationId), inArray(entitlementRequest.locationNodeId, nodeIds))
+      : eq(entitlementRequest.organizationId, organizationId);
     const statusRows = await this.db
       .select({ status: entitlementRequest.status, n: sql<number>`cast(count(*) as int)` })
       .from(entitlementRequest)
@@ -157,16 +168,35 @@ export class DashboardsRepository {
       .groupBy(entitlementRequest.status);
     let allocated = 0;
     let pendingApproval = 0;
+    let awaitingConsent = 0;
+    let returned = 0;
+    let expired = 0;
     for (const r of statusRows) {
       if (r.status === 'Allocated') allocated = r.n;
       else if (r.status === 'PendingApproval') pendingApproval = r.n;
+      else if (r.status === 'AwaitingConsent') awaitingConsent = r.n;
+      else if (r.status === 'Returned') returned = r.n;
+      else if (r.status === 'Expired') expired = r.n;
     }
     const catRows = await this.db
       .select({ justificationCategory: entitlementRequest.justificationCategory, count: sql<number>`cast(count(*) as int)` })
       .from(entitlementRequest)
-      .where(scope ? and(scope, eq(entitlementRequest.status, 'Allocated')) : eq(entitlementRequest.status, 'Allocated'))
+      .where(and(scope, eq(entitlementRequest.status, 'Allocated')))
       .groupBy(entitlementRequest.justificationCategory);
-    return { allocated, pendingApproval, byCategory: catRows };
+    const scopedNodes = nodeIds
+      ? sql.join(nodeIds.map((nodeId) => sql`${nodeId}::uuid`), sql`, `)
+      : null;
+    const bsdCounts = await this.db.execute(sql`
+      SELECT
+        count(*) FILTER (WHERE bsd.status = 'Active')::int AS active,
+        count(*) FILTER (WHERE bsd.status = 'Conflict')::int AS conflict
+      FROM fleet.bsd_return_window bsd
+      JOIN fleet.entitlement_request entitlement ON entitlement.id = bsd.entitlement_request_id
+      WHERE entitlement.organization_id = ${organizationId}::uuid
+        AND bsd.organization_id = entitlement.organization_id
+        ${scopedNodes ? sql`AND entitlement.location_node_id IN (${scopedNodes})` : sql``}
+    `) as unknown as Array<{ active: number; conflict: number }>;
+    return { allocated, pendingApproval, awaitingConsent, returned, expired, bsdActive: bsdCounts[0]?.active ?? 0, bsdConflict: bsdCounts[0]?.conflict ?? 0, byCategory: catRows };
   }
 
   /** Distinct vehicles with an active device pairing (telematics reporting). */

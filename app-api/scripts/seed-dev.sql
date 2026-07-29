@@ -34,6 +34,14 @@ VALUES
   ('c0000000-0000-4000-8000-000000000002', 'b0000000-0000-4000-8000-000000000002', 'Approver', 'a0000000-0000-4000-8000-000000000003')
 ON CONFLICT (person_id, role, scope_node_id) DO NOTHING;
 
+-- HCM-derived person capability remains editable through the normal person sync;
+-- the scoped role assignment above is the application authorization source.
+UPDATE fleet.person
+SET is_professional_driver = true,
+    updated_at_utc = now()
+WHERE id = 'b0000000-0000-4000-8000-000000000012'
+  AND is_professional_driver = false;
+
 -- Full role roster (dev-login): one dummy user per remaining business role, each
 -- with a proper email, grade, home pool and a single role assignment at a sensible
 -- scope (Group / Cluster / Pool). Lets you sign in as any actor to exercise the
@@ -87,7 +95,11 @@ INSERT INTO fleet.lookup_type (code, label_en, label_ar, is_hierarchical, is_sys
   ('use-category',     'Use Category',    'فئة الاستخدام', false, true),
   ('fuel-type',        'Fuel Type',       'نوع الوقود',    false, true),
   ('ownership-type',   'Ownership Type',  'نوع الملكية',   false, true),
-  ('vehicle-make',     'Make',            'الصانع',        true,  true)
+  ('vehicle-make',     'Make',            'الصانع',        true,  true),
+  ('vehicle-acquisition-scenario', 'Acquisition Scenario', 'سيناريو الاقتناء', false, true),
+  ('vehicle-operational-status', 'Vehicle Operational Status', 'الحالة التشغيلية للمركبة', false, true),
+  ('vehicle-telematics-setup', 'Telematics Setup', 'إعداد التتبع عن بُعد', false, true),
+  ('currency',         'Currency',        'العملة',         false, true)
 ON CONFLICT (code) DO NOTHING;
 
 -- Flat value sets (level taxonomy, body type, use category, fuel, ownership).
@@ -115,7 +127,20 @@ JOIN (VALUES
   ('fuel-type','HYBRID','Hybrid','هجين',2),
   ('fuel-type','EV','Electric','كهرباء',3),
   ('ownership-type','OWNED','Owned','مملوكة',0),
-  ('ownership-type','LEASED','Leased','مؤجرة',1)
+  ('ownership-type','LEASED','Leased','مؤجرة',1),
+  ('vehicle-acquisition-scenario','LEASED','Leased','مؤجرة',0),
+  ('vehicle-acquisition-scenario','OWNED_NEW','Owned - new purchase','مملوكة - شراء جديد',1),
+  ('vehicle-acquisition-scenario','TRANSFER_IN','Transfer-in','نقل وارد',2),
+  ('vehicle-acquisition-scenario','LEASE_REPLACEMENT','Lease replacement','استبدال مركبة مؤجرة',3),
+  ('vehicle-operational-status','ACTIVE','Active','نشطة',0),
+  ('vehicle-operational-status','RESERVE','Reserve','احتياطية',1),
+  ('vehicle-operational-status','STANDBY','Standby','استعداد',2),
+  ('vehicle-operational-status','VIP_ONLY','VIP only','لكبار الشخصيات فقط',3),
+  ('vehicle-operational-status','QUARANTINED','Quarantined','قيد العزل',4),
+  ('vehicle-telematics-setup','INSTALL','Install telematics unit','تركيب جهاز تتبع',0),
+  ('vehicle-telematics-setup','EXISTING','Unit already fitted','الجهاز مركب مسبقاً',1),
+  ('vehicle-telematics-setup','MANUAL','No telematics - manual odometer','بدون تتبع - عداد يدوي',2),
+  ('currency','AED','UAE Dirham','درهم إماراتي',0)
 ) AS v(type_code, code, en, ar, ord) ON v.type_code = t.code
 ON CONFLICT (lookup_type_id, code) DO NOTHING;
 

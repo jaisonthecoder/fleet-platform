@@ -32,12 +32,17 @@ export const BOOKING_REASON = {
   notReserved: 'booking-not-reserved',
   driverMismatch: 'booking-consent-driver-mismatch',
   vehicleUnavailable: 'booking-vehicle-unavailable',
+  vehicleCapacityInsufficient: 'booking-vehicle-capacity-insufficient',
   sodSelfApproval: 'sod-01-self-approval',
   noApprover: 'booking-no-approver-resolvable',
   reConsentRequired: 'booking-re-consent-required',
+  consentTemplateUnavailable: 'booking-consent-template-unavailable',
+  consentVersionChanged: 'booking-consent-version-changed',
   terminal: 'booking-already-terminal',
+  activeRequiresReturn: 'booking-active-requires-return',
   extendNotLater: 'booking-extend-must-be-later',
   onBehalfNotAllowed: 'booking-on-behalf-not-allowed',
+  onBehalfContractPending: 'booking-on-behalf-scope-contract-pending',
   driverNotAllowed: 'booking-driver-not-allowed',
   personInactive: 'booking-person-inactive',
   personScopeMissing: 'booking-person-scope-missing',
@@ -69,6 +74,8 @@ export type SignConsent = z.infer<typeof signConsentSchema>;
 /** Approver decision on a submitted booking (routed via the workflow engine). */
 export const decideBookingSchema = z.object({
   actorPersonId: z.string().uuid(),
+  expectedBookingVersion: z.number().int().positive(),
+  expectedStepVersion: z.number().int().positive(),
   decision: z.enum(['APPROVED', 'REJECTED', 'MODIFICATION_REQUESTED']),
   reason: z.string().max(500).optional(),
   onBehalfOfPersonId: z.string().uuid().optional(),
@@ -77,6 +84,8 @@ export type DecideBooking = z.infer<typeof decideBookingSchema>;
 
 /** Approver action body (the decision is set by the route: approve/decline/request-changes). */
 export const approverActionSchema = z.object({
+  expectedBookingVersion: z.number().int().positive(),
+  expectedStepVersion: z.number().int().positive(),
   reason: z.string().max(500).optional(),
   onBehalfOfPersonId: z.string().uuid().optional(),
 }).strict();
@@ -85,11 +94,12 @@ export type ApproverAction = z.infer<typeof approverActionSchema>;
 /** Requester modification of vehicle/window (may void consent → re-consent). */
 export const modifyBookingSchema = z
   .object({
-    actorPersonId: z.string().uuid(),
+    expectedRevision: z.number().int().positive(),
     vehicleId: z.string().uuid().optional(),
     pickupAtUtc: z.string().datetime().optional(),
     returnAtUtc: z.string().datetime().optional(),
   })
+  .strict()
   .refine((d) => d.vehicleId ?? d.pickupAtUtc ?? d.returnAtUtc, {
     message: 'at least one of vehicleId/pickupAtUtc/returnAtUtc is required',
   });
@@ -97,16 +107,16 @@ export type ModifyBooking = z.infer<typeof modifyBookingSchema>;
 
 /** Mid-trip extension of an active booking (FR-BOOK-18). */
 export const extendBookingSchema = z.object({
-  actorPersonId: z.string().uuid(),
+  expectedRevision: z.number().int().positive(),
   newReturnAtUtc: z.string().datetime(),
-});
+}).strict();
 export type ExtendBooking = z.infer<typeof extendBookingSchema>;
 
 /** Cancel a booking (releases the reservation). */
 export const cancelBookingSchema = z.object({
-  actorPersonId: z.string().uuid(),
+  expectedRevision: z.number().int().positive(),
   reason: z.string().max(500).optional(),
-});
+}).strict();
 export type CancelBooking = z.infer<typeof cancelBookingSchema>;
 
 /** Availability query — computed from the same persisted reservation ranges. */
@@ -117,6 +127,23 @@ export const availabilityQuerySchema = z.object({
 });
 export type AvailabilityQuery = z.infer<typeof availabilityQuerySchema>;
 
+/** Bounded timeline query used by the Employee Booking page. */
+export const availabilityTimelineQuerySchema = z
+  .object({
+    startAtUtc: z.string().datetime(),
+    endAtUtc: z.string().datetime(),
+  })
+  .superRefine((value, context) => {
+    const start = new Date(value.startAtUtc).getTime();
+    const end = new Date(value.endAtUtc).getTime();
+    if (end <= start) {
+      context.addIssue({ code: 'custom', message: 'timeline end must be after start' });
+    } else if (end - start > 24 * 60 * 60 * 1000) {
+      context.addIssue({ code: 'custom', message: 'timeline window cannot exceed 24 hours' });
+    }
+  });
+export type AvailabilityTimelineQuery = z.infer<typeof availabilityTimelineQuerySchema>;
+
 /** A booking projection returned to callers/tests. */
 export interface BookingDto {
   id: string;
@@ -124,6 +151,9 @@ export interface BookingDto {
   vehicleId: string;
   driverPersonId: string;
   requestedByPersonId: string;
+  beneficiaryPersonId: string | null;
+  bookingScopeNodeId: string | null;
+  revision: number;
   status: BookingStatus;
   pickupAtUtc: string;
   returnAtUtc: string;
@@ -143,10 +173,34 @@ export interface BookingDto {
 export interface AvailableVehicleDto {
   vehicleId: string;
   plate: string;
+  makeCode: string | null;
+  modelCode: string | null;
   bodyTypeCode: string;
   useCategoryCode: string | null;
   seatingCapacity: number | null;
   fuelTypeCode: string | null;
+  locationName: string | null;
+}
+
+/** Privacy-safe occupancy state; no other Booking facts are exposed. */
+export interface AvailabilityTimelineDto {
+  startAtUtc: string;
+  endAtUtc: string;
+  rows: Array<{
+    vehicleId: string;
+    plate: string;
+    makeCode: string | null;
+    modelCode: string | null;
+    bodyTypeCode: string;
+    seatingCapacity: number | null;
+    fuelTypeCode: string | null;
+    locationName: string;
+    segments: Array<{
+      startAtUtc: string;
+      endAtUtc: string;
+      state: 'OPEN' | 'OWN' | 'UNAVAILABLE';
+    }>;
+  }>;
 }
 
 /** Lightweight active-person option for self/on-behalf booking. */
@@ -161,6 +215,38 @@ export interface BookingPersonDto {
   isSelf: boolean;
 }
 
+/** Server-derived Booking entry context; gated modes never rely on client role inference. */
+export interface BookingContextDto {
+  actor: {
+    personId: string;
+    fullName: string;
+    email: string | null;
+    roles: string[];
+  };
+  modes: {
+    self: { enabled: boolean; blockingReasons: string[] };
+    onBehalf: { enabled: boolean; blockingReasons: string[] };
+    emergency: { enabled: false; blockingReasons: string[] };
+  };
+  defaults: {
+    requestedByPersonId: string;
+    driverPersonId: string;
+    scopeNodeId: string | null;
+    scopeName: string | null;
+  };
+  consent: {
+    status: 'PENDING_APPROVAL' | 'AVAILABLE' | 'UNAVAILABLE';
+    version: string | null;
+    contentHash: string | null;
+    effectiveAtUtc: string | null;
+    content: { en: string; ar: string } | null;
+  };
+  dependencies: Array<{
+    key: 'vehicleAvailability' | 'eligibility' | 'consentTemplate';
+    status: 'AVAILABLE' | 'PENDING_APPROVAL' | 'UNAVAILABLE';
+  }>;
+}
+
 /** A committed consent record pointer. */
 export interface ConsentDto {
   id: string;
@@ -171,4 +257,56 @@ export interface ConsentDto {
   windowStartUtc: string;
   windowEndUtc: string;
   signedAtUtc: string;
+}
+
+export interface BookingApprovalWorkItemDto {
+  bookingId: string;
+  bookingNumber: string;
+  requesterName: string;
+  vehicle: { plate: string; makeCode: string | null; modelCode: string | null };
+  pickupAtUtc: string;
+  returnAtUtc: string;
+  purpose: string | null;
+  passengerCount: number | null;
+  consentVersion: string;
+  workflowStepId: string;
+  expectedBookingVersion: number;
+  expectedStepVersion: number;
+  dueAtUtc: string | null;
+  delegated: boolean;
+  evidence: {
+    eligibility: 'VERIFIED_AT_CONSENT';
+    consent: 'SIGNED';
+    reservation: 'HELD';
+    forecast: 'NOT_AVAILABLE';
+  };
+}
+
+export interface BookingPreparationItemDto {
+  bookingId: string;
+  bookingNumber: string;
+  vehiclePlate: string;
+  pickupAtUtc: string;
+  returnAtUtc: string;
+  scopeName: string | null;
+  readiness: 'AWAITING_HANDOVER';
+}
+
+export interface MyBookingDto extends BookingDto {
+  vehicle: {
+    plate: string;
+    makeCode: string | null;
+    modelCode: string | null;
+    bodyTypeCode: string;
+    fuelTypeCode: string | null;
+    seatingCapacity: number | null;
+  };
+  scopeName: string | null;
+  capabilities: {
+    consent: boolean;
+    modify: boolean;
+    extend: boolean;
+    cancel: boolean;
+    returnVehicle: boolean;
+  };
 }

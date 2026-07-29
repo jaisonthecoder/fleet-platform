@@ -4,9 +4,9 @@
 
 Deliver the employee’s ongoing booking lifecycle after submission, including active-trip actions and complete historical evidence.
 
-## Mandatory mockup gate — ask before implementation
+## Mandatory mockup gate — resolved by approved derived design
 
-Request: My Bookings Upcoming/Active/Past; active pinned card; detail drawer; consent/evidence; modify/re-consent; extend conflict/mediation; cancel; early return; no-show/late indicators; receipt/download; empty/loading/error/mobile/RTL.
+Approved on 2026-07-21 for business-derived design and implementation. Follow `mockups/derived-screen-contracts.md` for Upcoming/Active/Past, detail/evidence and state-authorized actions; use `mockups/21-booking-employee-book-a-vehicle.png` for Employee visual language and `mockups/25-booking-approvals-inbox.png` for dense detail/evidence composition. `mockups/mockup-review.md` controls empty/loading/error, responsive and EN/AR/RTL behavior.
 
 ## My Bookings access
 

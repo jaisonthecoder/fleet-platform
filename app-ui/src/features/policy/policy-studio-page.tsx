@@ -100,7 +100,7 @@ function nextFact(
 /** Presents a typed rule output as editable text. */
 function formatOutcome(row: Pick<AuthoredDecisionRow, 'decision' | 'route' | 'value'>): string {
   if (row.decision === 'ROUTE_TO') return row.route?.join(', ') ?? ''
-  if (row.decision !== 'VALUE') return ''
+  if (row.value === undefined) return ''
   return typeof row.value === 'string' ? row.value : JSON.stringify(row.value ?? '')
 }
 
@@ -109,7 +109,7 @@ function parseOutcome(decision: PolicyDecision, raw: string): { route?: string[]
   if (decision === 'ROUTE_TO') {
     return { route: raw.split(',').map((value) => value.trim()).filter(Boolean) }
   }
-  if (decision !== 'VALUE') return {}
+  if (!raw.trim()) return {}
   try { return { value: JSON.parse(raw) as unknown } }
   catch { return { value: raw } }
 }
@@ -285,12 +285,12 @@ export function PolicyStudioPage() {
                         )
                       })}
                       <Button variant="secondary" size="sm" onClick={() => { const fact = nextFact(facts, row.conditions); if (!fact) return; updateRow(rowIndex, (current) => ({ ...current, conditions: [...current.conditions, { id: crypto.randomUUID(), fact: fact.key, operator: fact.operators[0], value: initialValue(fact) }] })) }}><Plus />{t('policyStudio.addCondition')}</Button>
-                      <div className="grid gap-2 border-t border-border pt-3 md:grid-cols-[120px_1fr_1fr]"><Select value={row.decision} onValueChange={(decision) => updateRow(rowIndex, (current) => ({ ...current, decision: decision as PolicyDecision, route: undefined, value: undefined }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DECISIONS.map((decision) => <SelectItem key={decision} value={decision}>{decision}</SelectItem>)}</SelectContent></Select><Input value={row.reasons.join(', ')} onChange={(event) => updateRow(rowIndex, (current) => ({ ...current, reasons: event.target.value.split(',').map((value) => value.trim()).filter(Boolean) }))} aria-label={t('policyStudio.reasons')} />{row.decision === 'VALUE' || row.decision === 'ROUTE_TO' ? <Input aria-label={t('policyStudio.outcome')} value={formatOutcome(row)} onChange={(event) => updateRow(rowIndex, (current) => ({ ...current, ...parseOutcome(current.decision, event.target.value) }))} /> : <span />}</div>
+                      <div className="grid gap-2 border-t border-border pt-3 md:grid-cols-[120px_1fr_1fr]"><Select value={row.decision} onValueChange={(decision) => updateRow(rowIndex, (current) => ({ ...current, decision: decision as PolicyDecision, route: undefined, value: undefined }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DECISIONS.map((decision) => <SelectItem key={decision} value={decision}>{decision}</SelectItem>)}</SelectContent></Select><Input value={row.reasons.join(', ')} onChange={(event) => updateRow(rowIndex, (current) => ({ ...current, reasons: event.target.value.split(',').map((value) => value.trim()).filter(Boolean) }))} aria-label={t('policyStudio.reasons')} />{row.decision === 'VALUE' || row.decision === 'ROUTE_TO' || table.ruleType === 'dedicated-vehicle-eligibility' ? <Input aria-label={t('policyStudio.outcome')} value={formatOutcome(row)} onChange={(event) => updateRow(rowIndex, (current) => ({ ...current, ...parseOutcome(current.decision, event.target.value) }))} /> : <span />}</div>
                     </div>
                   </section>
                 ))}
                 <Button variant="secondary" onClick={addRule}><Plus />{t('policyStudio.addRule')}</Button>
-                <section className="rounded-[3px] border border-dashed border-border bg-surface-2 p-4"><p className="eyebrow mb-2">{t('policyStudio.default')}</p><div className="grid gap-2 md:grid-cols-[140px_1fr_1fr]"><Select value={table.default.decision} onValueChange={(decision) => setTable({ ...table, default: { ...table.default, decision: decision as PolicyDecision, route: undefined, value: undefined } })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DECISIONS.map((decision) => <SelectItem key={decision} value={decision}>{decision}</SelectItem>)}</SelectContent></Select><Input value={table.default.reasons.join(', ')} onChange={(event) => setTable({ ...table, default: { ...table.default, reasons: event.target.value.split(',').map((value) => value.trim()).filter(Boolean) } })} />{table.default.decision === 'VALUE' || table.default.decision === 'ROUTE_TO' ? <Input aria-label={t('policyStudio.defaultOutcome')} value={formatOutcome(table.default)} onChange={(event) => setTable({ ...table, default: { ...table.default, ...parseOutcome(table.default.decision, event.target.value) } })} /> : <span />}</div></section>
+                <section className="rounded-[3px] border border-dashed border-border bg-surface-2 p-4"><p className="eyebrow mb-2">{t('policyStudio.default')}</p><div className="grid gap-2 md:grid-cols-[140px_1fr_1fr]"><Select value={table.default.decision} onValueChange={(decision) => setTable({ ...table, default: { ...table.default, decision: decision as PolicyDecision, route: undefined, value: undefined } })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{DECISIONS.map((decision) => <SelectItem key={decision} value={decision}>{decision}</SelectItem>)}</SelectContent></Select><Input value={table.default.reasons.join(', ')} onChange={(event) => setTable({ ...table, default: { ...table.default, reasons: event.target.value.split(',').map((value) => value.trim()).filter(Boolean) } })} />{table.default.decision === 'VALUE' || table.default.decision === 'ROUTE_TO' || table.ruleType === 'dedicated-vehicle-eligibility' ? <Input aria-label={t('policyStudio.defaultOutcome')} value={formatOutcome(table.default)} onChange={(event) => setTable({ ...table, default: { ...table.default, ...parseOutcome(table.default.decision, event.target.value) } })} /> : <span />}</div></section>
               </div>
             </>
           )}

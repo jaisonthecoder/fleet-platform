@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, ForbiddenException, HttpException } from '@nestjs/common';
 import { HANDOVER_REASON } from '../../../contracts/handover.contract';
 import type { PolicyEvaluationResponse } from '../../../contracts/policy-evaluation.contract';
+import type { Principal } from '../../../common/auth/principal';
 import { HandoverService } from './handover.service';
 
 async function reasonsOf(promise: Promise<unknown>): Promise<string[]> {
@@ -18,6 +19,7 @@ class FakeRepo {
   keys: Array<Record<string, unknown>> = [];
   vehicle: Record<string, unknown> | undefined = { id: 'v1', fuelEfficiencyKmpl: '10', lastConfirmedOdometer: '1100' };
   private seq = 0;
+  commands: Array<Record<string, unknown>> = [];
 
   transaction<T>(work: (tx: unknown) => Promise<T>): Promise<T> {
     return work({});
@@ -30,8 +32,23 @@ class FakeRepo {
   async findById(id: string) {
     return this.handovers.get(id);
   }
+  async findByIdInOrganization(id: string) {
+    return this.handovers.get(id);
+  }
   async findByBooking(bookingId: string) {
     return [...this.handovers.values()].find((h) => h.bookingId === bookingId);
+  }
+  async findCommand(organizationId: string, actorPersonId: string, commandType: string, idempotencyKey: string) {
+    return this.commands.find((command) => command.organizationId === organizationId && command.actorPersonId === actorPersonId && command.commandType === commandType && command.idempotencyKey === idempotencyKey);
+  }
+  async claimCommand(values: Record<string, unknown>) {
+    if (await this.findCommand(values.organizationId as string, values.actorPersonId as string, values.commandType as string, values.idempotencyKey as string)) return undefined;
+    const command = { id: `c${this.commands.length + 1}`, ...values, resultHandoverId: null };
+    this.commands.push(command);
+    return command;
+  }
+  async completeCommand(id: string, resultHandoverId: string, resultBody: unknown) {
+    Object.assign(this.commands.find((command) => command.id === id)!, { resultHandoverId, resultBody });
   }
   async update(id: string, patch: Record<string, unknown>) {
     const row = { ...this.handovers.get(id)!, ...patch };
@@ -64,21 +81,40 @@ class FakePdp {
 }
 
 class FakeBookings {
-  booking = { id: 'bk1', status: 'Approved', driverPersonId: 'd1', vehicleId: 'v1', returnAtUtc: '2999-01-01T10:00:00.000Z' };
+  booking = { id: 'bk1', status: 'Approved', driverPersonId: 'd1', vehicleId: 'v1', bookingScopeNodeId: 'scope', returnAtUtc: '2999-01-01T10:00:00.000Z' };
   pickedUp = false;
   returnedLate: boolean | null = null;
+  async getInternal() {
+    return this.booking;
+  }
   async get() {
     return this.booking;
   }
-  async markPickedUp() {
+  async markPickedUpInTransaction() {
     this.pickedUp = true;
+    this.booking.status = 'Active';
     return this.booking;
   }
-  async markReturned(_id: string, _actor: string, late: boolean) {
+  async markReturnedInTransaction(_id: string, _actor: string, late: boolean) {
     this.returnedLate = late;
+    this.booking.status = 'Completed';
     return this.booking;
   }
 }
+
+class FakeScopeAuthorization {
+  async assertRolesAtScope() {}
+}
+
+const fleetPrincipal: Principal = {
+  organizationId: '00000000-0000-4000-8000-000000000001',
+  userId: null,
+  personId: 'fleet-actor',
+  entraObjectId: null,
+  email: null,
+  roles: [{ role: 'FleetManager', scopeNodeId: 'scope' }],
+  isDevLogin: true,
+};
 
 class FakeAudit {
   entries: Array<Record<string, unknown>> = [];
@@ -100,7 +136,8 @@ function build() {
   const bookings = new FakeBookings();
   const audit = new FakeAudit();
   const outbox = new FakeOutbox();
-  const service = new HandoverService(repo as never, pdp as never, bookings as never, audit as never, outbox as never);
+  const scopeAuthorization = new FakeScopeAuthorization();
+  const service = new HandoverService(repo as never, pdp as never, bookings as never, audit as never, outbox as never, scopeAuthorization as never);
   return { service, repo, bookings, audit, outbox };
 }
 
@@ -118,7 +155,7 @@ const openInput = {
 describe('HandoverService', () => {
   it('opens a handover, logs the key issue, and moves the booking to Active', async () => {
     const { service, repo, bookings, outbox } = build();
-    const dto = await service.open(openInput);
+    const dto = await service.open(openInput, fleetPrincipal, 'open-command-key');
     expect(dto.phase).toBe('Handover');
     expect(bookings.pickedUp).toBe(true);
     expect(repo.keys.some((k) => k.custodyState === 'Issued')).toBe(true);
@@ -127,15 +164,15 @@ describe('HandoverService', () => {
 
   it('blocks a handover when the employee is not the booking driver (FR-HAND-01)', async () => {
     const { service } = build();
-    await expect(service.open({ ...openInput, employeePersonId: 'someone-else' })).rejects.toThrow(ForbiddenException);
-    const reasons = await reasonsOf(service.open({ ...openInput, employeePersonId: 'someone-else' }));
+    await expect(service.open({ ...openInput, employeePersonId: 'someone-else' }, fleetPrincipal, 'wrong-driver-key')).rejects.toThrow(ForbiddenException);
+    const reasons = await reasonsOf(service.open({ ...openInput, employeePersonId: 'someone-else' }, fleetPrincipal, 'wrong-driver-key-2'));
     expect(reasons).toContain(HANDOVER_REASON.employeeMismatch);
   });
 
   it('blocks a handover when the booking is not approved', async () => {
     const { service, bookings } = build();
     bookings.booking.status = 'Draft';
-    const reasons = await reasonsOf(service.open(openInput));
+    const reasons = await reasonsOf(service.open(openInput, fleetPrincipal, 'not-approved-key'));
     expect(reasons).toContain(HANDOVER_REASON.bookingNotApproved);
   });
 
@@ -151,7 +188,7 @@ describe('HandoverService', () => {
       signatureRef: 'ret-sig',
       offlineCaptured: false,
       newDamage: [{ x: 0.5, y: 0.5, region: 'front-bumper', templateVersion: 1, state: 'new' }],
-    });
+    }, fleetPrincipal, 'return-command-key');
 
     expect(dto.phase).toBe('Returned');
     expect(dto.fuelDeviationFlagged).toBe(true);
@@ -167,7 +204,7 @@ describe('HandoverService', () => {
     repo.handovers.set('h1', { id: 'h1', phase: 'Handover', bookingId: 'bk1', vehicleId: 'v1', driverPersonId: 'd1', startOdometer: '1000', offlineCaptured: false, handoverAtUtc: new Date() });
     bookings.booking.status = 'Active';
     await expect(
-      service.recordReturn('h1', { endOdometer: 900, endFuelEighths: 2, signatureRef: 's', offlineCaptured: false, newDamage: [] }),
+      service.recordReturn('h1', { endOdometer: 900, endFuelEighths: 2, signatureRef: 's', offlineCaptured: false, newDamage: [] }, fleetPrincipal, 'backwards-return-key'),
     ).rejects.toThrow(BadRequestException);
   });
 
@@ -175,7 +212,7 @@ describe('HandoverService', () => {
     const { service, repo } = build();
     repo.handovers.set('h1', { id: 'h1', phase: 'Returned', bookingId: 'bk1', vehicleId: 'v1', driverPersonId: 'd1', startOdometer: '1000', offlineCaptured: false });
     await expect(
-      service.recordReturn('h1', { endOdometer: 1300, endFuelEighths: 2, signatureRef: 's', offlineCaptured: false, newDamage: [] }),
+      service.recordReturn('h1', { endOdometer: 1300, endFuelEighths: 2, signatureRef: 's', offlineCaptured: false, newDamage: [] }, fleetPrincipal, 'second-return-key'),
     ).rejects.toThrow(ConflictException);
   });
 });
