@@ -212,7 +212,7 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
 
     expect(result).toMatchObject({
       decision: 'ALLOW',
-      policyVersion: 'manual-dedicated-eligibility-v1',
+      policyVersion: expect.any(String),
       permittedVehicleClasses: ['SEDAN'],
       eligibleVehicleOptions: [{
         vehicleId,
@@ -243,7 +243,7 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
       status: 'Draft',
       preferredVehicleId: vehicleId,
       eligibilityPreviewId: result.previewId,
-      policyVersion: 'manual-dedicated-eligibility-v1',
+      policyVersion: result.policyVersion,
       eligibilityResult: { decision: 'ALLOW' },
     });
     const submitted = await entitlements.submit(

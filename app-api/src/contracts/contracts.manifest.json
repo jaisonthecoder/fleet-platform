@@ -94,6 +94,7 @@
     "EntitlementEligibleVehicleOptionDto",
     "EntitlementEventDto",
     "EntitlementLifecycleCommand",
+    "EntitlementProfessionalDriverDto",
     "EntitlementReconciliationFindingDto",
     "EntitlementReconciliationReason",
     "EntitlementReconciliationReportDto",
@@ -298,6 +299,7 @@
   "telematics.contract.ts": [
     "DeviceDto",
     "EndTrip",
+    "LiveFleetPositionDto",
     "LivePositionDto",
     "PairDevice",
     "RaiseAlert",

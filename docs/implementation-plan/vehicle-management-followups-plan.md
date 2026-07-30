@@ -114,8 +114,11 @@
 
 Each part: EN+AR i18n, `pnpm typecheck` (both), targeted vitest, then a final full FE suite + BE unit specs. Update this plan's Status and repo memory at the end.
 
-## Status
-- [ ] A — clean smoke test
-- [ ] D — drawer tabs (booking style) + modern polish
-- [ ] C — Live Map page
-- [ ] B — Phase 6 finish (sort/pagination/export)
+## Status — ALL DONE
+- [x] A — smoke test: API rebuilt + running on :3003 (new build); every new route mapped and returning 200 with real seeded data; routes render + RBAC gates correctly (the dev browser user is a SystemAdmin without fleet roles, so /vehicles + /live-map show Access-restricted — switch to a FleetManager to view).
+- [x] D — drawer tabs swapped from `Segmented` to Radix `Tabs`/`TabsList`/`TabsTrigger` (underlined gold-active, horizontally scrollable); registry toolbar modernised (search + export + pager).
+- [x] C — Live Map: bulk `GET /v1/telematics/live` (DISTINCT ON latest per scoped vehicle, audited) + `LiveMapPage` at `/live-map` (MapLibre, shared `lib/map-style.ts`, side list + fly-to, 30s poll). Test passes (MapLibre mocked for jsdom).
+- [x] B — server sort (`sort=field:dir`, whitelisted) + pagination envelope `{items,total,page,pageSize}` + `GET /v1/vehicles/export` CSV; FE table gained sortable headers, pager, Export button; `vehicle.controller.spec` updated.
+- [x] Real seed: `scripts/seed-demo-telematics.mjs` (+ `pnpm db:seed-demo-telematics`) inserts devices+pairings, recent telemetry, trips, documents and alerts for every vehicle — features are backed by real, editable data.
+
+**Gates:** FE typecheck + 133 tests + lint(0 errors); BE typecheck + 25 unit specs + lint(0 errors); guard:contracts (manifest updated for `LiveFleetPositionDto`); guard:org (telematics-domain scope files allowlisted).

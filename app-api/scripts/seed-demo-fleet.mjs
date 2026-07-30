@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import process from 'node:process';
 
-const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:3000/api/v1';
+const API_BASE_URL = process.env.API_BASE_URL ?? 'http://localhost:3003/api/v1';
 const DEMO_COUNT = 10;
 const REQUIRED_DOCUMENTS = [
   ['TRADE_LICENCE', true],
@@ -45,6 +45,13 @@ function flattenHierarchy(nodes) {
     node,
     ...flattenHierarchy(Array.isArray(node.children) ? node.children : []),
   ]);
+}
+
+/** Normalizes current paged collections and earlier array responses. */
+function collectionItems(value, name) {
+  if (Array.isArray(value)) return value;
+  if (Array.isArray(value?.items)) return value.items;
+  throw new Error(`${name} endpoint returned an unsupported collection shape`);
 }
 
 /** Creates or completes one governed active demo Vendor and usable lease. */
@@ -270,12 +277,12 @@ async function main() {
     (node) => node.levelCode === 'POOL',
   );
   if (!pool) throw new Error('No active Pool hierarchy node is available');
-  const existingVendors = await api('/vendors?limit=200', {
+  const existingVendors = collectionItems(await api('/vendors?limit=200', {
     headers: { 'x-dev-person-id': actors.admin.personId },
-  });
-  const existingVehicles = await api('/vehicles?limit=200', {
+  }), 'Vendors');
+  const existingVehicles = collectionItems(await api('/vehicles?limit=200', {
     headers: { 'x-dev-person-id': actors.admin.personId },
-  });
+  }), 'Vehicles');
 
   const seeded = [];
   for (let index = 1; index <= DEMO_COUNT; index += 1) {

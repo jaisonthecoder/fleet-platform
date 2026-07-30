@@ -12,19 +12,22 @@ async function request(path, options = {}) {
 const users = await request('/dev/users');
 const admin = users.find((user) => user.roles.some(({ role }) => role === 'SystemAdmin'));
 if (!admin) throw new Error('A seeded SystemAdmin is required');
-const headers = { 'x-dev-person-id': admin.personId, 'content-type': 'application/json' };
-const workspace = await request(`/admin/policies/${ruleType}`, { headers });
+const authHeaders = { 'x-dev-person-id': admin.personId };
+const jsonHeaders = { ...authHeaders, 'content-type': 'application/json' };
+const workspace = await request(`/admin/policies/${ruleType}`, { headers: authHeaders });
 const rowId = 'development-active-with-professional-driver';
-if (workspace.active?.rows?.some((row) => row.id === rowId)) {
+const alreadyActive = workspace.active?.rows?.some((row) => row.id === rowId);
+if (alreadyActive) {
   console.log(`${ruleType}: ${workspace.active.version} already enables governed WithDriver development requests.`);
-  process.exit(0);
 }
-if (workspace.draft) {
+const resumableDraft = !alreadyActive && workspace.draft?.table?.version === 'development-dedicated-eligibility-v2' &&
+  workspace.draft.table.rows?.some((row) => row.id === rowId);
+if (!alreadyActive && workspace.draft && !resumableDraft) {
   throw new Error(`Refusing to overwrite Policy Studio draft revision ${workspace.draft.revision}`);
 }
-if (!workspace.active) throw new Error(`${ruleType} has no active baseline to extend`);
+if (!alreadyActive && !workspace.active) throw new Error(`${ruleType} has no active baseline to extend`);
 
-const table = {
+const table = !alreadyActive ? {
   ...workspace.active,
   schemaVersion: 1,
   version: 'development-dedicated-eligibility-v2',
@@ -42,11 +45,15 @@ const table = {
     },
     ...workspace.active.rows,
   ],
-};
-await request(`/admin/policies/${ruleType}/draft`, {
-  method: 'POST',
-  headers,
-  body: JSON.stringify({ expectedRevision: 0, scopeNodeId: null, table }),
-});
-const activated = await request(`/admin/policies/${ruleType}/activate`, { method: 'POST', headers });
-console.log(`${activated.ruleType}: ${activated.version} ${activated.status}`);
+} : null;
+if (!alreadyActive && !resumableDraft) {
+  await request(`/admin/policies/${ruleType}/draft`, {
+    method: 'POST',
+    headers: jsonHeaders,
+    body: JSON.stringify({ expectedRevision: 0, scopeNodeId: null, table }),
+  });
+}
+if (!alreadyActive) {
+  const activated = await request(`/admin/policies/${ruleType}/activate`, { method: 'POST', headers: authHeaders });
+  console.log(`${activated.ruleType}: ${activated.version} ${activated.status}`);
+}

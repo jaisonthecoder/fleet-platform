@@ -67,6 +67,6 @@ There is no remaining consent integration/code blocker. For UAT or production, d
 - signed UAT/go-no-go evidence;
 - manual NVDA + Chrome evidence;
 - production-like 300-user HTTP soak and 10k Booking query-plan review;
-- `G-0006` approval before Fleet on-behalf Booking;
-- D16 approval before Dedicated `WithDriver`;
+- Fleet on-behalf is development-active from persisted Fleet roles and hierarchy assignments; the selected employee owns consent.
+- Dedicated `WithDriver` is development-active from editable ProfessionalDriver roles and Policy Studio rules; the selected driver is fingerprint-bound and owns consent.
 - advanced B5 scenarios remain separately deferred.

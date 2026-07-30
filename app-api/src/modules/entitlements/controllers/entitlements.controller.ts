@@ -10,6 +10,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { z } from 'zod';
 import { CurrentUser, Roles } from '../../../common/auth/auth.decorators';
 import type { Principal } from '../../../common/auth/principal';
 import {
@@ -115,7 +116,14 @@ export class EntitlementsController {
     @Query('locationNodeId') locationNodeId: string,
     @CurrentUser() principal?: Principal,
   ) {
-    return this.entitlements.professionalDrivers(locationNodeId, requiredPrincipal(principal));
+    const parsedLocation = z.string().uuid().safeParse(locationNodeId);
+    if (!parsedLocation.success) {
+      throw new BadRequestException({
+        title: 'Invalid professional-driver scope',
+        reasons: ['entitlement-location-node-invalid'],
+      });
+    }
+    return this.entitlements.professionalDrivers(parsedLocation.data, requiredPrincipal(principal));
   }
 
   /** POST /api/v1/entitlements/eligibility-preview — side-effect-free configured D8 evaluation. */

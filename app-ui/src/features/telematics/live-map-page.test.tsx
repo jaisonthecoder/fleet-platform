@@ -9,25 +9,38 @@ import { LiveMapPage } from './live-map-page'
 
 // MapLibre needs WebGL, which jsdom lacks — stub it; we assert the DOM list.
 vi.mock('maplibre-gl', () => {
-  const marker = {
-    setLngLat: vi.fn().mockReturnThis(),
-    setPopup: vi.fn().mockReturnThis(),
-    addTo: vi.fn().mockReturnThis(),
-    remove: vi.fn(),
-    togglePopup: vi.fn(),
+  class FakeMap {
+    addControl() {}
+    on() {}
+    resize() {}
+    remove() {}
+    flyTo() {}
   }
+  class FakeMarker {
+    setLngLat() {
+      return this
+    }
+    setPopup() {
+      return this
+    }
+    addTo() {
+      return this
+    }
+    remove() {}
+    togglePopup() {}
+  }
+  class FakePopup {
+    setText() {
+      return this
+    }
+  }
+  class FakeNavigationControl {}
   return {
     default: {
-      Map: vi.fn(() => ({
-        addControl: vi.fn(),
-        on: vi.fn(),
-        resize: vi.fn(),
-        remove: vi.fn(),
-        flyTo: vi.fn(),
-      })),
-      NavigationControl: vi.fn(),
-      Marker: vi.fn(() => marker),
-      Popup: vi.fn(() => ({ setText: vi.fn().mockReturnThis() })),
+      Map: FakeMap,
+      Marker: FakeMarker,
+      Popup: FakePopup,
+      NavigationControl: FakeNavigationControl,
     },
   }
 })

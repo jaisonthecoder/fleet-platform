@@ -26,6 +26,7 @@ export function LiveMapPage() {
   // Initialise the map once.
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
+    const markers = markersRef.current
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: MAP_STYLE,
@@ -42,7 +43,7 @@ export function LiveMapPage() {
     return () => {
       map.remove()
       mapRef.current = null
-      markersRef.current.clear()
+      markers.clear()
     }
   }, [])
 

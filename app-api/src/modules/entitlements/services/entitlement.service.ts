@@ -1342,6 +1342,7 @@ export class EntitlementService {
     durationStart: string;
     durationEnd: string;
     locationNodeId?: string | null;
+    assignedDriverPersonId?: string | null;
     requestedVehicleClass?: string;
     vehicleCategoryCode?: string | null;
   }): string {
@@ -1352,6 +1353,7 @@ export class EntitlementService {
       durationStart: input.durationStart,
       durationEnd: input.durationEnd,
       locationNodeId: input.locationNodeId ?? null,
+      assignedDriverPersonId: input.assignedDriverPersonId ?? null,
       requestedVehicleClass:
         input.requestedVehicleClass ?? input.vehicleCategoryCode ?? null,
     })).digest('hex');
