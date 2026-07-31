@@ -29,7 +29,7 @@ import { flattenHierarchy } from '../platform.contract'
 export function ScopeSwitcher() {
   const { t } = useTranslation()
   const { me } = useAuth()
-  const { selectedScopeId, setScope, clearScope } = useScope()
+  const { selectedScopeId, setScope, clearScope, synchronizeScope } = useScope()
   const { data } = useHierarchy()
   const [open, setOpen] = useState(false)
 
@@ -50,20 +50,16 @@ export function ScopeSwitcher() {
     return (me?.roles ?? []).some((role) => rootIds.has(role.scopeNodeId))
   }, [me?.roles, nodes])
 
-  // Seed the default scope from the user's home pool the first time we can.
+  // Restore only an organization-bound scope that remains in the current authorized closure.
   useEffect(() => {
-    if (selectedScopeId || !me?.homePoolNodeId || nodes.length === 0) return
-    if (nodes.some((n) => n.id === me.homePoolNodeId)) {
-      setScope(me.homePoolNodeId)
-    }
-  }, [selectedScopeId, me?.homePoolNodeId, nodes, setScope])
-
-  useEffect(() => {
-    if (!selectedScopeId || selectableNodes.length === 0) return
-    if (!selectableNodes.some((node) => node.id === selectedScopeId)) {
-      setScope(selectableNodes[0]?.id ?? null)
-    }
-  }, [selectedScopeId, selectableNodes, setScope])
+    if (!me || nodes.length === 0) return
+    synchronizeScope({
+      organizationId: me.organizationId,
+      authorizedScopeIds: selectableNodes.map((node) => node.id),
+      preferredScopeId: me.homePoolNodeId,
+      allowAll: canSelectAll,
+    })
+  }, [canSelectAll, me, nodes.length, selectableNodes, synchronizeScope])
 
   if (nodes.length === 0) return null
 

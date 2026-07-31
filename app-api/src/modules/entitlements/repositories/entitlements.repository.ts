@@ -438,7 +438,8 @@ export class EntitlementsRepository {
         vehicleHierarchyAssignment,
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
-          isNull(vehicleHierarchyAssignment.validTo),
+          sql`${vehicleHierarchyAssignment.validFrom} <= now()`,
+          sql`(${vehicleHierarchyAssignment.validTo} IS NULL OR ${vehicleHierarchyAssignment.validTo} > now())`,
         ),
       )
       .innerJoin(hierarchyNode, eq(hierarchyNode.id, vehicleHierarchyAssignment.nodeId))

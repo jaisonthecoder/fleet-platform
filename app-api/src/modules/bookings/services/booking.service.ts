@@ -1080,6 +1080,7 @@ export class BookingService {
       start,
       end,
       principal.personId,
+      principal.organizationId,
       authorizedNodeIds,
     );
     const grouped = new Map<string, typeof source>();

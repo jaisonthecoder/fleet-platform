@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, ilike, inArray, isNull, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, ilike, inArray, isNull, lte, or, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
@@ -44,6 +44,7 @@ export class VehicleRepository {
     includeUnassigned = false,
     search?: string,
     sort?: string,
+    at = new Date(),
   ) {
     if (authorizedNodeIds && authorizedNodeIds.length === 0) return [];
     const term = search?.trim() ? `%${search.trim()}%` : undefined;
@@ -72,7 +73,8 @@ export class VehicleRepository {
         vehicleHierarchyAssignment,
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
-          isNull(vehicleHierarchyAssignment.validTo),
+          lte(vehicleHierarchyAssignment.validFrom, at),
+          or(isNull(vehicleHierarchyAssignment.validTo), gt(vehicleHierarchyAssignment.validTo, at)),
         ),
       )
       .leftJoin(
@@ -113,6 +115,7 @@ export class VehicleRepository {
     authorizedNodeIds?: string[],
     includeUnassigned = false,
     search?: string,
+    at = new Date(),
   ): Promise<number> {
     if (authorizedNodeIds && authorizedNodeIds.length === 0) return 0;
     const term = search?.trim() ? `%${search.trim()}%` : undefined;
@@ -123,7 +126,8 @@ export class VehicleRepository {
         vehicleHierarchyAssignment,
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
-          isNull(vehicleHierarchyAssignment.validTo),
+          lte(vehicleHierarchyAssignment.validFrom, at),
+          or(isNull(vehicleHierarchyAssignment.validTo), gt(vehicleHierarchyAssignment.validTo, at)),
         ),
       )
       .where(
@@ -157,6 +161,7 @@ export class VehicleRepository {
     organizationId?: string,
     authorizedNodeIds?: string[],
     includeUnassigned = false,
+    at = new Date(),
   ) {
     if (authorizedNodeIds && authorizedNodeIds.length === 0) {
       return { total: 0, active: 0, inUse: 0, maintenance: 0, blocked: 0 };
@@ -174,7 +179,8 @@ export class VehicleRepository {
         vehicleHierarchyAssignment,
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
-          isNull(vehicleHierarchyAssignment.validTo),
+          lte(vehicleHierarchyAssignment.validFrom, at),
+          or(isNull(vehicleHierarchyAssignment.validTo), gt(vehicleHierarchyAssignment.validTo, at)),
         ),
       )
       .where(
@@ -295,14 +301,15 @@ export class VehicleRepository {
   }
 
   /** The currently-active hierarchy assignment for a vehicle, if any. */
-  async activeAssignment(vehicleId: string) {
+  async activeAssignment(vehicleId: string, at = new Date()) {
     const rows = await this.db
       .select()
       .from(vehicleHierarchyAssignment)
       .where(
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicleId),
-          isNull(vehicleHierarchyAssignment.validTo),
+          lte(vehicleHierarchyAssignment.validFrom, at),
+          or(isNull(vehicleHierarchyAssignment.validTo), gt(vehicleHierarchyAssignment.validTo, at)),
         ),
       )
       .limit(1);

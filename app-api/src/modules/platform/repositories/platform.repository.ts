@@ -84,7 +84,7 @@ export class PlatformRepository {
         eq(delegation.requestType, input.requestType),
         eq(delegation.oneHopOnly, true),
         lte(delegation.validFrom, input.at),
-        gte(delegation.validTo, input.at),
+        gt(delegation.validTo, input.at),
       ))
       .limit(1);
     return rows[0] ?? null;

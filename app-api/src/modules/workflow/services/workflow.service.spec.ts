@@ -113,7 +113,7 @@ class FakeRepo {
       delegation.requestType === input.requestType &&
       delegation.oneHopOnly &&
       delegation.validFrom <= input.at &&
-      delegation.validTo >= input.at,
+      delegation.validTo > input.at,
     );
   }
 

@@ -29,14 +29,20 @@ export class DashboardsRepository {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDatabase) {}
 
   /** Distinct vehicles currently assigned to any node in the scope subtree. */
-  async vehicleIdsInNodes(nodeIds: string[]): Promise<string[]> {
+  async vehicleIdsInNodes(organizationId: string, nodeIds: string[]): Promise<string[]> {
     if (nodeIds.length === 0) {
       return [];
     }
     const rows = await this.db
       .selectDistinct({ id: vehicleHierarchyAssignment.vehicleId })
       .from(vehicleHierarchyAssignment)
-      .where(and(inArray(vehicleHierarchyAssignment.nodeId, nodeIds), isNull(vehicleHierarchyAssignment.validTo)));
+      .innerJoin(vehicle, eq(vehicle.id, vehicleHierarchyAssignment.vehicleId))
+      .where(and(
+        eq(vehicle.organizationId, organizationId),
+        inArray(vehicleHierarchyAssignment.nodeId, nodeIds),
+        sql`${vehicleHierarchyAssignment.validFrom} <= now()`,
+        sql`(${vehicleHierarchyAssignment.validTo} IS NULL OR ${vehicleHierarchyAssignment.validTo} > now())`,
+      ));
     return rows.map((r) => r.id);
   }
 

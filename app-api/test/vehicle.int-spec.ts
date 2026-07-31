@@ -20,6 +20,7 @@ import type { Redis } from 'ioredis';
 import { DocumentVaultService } from '../src/modules/vehicles/services/document-vault.service';
 import { TransferService } from '../src/modules/vehicles/services/transfer.service';
 import { VehicleService } from '../src/modules/vehicles/services/vehicle.service';
+import { VehicleRepository } from '../src/modules/vehicles/repositories/vehicle.repository';
 import {
   createCoreHierarchyFixture,
   type CoreHierarchyFixture,
@@ -133,6 +134,7 @@ describe('core hierarchy fixture concurrency (integration)', () => {
 describe('vehicle master (integration — requires DB + Redis)', () => {
   let ctx: INestApplicationContext;
   let vehicles: VehicleService;
+  let vehicleRepository: VehicleRepository;
   let transfers: TransferService;
   let documents: DocumentVaultService;
   let db: DrizzleDatabase;
@@ -179,6 +181,7 @@ describe('vehicle master (integration — requires DB + Redis)', () => {
       logger: false,
     });
     vehicles = ctx.get(VehicleService);
+    vehicleRepository = ctx.get(VehicleRepository);
     transfers = ctx.get(TransferService);
     documents = ctx.get(DocumentVaultService);
     db = ctx.get<DrizzleDatabase>(DRIZZLE);
@@ -317,6 +320,18 @@ describe('vehicle master (integration — requires DB + Redis)', () => {
         ),
       );
     expect(events.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('excludes future assignments until their exact effective instant', async () => {
+    const futureVehicle = await vehicles.create(baseVehicle({ plate: `VT-FUTURE-${suffix}`, chassisVin: `VIN-FUTURE-${suffix}`, bookingPoolFlag: false }), 'tester');
+    createdIds.push(futureVehicle.id);
+    const effectiveAt = new Date('2998-01-01T08:00:00.000Z');
+    await db.insert(vehicleHierarchyAssignment).values({ vehicleId: futureVehicle.id, nodeId: node1, validFrom: effectiveAt });
+
+    expect(await vehicleRepository.activeAssignment(futureVehicle.id, new Date('2998-01-01T07:59:59.999Z'))).toBeUndefined();
+    expect((await vehicleRepository.activeAssignment(futureVehicle.id, effectiveAt))?.nodeId).toBe(node1);
+    expect((await vehicleRepository.list(50, 0, DEFAULT_ORGANIZATION_ID, [node1], false, `VT-FUTURE-${suffix}`, undefined, new Date('2998-01-01T07:59:59.999Z'))).map((row) => row.vehicle.id)).not.toContain(futureVehicle.id);
+    expect((await vehicleRepository.list(50, 0, DEFAULT_ORGANIZATION_ID, [node1], false, `VT-FUTURE-${suffix}`, undefined, effectiveAt)).map((row) => row.vehicle.id)).toContain(futureVehicle.id);
   });
 
   it('keeps an incomplete onboarded vehicle out of the booking pool', async () => {

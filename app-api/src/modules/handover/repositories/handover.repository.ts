@@ -471,7 +471,8 @@ export class HandoverRepository {
       .where(and(
         eq(vehicle.id, vehicleId),
         eq(vehicle.organizationId, organizationId),
-        isNull(vehicleHierarchyAssignment.validTo),
+        sql`${vehicleHierarchyAssignment.validFrom} <= now()`,
+        sql`(${vehicleHierarchyAssignment.validTo} IS NULL OR ${vehicleHierarchyAssignment.validTo} > now())`,
       ))
       .orderBy(desc(vehicleHierarchyAssignment.validFrom))
       .limit(1);

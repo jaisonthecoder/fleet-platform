@@ -60,7 +60,7 @@ export class DashboardsService {
     if (nodeIds.length === 0) {
       return { nodeIds: [], vehicleIds: [], scopeId };
     }
-    return { nodeIds, vehicleIds: await this.repo.vehicleIdsInNodes(nodeIds), scopeId };
+    return { nodeIds, vehicleIds: await this.repo.vehicleIdsInNodes(principal.organizationId, nodeIds), scopeId };
   }
 
   /** The real operations overview read model (replaces the Phase-0 mock). */

@@ -371,7 +371,8 @@ export class BookingsRepository {
       .where(
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicleId),
-          isNull(vehicleHierarchyAssignment.validTo),
+          sql`${vehicleHierarchyAssignment.validFrom} <= now()`,
+          sql`(${vehicleHierarchyAssignment.validTo} IS NULL OR ${vehicleHierarchyAssignment.validTo} > now())`,
         ),
       )
       .limit(1);
@@ -596,6 +597,7 @@ export class BookingsRepository {
     start: Date,
     end: Date,
     actorPersonId: string,
+    organizationId: string,
     authorizedNodeIds: string[],
   ) {
     if (authorizedNodeIds.length === 0) return [];
@@ -628,7 +630,8 @@ export class BookingsRepository {
         vehicleHierarchyAssignment,
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
-          isNull(vehicleHierarchyAssignment.validTo),
+          sql`${vehicleHierarchyAssignment.validFrom} <= now()`,
+          sql`(${vehicleHierarchyAssignment.validTo} IS NULL OR ${vehicleHierarchyAssignment.validTo} > now())`,
         ),
       )
       .innerJoin(hierarchyNode, eq(hierarchyNode.id, vehicleHierarchyAssignment.nodeId))
@@ -636,12 +639,14 @@ export class BookingsRepository {
         booking,
         and(
           eq(booking.vehicleId, vehicle.id),
+          eq(booking.organizationId, organizationId),
           inArray(booking.status, ['PendingApproval', 'Approved', 'Active']),
           sql`tstzrange(${booking.reservationStart}, ${booking.reservationEnd})
               && tstzrange(${start.toISOString()}::timestamptz, ${end.toISOString()}::timestamptz)`,
         ),
       )
       .where(and(
+        eq(vehicle.organizationId, organizationId),
         eq(vehicle.assignmentModel, 'Pool'),
         sql`${vehicleHierarchyAssignment.nodeId} IN (${authorizedNodes})`,
       ))
