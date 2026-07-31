@@ -5,7 +5,7 @@ import { and, eq, isNull, sql } from 'drizzle-orm';
 import { AppModule } from '../src/app.module';
 import { DRIZZLE } from '../src/common/database/database.constants';
 import type { DrizzleDatabase } from '../src/common/database/database.module';
-import { devicePairing, vehicle } from '../src/common/database/schema';import {
+import { DEFAULT_ORGANIZATION_ID, devicePairing, vehicle } from '../src/common/database/schema';import {
   type ActiveBooking,
   BOOKINGS_PORT,
 } from '../src/modules/telematics-domain/internal/bookings-port';
@@ -131,14 +131,14 @@ describe('telematics domain (integration — requires DB + Redis)', () => {
 
   it('returns the live position + online flag and audits the access', async () => {
     await repo.insertTelemetry({ time: new Date(), vehicleId: vehicle1, lat: 24.5, lon: 54.4, speed: 30, ignition: true });
-    const live = await liveMap.getLive(vehicle1, 'tester');
+    const live = await liveMap.getLive(vehicle1, DEFAULT_ORGANIZATION_ID, 'tester');
     expect(live.lat).toBe(24.5);
     expect(live.online).toBe(true);
   });
 
   it('returns the latest position per scoped vehicle for the fleet live map', async () => {
     await repo.insertTelemetry({ time: new Date(), vehicleId: vehicle1, lat: 24.6, lon: 54.5, speed: 42, ignition: true });
-    const fleet = await liveMap.getFleetLive(undefined, undefined, true, 'tester');
+    const fleet = await liveMap.getFleetLive(DEFAULT_ORGANIZATION_ID, undefined, true, 'tester');
     const row = fleet.find((p) => p.vehicleId === vehicle1);
     expect(row).toBeDefined();
     expect(row?.lat).toBe(24.6);
@@ -148,7 +148,7 @@ describe('telematics domain (integration — requires DB + Redis)', () => {
   it('raises and lists a telematics alert', async () => {
     const alert = await alerts.raiseAlert({ vehicleId: vehicle1, deviceId, alertType: 'DeviceSilent', detail: 'no data 30m' });
     expect(alert.alertType).toBe('DeviceSilent');
-    const list = await alerts.list();
+    const list = await alerts.list(DEFAULT_ORGANIZATION_ID);
     expect(list.some((a) => a.id === alert.id)).toBe(true);
   });
 });

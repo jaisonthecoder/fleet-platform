@@ -7,11 +7,13 @@ import { join } from 'node:path';
 
 const ROOT = 'src/modules';
 // Explicit organization ownership boundaries may reference the seam while RLS
-// remains dormant. All domain modules stay prohibited until scope migration.
+// remains dormant. Domain modules enter this list only after their O4 scope
+// migration and cross-organization negative matrix are verified.
 const ALLOWLIST_SUFFIXES = [
   'services/audit.service.ts',
   'services/access.service.ts',
   'repositories/platform.repository.ts',
+  'controllers/audit.controller.ts',
   'services/hierarchy.service.ts',
   'services/scope-authorization.service.ts',
   'dashboards/services/dashboards.service.ts',
@@ -28,6 +30,8 @@ const ALLOWLIST_SUFFIXES = [
   'telematics-domain/controllers/telematics.controller.ts',
   'telematics-domain/repositories/telematics.repository.ts',
   'telematics-domain/services/live-map.service.ts',
+  'telematics-domain/services/device.service.ts',
+  'telematics-domain/services/alert.service.ts',
   'entitlements/repositories/entitlements.repository.ts',
   'entitlements/services/entitlement.service.ts',
   'entitlements/services/entitlement-consent-template.provider.ts',
@@ -36,9 +40,13 @@ const ALLOWLIST_SUFFIXES = [
   'vendors/controllers/vendor.controller.ts',
   'vendors/repositories/vendor.repository.ts',
   'vendors/services/vendor.service.ts',
+  'workflow/repositories/workflow.repository.ts',
+  'workflow/services/workflow.service.ts',
 ];
 const ALLOWLIST_SEGMENTS = [
+  '/compliance/',
   '/consent-administration/',
+  '/fines/',
   '/organization-administration/',
   '/policy/',
   '/policy-administration/',

@@ -874,7 +874,7 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
   it('availability reflects the reserved range (reserved vehicle is not offered)', async () => {
     // The vehicle reserved in the first test (day 2, 08:00–10:00) must not appear
     // as available for an overlapping window.
-    const available = await bookings.availability({ pickupAtUtc: future(2, 9), returnAtUtc: future(2, 10) });
+    const available = await bookings.availability({ pickupAtUtc: future(2, 9), returnAtUtc: future(2, 10) }, driverPrincipal);
     expect(available.some((v) => v.vehicleId === okVehicleId)).toBe(false);
   });
 
@@ -882,7 +882,7 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
     const available = await bookings.availability({
       pickupAtUtc: future(25, 9),
       returnAtUtc: future(25, 10),
-    });
+    }, driverPrincipal);
 
     expect(available.some((v) => v.vehicleId === inUseVehicleId)).toBe(false);
     expect(available.some((v) => v.vehicleId === okVehicleId)).toBe(true);

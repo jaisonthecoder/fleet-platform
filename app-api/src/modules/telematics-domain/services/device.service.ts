@@ -81,8 +81,8 @@ export class DeviceService {
     return { ok: true };
   }
 
-  async list(): Promise<DeviceDto[]> {
-    const devices = await this.repo.listDevices();
+  async list(organizationId: string): Promise<DeviceDto[]> {
+    const devices = await this.repo.listDevices(organizationId);
     return devices.map((d) => ({ id: d.id, identifier: d.identifier, status: d.status }));
   }
 

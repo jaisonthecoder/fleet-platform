@@ -24,6 +24,10 @@ import { VehicleService } from '../src/modules/vehicles/services/vehicle.service
 import { BookingService } from '../src/modules/bookings/services/booking.service';
 import { LookupService } from '../src/modules/config/services/lookup.service';
 import { AuditService } from '../src/modules/platform/services/audit.service';
+import type { Principal } from '../src/common/auth/principal';
+
+const KHALIFA_SCOPE_ID = 'a0000000-0000-4000-8000-000000000003';
+const fleetPrincipal: Principal = { organizationId: '00000000-0000-4000-8000-000000000001', userId: null, personId: 'b0000000-0000-4000-8000-000000000006', entraObjectId: null, email: null, roles: [{ role: 'GroupFleetLead', scopeNodeId: KHALIFA_SCOPE_ID }], isDevLogin: true };
 
 /**
  * Vendor master + lease contracts (S1/S2), incl. the plug-and-play source seam.
@@ -104,6 +108,9 @@ describe('vendor master (integration — requires DB + Redis)', () => {
 
   afterAll(async () => {
     for (const id of createdVehicleIds) {
+      await db.execute(
+        sql`DELETE FROM fleet.vehicle_hierarchy_assignment WHERE vehicle_id = ${id}`,
+      );
       await db.execute(
         sql`DELETE FROM fleet.vehicle_lifecycle_history WHERE vehicle_id = ${id}`,
       );
@@ -531,6 +538,7 @@ describe('vendor master (integration — requires DB + Redis)', () => {
         ownership: 'Leased',
         vendorId: vendor.id,
         leaseContractId: lease.id,
+        homeNodeId: KHALIFA_SCOPE_ID,
         bookingPoolFlag: true,
         mulkiyaNumber: `REG-${suffix}`,
         mulkiyaExpiry: '2999-12-31',
@@ -548,7 +556,7 @@ describe('vendor master (integration — requires DB + Redis)', () => {
     const available = await bookings.availability({
       pickupAtUtc: '2999-11-01T08:00:00.000Z',
       returnAtUtc: '2999-11-01T10:00:00.000Z',
-    });
+    }, fleetPrincipal);
     const availableVehicle = available.find(
       (candidate) => candidate.vehicleId === vehicle.id,
     );
@@ -573,7 +581,7 @@ describe('vendor master (integration — requires DB + Redis)', () => {
       await bookings.availability({
         pickupAtUtc: '2999-11-01T08:00:00.000Z',
         returnAtUtc: '2999-11-01T10:00:00.000Z',
-      }),
+      }, fleetPrincipal),
     ).not.toEqual(
       expect.arrayContaining([
         expect.objectContaining({ vehicleId: vehicle.id }),
@@ -655,7 +663,7 @@ describe('vendor master (integration — requires DB + Redis)', () => {
       await bookings.availability({
         pickupAtUtc: '2999-11-01T08:00:00.000Z',
         returnAtUtc: '2999-11-01T10:00:00.000Z',
-      }),
+      }, fleetPrincipal),
     ).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ vehicleId: vehicle.id }),
@@ -713,7 +721,7 @@ describe('vendor master (integration — requires DB + Redis)', () => {
       await bookings.availability({
         pickupAtUtc: '2999-11-01T08:00:00.000Z',
         returnAtUtc: '2999-11-01T10:00:00.000Z',
-      }),
+      }, fleetPrincipal),
     ).not.toEqual(
       expect.arrayContaining([
         expect.objectContaining({ vehicleId: vehicle.id }),

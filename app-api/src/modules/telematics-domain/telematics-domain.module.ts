@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BookingsModule } from '../bookings/bookings.module';
 import { PlatformModule } from '../platform/platform.module';
+import { VehiclesModule } from '../vehicles/vehicles.module';
 import { TelematicsController } from './controllers/telematics.controller';
 import { BookingLookupAdapter } from './internal/bookings-adapter';
 import { BOOKINGS_PORT } from './internal/bookings-port';
@@ -17,7 +18,7 @@ import { TripService } from './services/trip.service';
  * BOOKINGS_PORT now uses the real bookings adapter (closes P1B-R1-1).
  */
 @Module({
-  imports: [PlatformModule, BookingsModule],
+  imports: [PlatformModule, BookingsModule, VehiclesModule],
   controllers: [TelematicsController],
   providers: [
     TelematicsRepository,

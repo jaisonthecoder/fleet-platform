@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, gte, inArray, isNull, lte, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, gte, inArray, isNull, lte, or, sql } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import type { PlatformRole } from '../../../common/database/schema';
@@ -436,14 +436,26 @@ export class BookingsRepository {
   }
 
   /** First active holder of a platform role (optionally at a scope) — chain resolution. */
-  async findApproverForRole(role: PlatformRole, scopeNodeId?: string | null): Promise<string | null> {
-    const conditions = [eq(roleAssignment.role, role), isNull(roleAssignment.validTo)];
+  async findApproverForRole(organizationId: string, role: PlatformRole, scopeNodeId: string | null | undefined, at: Date): Promise<string | null> {
+    const conditions = [
+      eq(roleAssignment.organizationId, organizationId),
+      eq(roleAssignment.role, role),
+      lte(roleAssignment.validFrom, at),
+      or(isNull(roleAssignment.validTo), gt(roleAssignment.validTo, at)),
+      eq(person.organizationId, organizationId),
+      eq(person.employmentStatus, 'Active'),
+      eq(hierarchyNode.organizationId, organizationId),
+      lte(hierarchyNode.validFrom, at),
+      or(isNull(hierarchyNode.validTo), gt(hierarchyNode.validTo, at)),
+    ];
     if (scopeNodeId) {
       conditions.push(eq(roleAssignment.scopeNodeId, scopeNodeId));
     }
     const rows = await this.db
       .select({ personId: roleAssignment.personId })
       .from(roleAssignment)
+      .innerJoin(person, eq(person.id, roleAssignment.personId))
+      .innerJoin(hierarchyNode, eq(hierarchyNode.id, roleAssignment.scopeNodeId))
       .where(and(...conditions))
       .limit(1);
     return rows[0]?.personId ?? null;
@@ -505,6 +517,7 @@ export class BookingsRepository {
    * so availability can never disagree with the exclusion constraint (P1B-R2-1).
    */
   async listAvailable(
+    organizationId: string,
     start: Date,
     end: Date,
     seatingCapacity?: number,
@@ -513,11 +526,13 @@ export class BookingsRepository {
     const noOverlap = sql`NOT EXISTS (
       SELECT 1 FROM fleet.booking b
       WHERE b.vehicle_id = ${vehicle.id}
+        AND b.organization_id = ${organizationId}::uuid
         AND b.status IN ('PendingApproval', 'Approved', 'Active')
         AND tstzrange(b.reservation_start, b.reservation_end)
             && tstzrange(${start.toISOString()}::timestamptz, ${end.toISOString()}::timestamptz)
     )`;
     const conditions = [
+      eq(vehicle.organizationId, organizationId),
       eq(vehicle.bookingPoolFlag, true),
       eq(vehicle.lifecycleStatus, BOOKABLE_VEHICLE_LIFECYCLE),
       noOverlap,
@@ -534,7 +549,9 @@ export class BookingsRepository {
       conditions.push(sql`EXISTS (
         SELECT 1 FROM fleet.vehicle_hierarchy_assignment vha
         WHERE vha.vehicle_id = ${vehicle.id}
-          AND vha.valid_to IS NULL
+          AND vha.organization_id = ${organizationId}::uuid
+          AND vha.valid_from <= now()
+          AND (vha.valid_to IS NULL OR vha.valid_to > now())
           AND vha.node_id IN (${authorizedNodes})
       )`);
     }
@@ -553,7 +570,12 @@ export class BookingsRepository {
           FROM fleet.vehicle_hierarchy_assignment vha
           JOIN fleet.hierarchy_node hn ON hn.id = vha.node_id
           WHERE vha.vehicle_id = fleet.vehicle.id
-            AND vha.valid_to IS NULL
+            AND vha.organization_id = ${organizationId}::uuid
+            AND hn.organization_id = ${organizationId}::uuid
+            AND vha.valid_from <= now()
+            AND (vha.valid_to IS NULL OR vha.valid_to > now())
+            AND hn.valid_from <= now()
+            AND (hn.valid_to IS NULL OR hn.valid_to > now())
           LIMIT 1
         )`,
       })

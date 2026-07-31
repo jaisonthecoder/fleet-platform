@@ -3,6 +3,7 @@ import type { StepDecision, WorkflowStatus } from '../modules/workflow/internal/
 
 /** Request to start a multi-step approval chain (FR-WF-01). */
 export const startWorkflowSchema = z.object({
+  organizationId: z.string().min(1),
   workflowType: z.string().min(1),
   subjectRef: z.string().min(1),
   steps: z

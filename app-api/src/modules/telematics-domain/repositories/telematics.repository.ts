@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, inArray, isNull, or } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNull, lte, or } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import {
@@ -29,8 +29,8 @@ export class TelematicsRepository {
     return rows[0];
   }
 
-  async listDevices() {
-    return this.db.select().from(device).orderBy(desc(device.createdAtUtc));
+  async listDevices(organizationId: string) {
+    return this.db.select().from(device).where(eq(device.organizationId, organizationId)).orderBy(desc(device.createdAtUtc));
   }
 
   async activePairingForDevice(deviceId: string) {
@@ -46,7 +46,7 @@ export class TelematicsRepository {
     const rows = await this.db
       .select()
       .from(devicePairing)
-      .where(and(eq(devicePairing.vehicleId, vehicleId), isNull(devicePairing.validTo)))
+      .where(and(eq(devicePairing.vehicleId, vehicleId), lte(devicePairing.validFrom, new Date()), or(isNull(devicePairing.validTo), gt(devicePairing.validTo, new Date()))))
       .limit(1);
     return rows[0];
   }
@@ -97,8 +97,8 @@ export class TelematicsRepository {
     return rows[0];
   }
 
-  async listAlerts(limit = 50) {
-    return this.db.select().from(telematicsAlert).orderBy(desc(telematicsAlert.raisedAt)).limit(limit);
+  async listAlerts(organizationId: string, limit = 50) {
+    return this.db.select().from(telematicsAlert).where(eq(telematicsAlert.organizationId, organizationId)).orderBy(desc(telematicsAlert.raisedAt)).limit(limit);
   }
 
   async listAlertsForVehicle(vehicleId: string, limit = 50) {
@@ -156,7 +156,8 @@ export class TelematicsRepository {
         vehicleHierarchyAssignment,
         and(
           eq(vehicleHierarchyAssignment.vehicleId, vehicle.id),
-          isNull(vehicleHierarchyAssignment.validTo),
+          lte(vehicleHierarchyAssignment.validFrom, new Date()),
+          or(isNull(vehicleHierarchyAssignment.validTo), gt(vehicleHierarchyAssignment.validTo, new Date())),
         ),
       )
       .where(

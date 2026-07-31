@@ -39,13 +39,13 @@ class FakeRepo {
     return 'deployment-1';
   }
 
-  async createInstance(input: { workflowType: string; subjectRef: string; definitionDeploymentId: string }) {
+  async createInstance(input: { organizationId: string; workflowType: string; subjectRef: string; definitionDeploymentId: string }) {
     const id = `wf-${++this.seq}`;
     this.instances.set(id, {
       id,
       workflowType: input.workflowType,
       subjectRef: input.subjectRef,
-      organizationId: 'org-1',
+      organizationId: input.organizationId,
       currentStep: 0,
       status: 'Pending',
       definitionDeploymentId: input.definitionDeploymentId,
@@ -171,6 +171,7 @@ describe('WorkflowService', () => {
       workflowType: 'booking-approval',
       subjectRef: 'BK-1',
       steps: [{ assigneePersonId: 'mgr1' }, { assigneePersonId: 'ceo1' }],
+          organizationId: 'org-1',
       slaMinutes: 60,
     });
     expect(started.status).toBe('Pending');
@@ -192,9 +193,16 @@ describe('WorkflowService', () => {
     expect(afterStep2.steps.every((step) => step.decision === 'APPROVED')).toBe(true);
   });
 
+  it('persists a non-default owning organization on the workflow instance', async () => {
+    const { service, repo } = makeService();
+    const started = await service.start({ organizationId: 'org-2', workflowType: 'booking-approval', subjectRef: 'BK-ORG-2', steps: [{ assigneePersonId: 'mgr2' }] });
+    expect(repo.instances.get(started.id)?.organizationId).toBe('org-2');
+  });
+
   it('rejects the whole chain on a rejection', async () => {
     const { service } = makeService();
     const started = await service.start({
+      organizationId: 'org-1',
       workflowType: 'booking-approval',
       subjectRef: 'BK-2',
       steps: [{ assigneePersonId: 'mgr1' }, { assigneePersonId: 'ceo1' }],
@@ -220,6 +228,7 @@ describe('WorkflowService', () => {
       oneHopOnly: true,
     });
     const started = await service.start({
+      organizationId: 'org-1',
       workflowType: 'entitlement-approval',
       subjectRef: 'ENT-1',
       steps: [{ assigneePersonId: 'mgr1' }],
@@ -246,6 +255,7 @@ describe('WorkflowService', () => {
       oneHopOnly: true,
     });
     const started = await service.start({
+      organizationId: 'org-1',
       workflowType: 'booking-approval',
       subjectRef: 'BK-EXPIRED',
       steps: [{ assigneePersonId: 'mgr1' }],
@@ -270,11 +280,11 @@ describe('WorkflowService', () => {
       oneHopOnly: true,
     });
     const started = await service.start({
+      organizationId: 'org-1',
       workflowType: 'booking-approval',
       subjectRef: 'BK-CROSS-ORG',
       steps: [{ assigneePersonId: 'mgr1' }],
     });
-
     await expect(service.decide(started.id, {
       actorPersonId: 'delegate1',
       decision: 'APPROVED',
@@ -286,6 +296,7 @@ describe('WorkflowService', () => {
     const { service } = makeService();
     const started = await service.start({
       workflowType: 'booking-approval',
+          organizationId: 'org-1',
       subjectRef: 'BK-3',
       steps: [{ assigneePersonId: 'mgr1' }],
     });
@@ -299,6 +310,7 @@ describe('WorkflowService', () => {
     const started = await service.start({
       workflowType: 'booking-approval',
       subjectRef: 'BK-4',
+          organizationId: 'org-1',
       steps: [{ assigneePersonId: 'mgr1' }],
     });
     await service.decide(started.id, { actorPersonId: 'mgr1', decision: 'APPROVED' });
@@ -310,6 +322,7 @@ describe('WorkflowService', () => {
   it('escalates a step that passed its SLA and marks the instance Escalated', async () => {
     const { service, repo, escalate } = makeService();
     const started = await service.start({
+      organizationId: 'org-1',
       workflowType: 'booking-approval',
       subjectRef: 'BK-5',
       steps: [{ assigneePersonId: 'mgr1' }],

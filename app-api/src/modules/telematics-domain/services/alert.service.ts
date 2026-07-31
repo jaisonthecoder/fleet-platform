@@ -25,8 +25,8 @@ export class AlertService {
     }
   }
 
-  list() {
-    return this.repo.listAlerts();
+  list(organizationId: string) {
+    return this.repo.listAlerts(organizationId);
   }
 
   listForVehicle(vehicleId: string) {

@@ -513,6 +513,7 @@ export class BookingService {
     const routeDecision = await this.approvalRoute(durationHours(existing.pickupAtUtc, existing.returnAtUtc), decisionContext);
     const route = routeDecision.route;
     const requester = await this.repo.findPerson(existing.requestedByPersonId);
+    const approvalAt = new Date();
     const roleToPerson = new Map<string, string | null>();
     for (const role of route) {
       if (roleToPerson.has(role)) {
@@ -522,7 +523,7 @@ export class BookingService {
         role,
         role === 'LineManager'
           ? requester?.lineManagerPersonId ?? null
-          : await this.repo.findApproverForRole(role as PlatformRole, decisionContext.scopeNodeId),
+          : await this.repo.findApproverForRole(existing.organizationId, role as PlatformRole, decisionContext.scopeNodeId, approvalAt),
       );
     }
     const approvers = resolveApprovers(route, existing.requestedByPersonId, (r) => roleToPerson.get(r) ?? null);
@@ -560,6 +561,7 @@ export class BookingService {
         }
         const view = await this.workflow.start(
           {
+            organizationId: locked.organizationId,
             workflowType: 'booking-approval',
             subjectRef: `booking:${locked.id}`,
             slaMinutes: 24 * 60,
@@ -1029,9 +1031,9 @@ export class BookingService {
   /** Vehicles available for a window — computed from the same reservation ranges. */
   async availability(
     query: AvailabilityQuery,
-    principal?: Principal,
+    principal: Principal,
   ): Promise<AvailableVehicleDto[]> {
-    if (principal && !principal.personId) {
+    if (!principal.personId) {
       throw new ForbiddenException({
         title: 'User not linked',
         reasons: ['user-not-linked-to-person'],
@@ -1043,10 +1045,9 @@ export class BookingService {
     if (windowReasons.length) {
       throw new BadRequestException({ title: 'Invalid availability window', reasons: windowReasons });
     }
-    const authorizedNodeIds = principal
-      ? await this.scopeAuthorization.authorizedDescendantIds(principal)
-      : undefined;
+    const authorizedNodeIds = await this.scopeAuthorization.authorizedDescendantIds(principal);
     const rows = await this.repo.listAvailable(
+      principal.organizationId,
       start,
       end,
       query.seatingCapacity,

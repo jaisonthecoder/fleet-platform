@@ -21,10 +21,11 @@ export class LiveMapService {
     private readonly audit: AuditService,
   ) {}
 
-  async getLive(vehicleId: string, actorRef = 'system'): Promise<LivePositionDto> {
+  async getLive(vehicleId: string, organizationId: string, actorRef = 'system'): Promise<LivePositionDto> {
     const latest = await this.repo.latestTelemetry(vehicleId);
     // D4: location-data access is always logged.
     await this.audit.record({
+      organizationId,
       actorRef,
       action: 'TELEMATICS_LIVE_ACCESS',
       entityRef: `vehicle:${vehicleId}`,
@@ -60,6 +61,7 @@ export class LiveMapService {
     );
     // D4: bulk location access is logged once per read.
     await this.audit.record({
+      organizationId: organizationId!,
       actorRef,
       action: 'TELEMATICS_LIVE_FLEET_ACCESS',
       entityRef: 'fleet',

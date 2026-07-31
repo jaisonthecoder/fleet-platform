@@ -443,6 +443,7 @@
       "entitlement-fleet-allocation-only": "Final Vehicle allocation is performed by authorized Fleet operations after approval and driver consent.",
       "dedicated-manual-policy-eligible": "The configured policy permits this request.",
       "dedicated-manual-policy-no-match": "The configured policy does not permit this combination of employee, duration, category and driver facts.",
+      "entitlement-justification-request-type-not-allowed": "The selected justification category is not allowed for this request duration. Choose a different duration or a justification category that permits it.",
       "entitlement-requested-class-not-permitted": "The selected Vehicle class is not permitted by this eligibility result."
     },
     "selectVehicleClass": "Select a vehicle class",
@@ -683,7 +684,18 @@
       "fullNamePlaceholder": "Full name",
       "fullNameMismatch": "Enter your authenticated full name exactly as shown in your profile.",
       "versionChanged": "The consent template changed. Review the replacement text and agree again.",
-      "commandError": "Consent or submission could not be confirmed. The Booking was reconciled before allowing another attempt.",
+      "commandError": "Consent or submission could not be completed. Review the details and try again.",
+      "reasons": {
+        "booking-not-draft": "This booking is no longer a draft — it may already be confirmed or cancelled. Check My bookings.",
+        "booking-consent-driver-mismatch": "The consent signer does not match the assigned driver for this booking.",
+        "booking-consent-version-changed": "The consent template changed. Review the replacement text and agree again.",
+        "booking-consent-template-unavailable": "The consent document is temporarily unavailable. Please try again shortly.",
+        "booking-eligibility-denied": "This vehicle or driver failed a compliance check (for example an expired document) and cannot be booked.",
+        "booking-vehicle-not-bookable": "This vehicle is no longer available for booking. Return to results and choose another.",
+        "booking-vehicle-unavailable": "This vehicle is no longer available for the selected window. Return to results and choose another.",
+        "booking-command-in-progress": "A previous attempt is still being processed. Wait a moment and try again.",
+        "booking-idempotency-key-reused": "This request was already submitted. Check My bookings before trying again."
+      },
       "sign": "Sign & confirm booking",
       "signing": "Signing and submitting…",
       "phase": {

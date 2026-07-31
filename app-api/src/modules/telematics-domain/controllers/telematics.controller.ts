@@ -20,6 +20,7 @@ import { DeviceService } from '../services/device.service';
 import { LiveMapService } from '../services/live-map.service';
 import { TripService } from '../services/trip.service';
 import { ScopeAuthorizationService } from '../../platform/services/scope-authorization.service';
+import { VehicleService } from '../../vehicles/services/vehicle.service';
 
 const actorRef = (p?: Principal): string => p?.personId ?? p?.entraObjectId ?? 'system';
 const FLEET_ROLES = ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead', 'SystemAdmin'] as const;
@@ -41,11 +42,13 @@ export class TelematicsController {
     private readonly alerts: AlertService,
     private readonly liveMap: LiveMapService,
     private readonly scope: ScopeAuthorizationService,
+    private readonly vehicles: VehicleService,
   ) {}
 
+  @Roles(...FLEET_ROLES)
   @Get('devices')
-  listDevices() {
-    return this.devices.list();
+  listDevices(@CurrentUser() p: Principal) {
+    return this.devices.list(p.organizationId);
   }
 
   @Roles(...FLEET_ROLES)
@@ -78,9 +81,11 @@ export class TelematicsController {
     return this.trips.endTrip(id, parse(endTripSchema, body), actorRef(p));
   }
 
+  @Roles(...FLEET_ROLES)
   @Get('vehicles/:id/telemetry/live')
-  live(@Param('id') id: string, @CurrentUser() p: Principal) {
-    return this.liveMap.getLive(id, actorRef(p));
+  async live(@Param('id') id: string, @CurrentUser() p: Principal) {
+    await this.assertVehicleScope(id, p);
+    return this.liveMap.getLive(id, p.organizationId, actorRef(p));
   }
 
   @Roles(...FLEET_ROLES)
@@ -98,24 +103,31 @@ export class TelematicsController {
     );
   }
 
+  @Roles(...FLEET_ROLES)
   @Get('vehicles/:id/device')
-  async vehicleDevice(@Param('id') id: string) {
+  async vehicleDevice(@Param('id') id: string, @CurrentUser() p: Principal) {
+    await this.assertVehicleScope(id, p);
     return { device: await this.devices.getVehicleDevice(id) };
   }
 
+  @Roles(...FLEET_ROLES)
   @Get('vehicles/:id/alerts')
-  vehicleAlerts(@Param('id') id: string) {
+  async vehicleAlerts(@Param('id') id: string, @CurrentUser() p: Principal) {
+    await this.assertVehicleScope(id, p);
     return this.alerts.listForVehicle(id);
   }
 
+  @Roles(...FLEET_ROLES)
   @Get('vehicles/:id/trips')
-  vehicleTrips(@Param('id') id: string) {
+  async vehicleTrips(@Param('id') id: string, @CurrentUser() p: Principal) {
+    await this.assertVehicleScope(id, p);
     return this.trips.listForVehicle(id);
   }
 
+  @Roles(...FLEET_ROLES)
   @Get('telematics/alerts')
-  listAlerts() {
-    return this.alerts.list();
+  listAlerts(@CurrentUser() p: Principal) {
+    return this.alerts.list(p.organizationId);
   }
 
   @Roles(...FLEET_ROLES)
@@ -128,5 +140,18 @@ export class TelematicsController {
   @Post('telematics/alerts/:id/ack')
   ackAlert(@Param('id') id: string) {
     return this.alerts.acknowledge(id);
+  }
+
+  /** Requires Fleet authority over the Vehicle's current effective organization scope. */
+  private async assertVehicleScope(vehicleId: string, principal: Principal): Promise<void> {
+    if ((await this.vehicles.organizationOf(vehicleId)) !== principal.organizationId) {
+      throw new BadRequestException({ title: 'Vehicle belongs to another organization', reasons: ['vehicle-organization-mismatch'] });
+    }
+    const scopeNodeId = await this.vehicles.activeScope(vehicleId);
+    if (scopeNodeId) {
+      await this.scope.assertRolesAtScope(principal, FLEET_ROLES, scopeNodeId);
+    } else {
+      await this.scope.assertRootRole(principal, FLEET_ROLES);
+    }
   }
 }

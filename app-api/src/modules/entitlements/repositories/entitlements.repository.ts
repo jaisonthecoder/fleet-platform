@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, inArray, isNull, lte, or, sql } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import type { PlatformRole } from '../../../common/database/schema';
@@ -655,14 +655,26 @@ export class EntitlementsRepository {
   }
 
   /** First active holder of a platform role (optionally at a scope) — chain resolution. */
-  async findApproverForRole(role: PlatformRole, scopeNodeId?: string | null): Promise<string | null> {
-    const conditions = [eq(roleAssignment.role, role), isNull(roleAssignment.validTo)];
+  async findApproverForRole(organizationId: string, role: PlatformRole, scopeNodeId: string | null | undefined, at: Date): Promise<string | null> {
+    const conditions = [
+      eq(roleAssignment.organizationId, organizationId),
+      eq(roleAssignment.role, role),
+      lte(roleAssignment.validFrom, at),
+      or(isNull(roleAssignment.validTo), gt(roleAssignment.validTo, at)),
+      eq(person.organizationId, organizationId),
+      eq(person.employmentStatus, 'Active'),
+      eq(hierarchyNode.organizationId, organizationId),
+      lte(hierarchyNode.validFrom, at),
+      or(isNull(hierarchyNode.validTo), gt(hierarchyNode.validTo, at)),
+    ];
     if (scopeNodeId) {
       conditions.push(eq(roleAssignment.scopeNodeId, scopeNodeId));
     }
     const rows = await this.db
       .select({ personId: roleAssignment.personId })
       .from(roleAssignment)
+      .innerJoin(person, eq(person.id, roleAssignment.personId))
+      .innerJoin(hierarchyNode, eq(hierarchyNode.id, roleAssignment.scopeNodeId))
       .where(and(...conditions))
       .limit(1);
     return rows[0]?.personId ?? null;

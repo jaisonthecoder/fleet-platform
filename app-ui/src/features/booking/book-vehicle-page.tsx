@@ -42,6 +42,19 @@ interface ManagedDraft {
 
 type ConsentPhase = 'idle' | 'signing' | 'submitting' | 'reconciling' | 'error'
 
+/** Reason codes the consent step can explain precisely (else a generic message). */
+const KNOWN_CONSENT_REASONS = new Set([
+  'booking-not-draft',
+  'booking-consent-driver-mismatch',
+  'booking-consent-version-changed',
+  'booking-consent-template-unavailable',
+  'booking-eligibility-denied',
+  'booking-vehicle-not-bookable',
+  'booking-vehicle-unavailable',
+  'booking-command-in-progress',
+  'booking-idempotency-key-reused',
+])
+
 /** Converts a Date to the local datetime-input representation. */
 function toLocalInput(date: Date): string {
   const offset = date.getTimezoneOffset() * 60_000
@@ -120,6 +133,19 @@ export function BookVehiclePage() {
   const submitBooking = useSubmitBooking()
   const reconcileBooking = useBookingReconciliation()
   const locale = i18n.resolvedLanguage ?? i18n.language
+
+  /** Explains the consent/submit failure from the server reasons, when known. */
+  function consentErrorText(): string {
+    const error =
+      submitBooking.error ?? signConsent.error ?? reconcileBooking.error
+    if (error instanceof ApiRequestError) {
+      const known = error.reasons?.find((reason) =>
+        KNOWN_CONSENT_REASONS.has(reason),
+      )
+      if (known) return t(`booking.consent.reasons.${known}`)
+    }
+    return t('booking.consent.commandError')
+  }
 
   /** Validates the current trip form and returns its API search projection. */
   function validateSearch(): BookingSearchInput | null {
@@ -429,7 +455,7 @@ export function BookVehiclePage() {
                   {signerName && !signerMatches && <p className="mt-2 text-xs text-destructive" role="alert">{t('booking.consent.fullNameMismatch')}</p>}
                 </div>
                 <span className="sr-only"><bdi>{consentTemplate.contentHash}</bdi></span>
-                {(signConsent.isError || submitBooking.isError || reconcileBooking.isError) && <p className="mt-4 text-sm text-destructive" role="alert">{t('booking.consent.commandError')}</p>}
+                {(signConsent.isError || submitBooking.isError || reconcileBooking.isError) && <p className="mt-4 text-sm text-destructive" role="alert">{consentErrorText()}</p>}
                 {consentBusy && <output className="mt-4 block text-sm text-muted-foreground">{t(`booking.consent.phase.${consentPhase}`)}</output>}
                 <Button className="mt-5 h-12 w-full" size="lg" disabled={!agreed || !signerMatches || consentBusy} onClick={() => void completeConsent()}>
                   {consentBusy ? t(`booking.consent.phase.${consentPhase}`) : t('booking.consent.sign')}

@@ -22,17 +22,19 @@ export class WorkflowRepository {
 
   /** Resolves or creates one immutable deployment for the canonical snapshot hash. */
   async ensureDeployment(input: {
+    organizationId: string;
     workflowType: string;
     definitionKey: string;
     snapshot: unknown;
     sha256: string;
   }, executor: WorkflowExecutor = this.db): Promise<string> {
     await executor.insert(workflowDefinition).values({
+      organizationId: input.organizationId,
       workflowType: input.workflowType,
       definitionKey: input.definitionKey,
     }).onConflictDoNothing();
     const [definition] = await executor.select().from(workflowDefinition)
-      .where(and(eq(workflowDefinition.workflowType, input.workflowType), eq(workflowDefinition.definitionKey, input.definitionKey)))
+      .where(and(eq(workflowDefinition.organizationId, input.organizationId), eq(workflowDefinition.workflowType, input.workflowType), eq(workflowDefinition.definitionKey, input.definitionKey)))
       .limit(1);
     if (!definition) throw new Error('workflow definition resolution failed');
     const [existing] = await executor.select().from(workflowDefinitionDeployment)
@@ -59,13 +61,14 @@ export class WorkflowRepository {
 
   /** Creates a Pending instance at step 0 and returns its id. */
   async createInstance(input: {
+    organizationId: string;
     workflowType: string;
     subjectRef: string;
     definitionDeploymentId: string;
   }, executor: WorkflowExecutor = this.db): Promise<string> {
     const rows = await executor
       .insert(workflowInstance)
-      .values({ workflowType: input.workflowType, subjectRef: input.subjectRef, definitionDeploymentId: input.definitionDeploymentId })
+      .values({ organizationId: input.organizationId, workflowType: input.workflowType, subjectRef: input.subjectRef, definitionDeploymentId: input.definitionDeploymentId })
       .returning({ id: workflowInstance.id });
     return rows[0]!.id;
   }

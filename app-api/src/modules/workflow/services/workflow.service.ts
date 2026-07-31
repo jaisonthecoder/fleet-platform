@@ -45,12 +45,14 @@ export class WorkflowService {
       slaMinutes: input.slaMinutes ?? null,
     };
     const definitionDeploymentId = await this.repo.ensureDeployment({
+      organizationId: input.organizationId,
       workflowType: input.workflowType,
       definitionKey: input.workflowType,
       snapshot,
       sha256: createHash('sha256').update(JSON.stringify(snapshot)).digest('hex'),
     }, executor);
     const instanceId = await this.repo.createInstance({
+      organizationId: input.organizationId,
       workflowType: input.workflowType,
       subjectRef: input.subjectRef,
       definitionDeploymentId,

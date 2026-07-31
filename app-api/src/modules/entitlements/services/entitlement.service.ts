@@ -623,11 +623,12 @@ export class EntitlementService {
       scopeNodeId: existing.locationNodeId ?? undefined,
     });
     const route = chain.route?.length ? chain.route : ['LineManager', 'FleetManager', 'ClusterCEO'];
+    const approvalAt = new Date();
     const roleToPerson = new Map<string, string | null>();
     for (const role of route) {
       if (!roleToPerson.has(role)) roleToPerson.set(role, role === 'LineManager'
         ? requester?.lineManagerPersonId ?? null
-        : await this.repo.findApproverForRole(role as PlatformRole, existing.locationNodeId));
+        : await this.repo.findApproverForRole(existing.organizationId, role as PlatformRole, existing.locationNodeId, approvalAt));
     }
     const approvers = resolveApprovers(route, existing.requesterPersonId, (role) => roleToPerson.get(role) ?? null);
     const requiredSteps = new Set(route).size;
@@ -640,7 +641,7 @@ export class EntitlementService {
         if (!locked || locked.requesterPersonId !== actor.personId || locked.status !== 'Draft' || locked.revision !== input.expectedRevision) {
           throw new ConflictException({ title: 'Entitlement state changed', reasons: [ENTITLEMENT_REASON.stateConflict] });
         }
-        const view = await this.workflow.start({ workflowType: 'entitlement-approval', subjectRef: `entitlement:${id}`, slaMinutes: 48 * 60, steps: approvers.map((assigneePersonId) => ({ assigneePersonId })) }, tx);
+        const view = await this.workflow.start({ organizationId: locked.organizationId, workflowType: 'entitlement-approval', subjectRef: `entitlement:${id}`, slaMinutes: 48 * 60, steps: approvers.map((assigneePersonId) => ({ assigneePersonId })) }, tx);
         const existingProvenance = (locked.approvalRouteProvenance as Record<string, unknown> | null) ?? null;
         const history = Array.isArray(existingProvenance?.history) ? existingProvenance.history : [];
         const current = {
