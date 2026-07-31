@@ -194,14 +194,53 @@ export class BookingsRepository {
       bookingId: booking.id,
       bookingNumber: booking.bookingNumber,
       requesterName: person.fullName,
+      requesterEmployeeId: person.hcmEmployeeId,
+      requesterLineManagerPersonId: person.lineManagerPersonId,
       plate: vehicle.plate,
       makeCode: vehicle.makeCode,
       modelCode: vehicle.modelCode,
       pickupAtUtc: booking.pickupAtUtc,
       returnAtUtc: booking.returnAtUtc,
       purpose: booking.purpose,
+      destination: booking.destination,
       passengerCount: booking.passengerCount,
       consentVersion: consentRecord.consentDocumentVersion,
+      consentSignedAtUtc: consentRecord.signedAtUtc,
+      eligibilityDecision: sql<string | null>`(
+        SELECT ee.decision FROM fleet.eligibility_evaluation ee
+        WHERE ee.organization_id = ${booking.organizationId}
+          AND ee.driver_person_id = ${booking.driverPersonId}
+          AND ee.vehicle_id = ${booking.vehicleId}
+          AND ee.evaluated_at_utc <= ${consentRecord.signedAtUtc}
+        ORDER BY ee.evaluated_at_utc DESC LIMIT 1
+      )`,
+      eligibilityReasons: sql<string[] | null>`(
+        SELECT ee.reasons FROM fleet.eligibility_evaluation ee
+        WHERE ee.organization_id = ${booking.organizationId}
+          AND ee.driver_person_id = ${booking.driverPersonId}
+          AND ee.vehicle_id = ${booking.vehicleId}
+          AND ee.evaluated_at_utc <= ${consentRecord.signedAtUtc}
+        ORDER BY ee.evaluated_at_utc DESC LIMIT 1
+      )`,
+      eligibilityPolicyVersion: sql<string | null>`(
+        SELECT ee.policy_version FROM fleet.eligibility_evaluation ee
+        WHERE ee.organization_id = ${booking.organizationId}
+          AND ee.driver_person_id = ${booking.driverPersonId}
+          AND ee.vehicle_id = ${booking.vehicleId}
+          AND ee.evaluated_at_utc <= ${consentRecord.signedAtUtc}
+        ORDER BY ee.evaluated_at_utc DESC LIMIT 1
+      )`,
+      eligibilityEvaluatedAtUtc: sql<Date | string | null>`(
+        SELECT ee.evaluated_at_utc FROM fleet.eligibility_evaluation ee
+        WHERE ee.organization_id = ${booking.organizationId}
+          AND ee.driver_person_id = ${booking.driverPersonId}
+          AND ee.vehicle_id = ${booking.vehicleId}
+          AND ee.evaluated_at_utc <= ${consentRecord.signedAtUtc}
+        ORDER BY ee.evaluated_at_utc DESC LIMIT 1
+      )`,
+      behaviorBookingCount: sql<number>`(SELECT count(*)::int FROM fleet.booking b WHERE b.organization_id = ${booking.organizationId} AND b.requested_by_person_id = ${booking.requestedByPersonId} AND b.created_at_utc >= date_trunc('year', now()))`,
+      behaviorNoShowCount: sql<number>`(SELECT count(*)::int FROM fleet.booking b WHERE b.organization_id = ${booking.organizationId} AND b.requested_by_person_id = ${booking.requestedByPersonId} AND b.status = 'NoShow' AND b.created_at_utc >= date_trunc('year', now()))`,
+      behaviorLateReturnCount: sql<number>`(SELECT count(*)::int FROM fleet.booking_event be JOIN fleet.booking b ON b.id = be.booking_id WHERE b.organization_id = ${booking.organizationId} AND b.requested_by_person_id = ${booking.requestedByPersonId} AND be.event_type = 'Returned' AND (be.detail->>'lateReturn')::boolean = true AND be.at_utc >= date_trunc('year', now()))`,
       workflowStepId: workflowStep.id,
       bookingVersion: booking.revision,
       stepVersion: workflowStep.stateVersion,

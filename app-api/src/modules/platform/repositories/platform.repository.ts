@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, desc, eq, gte, isNull, lte } from 'drizzle-orm';
+import { and, desc, eq, gt, gte, isNull, lte, or } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import {
@@ -25,7 +25,7 @@ export class PlatformRepository {
   }
 
   /** Active role assignments for a person, joined to their scope node name. */
-  async listActiveRoles(personId: string) {
+  async listActiveRoles(personId: string, at = new Date()) {
     return this.db
       .select({
         role: roleAssignment.role,
@@ -34,18 +34,23 @@ export class PlatformRepository {
       })
       .from(roleAssignment)
       .leftJoin(hierarchyNode, eq(hierarchyNode.id, roleAssignment.scopeNodeId))
-      .where(and(eq(roleAssignment.personId, personId), isNull(roleAssignment.validTo)));
+      .where(and(
+        eq(roleAssignment.personId, personId),
+        lte(roleAssignment.validFrom, at),
+        or(isNull(roleAssignment.validTo), gt(roleAssignment.validTo, at)),
+      ));
   }
 
   /** All currently-effective hierarchy nodes, ordered by depth. */
-  async listHierarchy(organizationId = DEFAULT_ORGANIZATION_ID) {
+  async listHierarchy(organizationId = DEFAULT_ORGANIZATION_ID, at = new Date()) {
     return this.db
       .select()
       .from(hierarchyNode)
       .where(
         and(
           eq(hierarchyNode.organizationId, organizationId),
-          isNull(hierarchyNode.validTo),
+          lte(hierarchyNode.validFrom, at),
+          or(isNull(hierarchyNode.validTo), gt(hierarchyNode.validTo, at)),
         ),
       )
       .orderBy(hierarchyNode.levelIndex);
@@ -86,18 +91,19 @@ export class PlatformRepository {
   }
 
   /** Most-recent audit entries (Internal Audit read-only view). */
-  async listAudit(limit: number, offset: number) {
+  async listAudit(organizationId: string, limit: number, offset: number) {
     return this.db
       .select()
       .from(auditLog)
+      .where(eq(auditLog.organizationId, organizationId))
       .orderBy(desc(auditLog.id))
       .limit(limit)
       .offset(offset);
   }
 
   /** SoD override exceptions for the standing exception report. */
-  async listSodExceptions() {
-    return this.db.select().from(sodException).orderBy(desc(sodException.createdAtUtc));
+  async listSodExceptions(organizationId: string) {
+    return this.db.select().from(sodException).where(eq(sodException.organizationId, organizationId)).orderBy(desc(sodException.createdAtUtc));
   }
 
   /**

@@ -58,10 +58,14 @@ const BookingApprovalsPage = lazy(() =>
 const BookingPreparationPage = lazy(() =>
   import('@/features/approvals/booking-preparation-page').then((m) => ({ default: m.BookingPreparationPage })),
 )
-const HandoverPage = lazy(() =>
-  import('@/features/handover/handover-page').then((m) => ({
-    default: m.HandoverPage,
-  })),
+const HandoverCapturePage = lazy(() =>
+  import('@/features/handover/handover-capture-page').then((m) => ({ default: m.HandoverCapturePage })),
+)
+const HandoverRegisterPage = lazy(() =>
+  import('@/features/handover/handover-register-page').then((m) => ({ default: m.HandoverRegisterPage })),
+)
+const HandoverChainPage = lazy(() =>
+  import('@/features/handover/handover-chain-page').then((m) => ({ default: m.HandoverChainPage })),
 )
 const VehicleOnboardingPage = lazy(() =>
   import('@/features/vehicles/vehicle-onboarding-page').then((m) => ({
@@ -237,7 +241,39 @@ export const appRoutes: RouteObject[] = [
             path: 'handover',
             element: (
               <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
-                {page(<HandoverPage />)}
+                {page(<HandoverRegisterPage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'handover/new',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<HandoverCapturePage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'handover/return',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<HandoverCapturePage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'handover/work',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<HandoverCapturePage />)}
+              </RequireRole>
+            ),
+          },
+          {
+            path: 'handover/:handoverId',
+            element: (
+              <RequireRole roles={['FleetManager', 'ClusterFleetLead', 'GroupFleetLead']}>
+                {page(<HandoverChainPage />)}
               </RequireRole>
             ),
           },

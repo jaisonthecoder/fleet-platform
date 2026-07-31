@@ -5,7 +5,6 @@ import {
   SheetDescription,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 
 export type DrawerWidth = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl'
@@ -73,7 +72,7 @@ export function Drawer({
         closeLabel={closeLabel}
         className={cn('flex w-[92vw] flex-col gap-0 p-0', WIDTH[width], className)}
       >
-        <header className="border-b border-border bg-card px-5 py-4 pe-12">
+        <header className="border-b border-border bg-card px-5 py-4">
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           <div className="flex items-start justify-between gap-3">
             <SheetTitle className="text-base font-bold text-foreground">{title}</SheetTitle>
@@ -86,9 +85,9 @@ export function Drawer({
           ) : null}
         </header>
         {scrollable ? (
-          <ScrollArea className="flex-1">
-            <div className={cn('p-5', bodyClassName)}>{children}</div>
-          </ScrollArea>
+          <div className={cn('flex-1 overflow-y-auto p-5', bodyClassName)}>
+            {children}
+          </div>
         ) : (
           <div className={cn('flex min-h-0 flex-1 flex-col', bodyClassName)}>{children}</div>
         )}

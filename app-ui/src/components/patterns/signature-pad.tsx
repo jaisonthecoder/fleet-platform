@@ -22,6 +22,7 @@ interface SignaturePadProps {
   onSignedChange?: (signed: boolean) => void
   className?: string
   height?: number
+  labels?: Partial<{ method: string; draw: string; type: string; area: string; typeName: string; signature: string }>
 }
 
 /**
@@ -35,16 +36,17 @@ export function SignaturePad({
   onSignedChange,
   className,
   height = 170,
+  labels,
 }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [mode, setMode] = useState<'draw' | 'type'>('draw')
   const [drawn, setDrawn] = useState(false)
-  const [typed, setTyped] = useState(signerName)
+  const [typed, setTyped] = useState('')
   const drawnRef = useRef(false)
 
   // Reset the typed name if the designated signer changes.
   useEffect(() => {
-    setTyped(signerName)
+    setTyped('')
   }, [signerName])
 
   const signed = mode === 'draw' ? drawn : typed.trim().length > 0
@@ -166,7 +168,7 @@ export function SignaturePad({
     <div className={cn('space-y-2', className)}>
       <div
         role="tablist"
-        aria-label="Signature method"
+        aria-label={labels?.method ?? 'Signature method'}
         className="inline-flex gap-1 rounded-[3px] bg-surface-2 p-1"
       >
         {(['draw', 'type'] as const).map((m) => (
@@ -183,7 +185,7 @@ export function SignaturePad({
                 : 'text-muted-foreground hover:text-foreground',
             )}
           >
-            {m === 'draw' ? 'Draw' : 'Type'}
+            {m === 'draw' ? (labels?.draw ?? 'Draw') : (labels?.type ?? 'Type')}
           </button>
         ))}
       </div>
@@ -198,7 +200,7 @@ export function SignaturePad({
         {mode === 'draw' ? (
           <canvas
             ref={canvasRef}
-            aria-label="Signature area. Sign with finger, stylus or mouse."
+            aria-label={labels?.area ?? 'Signature area. Sign with finger, stylus or mouse.'}
             className="block size-full touch-none"
           />
         ) : (
@@ -207,11 +209,11 @@ export function SignaturePad({
               value={typed}
               onChange={(e) => setTyped(e.target.value)}
               placeholder={signerName || 'Type your full name'}
-              aria-label="Type your full name to sign"
+              aria-label={labels?.typeName ?? 'Type your full name to sign'}
               className="w-full bg-transparent text-center text-2xl italic tracking-wide outline-none placeholder:text-base placeholder:not-italic placeholder:text-ink-3"
             />
             <span className="mt-2 border-t border-dashed border-input px-10 pt-1.5 text-[11px] uppercase tracking-[0.08em] text-ink-3">
-              Signature
+              {labels?.signature ?? 'Signature'}
             </span>
           </div>
         )}

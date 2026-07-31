@@ -16,6 +16,7 @@ import {
 import { LookupService } from '../src/modules/config/services/lookup.service';
 import { UserAdminService } from '../src/modules/identity/services/user-admin.service';
 import { UserProvisioningService } from '../src/modules/identity/services/user-provisioning.service';
+import { PlatformRepository } from '../src/modules/platform/repositories/platform.repository';
 
 /**
  * Integration proof of Sub-Phase 1A₂ (lookup engine + user/access management).
@@ -28,6 +29,7 @@ describe('lookup + identity (integration — requires DB + Redis)', () => {
   let lookups: LookupService;
   let userAdmin: UserAdminService;
   let provisioning: UserProvisioningService;
+  let platform: PlatformRepository;
   let db: DrizzleDatabase;
 
   const suffix = randomUUID().slice(0, 8);
@@ -44,6 +46,7 @@ describe('lookup + identity (integration — requires DB + Redis)', () => {
     lookups = ctx.get(LookupService);
     userAdmin = ctx.get(UserAdminService);
     provisioning = ctx.get(UserProvisioningService);
+    platform = ctx.get(PlatformRepository);
     db = ctx.get<DrizzleDatabase>(DRIZZLE);
 
     // Seed a hierarchical lookup type (Make → Model) with values.
@@ -119,6 +122,36 @@ describe('lookup + identity (integration — requires DB + Redis)', () => {
       .from(roleAssignment)
       .where(and(eq(roleAssignment.personId, personId), isNull(roleAssignment.validTo)));
     expect(active.map((a) => a.r).sort()).toEqual(['Finance']);
+  });
+
+  it('resolves roles and hierarchy at effective-time boundaries', async () => {
+    const at = new Date('2026-07-30T12:00:00.000Z');
+    const futureNodeId = randomUUID();
+    await db.insert(hierarchyNode).values({
+      id: futureNodeId,
+      parentId: 'a0000000-0000-4000-8000-000000000003',
+      code: `IT-FUTURE-${suffix.toUpperCase()}`,
+      levelIndex: 3,
+      levelLabel: 'Location',
+      levelCode: 'LOCATION',
+      name: `Future Site ${suffix}`,
+      nameAr: `موقع مستقبلي ${suffix}`,
+      path: sql`${`group.ports.khalifa.future_${suffix}`}::ltree`,
+      validFrom: new Date('2026-07-31T12:00:00.000Z'),
+    });
+    await db.insert(roleAssignment).values([
+      { personId, role: 'InternalAudit', scopeNodeId, validFrom: at, validTo: new Date('2026-07-31T12:00:00.000Z') },
+      { personId, role: 'Procurement', scopeNodeId, validFrom: new Date('2026-07-29T12:00:00.000Z'), validTo: at },
+      { personId, role: 'GroupFleetLead', scopeNodeId, validFrom: new Date('2026-07-31T12:00:00.000Z') },
+    ]);
+
+    const roles = await platform.listActiveRoles(personId, at);
+    expect(roles.map((item) => item.role)).toContain('InternalAudit');
+    expect(roles.map((item) => item.role)).not.toContain('Procurement');
+    expect(roles.map((item) => item.role)).not.toContain('GroupFleetLead');
+    expect((await platform.listHierarchy(undefined, at)).map((node) => node.id)).not.toContain(futureNodeId);
+
+    await db.delete(hierarchyNode).where(eq(hierarchyNode.id, futureNodeId));
   });
 
   it('provisions a user JIT (matching the person by email) and is idempotent on re-login', async () => {

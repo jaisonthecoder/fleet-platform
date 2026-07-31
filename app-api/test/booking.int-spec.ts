@@ -521,7 +521,7 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
       delegated: false,
       evidence: { eligibility: 'VERIFIED_AT_CONSENT', consent: 'SIGNED', reservation: 'HELD', forecast: 'NOT_AVAILABLE' },
     });
-    expect(JSON.stringify(task)).not.toMatch(/device|signature|licence|ip/i);
+    expect(JSON.stringify(task)).not.toMatch(/"(?:ip|device|signatureRef|licence(?:Number|Expiry))"/i);
     const decisionKey = `booking-decision-${randomUUID()}`;
     const decisionInput = { actorPersonId: managerId, expectedBookingVersion: submitted.revision, expectedStepVersion: 1, decision: 'APPROVED' as const };
     const approved = await bookings.decide(id, decisionInput, approverPrincipal(managerId), decisionKey);

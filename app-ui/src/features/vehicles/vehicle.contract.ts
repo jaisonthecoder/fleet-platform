@@ -88,6 +88,11 @@ export async function fetchVehicles(
   )
 }
 
+/** Fetches a single hierarchy-scoped Vehicle by id (deep-link / click-through). */
+export async function fetchVehicle(id: string): Promise<Vehicle> {
+  return vehicleSchema.parse(await apiClient.get(`/v1/vehicles/${id}`))
+}
+
 /** Downloads the scoped registry as CSV text (honours search + sort). */
 export async function fetchVehiclesCsv(query: VehicleQuery = {}): Promise<string> {
   const params = new URLSearchParams()
@@ -237,6 +242,10 @@ export interface UpdateVehicleInput {
   trackerSerial?: string
   gpsStatus?: VehicleGpsStatus
   assignedDriverPersonId?: string | null
+  year?: number
+  seatingCapacity?: number
+  nextMaintenanceDue?: string
+  insuranceCoverageType?: string
 }
 
 /** Patches a vehicle's mutable attributes and returns the refreshed record. */

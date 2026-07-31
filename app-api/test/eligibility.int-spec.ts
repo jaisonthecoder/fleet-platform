@@ -5,7 +5,7 @@ import { sql } from 'drizzle-orm';
 import { AppModule } from '../src/app.module';
 import { DRIZZLE } from '../src/common/database/database.constants';
 import type { DrizzleDatabase } from '../src/common/database/database.module';
-import { person, vehicle } from '../src/common/database/schema';
+import { DEFAULT_ORGANIZATION_ID, person, vehicle } from '../src/common/database/schema';
 import { ComplianceService } from '../src/modules/compliance/services/compliance.service';
 import { EligibilityService } from '../src/modules/compliance/services/eligibility.service';
 
@@ -44,8 +44,8 @@ describe('eligibility gate (integration — requires DB + Redis)', () => {
     const vehicles = await db
       .insert(vehicle)
       .values([
-        { plate: `EL-${suffix}-G`, chassisVin: `ELVIN-${suffix}-G`, bodyTypeCode: 'SEDAN', mulkiyaExpiry: future, insuranceExpiry: future },
-        { plate: `EL-${suffix}-X`, chassisVin: `ELVIN-${suffix}-X`, bodyTypeCode: 'SEDAN', mulkiyaExpiry: future, insuranceExpiry: past },
+        { plate: `EL-${suffix}-G`, chassisVin: `ELVIN-${suffix}-G`, bodyTypeCode: 'SEDAN', lifecycleStatus: 'Active', bookingPoolFlag: true, mulkiyaExpiry: future, insuranceExpiry: future },
+        { plate: `EL-${suffix}-X`, chassisVin: `ELVIN-${suffix}-X`, bodyTypeCode: 'SEDAN', lifecycleStatus: 'Active', bookingPoolFlag: true, mulkiyaExpiry: future, insuranceExpiry: past },
       ])
       .returning({ id: vehicle.id });
     goodVehicle = vehicles[0].id;
@@ -61,20 +61,20 @@ describe('eligibility gate (integration — requires DB + Redis)', () => {
   });
 
   it('ALLOWs a compliant driver + vehicle and surfaces data-as-of', async () => {
-    const result = await eligibility.evaluate({ driverPersonId: driverId, vehicleId: goodVehicle });
+    const result = await eligibility.evaluate({ driverPersonId: driverId, vehicleId: goodVehicle }, DEFAULT_ORGANIZATION_ID);
     expect(result.decision).toBe('ALLOW');
     expect(result.dataAsOf).not.toBeNull();
   });
 
   it('hard-blocks an expired-insurance vehicle (no override)', async () => {
-    const result = await eligibility.evaluate({ driverPersonId: driverId, vehicleId: expiredVehicle });
+    const result = await eligibility.evaluate({ driverPersonId: driverId, vehicleId: expiredVehicle }, DEFAULT_ORGANIZATION_ID);
     expect(result.decision).toBe('DENY');
     expect(result.reasons).toContain('hard-block-insurance-expired');
   });
 
   it('blocks a driver with an active platform access block', async () => {
-    await compliance.raiseBlock({ personId: driverId, reason: 'black-point-overdue' }, 'hse');
-    const result = await eligibility.evaluate({ driverPersonId: driverId, vehicleId: goodVehicle });
+    await compliance.raiseBlock({ personId: driverId, reason: 'black-point-overdue' }, 'hse', DEFAULT_ORGANIZATION_ID);
+    const result = await eligibility.evaluate({ driverPersonId: driverId, vehicleId: goodVehicle }, DEFAULT_ORGANIZATION_ID);
     expect(result.decision).toBe('DENY');
     expect(result.reasons.some((r) => r.startsWith('access-blocked'))).toBe(true);
   });

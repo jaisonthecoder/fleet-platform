@@ -1,6 +1,40 @@
 import { z } from 'zod'
 import { apiClient } from '@/lib/api-client'
 
+export const approvalRelationshipSchema = z.enum(['DIRECT_MANAGER', 'DELEGATE', 'WORKFLOW_ASSIGNEE', 'FLEET_AUTHORITY'])
+export const approvalEvidenceKindSchema = z.enum(['Eligibility', 'Consent', 'Reservation', 'Forecast'])
+export const approvalEvidenceStatusSchema = z.enum(['VERIFIED', 'SIGNED', 'HELD', 'AVAILABLE', 'NOT_CONFIGURED', 'UNAVAILABLE'])
+export const approvalProviderStatusSchema = z.enum(['AVAILABLE', 'NOT_CONFIGURED', 'UNAVAILABLE'])
+
+export const approvalRequesterSchema = z.object({
+  fullName: z.string(),
+  employeeId: z.string(),
+  relationshipCode: approvalRelationshipSchema,
+  behavior: z.object({
+    year: z.number().int(),
+    bookingCount: z.number().int().nonnegative(),
+    noShowCount: z.number().int().nonnegative(),
+    lateReturnCount: z.number().int().nonnegative(),
+  }),
+}).strict()
+
+export const approvalEvidenceItemSchema = z.object({
+  kind: approvalEvidenceKindSchema,
+  status: approvalEvidenceStatusSchema,
+  reasonCodes: z.array(z.string()),
+  occurredAtUtc: z.string().nullable(),
+  version: z.string().nullable(),
+}).strict()
+
+export const approvalOptionalProviderSchema = z.object({
+  status: approvalProviderStatusSchema,
+  amount: z.string().nullable(),
+  currency: z.string().nullable(),
+  utilizationPercent: z.number().min(0).max(100).nullable(),
+  suggestedStartAtUtc: z.string().nullable(),
+  reasonCodes: z.array(z.string()),
+}).strict()
+
 export const approvalWorkItemSchema = z.object({
   bookingId: z.string().uuid(),
   bookingNumber: z.string(),
@@ -22,6 +56,13 @@ export const approvalWorkItemSchema = z.object({
     reservation: z.literal('HELD'),
     forecast: z.literal('NOT_AVAILABLE'),
   }),
+  requester: approvalRequesterSchema.optional(),
+  destination: z.string().nullable().optional(),
+  durationMinutes: z.number().int().positive().optional(),
+  justification: z.string().nullable().optional(),
+  evidenceItems: z.array(approvalEvidenceItemSchema).optional(),
+  cost: approvalOptionalProviderSchema.optional(),
+  forecast: approvalOptionalProviderSchema.optional(),
 })
 export type ApprovalWorkItem = z.infer<typeof approvalWorkItemSchema>
 export type ApprovalAction = 'approve' | 'decline' | 'request-changes'

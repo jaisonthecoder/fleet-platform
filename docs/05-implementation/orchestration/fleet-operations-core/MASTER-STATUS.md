@@ -5,12 +5,12 @@
 | Objective | Deliver the real-time fleet operational core from `docs/implementation-plan/booking_and_vehiclemanagement/`, then wire the full Organization, Decision and Workflow platforms into proven domain journeys. |
 | Orchestrator | Delivery Orchestrator |
 | Baseline | Current repository through migration `0055`; Booking, Handover and Dedicated flows use an application-owned immutable bilingual consent registry with maker-checker activation. |
-| Updated | 2026-07-29 |
+| Updated | 2026-07-30 |
 | Overall status | `ACTIVE` |
 | Current authorization | Approved Vendor, Vehicle, Booking and Handover mockups may be implemented inside the existing shell with EN/AR parity; unavailable integrations remain explicitly future. |
 | Live role alignment | Employee Booking, Approver/Delegate/Fleet approval inbox, Fleet preparation and SystemAdmin denial are aligned across navigation, route guards and current API on ports `5173/3000`. |
 | Local demo mode | `pnpm dev:bootstrap` applies migrations, editable hierarchy/people/roles/reference data, API-created demo fleet, governed consent v3 and editable development policy v2. Fleet on-behalf and Dedicated WithDriver are active from persisted records. |
-| Next action | Continue remaining product implementation/INT-1. No Booking/Dedicated development gate is waiting for an unnamed person: consent, Fleet on-behalf, professional-driver roster and policy are configured in-app. Production evidence remains a release concern. |
+| Next action | Continue INT-1 cross-domain O4 closure after verified effective-time authority and Fine/Compliance/Audit tenant-isolation slice; complete Vehicle, Booking, Handover, Entitlement, Dashboard, Workflow and Policy negative matrix. |
 
 ## 1. Controlled Sequencing Decision
 
@@ -54,10 +54,10 @@ flowchart LR
 | CORE-1 | Operational Vehicle Management: onboarding/import, registry/detail, lifecycle/pool controls, documents/compliance/device/custody | V1-V4 (5-8) | `ACTIVE_PARTIAL` | CORE-0 | Approved | Onboarding and scoped registry verified; full detail/quick view, import and later lifecycle surfaces remain |
 | CORE-2 | Basic live Pool Booking: self authority, availability, eligibility, consent and submit | B1-B2 (9-10) | `VERIFIED_DEVELOPMENT_ACTIVE` | Target-environment consent activation for release | Approved for derived implementation | Self and scoped Fleet-managed Draft flows live; selected driver owns consent |
 | CORE-3 | Booking operations: approval/preparation queue, My Bookings, modify/re-consent, extend/cancel/complete | B3-B4 (11-12) | `VERIFIED` | Human UAT/pilot | Approval/delegation/preparation and My Bookings implemented EN/AR | Actor/SoD/state/idempotency and role journeys verified |
-| CORE-4 | Physical handover/return, condition, damage, odometer/fuel, keys and accountability | H1 (16) | `VERIFIED` | Human UAT/pilot | Handover/return workbench implemented EN/AR | Atomic release/return, immutable evidence, replay/contention/rollback verified |
+| CORE-4 | Physical handover/return, condition, damage, odometer/fuel, keys and accountability | H1 (16) | `VERIFIED_HAPR_00_07_COMPLETE` | Production storage adapter and release evidence | Screens `25`-`28` and demo composition verified | Atomic lifecycle/replay, immutable evidence, register, capture, chain/receipt/amendments and approval projection verified |
 | CORE-5 | Dedicated entitlement request, approval, consent, allocation and BSD; active pack: [Dedicated Vehicle Implementation Plan](dedicated-vehicle-implementation-plan/README.md) | D1-D2 (14-15) | `VERIFIED_DEVELOPMENT_ACTIVE` | Target-environment configuration and release evidence | Dedicated journey implemented EN/AR; editable roster/policy/reference/leave sources | WithoutDriver lifecycle plus roster/policy-bound WithDriver Draft verified |
 | CORE-6 | Notifications, reporting, audit, imports and operational readiness across proven journeys | X1 (17) | `LIVE_OPERATIONS_AND_DEDICATED_HANDOFF_VERIFIED` | Remaining domain waves and human Dedicated production gates | Operations/report mockups approved | Live EN/AR role-aware operations, tenant-safe aggregates, Dedicated inventory/reconciliation/events and handoff verified; wider cross-domain CORE-6 remains active |
-| INT-1 | Close the final cross-domain O4 query-propagation matrix after each core phase delivers its just-in-time O4 controls | Organization O4 | `PLANNED` | CORE-6 operational contracts stable | Organization administration UI evidence only if changed | Full scope/ownership matrix; effective-date/revocation/cross-org negative tests |
+| INT-1 | Close the final cross-domain O4 query-propagation matrix after each core phase delivers its just-in-time O4 controls | Organization O4 | `ACTIVE_PARTIAL` | CORE-6 operational contracts stable | Organization administration UI evidence only if changed | Effective-time roles/nodes and Fine/Compliance/Audit tenant reads/mutations verified; remaining full scope/ownership matrix and cross-org negative tests active |
 | INT-2 | Migrate remaining domain PEPs and approval flows through selector/shadow/canary and immutable workflow versions using completed O6 foundations | Phase 8.3-8.10, with verified 8.0-8.2 and O6 retained | `PLANNED` | INT-1; stable core journeys | Decision evidence and approval UI mockups approved | Provenance/parity/SLO/rollback evidence; direct legacy paths removed or excepted |
 | LATER-1 | Advanced booking scenarios | B5 (13) | `PLANNED` | Basic core verified; business decisions D17/D24 as applicable | Scenario mockups approved | Scenario-specific concurrency, abuse and operational evidence |
 | LATER-2 | Vendor and Lease automation | S1-S3 (2-4) | `ACTIVE_PARTIAL` | Core vehicle contracts stable; source authority approved before external adapter | Vendor/lease mockups approved | Manual master, SoD, documents, lease and Vehicle linkage verified; onboarding/completeness, provider config and off-hire remain |
@@ -75,7 +75,7 @@ The active phase pack is [booking-core-implementation-plan/README.md](booking-co
 | BOOKING-02 | Authenticated consent, atomic number/reservation, submit and confirmation | `VERIFIED_GOVERNED_CONSENT_LOCAL` | BOOKING-01; target environment must activate accepted wording | Migrations `0054`/`0055`; registry/provider/consumer tests; local Active version/hash; atomic consent/reservation evidence |
 | BOOKING-03 | Pinned approval workflow, scoped inbox and Fleet preparation | `VERIFIED` | BOOKING-02 | Migration `0045`; immutable lineage; atomic decisions/races; assigned/delegated worklist; preparation queue; screen 25 EN/AR; G-0008 closed |
 | BOOKING-04 | Owner-scoped My Bookings and change lifecycle | `VERIFIED` | BOOKING-02 technical baseline; BOOKING-03 race rules | Server capabilities, list/detail/history, modify/re-consent, extend/cancel; backend 42/42 + PostgreSQL 17/17 + frontend 15/15 |
-| BOOKING-05 | Atomic Handover pick-up/return and Booking completion | `VERIFIED` | BOOKING-03/04; Handover contract | Shared transaction, scoped register, live EN/AR open/return/receipt, replay/contention and rollback verified |
+| BOOKING-05 | Atomic Handover pick-up/return and Booking completion | `VERIFIED_HAPR_COMPLETE` | BOOKING-03/04; Handover contract | Shared transaction/replay/contention/rollback plus HAPR evidence/register/capture/chain/receipt and mockup fidelity verified |
 | BOOKING-06 | Security, load, accessibility, failure, UAT and pilot rollout | `TECHNICALLY_VERIFIED_HUMAN_GATES_PENDING` | BOOKING-01 through 05 | Automated gates, governed consent and UAT/rollback package pass; named owners, manual NVDA, 300-user soak, 10k plan and signed pilot pending |
 
 ### Dedicated Vehicle execution breakdown
@@ -122,7 +122,8 @@ The user supplies and approves mockups separately for Vehicle, Booking, Approval
 
 - Last completed action: BOOKING-04 through 06 technically closed owner lifecycle, atomic Handover/Return, durable replay, role/security/load/static gates and EN/AR browser evidence.
 - Current fit: `Vendor/lease -> Vehicle -> Booking -> Approval -> Handover -> Return/Completion` is technically verified for the local/manual flow without exposing Vendor commercial data in Booking DTOs.
-- Resume autonomous engineering with INT-1 O4 query propagation. Do not reopen completed Booking phases without a new failing behavior or requirement.
+- HAPR-00..07 completed the 2026-07-30 corrective Handover/Approval slice. Resume INT-1 against the now-stable register/detail/evidence contracts.
+- Handover View now uses the canonical Vehicle Management drawer with responsive evidence tabs; New Handover work items require a real consent row and the Hamdan flow loads live. INT-1A now enforces true effective windows and closes Fine/Compliance/Audit organization reads plus Fine/Compliance mutation isolation; wider INT-1 remains active.
 - Target environments remain fail-closed until organization-accepted consent is activated through maker-checker; the source/workflow are complete and local v3 is Active. Fleet on-behalf is role/hierarchy-configured and G-0006 is closed. Signed human UAT/pilot remains release evidence; advanced B5 and external providers remain future.
 
 ## 8. Change Log

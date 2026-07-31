@@ -6,14 +6,23 @@ import {
   Headers,
   Param,
   Post,
+  Query,
+  Req,
   ForbiddenException,
 } from '@nestjs/common';
+import { z } from 'zod';
+import type { FastifyRequest } from 'fastify';
 import { CurrentUser, Roles } from '../../../common/auth/auth.decorators';
 import type { Principal } from '../../../common/auth/principal';
 import {
   addDamageSchema,
+  createHandoverAmendmentSchema,
+  handoverRegisterQuerySchema,
   openHandoverSchema,
+  openHandoverV2Schema,
   recordReturnSchema,
+  recordReturnV2Schema,
+  stageHandoverEvidenceQuerySchema,
 } from '../../../contracts/handover.contract';
 import { HandoverService } from '../services/handover.service';
 
@@ -59,11 +68,57 @@ export class HandoverController {
     return this.handovers.worklist(requiredPrincipal(principal));
   }
 
+  /** GET /api/v1/handovers/register — historical screen-26 custody register. */
+  @Roles(...FLEET_ROLES)
+  @Get('handovers/register')
+  register(@Query() query: unknown, @CurrentUser() principal?: Principal) {
+    return this.handovers.register(
+      parse(handoverRegisterQuerySchema, query),
+      requiredPrincipal(principal),
+    );
+  }
+
+  /** GET /api/v1/handovers/work-items — explicit Approved/Active compatibility worklist. */
+  @Roles(...FLEET_ROLES)
+  @Get('handovers/work-items')
+  workItems(@CurrentUser() principal?: Principal) {
+    return this.handovers.workItems(requiredPrincipal(principal));
+  }
+
+  /** GET /api/v1/handovers/capture-context — persisted mockup header and evidence facts. */
+  @Roles(...FLEET_ROLES)
+  @Get('handovers/capture-context')
+  captureContext(@Query('bookingId') bookingId: string, @CurrentUser() principal?: Principal) {
+    const parsed = z.string().uuid().safeParse(bookingId);
+    if (!parsed.success) throw new BadRequestException({ title: 'Invalid Booking id', reasons: ['handover-booking-id-invalid'] });
+    return this.handovers.captureContext(parsed.data, requiredPrincipal(principal));
+  }
+
+  /** POST /api/v1/handover-evidence/uploads — stages one bounded private image. */
+  @Roles(...FLEET_ROLES)
+  @Post('handover-evidence/uploads')
+  stageEvidence(
+    @Query() query: unknown,
+    @Req() request: FastifyRequest,
+    @CurrentUser() principal?: Principal,
+  ) {
+    const body = request.body;
+    if (!Buffer.isBuffer(body)) throw new BadRequestException({ title: 'Raw image body is required', reasons: ['handover-evidence-body-required'] });
+    const mimeType = String(request.headers['content-type'] ?? '').split(';', 1)[0] ?? '';
+    return this.handovers.stageEvidence(
+      parse(stageHandoverEvidenceQuerySchema, query),
+      body,
+      mimeType,
+      requiredPrincipal(principal),
+    );
+  }
+
   /** POST /api/v1/handovers — open a handover for an approved booking (→ Active). */
   @Roles(...FLEET_ROLES)
   @Post('handovers')
   open(@Body() body: unknown, @CurrentUser() principal?: Principal, @Headers('idempotency-key') idempotencyKey?: string) {
-    return this.handovers.open(parse(openHandoverSchema, body), requiredPrincipal(principal), requiredIdempotencyKey(idempotencyKey));
+    const schema = (body as { schemaVersion?: unknown } | null)?.schemaVersion === 2 ? openHandoverV2Schema : openHandoverSchema;
+    return this.handovers.open(parse(schema, body), requiredPrincipal(principal), requiredIdempotencyKey(idempotencyKey));
   }
 
   /** GET /api/v1/handovers/:id — a handover projection with damage pins. */
@@ -73,11 +128,49 @@ export class HandoverController {
     return this.handovers.get(id, requiredPrincipal(principal));
   }
 
+  /** GET /api/v1/handovers/:id/chain — immutable issue-to-return evidence chain. */
+  @Roles(...FLEET_ROLES)
+  @Get('handovers/:id/chain')
+  chain(@Param('id') id: string, @CurrentUser() principal?: Principal) {
+    const parsed = z.string().uuid().safeParse(id);
+    if (!parsed.success) throw new BadRequestException({ title: 'Invalid Handover id', reasons: ['handover-id-invalid'] });
+    return this.handovers.chain(parsed.data, requiredPrincipal(principal));
+  }
+
+  /** GET /api/v1/handovers/:id/receipt — locked completion projection. */
+  @Roles(...FLEET_ROLES)
+  @Get('handovers/:id/receipt')
+  receipt(@Param('id') id: string, @CurrentUser() principal?: Principal) {
+    const parsed = z.string().uuid().safeParse(id);
+    if (!parsed.success) throw new BadRequestException({ title: 'Invalid Handover id', reasons: ['handover-id-invalid'] });
+    return this.handovers.receipt(parsed.data, requiredPrincipal(principal));
+  }
+
+  /** POST /api/v1/handovers/:id/amendments — appends a versioned correction. */
+  @Roles(...FLEET_ROLES)
+  @Post('handovers/:id/amendments')
+  amend(
+    @Param('id') id: string,
+    @Body() body: unknown,
+    @CurrentUser() principal?: Principal,
+    @Headers('idempotency-key') idempotencyKey?: string,
+  ) {
+    const parsed = z.string().uuid().safeParse(id);
+    if (!parsed.success) throw new BadRequestException({ title: 'Invalid Handover id', reasons: ['handover-id-invalid'] });
+    return this.handovers.amend(
+      parsed.data,
+      parse(createHandoverAmendmentSchema, body),
+      requiredPrincipal(principal),
+      requiredIdempotencyKey(idempotencyKey),
+    );
+  }
+
   /** POST /api/v1/handovers/:id/return — record the return (reconciliation → Completed). */
   @Roles(...FLEET_ROLES)
   @Post('handovers/:id/return')
   return(@Param('id') id: string, @Body() body: unknown, @CurrentUser() principal?: Principal, @Headers('idempotency-key') idempotencyKey?: string) {
-    return this.handovers.recordReturn(id, parse(recordReturnSchema, body), requiredPrincipal(principal), requiredIdempotencyKey(idempotencyKey));
+    const schema = (body as { schemaVersion?: unknown } | null)?.schemaVersion === 2 ? recordReturnV2Schema : recordReturnSchema;
+    return this.handovers.recordReturn(id, parse(schema, body), requiredPrincipal(principal), requiredIdempotencyKey(idempotencyKey));
   }
 
   /** POST /api/v1/handovers/:id/damage — add a damage pin. */

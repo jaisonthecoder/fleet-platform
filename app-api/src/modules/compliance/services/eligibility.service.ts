@@ -20,19 +20,19 @@ export class EligibilityService {
     private readonly pdp: PolicyEvaluatorService,
   ) {}
 
-  async evaluate(input: EligibilityRequest): Promise<EligibilityResult> {
-    const person = await this.repo.findPerson(input.driverPersonId);
-    const vehicle = await this.repo.findVehicle(input.vehicleId);
-    if (!person) return this.record(input, 'DENY', ['driver-not-found'], null, null);
-    if (!vehicle) return this.record(input, 'DENY', ['vehicle-not-found'], null, person.updatedAtUtc);
+  async evaluate(input: EligibilityRequest, organizationId: string): Promise<EligibilityResult> {
+    const person = await this.repo.findPerson(input.driverPersonId, organizationId);
+    const vehicle = await this.repo.findVehicle(input.vehicleId, organizationId);
+    if (!person) return { decision: 'DENY', reasons: ['driver-not-found'], dataAsOf: null, policyVersion: null };
+    if (!vehicle) return { decision: 'DENY', reasons: ['vehicle-not-found'], dataAsOf: person.updatedAtUtc.toISOString(), policyVersion: null };
 
     // Fail-safe on stale HCM data: never allow an ineligible driver on stale
     // sync — block + surface "data as of" so a human can act (P1B-R2-2).
     if (!assessFreshness(person.updatedAtUtc).fresh) {
-      return this.record(input, 'DENY', ['hcm-data-stale'], 'freshness', person.updatedAtUtc);
+      return this.record(input, organizationId, 'DENY', ['hcm-data-stale'], 'freshness', person.updatedAtUtc);
     }
 
-    const block = await this.repo.activeBlock(input.driverPersonId);
+    const block = await this.repo.activeBlock(input.driverPersonId, organizationId);
     const hard = hardBlockCheck({
       today: new Date(),
       licenceExpiry: person.licenceExpiry,
@@ -46,7 +46,7 @@ export class EligibilityService {
     });
 
     if (hard.blocked) {
-      return this.record(input, 'DENY', hard.reasons, 'hard-block', person.updatedAtUtc);
+      return this.record(input, organizationId, 'DENY', hard.reasons, 'hard-block', person.updatedAtUtc);
     }
 
     const verdict = await this.pdp.evaluate({
@@ -54,17 +54,19 @@ export class EligibilityService {
       context: { licenceValid: true, notBlocked: true, vehicleDocsValid: true },
     });
     const decision = verdict.decision === 'ALLOW' ? 'ALLOW' : 'DENY';
-    return this.record(input, decision, verdict.reasons, verdict.policyVersion, person.updatedAtUtc);
+    return this.record(input, organizationId, decision, verdict.reasons, verdict.policyVersion, person.updatedAtUtc);
   }
 
   private async record(
     input: EligibilityRequest,
+    organizationId: string,
     decision: 'ALLOW' | 'DENY',
     reasons: string[],
     policyVersion: string | null,
     dataAsOf: Date | null,
   ): Promise<EligibilityResult> {
     await this.repo.insertEvaluation({
+      organizationId,
       driverPersonId: input.driverPersonId,
       vehicleId: input.vehicleId,
       decision,

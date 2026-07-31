@@ -70,6 +70,13 @@ const ON_BEHALF_ROLES = [
 ] as const satisfies readonly PlatformRole[];
 const BOOKING_PEOPLE_LIMIT = 100;
 
+/** Converts computed database timestamps into stable ISO strings. */
+function toIso(value: Date | string | null | undefined): string | null {
+  if (value === null || value === undefined) return null;
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
 interface BookingDecisionContext {
   organizationId: string;
   scopeNodeId: string;
@@ -361,7 +368,7 @@ export class BookingService {
     const verdict = await this.eligibility.evaluate({
       driverPersonId: existing.driverPersonId,
       vehicleId: existing.vehicleId,
-    });
+    }, actor.organizationId);
     if (verdict.decision !== 'ALLOW') {
       await this.audit.record({
         actorRef,
@@ -1171,6 +1178,40 @@ export class BookingService {
       dueAtUtc: row.dueAtUtc?.toISOString() ?? null,
       delegated: row.delegated,
       evidence: { eligibility: 'VERIFIED_AT_CONSENT', consent: 'SIGNED', reservation: 'HELD', forecast: 'NOT_AVAILABLE' },
+      requester: {
+        fullName: row.requesterName,
+        employeeId: row.requesterEmployeeId,
+        relationshipCode: row.delegated
+          ? 'DELEGATE'
+          : row.requesterLineManagerPersonId === actor.personId
+            ? 'DIRECT_MANAGER'
+            : actor.roles.some(({ role }) => ['FleetManager', 'ClusterFleetLead', 'GroupFleetLead'].includes(role))
+              ? 'FLEET_AUTHORITY'
+              : 'WORKFLOW_ASSIGNEE',
+        behavior: {
+          year: new Date().getUTCFullYear(),
+          bookingCount: row.behaviorBookingCount,
+          noShowCount: row.behaviorNoShowCount,
+          lateReturnCount: row.behaviorLateReturnCount,
+        },
+      },
+      destination: row.destination,
+      durationMinutes: Math.max(1, Math.round((row.returnAtUtc.getTime() - row.pickupAtUtc.getTime()) / 60_000)),
+      justification: row.purpose,
+      evidenceItems: [
+        {
+          kind: 'Eligibility',
+          status: row.eligibilityDecision === 'ALLOW' ? 'VERIFIED' : 'UNAVAILABLE',
+          reasonCodes: row.eligibilityReasons ?? ['booking-eligibility-evidence-unavailable'],
+          occurredAtUtc: toIso(row.eligibilityEvaluatedAtUtc),
+          version: row.eligibilityPolicyVersion,
+        },
+        { kind: 'Consent', status: 'SIGNED', reasonCodes: [], occurredAtUtc: row.consentSignedAtUtc.toISOString(), version: row.consentVersion },
+        { kind: 'Reservation', status: 'HELD', reasonCodes: ['booking-reservation-held'], occurredAtUtc: row.consentSignedAtUtc.toISOString(), version: null },
+        { kind: 'Forecast', status: 'NOT_CONFIGURED', reasonCodes: ['booking-forecast-not-configured'], occurredAtUtc: null, version: null },
+      ],
+      cost: { status: 'NOT_CONFIGURED', amount: null, currency: null, utilizationPercent: null, suggestedStartAtUtc: null, reasonCodes: ['booking-cost-not-configured'] },
+      forecast: { status: 'NOT_CONFIGURED', amount: null, currency: null, utilizationPercent: null, suggestedStartAtUtc: null, reasonCodes: ['booking-forecast-not-configured'] },
     }));
   }
 

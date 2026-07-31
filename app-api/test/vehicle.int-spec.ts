@@ -512,4 +512,27 @@ describe('vehicle master (integration — requires DB + Redis)', () => {
     expect(first.version).toBe(1);
     expect(second.version).toBe(2);
   });
+
+  it('lists, counts, and summarizes the scoped registry with search + sort', async () => {
+    const token = `LIST-${suffix}`;
+    const created = await vehicles.create(
+      baseVehicle({ plate: `VT-${token}`, chassisVin: `VIN-${token}`, homeNodeId: node1 }),
+      'tester',
+    );
+    createdIds.push(created.id);
+    const scope = [node1, node2];
+
+    const count = await vehicles.count(undefined, scope, false, token);
+    expect(count).toBe(1);
+
+    const page = await vehicles.list(50, 0, undefined, scope, false, token, 'plate:asc');
+    expect(page).toHaveLength(1);
+    expect(page[0].id).toBe(created.id);
+    expect(page[0].plate).toBe(`VT-${token}`);
+
+    const summary = await vehicles.summary(undefined, scope, false);
+    expect(summary.total).toBeGreaterThanOrEqual(1);
+    expect(summary.active).toBeGreaterThanOrEqual(1);
+    expect(summary.total).toBeGreaterThanOrEqual(summary.active);
+  });
 });

@@ -23,6 +23,16 @@ const item = {
   dueAtUtc: '2998-12-31T08:00:00.000Z',
   delegated: false,
   evidence: { eligibility: 'VERIFIED_AT_CONSENT', consent: 'SIGNED', reservation: 'HELD', forecast: 'NOT_AVAILABLE' },
+  requester: { fullName: 'Amina Khoury', employeeId: 'EMP-20481', relationshipCode: 'DIRECT_MANAGER', behavior: { year: 2998, bookingCount: 14, noShowCount: 0, lateReturnCount: 1 } },
+  destination: 'Kezad site office', durationMinutes: 120, justification: 'Quarterly HSE inspection with two auditors.',
+  evidenceItems: [
+    { kind: 'Eligibility', status: 'VERIFIED', reasonCodes: [], occurredAtUtc: '2998-12-31T07:50:00.000Z', version: 'eligibility-v2' },
+    { kind: 'Consent', status: 'SIGNED', reasonCodes: [], occurredAtUtc: '2998-12-31T07:55:00.000Z', version: 'consent-approved-v1' },
+    { kind: 'Reservation', status: 'HELD', reasonCodes: ['booking-reservation-held'], occurredAtUtc: '2998-12-31T07:55:00.000Z', version: null },
+    { kind: 'Forecast', status: 'NOT_CONFIGURED', reasonCodes: ['booking-forecast-not-configured'], occurredAtUtc: null, version: null },
+  ],
+  cost: { status: 'NOT_CONFIGURED', amount: null, currency: null, utilizationPercent: null, suggestedStartAtUtc: null, reasonCodes: ['booking-cost-not-configured'] },
+  forecast: { status: 'NOT_CONFIGURED', amount: null, currency: null, utilizationPercent: null, suggestedStartAtUtc: null, reasonCodes: ['booking-forecast-not-configured'] },
 }
 
 /** Renders the approval inbox with a retry-disabled query client. */
@@ -41,9 +51,13 @@ describe('BookingApprovalsPage', () => {
     renderPage()
     expect(await screen.findByRole('heading', { name: 'Approval inbox' })).toBeVisible()
     expect(screen.getAllByText('BK-2026-000101').length).toBeGreaterThan(0)
-    expect(screen.getByText('Verified when consent was committed')).toBeVisible()
-    expect(screen.getByText('Not available')).toBeVisible()
-    expect(screen.queryByText(/88%|cost|licence|signature|device/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/EMP-20481/)).toBeVisible()
+    expect(screen.getByText(/14 bookings in 2998/)).toBeVisible()
+    expect(screen.getByText(/Verified · eligibility-v2/)).toBeVisible()
+    expect(screen.getByText(/Signed · consent-approved-v1/)).toBeVisible()
+    expect(screen.getAllByText('Not configured').length).toBeGreaterThan(0)
+    expect(screen.getByText('Quarterly HSE inspection with two auditors.')).toBeVisible()
+    expect(screen.queryByText(/88%|licence|signature|device/i)).not.toBeInTheDocument()
   })
 
   it('sends expected versions and a durable key for approval', async () => {

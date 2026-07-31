@@ -9,7 +9,7 @@ class FakeRepo {
   substitutionWindows: Array<{ substitutePersonId: string; start: Date; end: Date }> = [];
   vehicle: Record<string, unknown> | undefined = { id: 'v1', assignedDriverPersonId: 'assigned' };
   fineCountSince = 1;
-  overdue: Array<{ id: string; subjectPersonId: string; points: number }> = [];
+  overdue: Array<{ id: string; organizationId: string; subjectPersonId: string; points: number }> = [];
   recoveryExists = false;
   failInsertCode: string | null = null;
   private seq = 0;
@@ -29,6 +29,9 @@ class FakeRepo {
   }
   async findFine(id: string) {
     return this.fines.find((f) => f.id === id);
+  }
+  async findFineInOrganization(id: string) {
+    return this.findFine(id);
   }
   async updateFine(id: string, patch: Record<string, unknown>) {
     const row = { ...this.fines.find((f) => f.id === id)!, ...patch };
@@ -128,13 +131,14 @@ function build() {
 }
 
 const fineInput = { vehicleId: 'v1', eventTimeUtc: '2026-07-10T12:00:00.000Z', amount: 300, authority: 'Police', points: 0 };
+const ORGANIZATION_ID = 'org-1';
 
 describe('FinesService', () => {
   it('attributes to the substitute when the event falls in a substitution window', async () => {
     const { service, repo } = build();
     repo.substitutionWindows = [{ substitutePersonId: 'sub', start: new Date('2026-07-10T00:00:00Z'), end: new Date('2026-07-11T00:00:00Z') }];
     repo.fineCountSince = 0;
-    const dto = await service.recordFine(fineInput);
+    const dto = await service.recordFine(fineInput, ORGANIZATION_ID);
     expect(dto.attributedPersonId).toBe('sub');
     expect(dto.attributionBasis).toBe('substitution-window');
     expect(dto.status).toBe('Attributed');
@@ -143,7 +147,7 @@ describe('FinesService', () => {
   it('falls back to the assigned driver when there is no booking or window', async () => {
     const { service, repo } = build();
     repo.fineCountSince = 0;
-    const dto = await service.recordFine(fineInput);
+    const dto = await service.recordFine(fineInput, ORGANIZATION_ID);
     expect(dto.attributedPersonId).toBe('assigned');
     expect(dto.attributionBasis).toBe('assigned-driver');
   });
@@ -151,7 +155,7 @@ describe('FinesService', () => {
   it('records a black point (with transfer deadline) when the fine carries points', async () => {
     const { service, repo, outbox } = build();
     repo.fineCountSince = 0;
-    await service.recordFine({ ...fineInput, points: 6 });
+    await service.recordFine({ ...fineInput, points: 6 }, ORGANIZATION_ID);
     expect(repo.blackPoints).toHaveLength(1);
     expect(repo.blackPoints[0].transferDeadline).toBeInstanceOf(Date);
     expect(outbox.events.some((e) => e.eventType === 'BlackPointRecorded')).toBe(true);
@@ -160,15 +164,15 @@ describe('FinesService', () => {
   it('raises an HR alert at the fines-per-user threshold', async () => {
     const { service, repo, outbox, audit } = build();
     repo.fineCountSince = 3; // meets default threshold of 3/12mo
-    await service.recordFine(fineInput);
+    await service.recordFine(fineInput, ORGANIZATION_ID);
     expect(outbox.events.some((e) => e.eventType === 'FinesHrThresholdReached')).toBe(true);
     expect(audit.entries.some((e) => e.action === 'FINES_HR_ALERT')).toBe(true);
   });
 
   it('blocks a driver platform-wide when a black-point transfer is overdue', async () => {
     const { service, repo, compliance } = build();
-    repo.overdue = [{ id: 'bp1', subjectPersonId: 'driver-x', points: 6 }];
-    const blocked = await service.enforceOverdueBlackPoints(new Date());
+    repo.overdue = [{ id: 'bp1', organizationId: ORGANIZATION_ID, subjectPersonId: 'driver-x', points: 6 }];
+    const blocked = await service.enforceOverdueBlackPoints(ORGANIZATION_ID, new Date());
     expect(blocked).toBe(1);
     expect(compliance.blocks.some((b) => b.personId === 'driver-x')).toBe(true);
     expect(repo.blackPoints).toHaveLength(0); // none inserted here
@@ -177,17 +181,17 @@ describe('FinesService', () => {
   it('raises only one block per person even with multiple overdue points in a run', async () => {
     const { service, compliance, repo } = build();
     repo.overdue = [
-      { id: 'bp1', subjectPersonId: 'driver-x', points: 6 },
-      { id: 'bp2', subjectPersonId: 'driver-x', points: 3 },
+      { id: 'bp1', organizationId: ORGANIZATION_ID, subjectPersonId: 'driver-x', points: 6 },
+      { id: 'bp2', organizationId: ORGANIZATION_ID, subjectPersonId: 'driver-x', points: 3 },
     ];
-    await service.enforceOverdueBlackPoints(new Date());
+    await service.enforceOverdueBlackPoints(ORGANIZATION_ID, new Date());
     expect(compliance.blocks.filter((b) => b.personId === 'driver-x')).toHaveLength(1);
   });
 
   it('records a recovery instruction WITHOUT marking the fine recovered (Phase 1 records only)', async () => {
     const { service, repo } = build();
     repo.fines.push({ id: 'f1', vehicleId: 'v1', bookingId: null, attributedPersonId: 'p', attributionBasis: 'assigned-driver', eventTimeUtc: new Date(), amount: '300.00', currency: 'AED', authority: 'Police', status: 'Attributed', points: 0, createdAtUtc: new Date() });
-    const dto = await service.recordRecovery('f1', { amount: 100 });
+    const dto = await service.recordRecovery('f1', { amount: 100 }, 'person:finance', 'org-1');
     expect(dto.status).toBe('Attributed'); // unchanged
     expect(repo.recoveries).toHaveLength(1);
   });
@@ -196,13 +200,13 @@ describe('FinesService', () => {
     const { service, repo } = build();
     repo.fines.push({ id: 'f1', vehicleId: 'v1', bookingId: null, attributedPersonId: 'p', attributionBasis: 'assigned-driver', eventTimeUtc: new Date(), amount: '300.00', currency: 'AED', authority: 'Police', status: 'Attributed', points: 0, createdAtUtc: new Date() });
     repo.recoveryExists = true;
-    await expect(service.recordRecovery('f1', { amount: 100 })).rejects.toThrow(ConflictException);
+    await expect(service.recordRecovery('f1', { amount: 100 }, 'person:finance', 'org-1')).rejects.toThrow(ConflictException);
   });
 
   it('maps a DB constraint violation on record to a 4xx (not a 500)', async () => {
     const { service, repo } = build();
     repo.fineCountSince = 0;
     repo.failInsertCode = '23503'; // foreign_key_violation
-    await expect(service.recordFine(fineInput)).rejects.toBeInstanceOf(BadRequestException);
+    await expect(service.recordFine(fineInput, ORGANIZATION_ID)).rejects.toBeInstanceOf(BadRequestException);
   });
 });

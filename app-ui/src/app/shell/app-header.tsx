@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
 import {
   Bell,
+  Home,
   Menu,
   Moon,
   Sparkles,
@@ -92,6 +93,8 @@ function ThemeToggle() {
 const SEGMENT_LABEL_KEYS: Record<string, string> = {
   admin: 'nav.groups.administration',
   onboard: 'nav.vehicleOnboarding',
+  new: 'handover.capturePage.handover',
+  return: 'handover.returnPage.title',
 }
 
 /** Title-cases an unknown URL segment as a last-resort label (`off-hire` → `Off Hire`). */
@@ -116,10 +119,16 @@ function useBreadcrumbTrail(): BreadcrumbItem[] {
     ? pathname.slice(base.length).replace(/^\/+/, '')
     : ''
 
-  if (!rest) return [{ label: t('nav.home') }]
+  // The root crumb is always Home (icon), linking to the workspace landing.
+  const home: BreadcrumbItem = {
+    label: t('nav.home'),
+    icon: <Home className="size-4" />,
+  }
+
+  if (!rest) return [home]
 
   const segments = rest.split('/').filter(Boolean)
-  return segments.map((segment, index) => {
+  const trail = segments.map((segment, index) => {
     const isLast = index === segments.length - 1
     const cumulative = segments.slice(0, index + 1).join('/')
     const navItem = navItems.find((n) => n.segment === cumulative)
@@ -142,11 +151,15 @@ function useBreadcrumbTrail(): BreadcrumbItem[] {
 
     return { label, to }
   })
+
+  // Home links to the workspace root when it is an ancestor (not the current page).
+  return [{ ...home, to: base }, ...trail]
 }
 
 /** Fixed global header: breadcrumb + page title, with the action cluster. */
 export function AppHeader() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const breadcrumbTrail = useBreadcrumbTrail()
   const { me, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -198,7 +211,11 @@ export function AppHeader() {
         </a>
 
         {/* Breadcrumb trail (group › screen). */}
-        <Breadcrumb items={breadcrumbTrail} className="hidden md:block" />
+        <Breadcrumb
+          items={breadcrumbTrail}
+          onBack={() => navigate(-1)}
+          className="hidden md:block"
+        />
       </div>
 
       <div className="flex shrink-0 items-center gap-2">

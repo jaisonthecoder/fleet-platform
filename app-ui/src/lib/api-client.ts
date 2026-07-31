@@ -78,6 +78,9 @@ export const apiClient = {
       method: 'POST',
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
+  /** POSTs a non-JSON body such as a private image upload. */
+  postRaw: <T>(path: string, body: BodyInit, init?: RequestInit) =>
+    request<T>(path, { ...init, method: 'POST', body }),
   patch: <T>(path: string, body?: unknown, init?: RequestInit) =>
     request<T>(path, {
       ...init,

@@ -1,6 +1,6 @@
-import { useDeferredValue, useEffect, useState } from 'react'
+import { useDeferredValue, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import {
   ArrowDown,
   ArrowUp,
@@ -10,6 +10,7 @@ import {
   Import,
   Plus,
   Search,
+  ShieldAlert,
 } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -17,6 +18,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { PageHeader } from '@/components/ui/page-header'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { StatusChip } from '@/components/ui/status-chip'
 import {
   Table,
   TableBody,
@@ -27,7 +36,7 @@ import {
 } from '@/components/ui/table'
 import { defaultLanguage } from '@/i18n/config'
 import { notify } from '@/hooks/use-toast'
-import { fetchVehiclesCsv, type Vehicle } from './vehicle.contract'
+import { fetchVehicle, fetchVehiclesCsv, type Vehicle } from './vehicle.contract'
 import { useVehicles, useVehicleSummary } from './hooks/use-vehicles'
 import { VehicleDetailDrawer } from './vehicle-detail-drawer'
 
@@ -42,11 +51,6 @@ const lifecycleBadge = (status: string) => {
   return 'secondary' as const
 }
 
-/** Returns whether a compliance date is missing or already expired. */
-function isComplianceBlocked(value: string | null): boolean {
-  return !value || value < new Date().toISOString().slice(0, 10)
-}
-
 /** Renders one localized date without changing server-owned date semantics. */
 function formatDate(value: string | null, locale: string): string {
   if (!value) return '—'
@@ -57,30 +61,101 @@ function formatDate(value: string | null, locale: string): string {
   }).format(new Date(`${value}T00:00:00Z`))
 }
 
+/** Compliance state for a document expiry (missing / expired / valid). */
+function complianceState(value: string | null): {
+  tone: 'ok' | 'danger' | 'neutral'
+  key: 'valid' | 'expired' | 'missing'
+} {
+  if (!value) return { tone: 'neutral', key: 'missing' }
+  if (value < new Date().toISOString().slice(0, 10))
+    return { tone: 'danger', key: 'expired' }
+  return { tone: 'ok', key: 'valid' }
+}
+
+/** GPS status → StatusChip tone. */
+function gpsTone(status: string): 'ok' | 'warn' | 'danger' | 'info' | 'neutral' {
+  if (status === 'Online') return 'ok'
+  if (status === 'Installed') return 'info'
+  if (status === 'Faulty' || status === 'UnderReplacement') return 'danger'
+  if (status === 'Offline') return 'warn'
+  return 'neutral'
+}
+
+/** A compliance status chip + its expiry date, for listing table cells. */
+function ComplianceCell({
+  value,
+  locale,
+  t,
+}: {
+  value: string | null
+  locale: string
+  t: (key: string, options?: Record<string, unknown>) => string
+}) {
+  const state = complianceState(value)
+  return (
+    <div className="space-y-1">
+      <StatusChip
+        tone={state.tone}
+        label={t(`vehicleManagement.detail.compliance.${state.key}`)}
+      />
+      <p className="text-xs text-muted-foreground">{formatDate(value, locale)}</p>
+    </div>
+  )
+}
+
 /** The scoped Vehicle Management registry and parent surface for Vehicle actions. */
 export function VehicleManagementPage() {
   const { t, i18n } = useTranslation()
   const { lang = defaultLanguage } = useParams()
-  const PAGE_SIZE = 25
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('createdAt:desc')
   const [pageNum, setPageNum] = useState(1)
+  const [pageSize, setPageSize] = useState(25)
   const [selected, setSelected] = useState<Vehicle | null>(null)
   const [exporting, setExporting] = useState(false)
+  const [blockedOnly, setBlockedOnly] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const deepLinkHandled = useRef<string | null>(null)
   const deferredSearch = useDeferredValue(search.trim())
+  // Deep-link: ?vehicle=<id> (e.g. live-map click-through) opens the drawer.
+  useEffect(() => {
+    const id = searchParams.get('vehicle')
+    if (!id || deepLinkHandled.current === id) return
+    deepLinkHandled.current = id
+    void fetchVehicle(id)
+      .then((vehicle) => setSelected(vehicle))
+      .catch(() => notify.danger(t('vehicleManagement.deepLinkFailed')))
+      .finally(() =>
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev)
+            next.delete('vehicle')
+            return next
+          },
+          { replace: true },
+        ),
+      )
+  }, [searchParams, setSearchParams, t])
   useEffect(() => {
     setPageNum(1)
-  }, [deferredSearch, sort])
+  }, [deferredSearch, sort, pageSize])
   const vehicles = useVehicles({
     search: deferredSearch || undefined,
     sort,
     page: pageNum,
-    pageSize: PAGE_SIZE,
+    pageSize,
   })
   const summary = useVehicleSummary()
   const data = vehicles.data?.items ?? []
+  const rows = blockedOnly
+    ? data.filter(
+        (v) =>
+          complianceState(v.mulkiyaExpiry).key !== 'valid' ||
+          complianceState(v.insuranceExpiry).key !== 'valid',
+      )
+    : data
   const total = vehicles.data?.total ?? data.length
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
   // Tiles reflect the full authorized scope (server summary).
   const s = summary.data
   const metrics = [
@@ -211,6 +286,14 @@ export function VehicleManagementPage() {
                 />
               </label>
               <Button
+                variant={blockedOnly ? 'default' : 'secondary'}
+                aria-pressed={blockedOnly}
+                onClick={() => setBlockedOnly((v) => !v)}
+              >
+                <ShieldAlert aria-hidden="true" />
+                {t('vehicleManagement.blockedOnly')}
+              </Button>
+              <Button
                 variant="secondary"
                 onClick={() => void onExport()}
                 disabled={exporting}
@@ -234,7 +317,7 @@ export function VehicleManagementPage() {
                 {t('vehicleManagement.errorBody')}
               </AlertDescription>
             </Alert>
-          ) : data.length === 0 ? (
+          ) : rows.length === 0 ? (
             <div className="grid justify-items-center gap-2 p-10 text-center">
               <CarFront
                 aria-hidden="true"
@@ -258,7 +341,12 @@ export function VehicleManagementPage() {
                       label={t('vehicleManagement.columns.vehicle')}
                     />
                   </TableHead>
-                  <TableHead>{t('vehicleManagement.columns.node')}</TableHead>
+                  <TableHead>
+                    <SortButton
+                      field="node"
+                      label={t('vehicleManagement.columns.node')}
+                    />
+                  </TableHead>
                   <TableHead>
                     <SortButton
                       field="lifecycle"
@@ -266,7 +354,10 @@ export function VehicleManagementPage() {
                     />
                   </TableHead>
                   <TableHead>
-                    {t('vehicleManagement.columns.operational')}
+                    <SortButton
+                      field="operational"
+                      label={t('vehicleManagement.columns.operational')}
+                    />
                   </TableHead>
                   <TableHead>{t('vehicleManagement.columns.gps')}</TableHead>
                   <TableHead>
@@ -281,7 +372,7 @@ export function VehicleManagementPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((vehicle: Vehicle) => {
+                {rows.map((vehicle: Vehicle) => {
                   const nodeName =
                     i18n.resolvedLanguage === 'ar'
                       ? vehicle.hierarchyNodeNameAr
@@ -334,47 +425,71 @@ export function VehicleManagementPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {vehicle.operationalStatus
-                          ? t(
+                        {vehicle.operationalStatus ? (
+                          <StatusChip
+                            tone="neutral"
+                            label={t(
                               `vehicleManagement.status.${vehicle.operationalStatus}`,
-                            )
-                          : '—'}
+                            )}
+                          />
+                        ) : (
+                          '—'
+                        )}
                       </TableCell>
                       <TableCell>
-                        {t(`vehicleManagement.status.${vehicle.gpsStatus}`)}
+                        <StatusChip
+                          tone={gpsTone(vehicle.gpsStatus)}
+                          label={t(
+                            `vehicleManagement.status.${vehicle.gpsStatus}`,
+                          )}
+                        />
                       </TableCell>
-                      <TableCell
-                        className={
-                          isComplianceBlocked(vehicle.mulkiyaExpiry)
-                            ? 'font-semibold text-destructive'
-                            : undefined
-                        }
-                      >
-                        {formatDate(vehicle.mulkiyaExpiry, i18n.language)}
+                      <TableCell>
+                        <ComplianceCell
+                          value={vehicle.mulkiyaExpiry}
+                          locale={i18n.language}
+                          t={t}
+                        />
                       </TableCell>
-                      <TableCell
-                        className={
-                          isComplianceBlocked(vehicle.insuranceExpiry)
-                            ? 'font-semibold text-destructive'
-                            : undefined
-                        }
-                      >
-                        {formatDate(vehicle.insuranceExpiry, i18n.language)}
+                      <TableCell>
+                        <ComplianceCell
+                          value={vehicle.insuranceExpiry}
+                          locale={i18n.language}
+                          t={t}
+                        />
                       </TableCell>
                     </TableRow>
                   )
                 })}
               </TableBody>
             </Table>
-            {totalPages > 1 ? (
-              <div className="flex items-center justify-between gap-3 border-t border-border p-4 text-sm">
-                <span className="text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border p-4 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span>{t('vehicleManagement.perPage')}</span>
+                <Select
+                  value={String(pageSize)}
+                  onValueChange={(value) => setPageSize(Number(value))}
+                >
+                  <SelectTrigger className="h-8 w-20" aria-label={t('vehicleManagement.perPage')}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[25, 50, 100].map((size) => (
+                      <SelectItem key={size} value={String(size)}>
+                        {size}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span>
                   {t('vehicleManagement.pageInfo', {
                     page: pageNum,
                     pages: totalPages,
                     total,
                   })}
                 </span>
+              </div>
+              {totalPages > 1 ? (
                 <div className="flex gap-2">
                   <Button
                     variant="secondary"
@@ -393,8 +508,8 @@ export function VehicleManagementPage() {
                     {t('vehicleManagement.next')}
                   </Button>
                 </div>
-              </div>
-            ) : null}
+              ) : null}
+            </div>
             </>
           )}
         </CardContent>

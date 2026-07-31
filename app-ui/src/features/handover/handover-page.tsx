@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useSearchParams } from 'react-router-dom'
 import { Check, KeyRound, RefreshCw, TriangleAlert } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
@@ -26,10 +27,11 @@ const CHECKS = ['body', 'tyres', 'lights', 'assets', 'cabin'] as const
 export function HandoverPage() {
   const { t, i18n } = useTranslation()
   const { me } = useAuth()
+  const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
   const locale = i18n.resolvedLanguage ?? i18n.language
   const worklist = useQuery({ queryKey: ['handover', 'worklist'], queryFn: getHandoverWorklist })
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(() => searchParams.get('bookingId'))
   const [odometer, setOdometer] = useState('')
   const [fuel, setFuel] = useState(8)
   const [keyRef, setKeyRef] = useState('')

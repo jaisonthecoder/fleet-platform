@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { toDbException } from '../../../common/database/pg-error';
 import type {
   AccessBlockDto,
@@ -21,8 +21,8 @@ export class ComplianceService {
     private readonly audit: AuditService,
   ) {}
 
-  async listExpiries(): Promise<ComplianceItemDto[]> {
-    const items = await this.repo.listExpiries();
+  async listExpiries(organizationId: string): Promise<ComplianceItemDto[]> {
+    const items = await this.repo.listExpiries(organizationId);
     return items.map((i) => ({
       id: i.id,
       subjectType: i.subjectType,
@@ -33,19 +33,23 @@ export class ComplianceService {
     }));
   }
 
-  async listBlocks(): Promise<AccessBlockDto[]> {
-    const blocks = await this.repo.listActiveBlocks();
+  async listBlocks(organizationId: string): Promise<AccessBlockDto[]> {
+    const blocks = await this.repo.listActiveBlocks(organizationId);
     return blocks.map((b) => ({ id: b.id, personId: b.personId, reason: b.reason, active: b.active }));
   }
 
-  async raiseBlock(input: RaiseBlock, actorRef = 'system'): Promise<AccessBlockDto> {
+  async raiseBlock(input: RaiseBlock, actorRef = 'system', organizationId: string): Promise<AccessBlockDto> {
+    if (!(await this.repo.findPersonInOrganization(input.personId, organizationId))) {
+      throw new NotFoundException({ title: 'Unknown person', reasons: [`person-not-found:${input.personId}`] });
+    }
     let block;
     try {
-      block = await this.repo.insertBlock({ personId: input.personId, reason: input.reason });
+      block = await this.repo.insertBlock({ organizationId, personId: input.personId, reason: input.reason });
     } catch (error) {
       throw toDbException(error);
     }
     await this.audit.record({
+      organizationId,
       actorRef,
       action: 'ACCESS_BLOCK_RAISED',
       entityRef: `person:${input.personId}`,
@@ -54,9 +58,11 @@ export class ComplianceService {
     return { id: block.id, personId: block.personId, reason: block.reason, active: block.active };
   }
 
-  async liftBlock(id: string, actorRef = 'system'): Promise<{ ok: true }> {
-    await this.repo.liftBlock(id);
-    await this.audit.record({ actorRef, action: 'ACCESS_BLOCK_LIFTED', entityRef: `access-block:${id}` });
+  async liftBlock(id: string, actorRef = 'system', organizationId: string): Promise<{ ok: true }> {
+    if (!(await this.repo.liftBlock(id, organizationId))) {
+      throw new NotFoundException({ title: 'Unknown access block', reasons: [`access-block-not-found:${id}`] });
+    }
+    await this.audit.record({ organizationId, actorRef, action: 'ACCESS_BLOCK_LIFTED', entityRef: `access-block:${id}` });
     return { ok: true };
   }
 }

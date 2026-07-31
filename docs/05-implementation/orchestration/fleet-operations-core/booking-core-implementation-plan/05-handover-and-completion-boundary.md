@@ -1,6 +1,6 @@
 # BOOKING-05 - Handover and Completion Boundary
 
-> **Current status (2026-07-29):** `VERIFIED`. Atomic scoped open/return/damage, live EN/AR custody UI, migration `0053` durable replay, contention and rollback evidence pass.
+> **Current status (2026-07-30):** `ATOMIC_BASELINE_VERIFIED_MOCKUP_EVIDENCE_REFACTOR_REQUIRED`. Atomic scoped open/return/damage, migration `0053` durable replay, contention and rollback evidence pass. The live UI does not follow mandatory screens `26`-`28`/`handover-page-demo.tsx`, and register/history/photo/signature/key-loss/amendment evidence is incomplete. Corrective plan: [Handover, Return and Approval Mockup Realignment](../HANDOVER-APPROVAL-MOCKUP-REALIGNMENT-PLAN.md).
 
 ## Objective
 

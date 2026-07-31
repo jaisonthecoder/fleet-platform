@@ -51,6 +51,8 @@ export class VehicleRepository {
       plate: vehicle.plate,
       make: vehicle.makeCode,
       lifecycle: vehicle.lifecycleStatus,
+      operational: vehicle.operationalStatus,
+      node: hierarchyNode.name,
       mulkiyaExpiry: vehicle.mulkiyaExpiry,
       createdAt: vehicle.createdAtUtc,
     } as const;

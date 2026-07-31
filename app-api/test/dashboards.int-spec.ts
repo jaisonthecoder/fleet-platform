@@ -25,12 +25,13 @@ describe('dashboards read models (integration — requires DB + Redis)', () => {
   let db: DrizzleDatabase;
 
   const suffix = randomUUID().slice(0, 8);
+  const organizationId = '00000000-0000-4000-8000-000000000001';
   let poolNode = '';
   let driverId = '';
   let vehicleId = '';
   const fineIds: string[] = [];
   const principal = (role: PlatformRole): Principal => ({
-    organizationId: '00000000-0000-4000-8000-000000000001',
+    organizationId,
     userId: null,
     personId: driverId,
     entraObjectId: null,
@@ -66,7 +67,7 @@ describe('dashboards read models (integration — requires DB + Redis)', () => {
     await db.insert(vehicleHierarchyAssignment).values({ vehicleId, nodeId: poolNode });
 
     // A fine attributed to the assigned driver (no booking/window ⇒ assigned-driver).
-    const fine = await fines.recordFine({ vehicleId, eventTimeUtc: '2026-05-01T12:00:00.000Z', amount: 300, authority: 'Police' });
+    const fine = await fines.recordFine({ vehicleId, eventTimeUtc: '2026-05-01T12:00:00.000Z', amount: 300, authority: 'Police' }, organizationId);
     fineIds.push(fine.id);
   });
 

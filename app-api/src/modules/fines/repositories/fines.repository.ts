@@ -32,6 +32,12 @@ export class FinesRepository {
     return rows[0];
   }
 
+  /** Loads one Fine only when it belongs to the authenticated organization. */
+  async findFineInOrganization(id: string, organizationId: string) {
+    const rows = await this.db.select().from(fine).where(and(eq(fine.id, id), eq(fine.organizationId, organizationId))).limit(1);
+    return rows[0];
+  }
+
   async updateFine(id: string, set: Partial<typeof fine.$inferInsert>, executor: Executor = this.db) {
     const rows = await executor
       .update(fine)
@@ -41,8 +47,8 @@ export class FinesRepository {
     return rows[0];
   }
 
-  async listFines(limit = 50, offset = 0) {
-    return this.db.select().from(fine).orderBy(desc(fine.eventTimeUtc)).limit(limit).offset(offset);
+  async listFines(organizationId: string, limit = 50, offset = 0) {
+    return this.db.select().from(fine).where(eq(fine.organizationId, organizationId)).orderBy(desc(fine.eventTimeUtc)).limit(limit).offset(offset);
   }
 
   async insertAccident(values: typeof accident.$inferInsert) {
@@ -60,11 +66,11 @@ export class FinesRepository {
   }
 
   /** Open black points whose transfer deadline has passed (candidates for a platform block). */
-  async findOverdueOpenBlackPoints(now: Date) {
+  async findOverdueOpenBlackPoints(organizationId: string, now: Date) {
     return this.db
-      .select({ id: blackPoint.id, subjectPersonId: blackPoint.subjectPersonId, points: blackPoint.points })
+      .select({ id: blackPoint.id, organizationId: blackPoint.organizationId, subjectPersonId: blackPoint.subjectPersonId, points: blackPoint.points })
       .from(blackPoint)
-      .where(and(eq(blackPoint.transferStatus, 'Open'), ne(blackPoint.transferStatus, 'Transferred'), lt(blackPoint.transferDeadline, now)));
+      .where(and(eq(blackPoint.organizationId, organizationId), eq(blackPoint.transferStatus, 'Open'), ne(blackPoint.transferStatus, 'Transferred'), lt(blackPoint.transferDeadline, now)));
   }
 
   async insertRecovery(values: typeof recoveryRecord.$inferInsert, executor: Executor = this.db) {
@@ -102,11 +108,11 @@ export class FinesRepository {
   }
 
   /** The vehicle's assigned driver (the attribution fallback). */
-  async findVehicle(id: string) {
+  async findVehicle(id: string, organizationId: string) {
     const rows = await this.db
       .select({ id: vehicle.id, assignedDriverPersonId: vehicle.assignedDriverPersonId })
       .from(vehicle)
-      .where(eq(vehicle.id, id))
+      .where(and(eq(vehicle.id, id), eq(vehicle.organizationId, organizationId)))
       .limit(1);
     return rows[0];
   }

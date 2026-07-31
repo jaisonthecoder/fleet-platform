@@ -18,22 +18,22 @@ export class ComplianceController {
 
   /** The single "can this driver take this vehicle now?" verdict. */
   @Post('eligibility')
-  evaluate(@Body() body: unknown) {
+  evaluate(@Body() body: unknown, @CurrentUser() principal: Principal) {
     const parsed = eligibilityRequestSchema.safeParse(body);
     if (!parsed.success) {
       throw new BadRequestException({ title: 'Invalid eligibility request', reasons: parsed.error.issues.map((i) => i.message) });
     }
-    return this.eligibility.evaluate(parsed.data);
+    return this.eligibility.evaluate(parsed.data, principal.organizationId);
   }
 
   @Get('compliance/expiries')
-  expiries() {
-    return this.compliance.listExpiries();
+  expiries(@CurrentUser() principal: Principal) {
+    return this.compliance.listExpiries(principal.organizationId);
   }
 
   @Get('compliance/blocks')
-  blocks() {
-    return this.compliance.listBlocks();
+  blocks(@CurrentUser() principal: Principal) {
+    return this.compliance.listBlocks(principal.organizationId);
   }
 
   @Roles(...BLOCK_ROLES)
@@ -43,12 +43,12 @@ export class ComplianceController {
     if (!parsed.success) {
       throw new BadRequestException({ title: 'Invalid block', reasons: parsed.error.issues.map((i) => i.message) });
     }
-    return this.compliance.raiseBlock(parsed.data, actorRef(p));
+    return this.compliance.raiseBlock(parsed.data, actorRef(p), p.organizationId);
   }
 
   @Roles(...BLOCK_ROLES)
   @Post('compliance/blocks/:id/lift')
   liftBlock(@Param('id') id: string, @CurrentUser() p: Principal) {
-    return this.compliance.liftBlock(id, actorRef(p));
+    return this.compliance.liftBlock(id, actorRef(p), p.organizationId);
   }
 }

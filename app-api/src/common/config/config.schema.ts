@@ -43,6 +43,7 @@ export const envSchema = z.object({
   BOOKING_LOCAL_DUMMY_CONSENT_EFFECTIVE_AT_UTC: z.string().optional(),
   BOOKING_LOCAL_DUMMY_CONSENT_EN: z.string().optional(),
   BOOKING_LOCAL_DUMMY_CONSENT_AR: z.string().optional(),
+  HANDOVER_EVIDENCE_LOCAL_DIR: z.string().default('.local/handover-evidence'),
 
   // PDP deployable + budgets
   PDP_PORT: z.coerce.number().int().positive().default(3001),

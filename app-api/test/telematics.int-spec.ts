@@ -136,6 +136,15 @@ describe('telematics domain (integration — requires DB + Redis)', () => {
     expect(live.online).toBe(true);
   });
 
+  it('returns the latest position per scoped vehicle for the fleet live map', async () => {
+    await repo.insertTelemetry({ time: new Date(), vehicleId: vehicle1, lat: 24.6, lon: 54.5, speed: 42, ignition: true });
+    const fleet = await liveMap.getFleetLive(undefined, undefined, true, 'tester');
+    const row = fleet.find((p) => p.vehicleId === vehicle1);
+    expect(row).toBeDefined();
+    expect(row?.lat).toBe(24.6);
+    expect(row?.online).toBe(true);
+  });
+
   it('raises and lists a telematics alert', async () => {
     const alert = await alerts.raiseAlert({ vehicleId: vehicle1, deviceId, alertType: 'DeviceSilent', detail: 'no data 30m' });
     expect(alert.alertType).toBe('DeviceSilent');

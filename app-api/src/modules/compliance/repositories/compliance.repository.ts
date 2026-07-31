@@ -13,9 +13,15 @@ import {
 /** Data access for the compliance / eligibility gate. */
 @Injectable()
 export class ComplianceRepository {
+    /** Resolves an active Person only inside the authenticated organization. */
+    async findPersonInOrganization(id: string, organizationId: string) {
+      const rows = await this.db.select({ id: person.id }).from(person).where(and(eq(person.id, id), eq(person.organizationId, organizationId), eq(person.employmentStatus, 'Active'))).limit(1);
+      return rows[0];
+    }
+
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDatabase) {}
 
-  async findPerson(id: string) {
+  async findPerson(id: string, organizationId: string) {
     const rows = await this.db
       .select({
         id: person.id,
@@ -24,12 +30,12 @@ export class ComplianceRepository {
         updatedAtUtc: person.updatedAtUtc,
       })
       .from(person)
-      .where(eq(person.id, id))
+      .where(and(eq(person.id, id), eq(person.organizationId, organizationId)))
       .limit(1);
     return rows[0];
   }
 
-  async findVehicle(id: string) {
+  async findVehicle(id: string, organizationId: string) {
     const rows = await this.db
       .select({
         id: vehicle.id,
@@ -39,16 +45,16 @@ export class ComplianceRepository {
         bookingPoolFlag: vehicle.bookingPoolFlag,
       })
       .from(vehicle)
-      .where(eq(vehicle.id, id))
+      .where(and(eq(vehicle.id, id), eq(vehicle.organizationId, organizationId)))
       .limit(1);
     return rows[0];
   }
 
-  async activeBlock(personId: string) {
+  async activeBlock(personId: string, organizationId: string) {
     const rows = await this.db
       .select()
       .from(accessBlock)
-      .where(and(eq(accessBlock.personId, personId), eq(accessBlock.active, true)))
+      .where(and(eq(accessBlock.organizationId, organizationId), eq(accessBlock.personId, personId), eq(accessBlock.active, true)))
       .limit(1);
     return rows[0];
   }
@@ -57,19 +63,19 @@ export class ComplianceRepository {
     await this.db.insert(eligibilityEvaluation).values(values);
   }
 
-  async listExpiries() {
+  async listExpiries(organizationId: string) {
     return this.db
       .select()
       .from(complianceItem)
-      .where(ne(complianceItem.status, 'Expired'))
+      .where(and(eq(complianceItem.organizationId, organizationId), ne(complianceItem.status, 'Expired')))
       .orderBy(asc(complianceItem.expiryDate));
   }
 
-  async listActiveBlocks() {
+  async listActiveBlocks(organizationId: string) {
     return this.db
       .select()
       .from(accessBlock)
-      .where(eq(accessBlock.active, true))
+      .where(and(eq(accessBlock.organizationId, organizationId), eq(accessBlock.active, true)))
       .orderBy(desc(accessBlock.blockedAtUtc));
   }
 
@@ -78,11 +84,13 @@ export class ComplianceRepository {
     return rows[0];
   }
 
-  async liftBlock(id: string) {
-    await this.db
+  async liftBlock(id: string, organizationId: string) {
+    const rows = await this.db
       .update(accessBlock)
       .set({ active: false, liftedAtUtc: new Date() })
-      .where(eq(accessBlock.id, id));
+      .where(and(eq(accessBlock.id, id), eq(accessBlock.organizationId, organizationId), eq(accessBlock.active, true)))
+      .returning({ id: accessBlock.id });
+    return rows[0];
   }
 
   async insertComplianceItem(values: typeof complianceItem.$inferInsert) {

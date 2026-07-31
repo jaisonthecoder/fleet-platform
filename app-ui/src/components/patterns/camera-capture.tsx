@@ -14,7 +14,9 @@ interface CameraCaptureProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   /** Receives the captured image as a JPEG data URL. */
-  onCapture: (dataUrl: string) => void
+  onCapture?: (dataUrl: string) => void
+  onCaptureFile?: (file: File) => void | Promise<void>
+  onCaptureError?: (error: unknown) => void
   title?: string
   description?: string
 }
@@ -28,6 +30,8 @@ export function CameraCapture({
   open,
   onOpenChange,
   onCapture,
+  onCaptureFile,
+  onCaptureError,
   title = 'Capture photo',
   description = 'Point the camera at the vehicle, then capture.',
 }: CameraCaptureProps) {
@@ -87,16 +91,29 @@ export function CameraCapture({
     canvas.width = video.videoWidth || 1280
     canvas.height = video.videoHeight || 720
     canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height)
-    onCapture(canvas.toDataURL('image/jpeg', 0.8))
-    onOpenChange(false)
+    if (onCaptureFile) {
+      canvas.toBlob((blob) => {
+        if (!blob) return
+        void Promise.resolve(onCaptureFile(new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' })))
+          .then(() => onOpenChange(false))
+          .catch((error) => onCaptureError?.(error))
+      }, 'image/jpeg', 0.8)
+    } else if (onCapture) {
+      onCapture(canvas.toDataURL('image/jpeg', 0.8))
+      onOpenChange(false)
+    }
   }
 
   const onFile = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
+    if (onCaptureFile) {
+      void Promise.resolve(onCaptureFile(file)).then(() => onOpenChange(false)).catch((error) => onCaptureError?.(error))
+      return
+    }
     const reader = new FileReader()
     reader.onload = () => {
-      onCapture(String(reader.result))
+      onCapture?.(String(reader.result))
       onOpenChange(false)
     }
     reader.readAsDataURL(file)

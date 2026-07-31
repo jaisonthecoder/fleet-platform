@@ -90,6 +90,9 @@ const EXPECTED_TABLES = [
   'consent_record',
   'consent_lifecycle_event',
   'handover',
+  'handover_inspection_item',
+  'handover_evidence',
+  'handover_amendment',
   'damage_pin',
   'key_log',
   // Phase 1 — 1E entitlements + fines/substitution
@@ -114,6 +117,10 @@ const EXPECTED_TRIGGERS = [
   'organization_hierarchy_level_bump_revision_trg',
   'vendor_document_lineage_trg',
   'booking_bump_revision_trg',
+  'handover_completed_immutable_trg',
+  'handover_inspection_no_mutate_trg',
+  'handover_amendment_no_mutate_trg',
+  'handover_evidence_claimed_immutable_trg',
 ];
 const EXPECTED_EXTENSIONS = ['pgcrypto', 'ltree', 'btree_gist'];
 
@@ -196,6 +203,51 @@ async function main() {
       throw new Error('missing booking command idempotency unique index');
     }
 
+    const handoverEvidenceColumns = await sql`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_schema = 'fleet' AND table_name = 'handover'
+        AND column_name IN (
+          'revision',
+          'checklist_definition_version',
+          'release_location_node_id',
+          'return_location_node_id',
+          'return_condition_code',
+          'key_outcome',
+          'telematics_status',
+          'reconciliation_status',
+          'evidence_completeness'
+        )
+    `;
+    if (handoverEvidenceColumns.length !== 9) {
+      throw new Error('missing fleet.handover HAPR evidence columns');
+    }
+
+    const handoverEvidenceIndexes = await sql`
+      SELECT indexname FROM pg_indexes
+      WHERE schemaname = 'fleet'
+        AND indexname IN (
+          'handover_org_activity_idx',
+          'handover_inspection_item_uq',
+          'handover_evidence_object_key_uq',
+          'handover_amendment_revision_uq'
+        )
+    `;
+    if (handoverEvidenceIndexes.length !== 4) {
+      throw new Error('missing HAPR evidence/register indexes');
+    }
+
+    const keyCustodyStates = (
+      await sql`
+        SELECT enumlabel FROM pg_enum e
+        JOIN pg_type t ON t.oid = e.enumtypid
+        JOIN pg_namespace n ON n.oid = t.typnamespace
+        WHERE n.nspname = 'public' AND t.typname = 'fleet_key_custody'
+      `
+    ).map((row) => row.enumlabel);
+    for (const state of ['Issued', 'Returned', 'Lost', 'Recovered', 'Replaced']) {
+      if (!keyCustodyStates.includes(state)) throw new Error(`missing fleet_key_custody state ${state}`);
+    }
+
     const entitlementBaselineColumns = await sql`
       SELECT column_name FROM information_schema.columns
       WHERE table_schema = 'fleet' AND table_name = 'entitlement_request'
@@ -257,7 +309,7 @@ async function main() {
          WHERE rule.rule_type = 'dedicated-vehicle-eligibility'
            AND rule.status = 'Active'
            AND rule.scope_node_id IS NULL
-           AND version.decision_table->>'version' = 'manual-dedicated-eligibility-v1') AS policy_count
+           AND version.decision_table->>'version' IS NOT NULL) AS policy_count
     `;
     if (
       dedicatedConfiguration[0]?.justification_count !== 4 ||

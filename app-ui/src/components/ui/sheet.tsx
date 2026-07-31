@@ -30,7 +30,14 @@ function SheetContent({
         {...props}
       >
         {children}
-        <DialogPrimitive.Close className="absolute end-4 top-4 rounded-md p-1 text-muted-foreground hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring">
+        <DialogPrimitive.Close
+          className={cn(
+            'absolute top-4 z-10 grid size-9 place-items-center rounded-full bg-signal text-signal-foreground shadow-lg outline-none transition-colors hover:bg-signal-strong focus-visible:ring-2 focus-visible:ring-ring',
+            side === 'left'
+              ? 'right-0 translate-x-[calc(100%+0.5rem)]'
+              : 'left-0 -translate-x-[calc(100%+0.5rem)]',
+          )}
+        >
           <X className="size-4" />
           <span className="sr-only">{closeLabel}</span>
         </DialogPrimitive.Close>

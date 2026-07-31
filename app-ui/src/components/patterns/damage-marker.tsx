@@ -11,6 +11,8 @@ export interface DamageMark {
   note: string
   /** Attached photos as data URLs (optional, multiple supported). */
   photos: string[]
+  /** Opaque staged evidence IDs corresponding to captured photos. */
+  photoRefs?: string[]
   /** Carried over from a previous booking — read-only evidence. */
   existing?: boolean
 }
@@ -21,6 +23,18 @@ interface DamageMarkerProps {
   className?: string
   /** Hint shown when a new mark has no photo yet. */
   requirePhotoHint?: boolean
+  onStagePhoto?: (file: File) => Promise<string>
+  labels?: Partial<{
+    markDamage: string
+    existingHelp: string
+    empty: string
+    existing: string
+    logged: string
+    newMark: string
+    describePlaceholder: string
+    photo: string
+    photoRequired: string
+  }>
 }
 
 /** Portrait car top-view (from the fleet-manager handover screen), tokenised. */
@@ -110,6 +124,8 @@ export function DamageMarker({
   onChange,
   className,
   requirePhotoHint = true,
+  onStagePhoto,
+  labels,
 }: DamageMarkerProps) {
   const uid = useId()
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -121,7 +137,7 @@ export function DamageMarker({
     const x = keyboard ? 50 : ((event.clientX - rect.left) / rect.width) * 100
     const y = keyboard ? 50 : ((event.clientY - rect.top) / rect.height) * 100
     const id = `${uid}-${Date.now()}`
-    onChange([...marks, { id, x, y, note: '', photos: [] }])
+    onChange([...marks, { id, x, y, note: '', photos: [], photoRefs: [] }])
     setSelectedId(id)
   }
 
@@ -143,7 +159,7 @@ export function DamageMarker({
         <button
           type="button"
           onClick={addMark}
-          aria-label="Tap the vehicle to mark damage"
+          aria-label={labels?.markDamage ?? 'Tap the vehicle to mark damage'}
           className="absolute inset-0 cursor-crosshair outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         />
         {marks.map((mark, index) => (
@@ -166,14 +182,12 @@ export function DamageMarker({
       {/* Details */}
       <div className="space-y-3">
         <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-          Existing marks carry over from the last return. New pins are
-          timestamped, photographed and countersigned — they become evidence,
-          not argument.
+          {labels?.existingHelp ?? 'Existing marks carry over from the last return. New pins are timestamped, photographed and countersigned — they become evidence, not argument.'}
         </p>
 
         {marks.length === 0 ? (
           <p className="rounded-[3px] border border-dashed border-border bg-card px-3 py-4 text-center text-sm text-muted-foreground">
-            No damage pinned — tap the diagram to add a mark.
+            {labels?.empty ?? 'No damage pinned — tap the diagram to add a mark.'}
           </p>
         ) : (
           <ul className="space-y-2">
@@ -195,11 +209,11 @@ export function DamageMarker({
                       className="flex-1 text-start text-[13.5px] font-semibold outline-none hover:text-brand"
                     >
                       {mark.existing
-                        ? 'Existing mark · previous booking'
-                        : mark.note || 'New mark · tap to describe'}
+                        ? (labels?.existing ?? 'Existing mark · previous booking')
+                        : mark.note || (labels?.newMark ?? 'New mark · tap to describe')}
                     </button>
                     {mark.existing ? (
-                      <span className="eyebrow">logged</span>
+                      <span className="eyebrow">{labels?.logged ?? 'logged'}</span>
                     ) : (
                       <button
                         type="button"
@@ -219,7 +233,7 @@ export function DamageMarker({
                         onChange={(e) =>
                           update(mark.id, { note: e.target.value })
                         }
-                        placeholder="Describe the damage (e.g. scratch, front-left wing)"
+                        placeholder={labels?.describePlaceholder ?? 'Describe the damage (e.g. scratch, front-left wing)'}
                         className="min-h-16 w-full rounded-[3px] border border-input bg-surface-2 px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                       <div className="flex flex-wrap items-center gap-2">
@@ -253,12 +267,12 @@ export function DamageMarker({
                           className="flex size-14 flex-col items-center justify-center gap-1 rounded-[3px] border border-dashed border-input text-[10px] font-semibold text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                         >
                           <Camera className="size-4" aria-hidden="true" />
-                          Photo
+                          {labels?.photo ?? 'Photo'}
                         </button>
                       </div>
                       {requirePhotoHint && mark.photos.length === 0 ? (
                         <p className="text-[12px] text-warning">
-                          Attach at least one photo as evidence.
+                          {labels?.photoRequired ?? 'Attach at least one photo as evidence.'}
                         </p>
                       ) : null}
                     </div>
@@ -275,12 +289,22 @@ export function DamageMarker({
         onOpenChange={(open) => {
           if (!open) setCameraFor(null)
         }}
-        onCapture={(dataUrl) => {
+        onCapture={onStagePhoto ? undefined : (dataUrl) => {
           if (cameraFor) {
             const mark = marks.find((m) => m.id === cameraFor)
             if (mark) update(cameraFor, { photos: [...mark.photos, dataUrl] })
           }
         }}
+        onCaptureFile={onStagePhoto ? async (file) => {
+          if (!cameraFor) return
+          const mark = marks.find((item) => item.id === cameraFor)
+          if (!mark) return
+          const evidenceRef = await onStagePhoto(file)
+          update(cameraFor, {
+            photos: [...mark.photos, URL.createObjectURL(file)],
+            photoRefs: [...(mark.photoRefs ?? []), evidenceRef],
+          })
+        } : undefined}
         title="Photograph the damage"
         description="Capture the marked area as evidence."
       />

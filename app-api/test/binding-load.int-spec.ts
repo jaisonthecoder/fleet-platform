@@ -153,12 +153,12 @@ describe('Phase 1 binding load/concurrency (1G — requires DB + Redis)', () => 
     const wave = 30;
     const durations: number[] = [];
     // warm
-    await eligibility.evaluate({ driverPersonId: driverId, vehicleId });
+    await eligibility.evaluate({ driverPersonId: driverId, vehicleId }, DEFAULT_ORGANIZATION_ID);
     for (let i = 0; i < ITERATIONS; i += wave) {
       await Promise.all(
         Array.from({ length: wave }, async () => {
           const start = performance.now();
-          await eligibility.evaluate({ driverPersonId: driverId, vehicleId });
+          await eligibility.evaluate({ driverPersonId: driverId, vehicleId }, DEFAULT_ORGANIZATION_ID);
           durations.push(performance.now() - start);
         }),
       );

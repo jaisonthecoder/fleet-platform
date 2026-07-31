@@ -44,9 +44,9 @@ export class FinesService {
   ) {}
 
   /** Records + auto-attributes a fine; may raise black points and an HR alert. */
-  async recordFine(input: RecordFine, actorRef = 'system'): Promise<FineDto> {
+  async recordFine(input: RecordFine, organizationId: string, actorRef = 'system'): Promise<FineDto> {
     const eventTime = new Date(input.eventTimeUtc);
-    const { attribution, activeBooking } = await this.attributeWithBooking(input.vehicleId, eventTime);
+    const { attribution, activeBooking } = await this.attributeWithBooking(input.vehicleId, eventTime, organizationId);
     const points = input.points ?? 0;
 
     let created;
@@ -54,6 +54,7 @@ export class FinesService {
       created = await this.repo.transaction(async (tx) => {
       const row = await this.repo.insertFine(
         {
+          organizationId,
           vehicleId: input.vehicleId,
           bookingId: activeBooking?.bookingId ?? null,
           attributedPersonId: attribution.personId,
@@ -71,7 +72,7 @@ export class FinesService {
       if (points > 0 && attribution.personId) {
         const days = await this.blackPointDays();
         await this.repo.insertBlackPoint(
-          { subjectPersonId: attribution.personId, fineId: row.id, points, transferDeadline: transferDeadline(eventTime, days), transferStatus: 'Open' },
+          { organizationId, subjectPersonId: attribution.personId, fineId: row.id, points, transferDeadline: transferDeadline(eventTime, days), transferStatus: 'Open' },
           tx,
         );
         await this.outbox.enqueue(
@@ -80,7 +81,7 @@ export class FinesService {
         );
       }
       await this.audit.record(
-        { actorRef, action: 'FINE_RECORDED', entityRef: `fine:${row.id}`, after: { attributedPersonId: attribution.personId, basis: attribution.basis, amount: input.amount } },
+        { organizationId, actorRef, action: 'FINE_RECORDED', entityRef: `fine:${row.id}`, after: { attributedPersonId: attribution.personId, basis: attribution.basis, amount: input.amount } },
         tx,
       );
       await this.outbox.enqueue({ aggregateType: 'fine', aggregateId: row.id, eventType: 'FineRecorded', payload: { fineId: row.id } }, tx);
@@ -99,12 +100,13 @@ export class FinesService {
   }
 
   /** Records + auto-attributes an accident. */
-  async recordAccident(input: RecordAccident, actorRef = 'system'): Promise<AccidentDto> {
+  async recordAccident(input: RecordAccident, organizationId: string, actorRef = 'system'): Promise<AccidentDto> {
     const occurredAt = new Date(input.occurredAtUtc);
-    const { attribution, activeBooking } = await this.attributeWithBooking(input.vehicleId, occurredAt);
+    const { attribution, activeBooking } = await this.attributeWithBooking(input.vehicleId, occurredAt, organizationId);
     let row;
     try {
       row = await this.repo.insertAccident({
+        organizationId,
         vehicleId: input.vehicleId,
         bookingId: activeBooking?.bookingId ?? null,
         attributedPersonId: attribution.personId,
@@ -116,7 +118,7 @@ export class FinesService {
     } catch (error) {
       throw toDbException(error);
     }
-    await this.audit.record({ actorRef, action: 'ACCIDENT_RECORDED', entityRef: `accident:${row.id}`, after: { attributedPersonId: attribution.personId, basis: attribution.basis } });
+    await this.audit.record({ organizationId, actorRef, action: 'ACCIDENT_RECORDED', entityRef: `accident:${row.id}`, after: { attributedPersonId: attribution.personId, basis: attribution.basis } });
     await this.outbox.enqueue({ aggregateType: 'accident', aggregateId: row.id, eventType: 'AccidentRecorded', payload: { accidentId: row.id, attributedPersonId: attribution.personId } });
     return {
       id: row.id,
@@ -131,8 +133,10 @@ export class FinesService {
   }
 
   /** Records a minimal recovery instruction against a fine (payroll export is Phase 2). */
-  async recordRecovery(fineId: string, input: RecordRecovery, actorRef = 'system'): Promise<FineDto> {
-    const existing = await this.repo.findFine(fineId);
+  async recordRecovery(fineId: string, input: RecordRecovery, actorRef = 'system', organizationId?: string): Promise<FineDto> {
+    const existing = organizationId
+      ? await this.repo.findFineInOrganization(fineId, organizationId)
+      : await this.repo.findFine(fineId);
     if (!existing) {
       throw new NotFoundException({ title: 'Unknown fine', reasons: [`fine-not-found:${fineId}`] });
     }
@@ -153,7 +157,10 @@ export class FinesService {
   }
 
   /** Records a substitution window (minimal admin/API entry, P1B-R2-4). */
-  async addSubstitutionWindow(vehicleId: string, input: SubstitutionWindow, actorRef = 'system'): Promise<SubstitutionWindowDto> {
+  async addSubstitutionWindow(vehicleId: string, input: SubstitutionWindow, organizationId: string, actorRef = 'system'): Promise<SubstitutionWindowDto> {
+        if (!(await this.repo.findVehicle(vehicleId, organizationId))) {
+          throw new NotFoundException({ title: 'Unknown vehicle', reasons: [`vehicle-not-found:${vehicleId}`] });
+        }
     const start = new Date(input.windowStart);
     const end = new Date(input.windowEnd);
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end.getTime() <= start.getTime()) {
@@ -162,6 +169,7 @@ export class FinesService {
     let row;
     try {
       row = await this.repo.insertSubstitutionWindow({
+        organizationId,
         vehicleId,
         substitutePersonId: input.substitutePersonId,
         windowStart: start,
@@ -171,7 +179,7 @@ export class FinesService {
     } catch (error) {
       throw toDbException(error);
     }
-    await this.audit.record({ actorRef, action: 'SUBSTITUTION_WINDOW_ADDED', entityRef: `vehicle:${vehicleId}`, after: { substitutePersonId: input.substitutePersonId } });
+    await this.audit.record({ organizationId, actorRef, action: 'SUBSTITUTION_WINDOW_ADDED', entityRef: `vehicle:${vehicleId}`, after: { substitutePersonId: input.substitutePersonId } });
     return {
       id: row.id,
       vehicleId: row.vehicleId,
@@ -187,23 +195,23 @@ export class FinesService {
    * Interim runner for the scheduler; each overdue open black point flips to
    * `Overdue` and raises the shared platform-wide access block. Returns the count.
    */
-  async enforceOverdueBlackPoints(now = new Date(), actorRef = 'system'): Promise<number> {
-    const overdue = await this.repo.findOverdueOpenBlackPoints(now);
+  async enforceOverdueBlackPoints(organizationId: string, now = new Date(), actorRef = 'system'): Promise<number> {
+    const overdue = await this.repo.findOverdueOpenBlackPoints(organizationId, now);
     const blockedThisRun = new Set<string>();
     for (const bp of overdue) {
       await this.repo.updateBlackPoint(bp.id, { transferStatus: 'Overdue' });
       if (blockedThisRun.has(bp.subjectPersonId)) {
         continue;
       }
-      await this.compliance.raiseBlock({ personId: bp.subjectPersonId, reason: `overdue-black-point-transfer:${bp.id}` }, actorRef);
+      await this.compliance.raiseBlock({ personId: bp.subjectPersonId, reason: `overdue-black-point-transfer:${bp.id}` }, actorRef, bp.organizationId);
       await this.outbox.enqueue({ aggregateType: 'black-point', aggregateId: bp.id, eventType: 'AccessBlockRaised', payload: { subjectPersonId: bp.subjectPersonId } });
       blockedThisRun.add(bp.subjectPersonId);
     }
     return overdue.length;
   }
 
-  async listFines(limit = 50, offset = 0): Promise<FineDto[]> {
-    const rows = await this.repo.listFines(limit, offset);
+  async listFines(organizationId: string, limit = 50, offset = 0): Promise<FineDto[]> {
+    const rows = await this.repo.listFines(organizationId, limit, offset);
     return rows.map((r) => this.toFineDto(r));
   }
 
@@ -212,8 +220,9 @@ export class FinesService {
   private async attributeWithBooking(
     vehicleId: string,
     at: Date,
+    organizationId: string,
   ): Promise<{ attribution: AttributionResult; activeBooking: { bookingId: string; driverPersonId: string } | null }> {
-    const vehicle = await this.repo.findVehicle(vehicleId);
+    const vehicle = await this.repo.findVehicle(vehicleId, organizationId);
     if (!vehicle) {
       throw new BadRequestException({ title: 'Unknown vehicle', reasons: [`fk-violation:vehicle:${vehicleId}`] });
     }

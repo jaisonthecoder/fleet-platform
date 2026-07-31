@@ -3,9 +3,11 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import i18n from '@/i18n/config'
 import { server } from '@/mocks/server'
+import { AuthProvider } from '@/features/auth/auth-context'
+import { clearAuthCredential, setDevCredential } from '@/lib/auth-headers'
 import { VehicleManagementPage } from './vehicle-management-page'
 
 const vehicle = {
@@ -51,16 +53,39 @@ const vehicle = {
 
 /** Renders the registry with production query and locale routing providers. */
 function renderPage() {
+  return renderAt('/en/vehicles')
+}
+
+/** Renders the registry at a specific URL (used for deep-link coverage). */
+function renderAt(entry: string) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   })
   return render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={['/en/vehicles']}>
+      <MemoryRouter initialEntries={[entry]}>
         <Routes>
           <Route path=":lang/vehicles" element={<VehicleManagementPage />} />
         </Routes>
       </MemoryRouter>
+    </QueryClientProvider>,
+  )
+}
+
+/** Renders inside an AuthProvider (needed for the auth-gated Assignment tab). */
+function renderAuthed() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <MemoryRouter initialEntries={['/en/vehicles']}>
+          <Routes>
+            <Route path=":lang/vehicles" element={<VehicleManagementPage />} />
+          </Routes>
+        </MemoryRouter>
+      </AuthProvider>
     </QueryClientProvider>,
   )
 }
@@ -311,5 +336,127 @@ describe('VehicleManagementPage', () => {
 
     expect(await screen.findByText('Device unplugged')).toBeVisible()
     expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeVisible()
+    // Phase 4: derived utilization + estimated-fuel metrics.
+    expect(screen.getByText('Avg / trip')).toBeVisible()
+    expect(screen.getByText('Est. fuel used')).toBeVisible()
+  })
+
+  it('filters to compliance-blocked vehicles only', async () => {
+    const user = userEvent.setup()
+    renderPage()
+    await screen.findByText('TOYOTA LAND_CRUISER')
+
+    // The seed vehicle has valid compliance, so the toggle hides it.
+    await user.click(screen.getByRole('button', { name: 'Compliance blocks' }))
+    expect(await screen.findByText('No vehicles found')).toBeVisible()
+
+    // Toggling off restores the row.
+    await user.click(screen.getByRole('button', { name: 'Compliance blocks' }))
+    expect(await screen.findByText('TOYOTA LAND_CRUISER')).toBeVisible()
+  })
+
+  it('opens the drawer from a ?vehicle= deep link', async () => {
+    server.use(
+      http.get('*/api/v1/vehicles/:id', ({ params }) => {
+        if (params.id === 'summary')
+          return HttpResponse.json({
+            total: 1,
+            active: 1,
+            inUse: 0,
+            maintenance: 0,
+            blocked: 0,
+          })
+        return HttpResponse.json(vehicle)
+      }),
+    )
+    renderAt(`/en/vehicles?vehicle=${vehicle.id}`)
+
+    expect(await screen.findByRole('tab', { name: 'Edit' })).toBeVisible()
+    expect(screen.getByText('VIN-40213')).toBeVisible()
+  })
+
+  describe('Assignment tab (auth-gated)', () => {
+    afterEach(() => clearAuthCredential())
+
+    it('shows transfer history and assigns a driver', async () => {
+      const user = userEvent.setup()
+      setDevCredential('p1')
+      let patchBody: Record<string, unknown> | undefined
+      server.use(
+        http.get('/api/v1/me', () =>
+          HttpResponse.json({
+            organizationId: '00000000-0000-4000-8000-000000000001',
+            personId: 'p1',
+            fullName: 'Fleet Manager',
+            email: 'fm@example.com',
+            grade: 'G12',
+            employmentStatus: 'Active',
+            homePoolNodeId: 'node-pool',
+            roles: [
+              {
+                role: 'FleetManager',
+                scopeNodeId: 'node-group',
+                scopeName: 'AD Ports Group',
+              },
+            ],
+          }),
+        ),
+        http.get('*/api/v1/vehicles/:id/transfers', () =>
+          HttpResponse.json([
+            {
+              id: '60000000-0000-4000-8000-000000000001',
+              fromNodeId: '50000000-0000-4000-8000-000000000002',
+              toNodeId: '50000000-0000-4000-8000-000000000001',
+              fromNodeName: 'Old Pool',
+              toNodeName: 'New Pool',
+              reason: 'Rebalance',
+              effectiveDate: '2026-02-01',
+            },
+          ]),
+        ),
+        http.get('*/api/v1/admin/users', () =>
+          HttpResponse.json({
+            items: [
+              {
+                personId: '70000000-0000-4000-8000-000000000001',
+                userId: null,
+                name: 'Ayesha Khan',
+                email: null,
+                employeeId: 'EMP-9001',
+                grade: 'G10',
+                roles: [],
+                cluster: null,
+                lastLoginAt: null,
+                accountStatus: 'Active',
+                status: 'Active',
+              },
+            ],
+            total: 1,
+            page: 1,
+            pageSize: 8,
+          }),
+        ),
+        http.patch('*/api/v1/vehicles/:id', async ({ request }) => {
+          patchBody = (await request.json()) as Record<string, unknown>
+          return HttpResponse.json({
+            ...vehicle,
+            assignedDriverPersonId: '70000000-0000-4000-8000-000000000001',
+          })
+        }),
+      )
+      renderAuthed()
+      await user.click(await screen.findByText('TOYOTA LAND_CRUISER'))
+      await user.click(await screen.findByRole('tab', { name: 'Assignment' }))
+
+      expect(await screen.findByText('Old Pool → New Pool')).toBeVisible()
+
+      await user.click(
+        await screen.findByRole('button', { name: /Ayesha Khan/ }),
+      )
+      await waitFor(() => expect(patchBody).toBeTruthy())
+      expect(patchBody?.assignedDriverPersonId).toBe(
+        '70000000-0000-4000-8000-000000000001',
+      )
+    })
   })
 })

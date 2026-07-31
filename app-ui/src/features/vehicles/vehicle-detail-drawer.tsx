@@ -1,9 +1,18 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  Activity,
+  FileText,
+  History,
+  Info,
+  PencilLine,
+  RadioTower,
+  Route,
+  Workflow,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
   SelectContent,
@@ -14,6 +23,7 @@ import {
 import { StatusChip } from '@/components/ui/status-chip'
 import { Switch } from '@/components/ui/switch'
 import { Drawer } from '@/components/patterns/drawer'
+import { MiniMap } from '@/components/patterns/mini-map'
 import { useLookupValues } from '@/features/config/hooks/use-lookups'
 import type { LookupValue } from '@/features/config/config.contract'
 import { useAuth } from '@/features/auth/auth-context'
@@ -24,6 +34,7 @@ import {
 } from '@/features/platform/platform.contract'
 import { useUsers } from '@/features/identity/hooks/use-user-admin'
 import { ApiRequestError } from '@/lib/api-client'
+import { cn } from '@/lib/utils'
 import { notify } from '@/hooks/use-toast'
 import {
   ALLOWED_VEHICLE_TRANSITIONS,
@@ -108,6 +119,10 @@ interface EditState {
   fuelCardNumber: string
   salikTag: string
   darbTag: string
+  year: string
+  seatingCapacity: string
+  nextMaintenanceDue: string
+  insuranceCoverageType: string
 }
 
 function toEditState(v: Vehicle): EditState {
@@ -128,6 +143,10 @@ function toEditState(v: Vehicle): EditState {
     fuelCardNumber: v.fuelCardNumber ?? '',
     salikTag: v.salikTag ?? '',
     darbTag: v.darbTag ?? '',
+    year: v.year != null ? String(v.year) : '',
+    seatingCapacity: v.seatingCapacity != null ? String(v.seatingCapacity) : '',
+    nextMaintenanceDue: v.nextMaintenanceDue ?? '',
+    insuranceCoverageType: v.insuranceCoverageType ?? '',
   }
 }
 
@@ -222,6 +241,12 @@ export function VehicleDetailDrawer({
       fuelCardNumber: form.fuelCardNumber || undefined,
       salikTag: form.salikTag || undefined,
       darbTag: form.darbTag || undefined,
+      year: form.year ? Number(form.year) : undefined,
+      seatingCapacity: form.seatingCapacity
+        ? Number(form.seatingCapacity)
+        : undefined,
+      nextMaintenanceDue: form.nextMaintenanceDue || undefined,
+      insuranceCoverageType: form.insuranceCoverageType || undefined,
     }
     try {
       const updated = await update.mutateAsync({ id: vehicle.id, input })
@@ -266,14 +291,14 @@ export function VehicleDetailDrawer({
     : ''
 
   const tabs = [
-    { value: 'details', label: t('vehicleManagement.detail.tabs.details') },
-    { value: 'telematics', label: t('vehicleManagement.detail.tabs.telematics') },
-    { value: 'edit', label: t('vehicleManagement.detail.tabs.edit') },
-    { value: 'assignment', label: t('vehicleManagement.detail.tabs.assignment') },
-    { value: 'documents', label: t('vehicleManagement.detail.tabs.documents') },
-    { value: 'activity', label: t('vehicleManagement.detail.tabs.activity') },
-    { value: 'lifecycle', label: t('vehicleManagement.detail.tabs.lifecycle') },
-    { value: 'history', label: t('vehicleManagement.detail.tabs.history') },
+    { value: 'details', label: t('vehicleManagement.detail.tabs.details'), icon: Info },
+    { value: 'telematics', label: t('vehicleManagement.detail.tabs.telematics'), icon: RadioTower },
+    { value: 'edit', label: t('vehicleManagement.detail.tabs.edit'), icon: PencilLine },
+    { value: 'assignment', label: t('vehicleManagement.detail.tabs.assignment'), icon: Route },
+    { value: 'documents', label: t('vehicleManagement.detail.tabs.documents'), icon: FileText },
+    { value: 'activity', label: t('vehicleManagement.detail.tabs.activity'), icon: Activity },
+    { value: 'lifecycle', label: t('vehicleManagement.detail.tabs.lifecycle'), icon: Workflow },
+    { value: 'history', label: t('vehicleManagement.detail.tabs.history'), icon: History },
   ]
 
   return (
@@ -291,25 +316,53 @@ export function VehicleDetailDrawer({
           />
         ) : null
       }
-      width="xl"
+      width="3xl"
       bodyClassName="space-y-5"
     >
       {vehicle ? (
         <>
-          <Tabs
-            value={tab}
-            onValueChange={(value) => setTab(value as Tab)}
-            aria-label={t('vehicleManagement.detail.tabsLabel')}
-          >
-            <TabsList className="w-full flex-nowrap overflow-x-auto">
-              {tabs.map((tabDef) => (
-                <TabsTrigger key={tabDef.value} value={tabDef.value}>
-                  {tabDef.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          <div className="grid gap-4 sm:grid-cols-[190px_minmax(0,1fr)]">
+            <aside className="h-fit rounded-[3px] border border-border bg-card p-2 sm:sticky sm:top-0">
+              <div
+                role="tablist"
+                aria-label={t('vehicleManagement.detail.tabsLabel')}
+                className="flex gap-1 overflow-x-auto sm:flex-col"
+              >
+                {tabs.map((tabDef) => {
+                  const active = tab === tabDef.value
+                  const Icon = tabDef.icon
+                  return (
+                    <button
+                      key={tabDef.value}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setTab(tabDef.value as Tab)}
+                      className={cn(
+                        'flex min-h-10 shrink-0 items-center gap-2.5 rounded-[3px] px-2.5 text-start text-sm transition-colors',
+                        active
+                          ? 'bg-brand-soft font-semibold text-brand'
+                          : 'text-muted-foreground hover:bg-surface-hover hover:text-foreground',
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          'grid size-7 shrink-0 place-items-center rounded-full border',
+                          active
+                            ? 'border-brand bg-brand text-brand-foreground'
+                            : 'border-border bg-card text-muted-foreground',
+                        )}
+                      >
+                        <Icon className="size-3.5" aria-hidden="true" />
+                      </span>
+                      {tabDef.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </aside>
 
+            <div className="min-w-0 space-y-5 rounded-[3px] border border-border bg-card p-4 sm:p-5">
           {healthHold ? (
             <p className="rounded-[3px] border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-warning">
               {t('vehicleManagement.detail.healthHold', {
@@ -361,6 +414,20 @@ export function VehicleDetailDrawer({
                   label={t('vehicleManagement.detail.fields.colour')}
                   value={form.colour}
                   onChange={(value) => set('colour', value)}
+                />
+                <TextField
+                  id="edit-year"
+                  type="number"
+                  label={t('vehicleManagement.detail.fields.year')}
+                  value={form.year}
+                  onChange={(value) => set('year', value)}
+                />
+                <TextField
+                  id="edit-seating"
+                  type="number"
+                  label={t('vehicleManagement.detail.fields.seating')}
+                  value={form.seatingCapacity}
+                  onChange={(value) => set('seatingCapacity', value)}
                 />
               </Section>
 
@@ -437,6 +504,19 @@ export function VehicleDetailDrawer({
                   value={form.insuranceExpiry}
                   onChange={(value) => set('insuranceExpiry', value)}
                   invalid={complianceExpired(form.insuranceExpiry)}
+                />
+                <TextField
+                  id="edit-coverage"
+                  label={t('vehicleManagement.detail.fields.coverage')}
+                  value={form.insuranceCoverageType}
+                  onChange={(value) => set('insuranceCoverageType', value)}
+                />
+                <TextField
+                  id="edit-next-maintenance"
+                  type="date"
+                  label={t('vehicleManagement.detail.fields.nextMaintenance')}
+                  value={form.nextMaintenanceDue}
+                  onChange={(value) => set('nextMaintenanceDue', value)}
                 />
               </Section>
 
@@ -654,6 +734,8 @@ export function VehicleDetailDrawer({
               )}
             </div>
           ) : null}
+            </div>
+          </div>
         </>
       ) : null}
     </Drawer>
@@ -772,21 +854,26 @@ function TelematicsTab({
         />
       </div>
 
-      <div className="rounded-[3px] border border-border p-3">
-        <p className="eyebrow">
-          {t('vehicleManagement.detail.telematics.position')}
-        </p>
+      <div className="space-y-2 rounded-[3px] border border-border p-3">
+        <div className="flex items-center justify-between gap-2">
+          <p className="eyebrow">
+            {t('vehicleManagement.detail.telematics.position')}
+          </p>
+          {data?.lat != null && data?.lon != null ? (
+            <a
+              className="text-xs font-medium text-info underline"
+              href={`https://www.google.com/maps?q=${data.lat},${data.lon}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {fmt(data.lat, 5)}, {fmt(data.lon, 5)}
+            </a>
+          ) : null}
+        </div>
         {data?.lat != null && data?.lon != null ? (
-          <a
-            className="mt-1 inline-block text-sm font-medium text-info underline"
-            href={`https://www.google.com/maps?q=${data.lat},${data.lon}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {fmt(data.lat, 5)}, {fmt(data.lon, 5)}
-          </a>
+          <MiniMap latitude={data.lat} longitude={data.lon} />
         ) : (
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             {t('vehicleManagement.detail.telematics.noPosition')}
           </p>
         )}
@@ -855,6 +942,12 @@ function ActivityTab({
     0,
   )
   const openAlerts = (alerts.data ?? []).filter((a) => !a.acknowledgedAt).length
+  const tripCount = trips.data?.length ?? 0
+  const avgTrip = tripCount ? totalKm / tripCount : 0
+  const efficiency = vehicle.fuelEfficiencyKmpl
+    ? Number(vehicle.fuelEfficiencyKmpl)
+    : null
+  const estFuel = efficiency && efficiency > 0 ? totalKm / efficiency : null
 
   const onAck = async (alertId: string) => {
     try {
@@ -874,7 +967,7 @@ function ActivityTab({
         />
         <Metric
           label={t('vehicleManagement.detail.activity.tripCount')}
-          value={num(trips.data?.length ?? 0)}
+          value={num(tripCount)}
         />
         <Metric
           label={t('vehicleManagement.detail.activity.openAlerts')}
@@ -890,7 +983,24 @@ function ActivityTab({
               : '—'
           }
         />
+        <Metric
+          label={t('vehicleManagement.detail.activity.avgTrip')}
+          value={t('vehicleManagement.kilometres', { value: num(avgTrip) })}
+        />
+        <Metric
+          label={t('vehicleManagement.detail.activity.estFuel')}
+          value={
+            estFuel != null
+              ? t('vehicleManagement.detail.activity.litres', {
+                  value: num(estFuel),
+                })
+              : '—'
+          }
+        />
       </div>
+      <p className="text-xs text-muted-foreground">
+        {t('vehicleManagement.detail.activity.estimateNote')}
+      </p>
 
       <section className="space-y-2">
         <p className="eyebrow">
@@ -1592,6 +1702,16 @@ function DevicePanel({
   )
 }
 
+function gpsTone(
+  status: string,
+): 'ok' | 'warn' | 'danger' | 'info' | 'neutral' {
+  if (status === 'Online') return 'ok'
+  if (status === 'Installed') return 'info'
+  if (status === 'Faulty' || status === 'UnderReplacement') return 'danger'
+  if (status === 'Offline') return 'warn'
+  return 'neutral'
+}
+
 function DetailsTab({
   vehicle,
   language,
@@ -1605,6 +1725,12 @@ function DetailsTab({
     language.startsWith('ar')
       ? (vehicle.hierarchyNodeNameAr ?? vehicle.hierarchyNodeName)
       : vehicle.hierarchyNodeName
+  const fmtDate = (value: string | null) =>
+    value
+      ? new Intl.DateTimeFormat(language, { dateStyle: 'medium' }).format(
+          new Date(`${value}T00:00:00Z`),
+        )
+      : '—'
   const rows: Array<[string, ReactNode]> = [
     [t('vehicleManagement.detail.fields.vin'), vehicle.chassisVin],
     [
@@ -1616,10 +1742,7 @@ function DetailsTab({
       vehicle.useCategoryCode || '—',
     ],
     [t('vehicleManagement.detail.fields.fuelType'), vehicle.fuelTypeCode || '—'],
-    [
-      t('vehicleManagement.detail.fields.ownership'),
-      vehicle.ownership || '—',
-    ],
+    [t('vehicleManagement.detail.fields.ownership'), vehicle.ownership || '—'],
     [
       t('vehicleManagement.detail.fields.leaseRef'),
       vehicle.leaseContractRef || '—',
@@ -1627,30 +1750,6 @@ function DetailsTab({
     [
       t('vehicleManagement.detail.fields.node'),
       nodeName ?? t('vehicleManagement.unassigned'),
-    ],
-    [
-      t('vehicleManagement.detail.fields.operational'),
-      vehicle.operationalStatus
-        ? t(`vehicleManagement.status.${vehicle.operationalStatus}`)
-        : t('vehicleManagement.detail.operationalActive'),
-    ],
-    [
-      t('vehicleManagement.detail.fields.pool'),
-      vehicle.bookingPoolFlag
-        ? t('vehicleManagement.detail.yes')
-        : t('vehicleManagement.detail.no'),
-    ],
-    [
-      t('vehicleManagement.detail.fields.gps'),
-      t(`vehicleManagement.status.${vehicle.gpsStatus}`),
-    ],
-    [
-      t('vehicleManagement.detail.fields.mulkiyaExpiry'),
-      vehicle.mulkiyaExpiry ?? '—',
-    ],
-    [
-      t('vehicleManagement.detail.fields.insuranceExpiry'),
-      vehicle.insuranceExpiry ?? '—',
     ],
     [t('vehicleManagement.detail.fields.salik'), vehicle.salikTag || '—'],
     [t('vehicleManagement.detail.fields.darb'), vehicle.darbTag || '—'],
@@ -1688,14 +1787,139 @@ function DetailsTab({
     ],
   ]
   return (
-    <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-      {rows.map(([label, value], index) => (
-        <div key={index} className="min-w-0">
-          <dt className="text-xs uppercase text-muted-foreground">{label}</dt>
-          <dd className="mt-0.5 break-words font-medium">{value}</dd>
-        </div>
-      ))}
-    </dl>
+    <div className="space-y-5">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <ComplianceCard
+          title={t('vehicleManagement.detail.compliance.mulkiya')}
+          number={vehicle.mulkiyaNumber}
+          expiry={vehicle.mulkiyaExpiry}
+          fmtDate={fmtDate}
+          t={t}
+        />
+        <ComplianceCard
+          title={t('vehicleManagement.detail.compliance.insurance')}
+          number={vehicle.insurancePolicyNumber}
+          meta={vehicle.insuranceProvider}
+          expiry={vehicle.insuranceExpiry}
+          fmtDate={fmtDate}
+          t={t}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatHighlight
+          label={t('vehicleManagement.detail.fields.lifecycle')}
+          tone={lifecycleTone(vehicle.lifecycleStatus)}
+          value={t(`vehicleManagement.status.${vehicle.lifecycleStatus}`)}
+        />
+        <StatHighlight
+          label={t('vehicleManagement.detail.fields.operational')}
+          tone="neutral"
+          value={
+            vehicle.operationalStatus
+              ? t(`vehicleManagement.status.${vehicle.operationalStatus}`)
+              : t('vehicleManagement.detail.operationalActive')
+          }
+        />
+        <StatHighlight
+          label={t('vehicleManagement.detail.fields.pool')}
+          tone={vehicle.bookingPoolFlag ? 'ok' : 'neutral'}
+          value={
+            vehicle.bookingPoolFlag
+              ? t('vehicleManagement.detail.yes')
+              : t('vehicleManagement.detail.no')
+          }
+        />
+        <StatHighlight
+          label={t('vehicleManagement.detail.fields.gps')}
+          tone={gpsTone(vehicle.gpsStatus)}
+          value={t(`vehicleManagement.status.${vehicle.gpsStatus}`)}
+        />
+      </div>
+
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+        {rows.map(([label, value], index) => (
+          <div key={index} className="min-w-0">
+            <dt className="text-xs uppercase text-muted-foreground">{label}</dt>
+            <dd className="mt-0.5 break-words font-medium">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
+function ComplianceCard({
+  title,
+  number,
+  meta,
+  expiry,
+  fmtDate,
+  t,
+}: {
+  title: string
+  number: string | null
+  meta?: string | null
+  expiry: string | null
+  fmtDate: (value: string | null) => string
+  t: (key: string, options?: Record<string, unknown>) => string
+}) {
+  const missing = !expiry
+  const expired = complianceExpired(expiry)
+  const tone: 'ok' | 'danger' | 'neutral' = missing
+    ? 'neutral'
+    : expired
+      ? 'danger'
+      : 'ok'
+  const statusLabel = missing
+    ? t('vehicleManagement.detail.compliance.missing')
+    : expired
+      ? t('vehicleManagement.detail.compliance.expired')
+      : t('vehicleManagement.detail.compliance.valid')
+  return (
+    <div
+      className={cn(
+        'rounded-[3px] border p-3',
+        tone === 'danger'
+          ? 'border-destructive/40 bg-destructive/5'
+          : tone === 'ok'
+            ? 'border-success/40 bg-success/5'
+            : 'border-border bg-muted/30',
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="eyebrow">{title}</p>
+        <StatusChip tone={tone} label={statusLabel} />
+      </div>
+      <p className="mt-2 text-lg font-bold tabular-nums">{fmtDate(expiry)}</p>
+      <p className="mt-0.5 truncate text-xs text-muted-foreground">
+        {number || '—'}
+        {meta ? ` · ${meta}` : ''}
+      </p>
+    </div>
+  )
+}
+
+function StatHighlight({
+  label,
+  tone,
+  value,
+}: {
+  label: string
+  tone: 'ok' | 'warn' | 'danger' | 'info' | 'neutral'
+  value: string
+}) {
+  return (
+    <div className="min-w-0 rounded-[3px] border border-border p-3">
+      <p className="eyebrow">{label}</p>
+      <div className="mt-2">
+        <StatusChip
+          tone={tone}
+          label={value}
+          className="max-w-full whitespace-normal text-start leading-snug"
+        />
+      </div>
+    </div>
   )
 }
 

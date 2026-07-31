@@ -259,6 +259,79 @@ export interface ConsentDto {
   signedAtUtc: string;
 }
 
+/** Actor-relative requester relationship; never hardcode "reports to you". */
+export const bookingApprovalRelationshipSchema = z.enum([
+  'DIRECT_MANAGER',
+  'DELEGATE',
+  'WORKFLOW_ASSIGNEE',
+  'FLEET_AUTHORITY',
+]);
+export type BookingApprovalRelationship = z.infer<typeof bookingApprovalRelationshipSchema>;
+
+/** Safe evidence categories rendered as the screen-25 verdict stack. */
+export const bookingApprovalEvidenceKindSchema = z.enum([
+  'Eligibility',
+  'Consent',
+  'Reservation',
+  'Forecast',
+]);
+export type BookingApprovalEvidenceKind = z.infer<typeof bookingApprovalEvidenceKindSchema>;
+
+/** Stable evidence state without raw HR, signature, device or policy internals. */
+export const bookingApprovalEvidenceStatusSchema = z.enum([
+  'VERIFIED',
+  'SIGNED',
+  'HELD',
+  'AVAILABLE',
+  'NOT_CONFIGURED',
+  'UNAVAILABLE',
+]);
+export type BookingApprovalEvidenceStatus = z.infer<typeof bookingApprovalEvidenceStatusSchema>;
+
+/** Availability of optional governed cost/forecast providers. */
+export const bookingApprovalProviderStatusSchema = z.enum([
+  'AVAILABLE',
+  'NOT_CONFIGURED',
+  'UNAVAILABLE',
+]);
+export type BookingApprovalProviderStatus = z.infer<typeof bookingApprovalProviderStatusSchema>;
+
+export const bookingApprovalEvidenceItemSchema = z.object({
+  kind: bookingApprovalEvidenceKindSchema,
+  status: bookingApprovalEvidenceStatusSchema,
+  reasonCodes: z.array(z.string().min(1).max(120)).max(20),
+  occurredAtUtc: z.string().datetime().nullable(),
+  version: z.string().min(1).max(120).nullable(),
+}).strict();
+export type BookingApprovalEvidenceItemDto = z.infer<typeof bookingApprovalEvidenceItemSchema>;
+
+export const bookingApprovalRequesterSchema = z.object({
+  fullName: z.string().min(1).max(200),
+  employeeId: z.string().min(1).max(120),
+  relationshipCode: bookingApprovalRelationshipSchema,
+  behavior: z.object({
+    year: z.number().int().min(2000).max(9999),
+    bookingCount: z.number().int().min(0),
+    noShowCount: z.number().int().min(0),
+    lateReturnCount: z.number().int().min(0),
+  }).strict(),
+}).strict();
+export type BookingApprovalRequesterDto = z.infer<typeof bookingApprovalRequesterSchema>;
+
+export const bookingApprovalOptionalProviderSchema = z.object({
+  status: bookingApprovalProviderStatusSchema,
+  amount: z.string().regex(/^\d+(?:\.\d{1,2})?$/).nullable(),
+  currency: z.string().length(3).nullable(),
+  utilizationPercent: z.number().min(0).max(100).nullable(),
+  suggestedStartAtUtc: z.string().datetime().nullable(),
+  reasonCodes: z.array(z.string().min(1).max(120)).max(20),
+}).strict().superRefine((value, context) => {
+  if (value.status !== 'AVAILABLE' && [value.amount, value.currency, value.utilizationPercent, value.suggestedStartAtUtc].some((field) => field !== null)) {
+    context.addIssue({ code: 'custom', message: 'unavailable provider cannot expose values' });
+  }
+});
+export type BookingApprovalOptionalProviderDto = z.infer<typeof bookingApprovalOptionalProviderSchema>;
+
 export interface BookingApprovalWorkItemDto {
   bookingId: string;
   bookingNumber: string;
@@ -280,6 +353,14 @@ export interface BookingApprovalWorkItemDto {
     reservation: 'HELD';
     forecast: 'NOT_AVAILABLE';
   };
+  /** HAPR additive projection retained as optional until the frontend cutover. */
+  requester?: BookingApprovalRequesterDto;
+  destination?: string | null;
+  durationMinutes?: number;
+  justification?: string | null;
+  evidenceItems?: BookingApprovalEvidenceItemDto[];
+  cost?: BookingApprovalOptionalProviderDto;
+  forecast?: BookingApprovalOptionalProviderDto;
 }
 
 export interface BookingPreparationItemDto {
