@@ -37,6 +37,9 @@ function makeBooking(over: Record<string, unknown> = {}) {
     passengerCount: null,
     consentRecordId: null,
     workflowInstanceId: null,
+    approvalSuspendedAtUtc: null,
+    approvalSuspendedByPersonId: null,
+    approvalSuspensionReason: null,
     beneficiaryPersonId: null,
     bookingScopeNodeId: HOME_SCOPE_ID,
     revision: 1,
@@ -58,6 +61,7 @@ class FakeRepo {
   policyDecisions: Array<Record<string, unknown>> = [];
   commands: Array<Record<string, unknown>> = [];
   decisionCommands: Array<Record<string, unknown>> = [];
+  approvedParticipant = true;
   vehicleScopes = new Map<string, string>();
   private consentSeq = 0;
 
@@ -197,6 +201,9 @@ class FakeRepo {
   }
   async completeDecisionCommand(id: string, resultBookingId: string, resultBody: unknown) {
     Object.assign(this.decisionCommands.find((command) => command.id === id)!, { resultBookingId, resultBody });
+  }
+  async hasApprovedDecision() {
+    return this.approvedParticipant;
   }
   async listActiveBookingPeople() {
     return [...this.persons.values()];
@@ -1186,5 +1193,40 @@ describe('BookingService', () => {
     );
     expect(dto.status).toBe('Draft');
     expect(dto.workflowInstanceId).toBeNull();
+  });
+
+  it('lets a participating approver suspend, resume, and revoke before Handover', async () => {
+    const { service, repo, outbox } = build();
+    repo.bookings.set('b1', makeBooking({ status: 'Approved', workflowInstanceId: 'wf1', bookingNumber: 'BK-2026-000001' }));
+    const approver = principal('mgr', 'Approver');
+
+    const suspended = await service.interveneApproval('b1', { action: 'SUSPEND', expectedRevision: 1, reason: 'Safety evidence review' }, approver, 'suspend-approval-key');
+    expect(suspended.status).toBe('Approved');
+    expect(repo.bookings.get('b1')?.approvalSuspendedAtUtc).toBeInstanceOf(Date);
+
+    await service.interveneApproval('b1', { action: 'RESUME', expectedRevision: 2, reason: 'Safety evidence cleared' }, approver, 'resume-approval-key');
+    expect(repo.bookings.get('b1')?.approvalSuspendedAtUtc).toBeNull();
+
+    const revoked = await service.interveneApproval('b1', { action: 'REVOKE', expectedRevision: 3, reason: 'Operational approval withdrawn' }, approver, 'revoke-approval-key');
+    expect(revoked.status).toBe('Cancelled');
+    expect(repo.events.map((event) => event.eventType)).toEqual(expect.arrayContaining(['ApprovalSuspended', 'ApprovalResumed', 'ApprovalRevoked']));
+    expect(outbox.events.map((event) => event.eventType)).toEqual(expect.arrayContaining(['ApprovalSuspended', 'ApprovalResumed', 'ApprovalRevoked']));
+  });
+
+  it('denies Pool intervention by an approver who did not approve the request', async () => {
+    const { service, repo } = build();
+    repo.approvedParticipant = false;
+    repo.bookings.set('b1', makeBooking({ status: 'Approved', workflowInstanceId: 'wf1', bookingNumber: 'BK-2026-000001' }));
+    const reasons = await reasonsOf(service.interveneApproval('b1', { action: 'SUSPEND', expectedRevision: 1, reason: 'Unrelated intervention' }, principal('other', 'Approver'), 'unrelated-suspend-key'));
+    expect(reasons).toContain('booking-approval-intervention-not-participant');
+  });
+
+  it('blocks the row-locked Handover transition while approval is suspended', async () => {
+    const { service, repo } = build();
+    repo.bookings.set('b1', makeBooking({ status: 'Approved', approvalSuspendedAtUtc: new Date(), workflowInstanceId: 'wf1' }));
+    await expect(service.markPickedUpInTransaction('b1', 'fleet-manager', {} as never)).rejects.toMatchObject({
+      response: { reasons: [BOOKING_REASON.notReserved] },
+    });
+    expect(repo.bookings.get('b1')?.status).toBe('Approved');
   });
 });

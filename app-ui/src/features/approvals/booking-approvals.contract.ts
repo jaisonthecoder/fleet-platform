@@ -103,6 +103,28 @@ export const entitlementApprovalWorkItemSchema = z.object({
 export type EntitlementApprovalWorkItem = z.infer<typeof entitlementApprovalWorkItemSchema>
 export type EntitlementApprovalAction = 'approve' | 'decline' | 'request-modification'
 
+export const approvalInterventionActionSchema = z.enum(['SUSPEND', 'RESUME', 'REVOKE'])
+export type ApprovalInterventionAction = z.infer<typeof approvalInterventionActionSchema>
+
+export const approvalHistoryItemSchema = z.object({
+  domain: z.enum(['PoolBooking', 'DedicatedVehicle']),
+  subjectId: z.string().uuid(),
+  reference: z.string(),
+  requesterName: z.string(),
+  summary: z.string(),
+  status: z.string(),
+  revision: z.number().int().positive(),
+  decision: z.string(),
+  decisionReason: z.string().nullable(),
+  decidedAtUtc: z.string().datetime(),
+  suspended: z.boolean(),
+  suspensionReason: z.string().nullable(),
+  suspendedAtUtc: z.string().datetime().nullable(),
+  capabilities: z.object({ suspend: z.boolean(), resume: z.boolean(), revoke: z.boolean() }),
+  interventions: z.array(z.object({ action: approvalInterventionActionSchema, reason: z.string().nullable(), occurredAtUtc: z.string().datetime() })),
+})
+export type ApprovalHistoryItem = z.infer<typeof approvalHistoryItemSchema>
+
 /** Loads only approval tasks assigned or actively delegated to the caller. */
 export async function getBookingApprovals(): Promise<ApprovalWorkItem[]> {
   return z.array(approvalWorkItemSchema).parse(await apiClient.get('/v1/booking-approvals'))
@@ -144,5 +166,27 @@ export async function decideEntitlement(input: {
     expectedStepVersion: input.item.workflowStepVersion,
     ...(input.item.actingForPersonId ? { onBehalfOfPersonId: input.item.actingForPersonId } : {}),
     ...(input.reason ? { reason: input.reason } : {}),
+  }, { headers: { 'Idempotency-Key': input.idempotencyKey } })
+}
+
+/** Loads the caller's immutable Pool and Dedicated decision history. */
+export async function getApprovalHistory(): Promise<ApprovalHistoryItem[]> {
+  const [pool, dedicated] = await Promise.all([
+    apiClient.get('/v1/booking-approvals/history'),
+    apiClient.get('/v1/entitlements/approvals/history'),
+  ])
+  return z.array(approvalHistoryItemSchema).parse([...z.array(approvalHistoryItemSchema).parse(pool), ...z.array(approvalHistoryItemSchema).parse(dedicated)])
+    .sort((left, right) => Date.parse(right.decidedAtUtc) - Date.parse(left.decidedAtUtc))
+}
+
+/** Applies one versioned pre-custody/pre-allocation approval intervention. */
+export async function interveneApproval(input: { item: ApprovalHistoryItem; action: ApprovalInterventionAction; reason: string; idempotencyKey: string }) {
+  const path = input.item.domain === 'PoolBooking'
+    ? `/v1/bookings/${input.item.subjectId}/approval-intervention`
+    : `/v1/entitlements/${input.item.subjectId}/approval-intervention`
+  return apiClient.post(path, {
+    action: input.action,
+    expectedRevision: input.item.revision,
+    reason: input.reason,
   }, { headers: { 'Idempotency-Key': input.idempotencyKey } })
 }

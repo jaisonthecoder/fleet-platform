@@ -8,7 +8,6 @@ import { DRIZZLE } from '../src/common/database/database.constants';
 import type { DrizzleDatabase } from '../src/common/database/database.module';
 import {
   DEFAULT_ORGANIZATION_ID,
-  domainDecisionComparison,
   domainDecisionSelector,
   person,
   roleAssignment,
@@ -523,6 +522,7 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
         requesterPersonId: requesterId,
         justificationCategory: 'OPERATIONAL_REQUIREMENT',
         justificationText: `${keyPrefix} selector rollback proof`,
+        vehicleCategoryCode: 'SEDAN',
         eligibilityPreviewId: preview.previewId!,
         durationStart: `2028-${suffixDate}-01`,
         durationEnd: `2028-${suffixDate}-28`,

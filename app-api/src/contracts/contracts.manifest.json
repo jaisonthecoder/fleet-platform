@@ -1,4 +1,11 @@
 {
+  "approval-history.contract.ts": [
+    "ApprovalHistoryItemDto",
+    "ApprovalIntervention",
+    "ApprovalInterventionAction",
+    "approvalInterventionActionSchema",
+    "approvalInterventionSchema"
+  ],
   "booking.contract.ts": [
     "ApproverAction",
     "AvailabilityQuery",

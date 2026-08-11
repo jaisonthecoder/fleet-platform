@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/ui/page-header'
 import { ApiRequestError } from '@/lib/api-client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EntitlementApprovalsPanel } from './entitlement-approvals-panel'
+import { ApprovalHistoryPanel } from './approval-history-panel'
 import type { ApprovalAction, ApprovalWorkItem } from './booking-approvals.contract'
 import { useBookingApprovals, useBookingDecision } from './use-booking-approvals'
 
@@ -52,9 +53,6 @@ export function BookingApprovalsPage() {
     }
   }
 
-  if (approvals.isLoading) return <p className="py-16 text-center text-sm text-muted-foreground">{t('approvals.loading')}</p>
-  if (approvals.isError) return <div role="alert" className="border border-destructive/30 bg-destructive/5 p-5"><h1 className="font-bold">{t('approvals.errorTitle')}</h1><Button className="mt-3" variant="secondary" onClick={() => void approvals.refetch()}>{t('common.retry')}</Button></div>
-
   return (
     <div className="space-y-5">
       <PageHeader
@@ -62,7 +60,7 @@ export function BookingApprovalsPage() {
         title={t('approvals.title')}
         description={t('approvals.subtitle')}
       />
-      <Tabs defaultValue="booking"><TabsList><TabsTrigger value="booking">{t('approvals.bookingTab')}</TabsTrigger><TabsTrigger value="dedicated">{t('approvals.dedicatedTab')}</TabsTrigger></TabsList><TabsContent value="booking" className="pt-4">{approvals.data?.length === 0 ? <div className="border border-border bg-card p-10 text-center text-sm text-muted-foreground">{t('approvals.empty')}</div> : (
+      <Tabs defaultValue="booking"><TabsList><TabsTrigger value="booking">{t('approvals.bookingTab')}</TabsTrigger><TabsTrigger value="dedicated">{t('approvals.dedicatedTab')}</TabsTrigger><TabsTrigger value="history">{t('approvals.historyTab')}</TabsTrigger></TabsList><TabsContent value="booking" className="pt-4">{approvals.isLoading ? <p className="border border-border bg-card py-16 text-center text-sm text-muted-foreground">{t('approvals.loading')}</p> : approvals.isError ? <div role="alert" className="border border-destructive/30 bg-destructive/5 p-5"><h2 className="font-bold">{t('approvals.errorTitle')}</h2><Button className="mt-3" variant="secondary" onClick={() => void approvals.refetch()}>{t('common.retry')}</Button></div> : approvals.data?.length === 0 ? <div className="border border-border bg-card p-10 text-center text-sm text-muted-foreground">{t('approvals.empty')}</div> : (
         <div className="grid min-h-[620px] border border-border bg-card lg:grid-cols-[340px_1fr]">
           <aside className="border-b border-border lg:border-b-0 lg:border-e" aria-label={t('approvals.queue')}>
             {approvals.data?.map((item) => (
@@ -96,7 +94,7 @@ export function BookingApprovalsPage() {
             <div className="mt-auto flex flex-wrap justify-end gap-2 border-t border-border p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"><Button onClick={() => setAction('approve')}><Check />{t('approvals.approve')}</Button><Button variant="secondary" onClick={() => setAction('request-changes')}>{t('approvals.requestChange')}</Button><Button variant="destructive" onClick={() => setAction('decline')}><X />{t('approvals.decline')}</Button></div>
           </main>}
         </div>
-      )}</TabsContent><TabsContent value="dedicated" className="pt-4"><EntitlementApprovalsPanel /></TabsContent></Tabs>
+      )}</TabsContent><TabsContent value="dedicated" className="pt-4"><EntitlementApprovalsPanel /></TabsContent><TabsContent value="history" className="pt-4"><ApprovalHistoryPanel /></TabsContent></Tabs>
     </div>
   )
 }

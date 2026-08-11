@@ -38,6 +38,10 @@ import { PolicyEvaluatorService } from '../../policy/services/policy-evaluator.s
 import { DomainDecisionService } from '../../policy/services/domain-decision.service';
 import type { DecisionProvenance } from '../../../contracts/domain-decision.contract';
 import type { PolicyEvaluationResponse } from '../../../contracts/policy-evaluation.contract';
+import type {
+  ApprovalHistoryItemDto,
+  ApprovalIntervention,
+} from '../../../contracts/approval-history.contract';
 import { AuditService } from '../../platform/services/audit.service';
 import { ScopeAuthorizationService } from '../../platform/services/scope-authorization.service';
 import { WorkflowService } from '../../workflow/services/workflow.service';
@@ -992,7 +996,7 @@ export class BookingService {
   /** Marks an Approved Booking Active inside an owning cross-domain transaction. */
   async markPickedUpInTransaction(id: string, actorRef: string, tx: DrizzleDatabase): Promise<BookingDto> {
     const existing = await this.repo.findByIdForUpdate(id, tx);
-    if (!existing || existing.status !== 'Approved') {
+    if (!existing || existing.status !== 'Approved' || existing.approvalSuspendedAtUtc) {
       throw new ConflictException({ title: 'Booking is not approved for handover', reasons: [BOOKING_REASON.notReserved] });
     }
     const updated = await this.repo.update(existing.id, { status: 'Active' }, tx);
@@ -1223,6 +1227,88 @@ export class BookingService {
       cost: { status: 'NOT_CONFIGURED', amount: null, currency: null, utilizationPercent: null, suggestedStartAtUtc: null, reasonCodes: ['booking-cost-not-configured'] },
       forecast: { status: 'NOT_CONFIGURED', amount: null, currency: null, utilizationPercent: null, suggestedStartAtUtc: null, reasonCodes: ['booking-forecast-not-configured'] },
     }));
+  }
+
+  /** Returns categorized Pool approval history for decisions made by the caller. */
+  async approvalHistory(principal: Principal): Promise<ApprovalHistoryItemDto[]> {
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId) throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    const rows = await this.repo.listApprovalHistory(actor.personId, actor.organizationId);
+    return rows.map((row) => ({
+      domain: 'PoolBooking',
+      subjectId: row.subjectId,
+      reference: row.reference,
+      requesterName: row.requesterName,
+      summary: row.summary,
+      status: row.status,
+      revision: row.revision,
+      decision: row.decision,
+      decisionReason: row.decisionReason,
+      decidedAtUtc: toIso(row.decidedAtUtc)!,
+      suspended: Boolean(row.suspendedAtUtc),
+      suspensionReason: row.suspensionReason,
+      suspendedAtUtc: toIso(row.suspendedAtUtc),
+      capabilities: {
+        suspend: row.status === 'Approved' && !row.suspendedAtUtc,
+        resume: row.status === 'Approved' && Boolean(row.suspendedAtUtc),
+        revoke: row.status === 'Approved',
+      },
+      interventions: row.interventions.map((entry) => ({ ...entry, occurredAtUtc: toIso(entry.occurredAtUtc)! })),
+    }));
+  }
+
+  /** Suspends, resumes, or irrevocably revokes a caller-participated Pool approval before custody. */
+  async interveneApproval(
+    id: string,
+    input: ApprovalIntervention,
+    principal: Principal,
+    idempotencyKey: string,
+  ): Promise<BookingDto> {
+    const actor = this.authenticatedPrincipal(principal);
+    if (!actor.personId) throw new ForbiddenException({ title: 'User not linked', reasons: ['user-not-linked-to-person'] });
+    const actorPersonId = actor.personId;
+    const commandType = `APPROVAL_${input.action}`;
+    const payloadHash = createHash('sha256').update(JSON.stringify({ id, input })).digest('hex');
+    const prior = await this.repo.findCommand(actor.organizationId, actorPersonId, commandType, idempotencyKey);
+    if (prior) {
+      if (prior.payloadHash !== payloadHash) throw new ConflictException({ title: 'Idempotency key was reused', reasons: ['booking-idempotency-key-reused'] });
+      if (!prior.resultBookingId) throw new ConflictException({ title: 'Command is in progress', reasons: ['booking-command-in-progress'] });
+      return this.toDto(await this.require(prior.resultBookingId));
+    }
+    return this.repo.transaction(async (tx) => {
+      const command = await this.repo.claimCommand({
+        organizationId: actor.organizationId,
+        actorPersonId,
+        commandType,
+        idempotencyKey,
+        payloadHash,
+      }, tx);
+      if (!command) throw new ConflictException({ title: 'Command is in progress', reasons: ['booking-command-in-progress'] });
+      const locked = await this.repo.findByIdForUpdate(id, tx);
+      if (!locked || locked.organizationId !== actor.organizationId || locked.revision !== input.expectedRevision || locked.status !== 'Approved' || !locked.workflowInstanceId) {
+        throw new ConflictException({ title: 'Booking approval state changed', reasons: ['booking-approval-intervention-state-conflict'] });
+      }
+      if (!(await this.repo.hasApprovedDecision(locked.workflowInstanceId, actorPersonId, actor.organizationId, tx))) {
+        throw new ForbiddenException({ title: 'Only a participating approver may intervene', reasons: ['booking-approval-intervention-not-participant'] });
+      }
+      if (input.action === 'SUSPEND' && locked.approvalSuspendedAtUtc) throw new ConflictException({ title: 'Approval is already suspended', reasons: ['booking-approval-already-suspended'] });
+      if (input.action === 'RESUME' && !locked.approvalSuspendedAtUtc) throw new ConflictException({ title: 'Approval is not suspended', reasons: ['booking-approval-not-suspended'] });
+      const patch = input.action === 'SUSPEND'
+        ? { approvalSuspendedAtUtc: new Date(), approvalSuspendedByPersonId: actorPersonId, approvalSuspensionReason: input.reason }
+        : input.action === 'RESUME'
+          ? { approvalSuspendedAtUtc: null, approvalSuspendedByPersonId: null, approvalSuspensionReason: null }
+          : { status: 'Cancelled' as const, approvalSuspendedAtUtc: null, approvalSuspendedByPersonId: null, approvalSuspensionReason: null };
+      const updated = await this.repo.updateAtRevision(id, input.expectedRevision, patch, tx);
+      if (!updated) throw new ConflictException({ title: 'Booking approval state changed', reasons: ['booking-approval-intervention-state-conflict'] });
+      const eventType = input.action === 'SUSPEND' ? 'ApprovalSuspended' : input.action === 'RESUME' ? 'ApprovalResumed' : 'ApprovalRevoked';
+      const auditAction = input.action === 'SUSPEND' ? 'BOOKING_APPROVAL_SUSPENDED' : input.action === 'RESUME' ? 'BOOKING_APPROVAL_RESUMED' : 'BOOKING_APPROVAL_REVOKED';
+      await this.repo.insertEvent({ bookingId: id, eventType, detail: { reason: input.reason }, actorRef: actorPersonId }, tx);
+      await this.audit.record({ organizationId: actor.organizationId, actorRef: actorPersonId, action: auditAction, entityRef: `booking:${id}`, reason: input.reason }, tx);
+      await this.outbox.enqueue({ aggregateType: 'booking', aggregateId: id, eventType, payload: { bookingId: id, reason: input.reason } }, tx);
+      const dto = this.toDto(updated);
+      await this.repo.completeCommand(command.id, id, dto, tx);
+      return dto;
+    });
   }
 
   /** Returns the scoped read-only Fleet preparation queue. */

@@ -50,7 +50,7 @@ describe('BookingApprovalsPage', () => {
   it('renders the live assigned task and safe evidence without a forecast claim', async () => {
     renderPage()
     expect(await screen.findByRole('heading', { name: 'Approval inbox' })).toBeVisible()
-    expect(screen.getAllByText('BK-2026-000101').length).toBeGreaterThan(0)
+    expect((await screen.findAllByText('BK-2026-000101')).length).toBeGreaterThan(0)
     expect(screen.getByText(/EMP-20481/)).toBeVisible()
     expect(screen.getByText(/14 bookings in 2998/)).toBeVisible()
     expect(screen.getByText(/Verified · eligibility-v2/)).toBeVisible()
@@ -84,5 +84,19 @@ describe('BookingApprovalsPage', () => {
     expect(screen.getByRole('button', { name: 'Confirm decision' })).toBeDisabled()
     await user.type(screen.getByLabelText('Decision reason'), 'Operational conflict')
     expect(screen.getByRole('button', { name: 'Confirm decision' })).toBeEnabled()
+  })
+
+  it('keeps Approval history reachable when the Pool inbox is unavailable', async () => {
+    server.use(
+      http.get('*/api/v1/booking-approvals', () => HttpResponse.json({ title: 'Unavailable' }, { status: 503 })),
+      http.get('*/api/v1/booking-approvals/history', () => HttpResponse.json([])),
+      http.get('*/api/v1/entitlements/approvals/history', () => HttpResponse.json([])),
+    )
+    const user = userEvent.setup()
+    renderPage()
+    expect(await screen.findByText('Approval inbox is unavailable')).toBeVisible()
+    await user.click(screen.getByRole('tab', { name: 'Approval history' }))
+    expect(await screen.findByRole('heading', { name: 'Approval history' })).toBeVisible()
+    expect(screen.getByText('No decisions match this category.')).toBeVisible()
   })
 })

@@ -38,6 +38,10 @@ import {
   type RenewEntitlement,
   type UpdateEntitlementDraft,
 } from '../../../contracts/entitlement.contract';
+import type {
+  ApprovalHistoryItemDto,
+  ApprovalIntervention,
+} from '../../../contracts/approval-history.contract';
 import { DomainDecisionService } from '../../policy/services/domain-decision.service';
 import { LookupService } from '../../config/services/lookup.service';
 import { AuditService } from '../../platform/services/audit.service';
@@ -726,6 +730,83 @@ export class EntitlementService {
     }));
   }
 
+  /** Returns categorized Dedicated approval history for decisions made by the caller. */
+  async approvalHistory(principal: Principal): Promise<ApprovalHistoryItemDto[]> {
+    const actor = this.requireLinkedPrincipal(principal);
+    const rows = await this.repo.listApprovalHistory(actor.personId, actor.organizationId);
+    return rows.map((row) => {
+      const preAllocation = ['Approved', 'AwaitingConsent'].includes(row.status);
+      return {
+        domain: 'DedicatedVehicle' as const,
+        subjectId: row.subjectId,
+        reference: row.reference,
+        requesterName: row.requesterName,
+        summary: row.summary,
+        status: row.status,
+        revision: row.revision,
+        decision: row.decision,
+        decisionReason: row.decisionReason,
+        decidedAtUtc: new Date(row.decidedAtUtc).toISOString(),
+        suspended: Boolean(row.suspendedAtUtc),
+        suspensionReason: row.suspensionReason,
+        suspendedAtUtc: row.suspendedAtUtc ? new Date(row.suspendedAtUtc).toISOString() : null,
+        capabilities: {
+          suspend: preAllocation && !row.suspendedAtUtc,
+          resume: preAllocation && Boolean(row.suspendedAtUtc),
+          revoke: preAllocation,
+        },
+        interventions: row.interventions.map((entry) => ({ ...entry, occurredAtUtc: new Date(entry.occurredAtUtc).toISOString() })),
+      };
+    });
+  }
+
+  /** Suspends, resumes, or irrevocably revokes a caller-participated Dedicated approval before allocation. */
+  async interveneApproval(
+    id: string,
+    input: ApprovalIntervention,
+    principal: Principal,
+    idempotencyKey?: string,
+  ): Promise<EntitlementDto> {
+    const actor = this.requireLinkedPrincipal(principal);
+    const commandKey = this.requireIdempotencyKey(idempotencyKey);
+    const commandType = `APPROVAL_${input.action}`;
+    const payloadSha256 = createHash('sha256').update(JSON.stringify({ id, input })).digest('hex');
+    const prior = await this.repo.findCommand(actor.organizationId, actor.personId, commandType, commandKey);
+    if (prior) {
+      if (prior.payloadSha256 !== payloadSha256) throw new ConflictException({ title: 'Idempotency key was reused', reasons: [ENTITLEMENT_REASON.idempotencyReused] });
+      if (!prior.resultEntitlementId) throw new ConflictException({ title: 'Command is in progress', reasons: [ENTITLEMENT_REASON.commandInProgress] });
+      return this.toDto(await this.require(prior.resultEntitlementId));
+    }
+    return this.repo.transaction(async (tx) => {
+      const command = await this.repo.claimCommand({ organizationId: actor.organizationId, actorPersonId: actor.personId, commandType, idempotencyKey: commandKey, payloadSha256 }, tx);
+      if (!command) throw new ConflictException({ title: 'Command is in progress', reasons: [ENTITLEMENT_REASON.commandInProgress] });
+      const locked = await this.repo.findByIdForUpdate(id, actor.organizationId, tx);
+      if (!locked || locked.revision !== input.expectedRevision || !['Approved', 'AwaitingConsent'].includes(locked.status) || !locked.workflowInstanceId) {
+        throw new ConflictException({ title: 'Dedicated approval state changed', reasons: ['entitlement-approval-intervention-state-conflict'] });
+      }
+      if (!(await this.repo.hasApprovedDecision(locked.workflowInstanceId, actor.personId, actor.organizationId, tx))) {
+        throw new ForbiddenException({ title: 'Only a participating approver may intervene', reasons: ['entitlement-approval-intervention-not-participant'] });
+      }
+      if (input.action === 'SUSPEND' && locked.approvalSuspendedAtUtc) throw new ConflictException({ title: 'Approval is already suspended', reasons: ['entitlement-approval-already-suspended'] });
+      if (input.action === 'RESUME' && !locked.approvalSuspendedAtUtc) throw new ConflictException({ title: 'Approval is not suspended', reasons: ['entitlement-approval-not-suspended'] });
+      const patch = input.action === 'SUSPEND'
+        ? { approvalSuspendedAtUtc: new Date(), approvalSuspendedByPersonId: actor.personId, approvalSuspensionReason: input.reason }
+        : input.action === 'RESUME'
+          ? { approvalSuspendedAtUtc: null, approvalSuspendedByPersonId: null, approvalSuspensionReason: null }
+          : { status: 'Cancelled' as const, approvalSuspendedAtUtc: null, approvalSuspendedByPersonId: null, approvalSuspensionReason: null };
+      const updated = await this.repo.updateAtRevision(id, actor.organizationId, input.expectedRevision, patch, tx);
+      if (!updated) throw new ConflictException({ title: 'Dedicated approval state changed', reasons: ['entitlement-approval-intervention-state-conflict'] });
+      const eventType = input.action === 'SUSPEND' ? 'ApprovalSuspended' : input.action === 'RESUME' ? 'ApprovalResumed' : 'ApprovalRevoked';
+      const auditAction = input.action === 'SUSPEND' ? 'ENTITLEMENT_APPROVAL_SUSPENDED' : input.action === 'RESUME' ? 'ENTITLEMENT_APPROVAL_RESUMED' : 'ENTITLEMENT_APPROVAL_REVOKED';
+      await this.repo.insertEvent({ organizationId: actor.organizationId, entitlementRequestId: id, eventType, actorPersonId: actor.personId, reason: input.reason }, tx);
+      await this.audit.record({ organizationId: actor.organizationId, actorRef: actor.personId, action: auditAction, entityRef: `entitlement:${id}`, reason: input.reason }, tx);
+      await this.outbox.enqueue({ aggregateType: 'entitlement', aggregateId: id, eventType, payload: { entitlementId: id, reason: input.reason } }, tx);
+      const dto = this.toDto(updated);
+      await this.repo.completeCommand(command.id, id, dto, tx);
+      return dto;
+    });
+  }
+
   /** Applies one stable, version-checked approval decision in the Entitlement transaction. */
   async decide(
     id: string,
@@ -808,7 +889,7 @@ export class EntitlementService {
         const command = await this.repo.claimCommand({ organizationId: actor.organizationId, actorPersonId: actor.personId, commandType: 'CONSENT', idempotencyKey: commandKey, payloadSha256 }, tx);
         if (!command) throw new ConflictException({ title: 'Command is in progress', reasons: [ENTITLEMENT_REASON.commandInProgress] });
         const locked = await this.repo.findByIdForUpdate(id, actor.organizationId, tx);
-        if (!locked || locked.status !== 'Approved' || locked.revision !== input.expectedRevision) throw new ConflictException({ title: 'Entitlement is not approved at this revision', reasons: [ENTITLEMENT_REASON.stateConflict] });
+        if (!locked || locked.status !== 'Approved' || locked.approvalSuspendedAtUtc || locked.revision !== input.expectedRevision) throw new ConflictException({ title: 'Entitlement is not approved at this revision', reasons: [ENTITLEMENT_REASON.stateConflict] });
         const assignedDriverId = locked.assignedDriverPersonId ?? locked.requesterPersonId;
         if (actor.personId !== assignedDriverId) throw new ForbiddenException({ title: 'Only the assigned driver can consent', reasons: [ENTITLEMENT_REASON.consentActorMismatch] });
         const updated = await this.repo.updateAtRevision(id, actor.organizationId, input.expectedRevision, {
@@ -874,7 +955,7 @@ export class EntitlementService {
         const command = await this.repo.claimCommand({ organizationId: actor.organizationId, actorPersonId: actor.personId, commandType: 'ALLOCATE', idempotencyKey: commandKey, payloadSha256 }, tx);
         if (!command) throw new ConflictException({ title: 'Command is in progress', reasons: [ENTITLEMENT_REASON.commandInProgress] });
         const locked = await this.repo.findByIdForUpdate(id, actor.organizationId, tx);
-        if (!locked || locked.status !== 'AwaitingConsent' || !locked.consentSignedAtUtc || locked.revision !== input.expectedRevision) throw new ConflictException({ title: 'Entitlement is not ready for allocation', reasons: [ENTITLEMENT_REASON.stateConflict] });
+        if (!locked || locked.status !== 'AwaitingConsent' || locked.approvalSuspendedAtUtc || !locked.consentSignedAtUtc || locked.revision !== input.expectedRevision) throw new ConflictException({ title: 'Entitlement is not ready for allocation', reasons: [ENTITLEMENT_REASON.stateConflict] });
         const selected = await this.repo.findVehicleForUpdate(input.vehicleId, actor.organizationId, tx);
         if (!selected) throw new BadRequestException({ title: 'Unknown Vehicle', reasons: [ENTITLEMENT_REASON.vehicleNotQualified] });
         const options = await this.repo.listEligibleVehicleOptions({

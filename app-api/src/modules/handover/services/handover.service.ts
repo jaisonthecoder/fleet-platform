@@ -249,7 +249,7 @@ export class HandoverService {
         : null,
       carriedDamage: carried.map(({ pin }) => this.toDamageDto(pin)),
       capabilities: {
-        handover: row.bookingStatus === 'Approved' && !row.handoverId && eligibilityVerified,
+        handover: row.bookingStatus === 'Approved' && !row.approvalSuspendedAtUtc && !row.handoverId && eligibilityVerified,
         return: row.bookingStatus === 'Active' && row.handoverPhase === 'Handover',
         amendOpenCustody: row.bookingStatus === 'Active' && row.handoverPhase === 'Handover',
       },

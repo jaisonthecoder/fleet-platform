@@ -37,6 +37,9 @@ function makeEntitlement(over: Record<string, unknown> = {}) {
     revision: 1,
     workflowInstanceId: null,
     workflowDefinitionVersionId: null,
+    approvalSuspendedAtUtc: null,
+    approvalSuspendedByPersonId: null,
+    approvalSuspensionReason: null,
     policyVersion: null,
     eligibilityResult: null,
     approvalRouteProvenance: null,
@@ -59,6 +62,8 @@ class FakeRepo {
   commands: Array<Record<string, unknown>> = [];
   previews = new Map<string, Record<string, unknown>>();
   professionalDrivers = [{ personId: 'driver-1', fullName: 'Rashed Obaid', employeeId: 'EMP-1018', scopeName: 'Home Pool' }];
+  events: Array<Record<string, unknown>> = [];
+  approvedParticipant = true;
   async transaction<T>(work: (tx: unknown) => Promise<T>): Promise<T> {
     const entitlementSnapshot = new Map(
       [...this.entitlements].map(([id, row]) => [id, { ...row }]),
@@ -188,6 +193,12 @@ class FakeRepo {
   }
   async listApprovalWorklist() {
     return [];
+  }
+  async hasApprovedDecision() {
+    return this.approvedParticipant;
+  }
+  async insertEvent(values: Record<string, unknown>) {
+    this.events.push(values);
   }
   async insertBsdWindow(values: Record<string, unknown>) {
     const row = { id: 'w1', windowStart: new Date(values.windowStart as Date), windowEnd: new Date(values.windowEnd as Date), status: 'Proposed', reason: values.reason ?? null, entitlementRequestId: values.entitlementRequestId, vehicleId: values.vehicleId };
@@ -638,5 +649,27 @@ describe('EntitlementService', () => {
     }, { ...principal, personId: 'other' } as never, 'consent-other-key'));
     expect(reasons).toContain(ENTITLEMENT_REASON.consentTemplatePending);
     expect(repo.entitlements.get('e1')?.consentSignedAtUtc).toBeNull();
+  });
+
+  it('lets a participating approver suspend and revoke before Dedicated allocation', async () => {
+    const { service, repo, outbox } = build();
+    repo.entitlements.set('e1', makeEntitlement({ status: 'Approved', workflowInstanceId: 'wf1', locationNodeId: 'scope' }));
+
+    const suspended = await service.interveneApproval('e1', { action: 'SUSPEND', expectedRevision: 1, reason: 'Driver evidence review' }, approverPrincipal as never, 'entitlement-suspend-key');
+    expect(suspended.status).toBe('Approved');
+    expect(repo.entitlements.get('e1')?.approvalSuspendedAtUtc).toBeInstanceOf(Date);
+
+    const revoked = await service.interveneApproval('e1', { action: 'REVOKE', expectedRevision: 2, reason: 'Approval withdrawn before allocation' }, approverPrincipal as never, 'entitlement-revoke-key');
+    expect(revoked.status).toBe('Cancelled');
+    expect(repo.events.map((event) => event.eventType)).toEqual(expect.arrayContaining(['ApprovalSuspended', 'ApprovalRevoked']));
+    expect(outbox.events.map((event) => event.eventType)).toEqual(expect.arrayContaining(['ApprovalSuspended', 'ApprovalRevoked']));
+  });
+
+  it('denies Dedicated intervention by an approver who did not approve the request', async () => {
+    const { service, repo } = build();
+    repo.approvedParticipant = false;
+    repo.entitlements.set('e1', makeEntitlement({ status: 'Approved', workflowInstanceId: 'wf1', locationNodeId: 'scope' }));
+    const reasons = await reasonsOf(service.interveneApproval('e1', { action: 'SUSPEND', expectedRevision: 1, reason: 'Unrelated intervention' }, approverPrincipal as never, 'entitlement-unrelated-key'));
+    expect(reasons).toContain('entitlement-approval-intervention-not-participant');
   });
 });

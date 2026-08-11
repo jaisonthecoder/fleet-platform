@@ -35,6 +35,7 @@ const ALLOWLIST_SUFFIXES = [
   'entitlements/repositories/entitlements.repository.ts',
   'entitlements/services/entitlement.service.ts',
   'entitlements/services/entitlement-consent-template.provider.ts',
+  'entitlements/internal/legacy-entitlement-decision.adapters.ts',
   'handover/repositories/handover.repository.ts',
   'handover/services/handover.service.ts',
   'vendors/controllers/vendor.controller.ts',
@@ -42,6 +43,8 @@ const ALLOWLIST_SUFFIXES = [
   'vendors/services/vendor.service.ts',
   'workflow/repositories/workflow.repository.ts',
   'workflow/services/workflow.service.ts',
+  'person-documents/person-document.repository.ts',
+  'person-documents/services/person-document.service.ts',
 ];
 const ALLOWLIST_SEGMENTS = [
   '/compliance/',

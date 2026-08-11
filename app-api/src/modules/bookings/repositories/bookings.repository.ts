@@ -271,6 +271,68 @@ export class BookingsRepository {
       )).orderBy(workflowStep.dueAtUtc, booking.pickupAtUtc).limit(100);
   }
 
+  /** Lists immutable Pool decisions and later interventions for one participating approver. */
+  async listApprovalHistory(actorPersonId: string, organizationId: string) {
+    return this.db.execute(sql`
+      SELECT b.id AS "subjectId", coalesce(b.booking_number, b.id::text) AS reference,
+             requester.full_name AS "requesterName", vehicle.plate AS summary,
+             b.status::text AS status, b.revision, actor_step.decision,
+             actor_step.reason AS "decisionReason", actor_step.decided_at AS "decidedAtUtc",
+             b.approval_suspended_at_utc AS "suspendedAtUtc",
+             b.approval_suspension_reason AS "suspensionReason",
+             coalesce((
+               SELECT jsonb_agg(jsonb_build_object(
+                 'action', CASE event.event_type
+                   WHEN 'ApprovalSuspended' THEN 'SUSPEND'
+                   WHEN 'ApprovalResumed' THEN 'RESUME'
+                   ELSE 'REVOKE' END,
+                 'reason', event.detail->>'reason',
+                 'occurredAtUtc', event.at_utc
+               ) ORDER BY event.at_utc)
+               FROM fleet.booking_event event
+               WHERE event.booking_id = b.id
+                 AND event.event_type IN ('ApprovalSuspended','ApprovalResumed','ApprovalRevoked')
+             ), '[]'::jsonb) AS interventions
+      FROM fleet.booking b
+      JOIN LATERAL (
+        SELECT step.decision, step.reason, step.decided_at
+        FROM fleet.workflow_step step
+        JOIN fleet.workflow_instance decision_instance ON decision_instance.id = step.workflow_instance_id
+        WHERE decision_instance.organization_id = ${organizationId}::uuid
+          AND decision_instance.workflow_type = 'booking-approval'
+          AND decision_instance.subject_ref = concat('booking:', b.id::text)
+          AND step.decided_by_person_id = ${actorPersonId}::uuid
+          AND step.decision IS NOT NULL
+        ORDER BY step.decided_at DESC
+        LIMIT 1
+      ) actor_step ON true
+      JOIN fleet.person requester ON requester.id = b.requested_by_person_id
+      JOIN fleet.vehicle vehicle ON vehicle.id = b.vehicle_id
+      WHERE b.organization_id = ${organizationId}::uuid
+      ORDER BY actor_step.decided_at DESC
+      LIMIT 200
+    `) as unknown as Array<{
+      subjectId: string; reference: string; requesterName: string; summary: string;
+      status: string; revision: number; decision: string; decisionReason: string | null;
+      decidedAtUtc: Date | string; suspendedAtUtc: Date | string | null; suspensionReason: string | null;
+      interventions: Array<{ action: 'SUSPEND' | 'RESUME' | 'REVOKE'; reason: string | null; occurredAtUtc: string }>;
+    }>;
+  }
+
+  /** Proves that an actor recorded an approval on the aggregate's pinned workflow. */
+  async hasApprovedDecision(workflowInstanceId: string, actorPersonId: string, organizationId: string, executor: Executor = this.db) {
+    const rows = await executor.execute(sql`
+      SELECT 1 FROM fleet.workflow_step step
+      JOIN fleet.workflow_instance instance ON instance.id = step.workflow_instance_id
+      WHERE step.workflow_instance_id = ${workflowInstanceId}::uuid
+        AND step.decided_by_person_id = ${actorPersonId}::uuid
+        AND step.decision = 'APPROVED'
+        AND instance.organization_id = ${organizationId}::uuid
+      LIMIT 1
+    `) as unknown as Array<Record<string, unknown>>;
+    return rows.length > 0;
+  }
+
   /** Lists Approved upcoming Bookings in authorized Vehicle scopes for preparation. */
   async listPreparationWorklist(authorizedNodeIds: string[]) {
     if (authorizedNodeIds.length === 0) return [];
@@ -286,6 +348,7 @@ export class BookingsRepository {
       .leftJoin(hierarchyNode, eq(hierarchyNode.id, booking.bookingScopeNodeId))
       .where(and(
         eq(booking.status, 'Approved'),
+        isNull(booking.approvalSuspendedAtUtc),
         gte(booking.pickupAtUtc, new Date()),
         inArray(booking.bookingScopeNodeId, authorizedNodeIds),
       )).orderBy(booking.pickupAtUtc).limit(100);

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { Plus, RefreshCw } from 'lucide-react'
+import { CalendarClock, KeyRound, MapPin, Plus, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui/page-header'
@@ -31,8 +31,8 @@ export function HandoverRegisterPage() {
   const page = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1
   const register = useHandoverRegister({ filter, page, pageSize: PAGE_SIZE })
   const workItems = useHandoverWorkItems()
-  const nextHandover = workItems.data?.find((item) => item.phase === 'AwaitingHandover')
-  const nextReturn = workItems.data?.find((item) => item.phase === 'ActiveCustody')
+  const awaitingHandovers = workItems.data?.filter((item) => item.phase === 'AwaitingHandover') ?? []
+  const hasActiveCustody = workItems.data?.some((item) => item.phase === 'ActiveCustody') ?? false
 
   /** Changes one URL-backed register filter and returns to the first page. */
   function selectFilter(nextFilter: HandoverRegisterFilter) {
@@ -70,16 +70,16 @@ export function HandoverRegisterPage() {
         description={t('handover.subtitle')}
         action={
           <div className="flex flex-wrap gap-2">
-            {nextReturn ? (
+            {hasActiveCustody ? (
               <Button asChild variant="railGhost">
-                <Link to={`/${lang}/handover/return?bookingId=${nextReturn.bookingId}`}>{t('handover.registerPage.logReturn')}</Link>
+                <a href="#custody-register">{t('handover.registerPage.logReturn')}</a>
               </Button>
             ) : (
               <Button variant="railGhost" disabled>{t('handover.registerPage.logReturn')}</Button>
             )}
-            {nextHandover ? (
+            {awaitingHandovers.length > 0 ? (
               <Button asChild variant="signal">
-                <Link to={`/${lang}/handover/new?bookingId=${nextHandover.bookingId}`}><Plus />{t('handover.registerPage.newHandover')}</Link>
+                <a href="#awaiting-handovers"><Plus />{t('handover.registerPage.newHandover')}</a>
               </Button>
             ) : (
               <Button variant="signal" disabled><Plus />{t('handover.registerPage.newHandover')}</Button>
@@ -88,7 +88,48 @@ export function HandoverRegisterPage() {
         }
       />
 
-      <section className="min-w-0 max-w-full border border-border bg-card shadow-[var(--shadow-rest)]" aria-label={t('handover.register')}>
+      <section id="awaiting-handovers" className="scroll-mt-5 border border-border bg-card shadow-[var(--shadow-rest)]" aria-labelledby="awaiting-handovers-title">
+        <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border p-4">
+          <div>
+            <h2 id="awaiting-handovers-title" className="font-bold">{t('handover.registerPage.awaitingTitle')}</h2>
+            <p className="mt-1 text-xs text-muted-foreground">{t('handover.registerPage.awaitingDescription')}</p>
+          </div>
+          <span className="text-xs text-muted-foreground">{t('handover.registerPage.awaitingCount', { count: awaitingHandovers.length })}</span>
+        </div>
+        {workItems.isLoading ? (
+          <p className="p-6 text-sm text-muted-foreground">{t('handover.registerPage.awaitingLoading')}</p>
+        ) : workItems.isError ? (
+          <div role="alert" className="p-6 text-sm">
+            <p>{t('handover.registerPage.awaitingError')}</p>
+            <Button className="mt-3" size="sm" variant="secondary" onClick={() => void workItems.refetch()}><RefreshCw />{t('common.retry')}</Button>
+          </div>
+        ) : awaitingHandovers.length === 0 ? (
+          <p className="p-6 text-sm text-muted-foreground">{t('handover.registerPage.awaitingEmpty')}</p>
+        ) : (
+          <div className="divide-y divide-border">
+            {awaitingHandovers.map((item) => (
+              <article key={item.bookingId} className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <bdi className="font-data font-bold text-brand">{item.bookingNumber}</bdi>
+                    <StatusChip tone="warn" label={t('handover.registerPage.awaitingStatus')} />
+                  </div>
+                  <p className="mt-2 font-semibold"><span>{item.driverName}</span><span aria-hidden="true"> · </span><bdi>{item.vehiclePlate}</bdi></p>
+                  <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1"><CalendarClock className="size-4" /><bdi>{formatRange(item.pickupAtUtc, item.returnAtUtc, locale)}</bdi></span>
+                    <span className="inline-flex items-center gap-1"><MapPin className="size-4" />{item.scopeName ?? t('preparation.scopeUnavailable')}</span>
+                  </div>
+                </div>
+                <Button asChild variant="secondary">
+                  <Link to={`/${lang}/handover/new?bookingId=${item.bookingId}`}><KeyRound />{t('handover.registerPage.startHandover')}</Link>
+                </Button>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section id="custody-register" className="min-w-0 max-w-full scroll-mt-5 border border-border bg-card shadow-[var(--shadow-rest)]" aria-label={t('handover.register')}>
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
           <fieldset className="flex flex-wrap gap-2">
             <legend className="sr-only">{t('handover.registerPage.filtersLabel')}</legend>
@@ -214,4 +255,9 @@ function Cell({ children }: { children: React.ReactNode }) {
 
 function formatShort(value: string, locale: string): string {
   return new Intl.DateTimeFormat(locale, { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(value))
+}
+
+/** Formats one approved Booking window for the awaiting-Handover queue. */
+function formatRange(start: string, end: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).formatRange(new Date(start), new Date(end))
 }

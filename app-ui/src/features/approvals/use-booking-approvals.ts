@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { decideBooking, decideEntitlement, getBookingApprovals, getBookingPreparation, getEntitlementApprovals } from './booking-approvals.contract'
+import { decideBooking, decideEntitlement, getApprovalHistory, getBookingApprovals, getBookingPreparation, getEntitlementApprovals, interveneApproval } from './booking-approvals.contract'
 
 export const BOOKING_APPROVALS_KEY = ['booking', 'approvals'] as const
 
@@ -23,6 +23,7 @@ export function useBookingPreparation() {
 }
 
 export const ENTITLEMENT_APPROVALS_KEY = ['entitlements', 'approvals'] as const
+export const APPROVAL_HISTORY_KEY = ['approvals', 'history'] as const
 
 /** Queries the caller's assigned/delegated Dedicated approval tasks. */
 export function useEntitlementApprovals() {
@@ -35,5 +36,26 @@ export function useEntitlementDecision() {
   return useMutation({
     mutationFn: decideEntitlement,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ENTITLEMENT_APPROVALS_KEY }),
+  })
+}
+
+/** Queries Pool and Dedicated history under one approver-facing cache boundary. */
+export function useApprovalHistory() {
+  return useQuery({ queryKey: APPROVAL_HISTORY_KEY, queryFn: getApprovalHistory })
+}
+
+/** Applies an intervention and refreshes history plus downstream operational queues. */
+export function useApprovalIntervention() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: interveneApproval,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: APPROVAL_HISTORY_KEY }),
+        queryClient.invalidateQueries({ queryKey: ['booking', 'preparation'] }),
+        queryClient.invalidateQueries({ queryKey: ['handover'] }),
+        queryClient.invalidateQueries({ queryKey: ['entitlements', 'allocation'] }),
+      ])
+    },
   })
 }

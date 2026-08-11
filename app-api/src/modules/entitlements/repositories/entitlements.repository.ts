@@ -367,6 +367,68 @@ export class EntitlementsRepository {
       .limit(100);
   }
 
+  /** Lists immutable Dedicated decisions and later interventions for one participating approver. */
+  async listApprovalHistory(actorPersonId: string, organizationId: string) {
+    return this.db.execute(sql`
+      SELECT request.id AS "subjectId", request.id::text AS reference,
+             requester.full_name AS "requesterName",
+             concat(request.request_type, ' · ', coalesce(request.vehicle_category_code, '—')) AS summary,
+             request.status::text AS status, request.revision, actor_step.decision,
+             actor_step.reason AS "decisionReason", actor_step.decided_at AS "decidedAtUtc",
+             request.approval_suspended_at_utc AS "suspendedAtUtc",
+             request.approval_suspension_reason AS "suspensionReason",
+             coalesce((
+               SELECT jsonb_agg(jsonb_build_object(
+                 'action', CASE event.event_type
+                   WHEN 'ApprovalSuspended' THEN 'SUSPEND'
+                   WHEN 'ApprovalResumed' THEN 'RESUME'
+                   ELSE 'REVOKE' END,
+                 'reason', event.reason,
+                 'occurredAtUtc', event.at_utc
+               ) ORDER BY event.at_utc)
+               FROM fleet.entitlement_event event
+               WHERE event.entitlement_request_id = request.id
+                 AND event.event_type IN ('ApprovalSuspended','ApprovalResumed','ApprovalRevoked')
+             ), '[]'::jsonb) AS interventions
+      FROM fleet.entitlement_request request
+      JOIN LATERAL (
+        SELECT step.decision, step.reason, step.decided_at
+        FROM fleet.workflow_step step
+        JOIN fleet.workflow_instance decision_instance ON decision_instance.id = step.workflow_instance_id
+        WHERE decision_instance.organization_id = ${organizationId}::uuid
+          AND decision_instance.workflow_type = 'entitlement-approval'
+          AND decision_instance.subject_ref = concat('entitlement:', request.id::text)
+          AND step.decided_by_person_id = ${actorPersonId}::uuid
+          AND step.decision IS NOT NULL
+        ORDER BY step.decided_at DESC
+        LIMIT 1
+      ) actor_step ON true
+      JOIN fleet.person requester ON requester.id = request.requested_by_person_id
+      WHERE request.organization_id = ${organizationId}::uuid
+      ORDER BY actor_step.decided_at DESC
+      LIMIT 200
+    `) as unknown as Array<{
+      subjectId: string; reference: string; requesterName: string; summary: string;
+      status: string; revision: number; decision: string; decisionReason: string | null;
+      decidedAtUtc: Date | string; suspendedAtUtc: Date | string | null; suspensionReason: string | null;
+      interventions: Array<{ action: 'SUSPEND' | 'RESUME' | 'REVOKE'; reason: string | null; occurredAtUtc: string }>;
+    }>;
+  }
+
+  /** Proves that an actor recorded an approval on the aggregate's pinned workflow. */
+  async hasApprovedDecision(workflowInstanceId: string, actorPersonId: string, organizationId: string, executor: Executor = this.db) {
+    const rows = await executor.execute(sql`
+      SELECT 1 FROM fleet.workflow_step step
+      JOIN fleet.workflow_instance instance ON instance.id = step.workflow_instance_id
+      WHERE step.workflow_instance_id = ${workflowInstanceId}::uuid
+        AND step.decided_by_person_id = ${actorPersonId}::uuid
+        AND step.decision = 'APPROVED'
+        AND instance.organization_id = ${organizationId}::uuid
+      LIMIT 1
+    `) as unknown as Array<Record<string, unknown>>;
+    return rows.length > 0;
+  }
+
   /** Persists one short-lived preview evidence record without creating a Vehicle hold. */
   async insertEligibilityPreview(
     values: typeof entitlementEligibilityPreview.$inferInsert,
@@ -540,6 +602,7 @@ export class EntitlementsRepository {
     return this.db.select().from(entitlementRequest).where(and(
       eq(entitlementRequest.organizationId, organizationId),
       inArray(entitlementRequest.status, ['AwaitingConsent', 'Allocated']),
+      isNull(entitlementRequest.approvalSuspendedAtUtc),
       inArray(entitlementRequest.locationNodeId, authorizedNodeIds),
       sql`${entitlementRequest.consentSignedAtUtc} IS NOT NULL`,
     )).orderBy(entitlementRequest.durationStart).limit(100);

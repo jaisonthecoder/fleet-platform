@@ -81,6 +81,7 @@ describe('HandoverRegisterPage', () => {
       http.get('*/api/v1/handovers/work-items', () => HttpResponse.json([
         { bookingId: OPEN_BOOKING_ID, bookingNumber: 'BK-1198', handoverId: OPEN_HANDOVER_ID, phase: 'ActiveCustody', vehicleId: VEHICLE_ID, vehiclePlate: 'AD 77120', driverPersonId: DRIVER_ID, driverName: 'S. Al Hammadi', pickupAtUtc: '2026-07-29T08:00:00.000Z', returnAtUtc: '2026-07-29T10:00:00.000Z', scopeName: 'GS Pool' },
         { bookingId: '20000000-0000-4000-8000-000000000003', bookingNumber: 'BK-1204', handoverId: null, phase: 'AwaitingHandover', vehicleId: VEHICLE_ID, vehiclePlate: 'AD 88914', driverPersonId: DRIVER_ID, driverName: 'Amina Khoury', pickupAtUtc: '2026-07-30T08:00:00.000Z', returnAtUtc: '2026-07-30T10:00:00.000Z', scopeName: 'GS Pool' },
+        { bookingId: '20000000-0000-4000-8000-000000000004', bookingNumber: 'BK-1205', handoverId: null, phase: 'AwaitingHandover', vehicleId: VEHICLE_ID, vehiclePlate: 'AD 88915', driverPersonId: DRIVER_ID, driverName: 'Omar Saleh', pickupAtUtc: '2026-07-30T11:00:00.000Z', returnAtUtc: '2026-07-30T13:00:00.000Z', scopeName: 'GS Pool' },
       ])),
       http.get('*/api/v1/handovers/:id/chain', () => HttpResponse.json(returnedChain)),
     )
@@ -92,8 +93,11 @@ describe('HandoverRegisterPage', () => {
     for (const column of ['Booking', 'Driver', 'Vehicle', 'Issued → returned', 'KM', 'Charges', 'Status']) {
       expect(screen.getByRole('columnheader', { name: column })).toBeVisible()
     }
-    expect(screen.getByRole('link', { name: 'New handover' })).toHaveAttribute('href', '/en/handover/new?bookingId=20000000-0000-4000-8000-000000000003')
-    expect(screen.getByRole('link', { name: 'Log return' })).toHaveAttribute('href', `/en/handover/return?bookingId=${OPEN_BOOKING_ID}`)
+    expect(screen.getByRole('link', { name: 'New handover' })).toHaveAttribute('href', '#awaiting-handovers')
+    expect(screen.getByRole('link', { name: 'Log return' })).toHaveAttribute('href', '#custody-register')
+    expect(screen.getAllByRole('link', { name: 'Start handover' })).toHaveLength(2)
+    expect(screen.getAllByRole('link', { name: 'Start handover' })[0]).toHaveAttribute('href', '/en/handover/new?bookingId=20000000-0000-4000-8000-000000000003')
+    expect(screen.getAllByRole('link', { name: 'Start handover' })[1]).toHaveAttribute('href', '/en/handover/new?bookingId=20000000-0000-4000-8000-000000000004')
     const openRow = screen.getByText('BK-1198').closest('tr')!
     const returnedRow = screen.getByText('BK-1192').closest('tr')!
     expect(within(openRow).getByRole('link', { name: 'Edit' })).toBeVisible()

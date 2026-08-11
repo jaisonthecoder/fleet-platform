@@ -188,6 +188,7 @@ export class HandoverRepository {
         bookingNumber: booking.bookingNumber,
         handoverId: handover.id,
         bookingStatus: booking.status,
+        approvalSuspendedAtUtc: booking.approvalSuspendedAtUtc,
         vehicleId: booking.vehicleId,
         vehiclePlate: vehicle.plate,
         driverPersonId: booking.driverPersonId,
@@ -209,6 +210,7 @@ export class HandoverRepository {
         eq(booking.organizationId, organizationId),
         inArray(booking.bookingScopeNodeId, authorizedNodeIds),
         inArray(booking.status, ['Approved', 'Active']),
+        sql`(${booking.status} = 'Active' OR ${booking.approvalSuspendedAtUtc} IS NULL)`,
       ))
       .orderBy(booking.pickupAtUtc)
       .limit(200);
@@ -222,6 +224,7 @@ export class HandoverRepository {
         bookingNumber: booking.bookingNumber,
         bookingRevision: booking.revision,
         bookingStatus: booking.status,
+        approvalSuspendedAtUtc: booking.approvalSuspendedAtUtc,
         pickupAtUtc: booking.pickupAtUtc,
         returnAtUtc: booking.returnAtUtc,
         vehicleId: vehicle.id,

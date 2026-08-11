@@ -24,6 +24,7 @@ import {
   modifyBookingSchema,
   signConsentSchema,
 } from '../../../contracts/booking.contract';
+import { approvalInterventionSchema } from '../../../contracts/approval-history.contract';
 import { BookingService } from '../services/booking.service';
 
 /** Actor reference for audit/history from the authenticated principal. */
@@ -144,6 +145,25 @@ export class BookingsController {
   @Get('booking-approvals')
   approvalWorklist(@CurrentUser() principal?: Principal) {
     return this.bookings.approvalWorklist(requiredPrincipal(principal));
+  }
+
+  /** GET /api/v1/booking-approvals/history — caller's immutable Pool decisions and interventions. */
+  @Roles(...APPROVER_ROLES)
+  @Get('booking-approvals/history')
+  approvalHistory(@CurrentUser() principal?: Principal) {
+    return this.bookings.approvalHistory(requiredPrincipal(principal));
+  }
+
+  /** POST /api/v1/bookings/:id/approval-intervention — pre-custody suspend/resume/revoke. */
+  @Roles(...APPROVER_ROLES)
+  @Post('bookings/:id/approval-intervention')
+  approvalIntervention(@Param('id') id: string, @Body() body: unknown, @CurrentUser() principal?: Principal, @Headers('idempotency-key') idempotencyKey?: string) {
+    return this.bookings.interveneApproval(
+      id,
+      parse(approvalInterventionSchema, body),
+      requiredPrincipal(principal),
+      requiredIdempotencyKey(idempotencyKey),
+    );
   }
 
   /** GET /api/v1/booking-preparation — scoped Approved bookings awaiting handover. */

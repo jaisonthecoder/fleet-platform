@@ -28,6 +28,7 @@ import {
   submitEntitlementSchema,
   updateEntitlementDraftSchema,
 } from '../../../contracts/entitlement.contract';
+import { approvalInterventionSchema } from '../../../contracts/approval-history.contract';
 import { EntitlementService } from '../services/entitlement.service';
 
 const actorRef = (p?: Principal): string => p?.personId ?? p?.entraObjectId ?? 'system';
@@ -143,6 +144,25 @@ export class EntitlementsController {
   @Get('approvals')
   approvals(@CurrentUser() principal?: Principal) {
     return this.entitlements.approvalWorklist(requiredPrincipal(principal));
+  }
+
+  /** GET /api/v1/entitlements/approvals/history — caller's immutable Dedicated decisions and interventions. */
+  @Roles(...APPROVER_ROLES)
+  @Get('approvals/history')
+  approvalHistory(@CurrentUser() principal?: Principal) {
+    return this.entitlements.approvalHistory(requiredPrincipal(principal));
+  }
+
+  /** POST /api/v1/entitlements/:id/approval-intervention — pre-allocation suspend/resume/revoke. */
+  @Roles(...APPROVER_ROLES)
+  @Post(':id/approval-intervention')
+  approvalIntervention(@Param('id') id: string, @Body() body: unknown, @CurrentUser() principal?: Principal, @Headers('idempotency-key') idempotencyKey?: string) {
+    return this.entitlements.interveneApproval(
+      id,
+      parse(approvalInterventionSchema, body),
+      requiredPrincipal(principal),
+      idempotencyKey,
+    );
   }
 
   /** GET /api/v1/entitlements/consent-context — current governed consent content. */
