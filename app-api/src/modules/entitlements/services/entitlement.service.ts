@@ -38,12 +38,16 @@ import {
   type RenewEntitlement,
   type UpdateEntitlementDraft,
 } from '../../../contracts/entitlement.contract';
-import { PolicyEvaluatorService } from '../../policy/services/policy-evaluator.service';
+import { DomainDecisionService } from '../../policy/services/domain-decision.service';
 import { LookupService } from '../../config/services/lookup.service';
 import { AuditService } from '../../platform/services/audit.service';
 import { ScopeAuthorizationService } from '../../platform/services/scope-authorization.service';
 import { WorkflowService } from '../../workflow/services/workflow.service';
 import { resolveApprovers, validateDateWindow } from '../internal/entitlement-rules';
+import {
+  LegacyDedicatedEligibilityAdapter,
+  LegacyEntitlementApprovalRouteAdapter,
+} from '../internal/legacy-entitlement-decision.adapters';
 import { EntitlementsRepository } from '../repositories/entitlements.repository';
 import { EntitlementConsentTemplateProvider } from './entitlement-consent-template.provider';
 
@@ -68,7 +72,9 @@ const VEHICLE_CLASS_LOOKUP = 'dedicated-vehicle-class';
 export class EntitlementService {
   constructor(
     private readonly repo: EntitlementsRepository,
-    private readonly pdp: PolicyEvaluatorService,
+    private readonly decisions: DomainDecisionService,
+    private readonly legacyEligibility: LegacyDedicatedEligibilityAdapter,
+    private readonly legacyApprovalRoute: LegacyEntitlementApprovalRouteAdapter,
     private readonly workflow: WorkflowService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
@@ -428,22 +434,34 @@ export class EntitlementService {
       justificationCategory: input.justificationCategory,
       durationDays,
     };
-    const verdict = await this.pdp.evaluate({
+    const effectiveAtUtc = new Date().toISOString();
+    const eligibilityDecision = await this.decisions.evaluate({
+      consumer: 'entitlement-eligibility',
+      subjectRef: `entitlement-preview:${requestFingerprint}`,
+      correlationId: `entitlement-preview:${requestFingerprint}`,
+      request: {
+        organizationId: actor.organizationId,
+        scopeNodeId: input.locationNodeId,
+        effectiveAtUtc,
+        ruleType: 'dedicated-vehicle-eligibility',
+        context: facts,
+      },
+    }, () => this.legacyEligibility.evaluate({
       organizationId: actor.organizationId,
       scopeNodeId: input.locationNodeId,
+      effectiveAtUtc,
       ruleType: 'dedicated-vehicle-eligibility',
       context: facts,
-    });
+    }));
+    const verdict = eligibilityDecision.response;
     if (!verdict.policyRuleId || !verdict.policyVersionId) {
       throw new ServiceUnavailableException({
         title: 'Dedicated Vehicle eligibility policy is not configured',
         reasons: ['entitlement-eligibility-policy-unavailable'],
       });
     }
-    const factFingerprint = createHash('sha256')
-      .update(JSON.stringify(facts))
-      .digest('hex');
-    const evaluatedAtUtc = new Date().toISOString();
+    const factFingerprint = eligibilityDecision.provenance.factFingerprint;
+    const evaluatedAtUtc = eligibilityDecision.provenance.evaluatedAtUtc;
     if (verdict.decision !== 'ALLOW') {
       const evidence = await this.repo.insertEligibilityPreview({
         organizationId: actor.organizationId,
@@ -453,6 +471,7 @@ export class EntitlementService {
         policyRuleId: verdict.policyRuleId,
         policyVersionId: verdict.policyVersionId,
         policyVersion: verdict.policyVersion,
+        decisionProvenance: eligibilityDecision.provenance,
         decision: 'DENY',
         reasons: verdict.reasons,
         permittedVehicleClasses: [],
@@ -504,6 +523,7 @@ export class EntitlementService {
         policyRuleId: verdict.policyRuleId,
         policyVersionId: verdict.policyVersionId,
         policyVersion: verdict.policyVersion,
+        decisionProvenance: eligibilityDecision.provenance,
         decision: 'DENY',
         reasons: ['entitlement-requested-class-not-permitted'],
         permittedVehicleClasses,
@@ -549,6 +569,7 @@ export class EntitlementService {
       policyRuleId: verdict.policyRuleId,
       policyVersionId: verdict.policyVersionId,
       policyVersion: verdict.policyVersion,
+      decisionProvenance: eligibilityDecision.provenance,
       decision: 'ALLOW',
       reasons: verdict.reasons,
       permittedVehicleClasses,
@@ -616,12 +637,21 @@ export class EntitlementService {
       locationNodeId: existing.locationNodeId ?? undefined,
     }, actor);
     const requester = await this.repo.findPerson(existing.requesterPersonId);
-    const chain = await this.pdp.evaluate({
-      ruleType: 'entitlement-approval-chain',
-      context: { requestType: existing.requestType, grade: requester?.grade ?? undefined },
-      organizationId: actor.organizationId,
-      scopeNodeId: existing.locationNodeId ?? undefined,
-    });
+    if (!existing.locationNodeId) throw new UnprocessableEntityException({ title: 'The approval scope is unavailable', reasons: [ENTITLEMENT_REASON.noApprover] });
+    const routeEffectiveAtUtc = new Date().toISOString();
+    const routeDecision = await this.decisions.evaluate({
+      consumer: 'entitlement-approval',
+      subjectRef: `entitlement:${id}`,
+      correlationId: `entitlement:${id}:submit:${input.expectedRevision}`,
+      request: {
+        ruleType: 'entitlement-approval-chain',
+        context: { requestType: existing.requestType, grade: requester?.grade ?? undefined },
+        organizationId: actor.organizationId,
+        scopeNodeId: existing.locationNodeId,
+        effectiveAtUtc: routeEffectiveAtUtc,
+      },
+    }, async () => this.legacyApprovalRoute.evaluate(existing.requestType, existing.locationNodeId!));
+    const chain = routeDecision.response;
     const route = chain.route?.length ? chain.route : ['LineManager', 'FleetManager', 'ClusterCEO'];
     const approvalAt = new Date();
     const roleToPerson = new Map<string, string | null>();
@@ -641,14 +671,11 @@ export class EntitlementService {
         if (!locked || locked.requesterPersonId !== actor.personId || locked.status !== 'Draft' || locked.revision !== input.expectedRevision) {
           throw new ConflictException({ title: 'Entitlement state changed', reasons: [ENTITLEMENT_REASON.stateConflict] });
         }
-        const view = await this.workflow.start({ organizationId: locked.organizationId, workflowType: 'entitlement-approval', subjectRef: `entitlement:${id}`, slaMinutes: 48 * 60, steps: approvers.map((assigneePersonId) => ({ assigneePersonId })) }, tx);
+        const view = await this.workflow.start({ organizationId: locked.organizationId, workflowType: 'entitlement-approval', definitionKey: 'legacy-entitlement-approval-v1', subjectRef: `entitlement:${id}`, slaMinutes: 48 * 60, steps: approvers.map((assigneePersonId, index) => ({ assigneePersonId, assignmentKey: route[index]! })) }, tx);
         const existingProvenance = (locked.approvalRouteProvenance as Record<string, unknown> | null) ?? null;
         const history = Array.isArray(existingProvenance?.history) ? existingProvenance.history : [];
         const current = {
-          policyRuleId: chain.policyRuleId,
-          policyVersionId: chain.policyVersionId,
-          policyVersion: chain.policyVersion,
-          resolvedScopeNodeId: chain.resolvedScopeNodeId ?? null,
+          ...routeDecision.provenance,
           route,
           approvers,
           definitionDeploymentId: view.definitionDeploymentId,

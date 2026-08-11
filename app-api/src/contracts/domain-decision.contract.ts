@@ -60,3 +60,49 @@ export const domainDecisionResultSchema = z.object({
   provenance: decisionProvenanceSchema,
 });
 export type DomainDecisionResult = z.infer<typeof domainDecisionResultSchema>;
+
+export const decisionSelectorScopeSchema = z.object({
+  environment: z.string().trim().min(1).max(50).default('default'),
+  scopeNodeId: z.string().uuid().nullable().optional(),
+});
+
+export const updateDecisionSelectorSchema = decisionSelectorScopeSchema.extend({
+  mode: domainDecisionModeSchema,
+  canaryPercentage: z.number().int().min(0).max(100).default(0),
+  comparisonSamplePercentage: z.number().int().min(0).max(100).default(100),
+  expectedRevision: z.number().int().nonnegative(),
+});
+export type UpdateDecisionSelector = z.infer<typeof updateDecisionSelectorSchema>;
+
+export const decisionComparisonSummaryQuerySchema = decisionSelectorScopeSchema.extend({
+  decisionKey: z.string().trim().min(1).max(120),
+  sinceUtc: z.string().datetime().optional(),
+});
+export type DecisionComparisonSummaryQuery = z.infer<typeof decisionComparisonSummaryQuerySchema>;
+
+export interface DecisionSelectorStateDto {
+  configured: {
+    id: string;
+    revision: number;
+    scopeNodeId: string | null;
+    environment: string;
+    mode: DomainDecisionMode;
+    canaryPercentage: number;
+    comparisonSamplePercentage: number;
+  } | null;
+  effective: {
+    id: string | null;
+    revision: number | null;
+    mode: DomainDecisionMode;
+    canaryPercentage: number;
+    comparisonSamplePercentage: number;
+  };
+}
+
+export interface DecisionComparisonSummaryDto {
+  decisionKey: string;
+  environment: string;
+  sinceUtc: string;
+  total: number;
+  counts: Array<{ mode: DomainDecisionMode; category: string; count: number }>;
+}

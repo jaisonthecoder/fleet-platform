@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import { domainDecisionComparison, domainDecisionSelector, hierarchyNode } from '../../../common/database/schema';
@@ -40,7 +40,10 @@ export class DomainDecisionSelectorService {
     const rows = await this.db
       .select({ selector: domainDecisionSelector, path: hierarchyNode.path })
       .from(domainDecisionSelector)
-      .leftJoin(hierarchyNode, eq(hierarchyNode.id, domainDecisionSelector.scopeNodeId))
+      .leftJoin(hierarchyNode, and(
+        eq(hierarchyNode.id, domainDecisionSelector.scopeNodeId),
+        eq(hierarchyNode.organizationId, organizationId),
+      ))
       .where(
         and(
           eq(domainDecisionSelector.organizationId, organizationId),
@@ -76,8 +79,24 @@ export class DomainDecisionSelectorService {
     canaryPercentage = 0,
     comparisonSamplePercentage = 100,
     updatedBy?: string,
-  ): Promise<void> {
-    await this.db.transaction(async (tx) => {
+    expectedRevision?: number,
+  ): Promise<typeof domainDecisionSelector.$inferSelect> {
+    if (canaryPercentage < 0 || canaryPercentage > 100) {
+      throw new BadRequestException({ title: 'Invalid canary percentage', reasons: ['decision-selector-canary-percentage-out-of-range'] });
+    }
+    if (comparisonSamplePercentage < 0 || comparisonSamplePercentage > 100) {
+      throw new BadRequestException({ title: 'Invalid comparison sample percentage', reasons: ['decision-selector-comparison-percentage-out-of-range'] });
+    }
+    return this.db.transaction(async (tx) => {
+      if (scopeNodeId) {
+        const scope = await tx.select({ id: hierarchyNode.id }).from(hierarchyNode).where(and(
+          eq(hierarchyNode.id, scopeNodeId),
+          eq(hierarchyNode.organizationId, organizationId),
+          sql`${hierarchyNode.validFrom} <= now()`,
+          sql`(${hierarchyNode.validTo} IS NULL OR ${hierarchyNode.validTo} > now())`,
+        )).limit(1);
+        if (!scope[0]) throw new BadRequestException({ title: 'Unknown decision selector scope', reasons: [`decision-selector-scope-invalid:${scopeNodeId}`] });
+      }
       const predicate = and(
         eq(domainDecisionSelector.organizationId, organizationId),
         eq(domainDecisionSelector.environment, environment),
@@ -86,6 +105,13 @@ export class DomainDecisionSelectorService {
       );
       const existing = await tx.select().from(domainDecisionSelector).where(predicate).limit(1);
       const before = existing[0] ?? null;
+      const actualRevision = before?.revision ?? 0;
+      if (expectedRevision !== undefined && expectedRevision !== actualRevision) {
+        throw new ConflictException({
+          title: 'Decision selector changed',
+          reasons: [`decision-selector-revision-conflict:expected-${expectedRevision}:actual-${actualRevision}`],
+        });
+      }
       const rows = before
         ? await tx.update(domainDecisionSelector).set({ mode, canaryPercentage, comparisonSamplePercentage, updatedBy: updatedBy ?? null, revision: sql`${domainDecisionSelector.revision} + 1`, updatedAtUtc: new Date() }).where(eq(domainDecisionSelector.id, before.id)).returning()
         : await tx.insert(domainDecisionSelector).values({ organizationId, decisionKey, scopeNodeId, environment, mode, canaryPercentage, comparisonSamplePercentage, updatedBy: updatedBy ?? null }).returning();
@@ -93,6 +119,7 @@ export class DomainDecisionSelectorService {
         { organizationId, actorRef: updatedBy ?? 'system', action: 'DOMAIN_DECISION_SELECTOR_CHANGED', entityRef: `decision-selector:${rows[0].id}`, before, after: rows[0] },
         tx,
       );
+      return rows[0];
     });
   }
 }

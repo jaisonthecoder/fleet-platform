@@ -146,10 +146,26 @@ export const person = fleet.table(
     employmentStatus: text('employment_status').notNull().default('Active'),
     licenceNumber: text('licence_number'),
     licenceExpiry: date('licence_expiry'),
+    /** Provenance of the licence value: 'hcm' | 'manual' | 'seed'. */
+    licenceSource: text('licence_source'),
+    /** True once HCM-sourced or steward-verified (self-entry stays false). */
+    licenceVerified: boolean('licence_verified').notNull().default(false),
+    licenceUpdatedByPersonId: uuid('licence_updated_by').references(
+      (): AnyPgColumn => person.id,
+    ),
+    emiratesId: text('emirates_id'),
+    emiratesIdExpiry: date('emirates_id_expiry'),
+    emiratesIdSource: text('emirates_id_source'),
+    emiratesIdVerified: boolean('emirates_id_verified').notNull().default(false),
+    emiratesIdUpdatedByPersonId: uuid('emirates_id_updated_by').references(
+      (): AnyPgColumn => person.id,
+    ),
     lineManagerPersonId: uuid('line_manager_person_id').references((): AnyPgColumn => person.id),
     homePoolNodeId: uuid('home_pool_node_id').references(() => hierarchyNode.id),
     isProfessionalDriver: boolean('is_professional_driver').notNull().default(false),
     sponsor: text('sponsor'),
+    /** Last successful HCM sync for this person (distinct from row updated_at). */
+    lastHcmSyncedAt: timestamp('last_hcm_synced_at', { withTimezone: true }),
     ...timestamps(),
   },
   (t) => [

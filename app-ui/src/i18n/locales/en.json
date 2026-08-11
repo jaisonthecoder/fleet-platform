@@ -371,6 +371,37 @@
     "bookingDescription": "A calm-register screen built from the new tokens and patterns.",
     "bookingAction": "Open booking sample"
   },
+  "profile": {
+    "eyebrow": "Your workspace",
+    "title": "My profile",
+    "subtitle": "View your driver credentials and keep them current so bookings aren't blocked.",
+    "loading": "Loading your profile…",
+    "errorTitle": "Profile unavailable",
+    "errorBody": "We couldn't load your profile. Please try again.",
+    "credentials": {
+      "title": "Driving credentials",
+      "licence": "Driving licence",
+      "emiratesId": "Emirates ID",
+      "licenceNumber": "Licence number",
+      "licenceExpiry": "Licence expiry",
+      "emiratesIdNumber": "Emirates ID number",
+      "emiratesIdExpiry": "Emirates ID expiry",
+      "expires": "Expires {{date}}",
+      "notProvided": "Not provided",
+      "verified": "Verified",
+      "unverified": "Unverified — pending review",
+      "edit": "Update",
+      "saving": "Saving…",
+      "saved": "Your credentials were updated.",
+      "saveFailed": "We couldn't save your credentials. Please try again.",
+      "status": {
+        "Missing": "Missing",
+        "Valid": "Valid",
+        "ExpiringSoon": "Expiring soon",
+        "Expired": "Expired"
+      }
+    }
+  },
   "showcase": {
     "title": "Design system",
     "subtitle": "One type family, tokenised colour, and the signature patterns — toggle theme and language in the header to verify light/dark and RTL.",
@@ -691,6 +722,13 @@
         "booking-consent-version-changed": "The consent template changed. Review the replacement text and agree again.",
         "booking-consent-template-unavailable": "The consent document is temporarily unavailable. Please try again shortly.",
         "booking-eligibility-denied": "This vehicle or driver failed a compliance check (for example an expired document) and cannot be booked.",
+        "hcm-data-stale": "Your profile data hasn't synced recently. Please try again shortly, or contact HR if this persists.",
+        "licence-expired": "Your driving licence has expired. Update your licence details before booking.",
+        "licence-missing": "No driving licence is on file. Add your licence details to book.",
+        "hard-block-registration-expired": "This vehicle's registration (Mulkiya) has expired. Choose another vehicle or contact Fleet.",
+        "hard-block-insurance-expired": "This vehicle's insurance has expired. Choose another vehicle or contact Fleet.",
+        "employment-inactive": "Your employment status is not active. Please contact HR.",
+        "access-blocked": "Your access is currently blocked. Contact HSE or your Fleet administrator to resolve it.",
         "booking-vehicle-not-bookable": "This vehicle is no longer available for booking. Return to results and choose another.",
         "booking-vehicle-unavailable": "This vehicle is no longer available for the selected window. Return to results and choose another.",
         "booking-command-in-progress": "A previous attempt is still being processed. Wait a moment and try again.",

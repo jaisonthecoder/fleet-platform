@@ -4,6 +4,7 @@ import type { Principal } from '../../../common/auth/principal';
 import type { EligibilityResult } from '../../../contracts/compliance.contract';
 import type { PolicyEvaluationResponse } from '../../../contracts/policy-evaluation.contract';
 import { BookingService } from './booking.service';
+import { LegacyBookingApprovalRouteAdapter } from '../internal/legacy-booking-approval-route.adapter';
 
 /** Extracts the RFC-7807 reason codes from a rejected request. */
 async function reasonsOf(promise: Promise<unknown>): Promise<string[]> {
@@ -379,6 +380,7 @@ function build() {
     outbox as never,
     scopeAuthorization as never,
     consentTemplates as never,
+    new LegacyBookingApprovalRouteAdapter(),
   );
   return { service, repo, eligibility, workflow, audit, outbox, scopeAuthorization, consentTemplates };
 }
@@ -1068,6 +1070,19 @@ describe('BookingService', () => {
     expect(replay).toEqual(first);
     expect(workflow.starts).toBe(1);
     expect(repo.commands).toHaveLength(1);
+    expect(repo.policyDecisions).toHaveLength(1);
+    expect(repo.policyDecisions[0]).toMatchObject({
+      decisionKey: 'booking-approval-chain',
+      correlationId: 'booking:b1:submit:submit-replay-key',
+      provenance: {
+        decisionKey: 'booking-approval-chain',
+        consumer: 'bookings',
+        subjectRef: 'booking:b1',
+        mode: 'legacy-only',
+        source: 'legacy',
+        factFingerprint: 'test-fingerprint',
+      },
+    });
   });
 
   it('SoD-01: a requester cannot approve their own booking', async () => {

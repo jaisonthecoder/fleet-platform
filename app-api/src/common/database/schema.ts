@@ -25,3 +25,4 @@ export * from './schema/policy.schema';
 export * from './schema/workflow.schema';
 export * from './schema/audit.schema';
 export * from './schema/telematics.schema';
+export * from './schema/document.schema';

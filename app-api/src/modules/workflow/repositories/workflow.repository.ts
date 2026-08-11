@@ -168,6 +168,7 @@ export class WorkflowRepository {
     return executor
       .select({
         instanceId: workflowInstance.id,
+        organizationId: workflowInstance.organizationId,
         subjectRef: workflowInstance.subjectRef,
         stepSequence: workflowStep.sequence,
         slaDueAt: workflowStep.slaDueAt,

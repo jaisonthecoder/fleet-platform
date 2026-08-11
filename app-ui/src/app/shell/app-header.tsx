@@ -160,6 +160,7 @@ function useBreadcrumbTrail(): BreadcrumbItem[] {
 export function AppHeader() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { lang = defaultLanguage } = useParams()
   const breadcrumbTrail = useBreadcrumbTrail()
   const { me, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -261,7 +262,9 @@ export function AppHeader() {
                 </div>
               ) : null}
             </DropdownMenuLabel>
-            <DropdownMenuItem>{t('common.profile')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate(`/${lang}/profile`)}>
+              {t('common.profile')}
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"

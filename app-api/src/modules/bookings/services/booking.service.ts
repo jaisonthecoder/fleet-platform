@@ -54,6 +54,7 @@ import {
 import { toDbException } from '../internal/pg-error';
 import { BookingsRepository } from '../repositories/bookings.repository';
 import { ConsentTemplateProvider } from './consent-template.provider';
+import { LegacyBookingApprovalRouteAdapter } from '../internal/legacy-booking-approval-route.adapter';
 
 type BookingRow = NonNullable<Awaited<ReturnType<BookingsRepository['findById']>>>;
 const TERMINAL: ReadonlySet<string> = new Set([
@@ -126,6 +127,7 @@ export class BookingService {
     private readonly outbox: OutboxService,
     private readonly scopeAuthorization: ScopeAuthorizationService,
     private readonly consentTemplates: ConsentTemplateProvider,
+    private readonly legacyApprovalRoutes: LegacyBookingApprovalRouteAdapter,
   ) {}
 
   /** Creates a Draft booking (no number, reserves nothing) after buffer/duration checks. */
@@ -368,7 +370,10 @@ export class BookingService {
     const verdict = await this.eligibility.evaluate({
       driverPersonId: existing.driverPersonId,
       vehicleId: existing.vehicleId,
-    }, actor.organizationId);
+    }, actor.organizationId, {
+      correlationId: `booking:${id}:eligibility:${commandKey}`,
+      effectiveAtUtc: new Date().toISOString(),
+    });
     if (verdict.decision !== 'ALLOW') {
       await this.audit.record({
         actorRef,
@@ -510,7 +515,8 @@ export class BookingService {
     const vehicle = await this.repo.findVehicle(existing.vehicleId);
     if (!vehicle) throw new BadRequestException({ title: 'Unknown vehicle', reasons: [`fk-violation:vehicle:${existing.vehicleId}`] });
     const decisionContext = await this.decisionContext(existing.vehicleId, vehicle.organizationId, existing.pickupAtUtc);
-    const routeDecision = await this.approvalRoute(durationHours(existing.pickupAtUtc, existing.returnAtUtc), decisionContext);
+    const correlationId = `booking:${id}:submit:${commandKey}`;
+    const routeDecision = await this.approvalRoute(durationHours(existing.pickupAtUtc, existing.returnAtUtc), decisionContext, correlationId, `booking:${id}`);
     const route = routeDecision.route;
     const requester = await this.repo.findPerson(existing.requestedByPersonId);
     const approvalAt = new Date();
@@ -527,7 +533,8 @@ export class BookingService {
       );
     }
     const approvers = resolveApprovers(route, existing.requestedByPersonId, (r) => roleToPerson.get(r) ?? null);
-    if (approvers.length === 0) {
+    const requiredSteps = new Set(route).size;
+    if (approvers.length === 0 || approvers.length !== requiredSteps) {
       throw new UnprocessableEntityException({
         title: 'No approver could be resolved',
         reasons: [BOOKING_REASON.noApprover],
@@ -563,9 +570,10 @@ export class BookingService {
           {
             organizationId: locked.organizationId,
             workflowType: 'booking-approval',
+            definitionKey: 'legacy-booking-approval-v1',
             subjectRef: `booking:${locked.id}`,
             slaMinutes: 24 * 60,
-            steps: approvers.map((assigneePersonId) => ({ assigneePersonId })),
+            steps: approvers.map((assigneePersonId, index) => ({ assigneePersonId, assignmentKey: route[index]! })),
           },
           tx,
         );
@@ -580,15 +588,15 @@ export class BookingService {
             slaDueAt: step.slaDueAt ? new Date(step.slaDueAt) : null,
           })),
         }, tx);
+        await this.repo.insertPolicyDecision(
+          { organizationId: locked.organizationId, bookingId: locked.id, decisionKey: 'booking-approval-chain', correlationId, provenance: routeDecision.provenance },
+          tx,
+        );
         const updated = await this.repo.update(
           locked.id,
           {
             workflowInstanceId: view.id,
-            policyProvenance: this.mergeProvenance(
-              existing.policyProvenance,
-              'bookingApprovalChain',
-              routeDecision.response,
-            ),
+            policyProvenance: { ...this.provenanceObject(existing.policyProvenance), bookingApprovalChain: routeDecision.provenance },
           },
           tx,
         );
@@ -1677,10 +1685,18 @@ export class BookingService {
     return { hours: response.value, response, provenance: result.provenance };
   }
 
-  private async approvalRoute(hours: number, decisionContext: BookingDecisionContext) {
-    const response = await this.pdp.evaluate({ ...decisionContext, ruleType: 'booking-approval-chain', context: { durationHours: hours } });
+  private async approvalRoute(hours: number, decisionContext: BookingDecisionContext, correlationId: string, subjectRef: string) {
+    const request = { ...decisionContext, ruleType: 'booking-approval-chain', context: { durationHours: hours } };
+    const result = await this.decisions.evaluate(
+      { consumer: 'bookings', subjectRef, correlationId, request },
+      async () => this.legacyApprovalRoutes.evaluate({
+        durationHours: hours,
+        requestedScopeNodeId: decisionContext.scopeNodeId,
+      }),
+    );
+    const response = result.response;
     if (response.decision !== 'ROUTE_TO' || !response.route?.length) throw this.invalidPolicyValue('booking-approval-chain', response);
-    return { route: response.route, response };
+    return { route: response.route, response, provenance: result.provenance };
   }
 
   private async reConsentToleranceMinutes(decisionContext: BookingDecisionContext, correlationId: string, subjectRef: string) {

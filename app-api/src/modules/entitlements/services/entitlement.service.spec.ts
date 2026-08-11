@@ -217,6 +217,23 @@ class FakePdp {
   }
 }
 
+class FakeDecisions {
+  constructor(private readonly pdp: FakePdp) {}
+  async evaluate(input: { request: { ruleType: string; context: Record<string, unknown> } }) {
+    const response = await this.pdp.evaluate(input.request);
+    return {
+      response,
+      provenance: {
+        decisionKey: input.request.ruleType,
+        factFingerprint: createHash('sha256').update(JSON.stringify(input.request.context)).digest('hex'),
+        evaluatedAtUtc: new Date().toISOString(),
+        source: 'new',
+        mode: 'new-only',
+      },
+    };
+  }
+}
+
 class FakeWorkflow {
   decideStatus = 'Approved';
   async start() {
@@ -313,7 +330,9 @@ function build() {
   });
   const service = new EntitlementService(
     repo as never,
-    pdp as never,
+    new FakeDecisions(pdp) as never,
+    { evaluate: (request: { ruleType: string }) => pdp.evaluate(request) } as never,
+    { evaluate: (requestType: string) => pdp.evaluate({ ruleType: requestType === 'LongTerm' ? 'entitlement-approval-chain' : 'entitlement-approval-chain' }) } as never,
     workflow as never,
     audit as never,
     outbox as never,
@@ -364,7 +383,7 @@ describe('EntitlementService', () => {
   });
 
   it('returns permitted classes and bounded safe Vehicles from the manual policy', async () => {
-    const { service } = build();
+    const { service, repo } = build();
     const result = await service.eligibilityPreview({
       requestType: 'LongTerm',
       driverOption: 'WithoutDriver',
@@ -387,6 +406,11 @@ describe('EntitlementService', () => {
       }],
     });
     expect(JSON.stringify(result)).not.toMatch(/vin|vendor|lease|insurance|mulkiya/i);
+    expect(repo.previews.get('preview-2')?.decisionProvenance).toMatchObject({
+      decisionKey: 'dedicated-vehicle-eligibility',
+      source: 'new',
+      mode: 'new-only',
+    });
   });
 
   it('returns a policy denial without exposing Vehicle options', async () => {

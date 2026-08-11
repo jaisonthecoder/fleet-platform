@@ -28,6 +28,57 @@ export interface MeResponse {
   roles: RoleAtScope[];
 }
 
+/** Computed lifecycle status of one driver credential (autofill/warnings). */
+export type CredentialStatus = 'Missing' | 'Valid' | 'ExpiringSoon' | 'Expired';
+
+/** One credential field's value + computed status + provenance. */
+export interface CredentialFieldDto {
+  number: string | null;
+  expiry: string | null;
+  status: CredentialStatus;
+  /** 'hcm' | 'manual' | 'seed' | null. */
+  source: string | null;
+  /** True when HCM-sourced or steward-verified; self-entry stays false. */
+  verified: boolean;
+}
+
+/**
+ * `GET /me/credentials` — the caller's own driver-credential status, used by the
+ * UI to auto-fill known values and warn before expiry.
+ */
+export interface MeCredentialsResponse {
+  licence: CredentialFieldDto;
+  emiratesId: CredentialFieldDto;
+}
+
+/** ISO date-only (YYYY-MM-DD) validator for credential expiries. */
+const isoDateString = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'expiry must be an ISO date (YYYY-MM-DD)');
+
+/**
+ * Manual credential capture (licence / Emirates ID number + expiry). Used by the
+ * employee for their **own** record (self-service) and by an admin/steward for
+ * any person. At least one field is required.
+ */
+export const updateCredentialsSchema = z
+  .object({
+    licenceNumber: z.string().trim().min(1).max(64).optional(),
+    licenceExpiry: isoDateString.optional(),
+    emiratesId: z.string().trim().min(1).max(64).optional(),
+    emiratesIdExpiry: isoDateString.optional(),
+  })
+  .strict()
+  .refine(
+    (d) =>
+      d.licenceNumber !== undefined ||
+      d.licenceExpiry !== undefined ||
+      d.emiratesId !== undefined ||
+      d.emiratesIdExpiry !== undefined,
+    { message: 'at least one credential field is required' },
+  );
+export type UpdateCredentials = z.infer<typeof updateCredentialsSchema>;
+
 /** A node in the configurable hierarchy tree (nested for the UI). */
 export interface HierarchyNodeDto {
   id: string;

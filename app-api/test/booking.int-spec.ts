@@ -13,12 +13,14 @@ import {
   domainDecisionComparison,
   domainDecisionSelector,
   person,
+  roleAssignment,
   vehicle,
   vehicleHierarchyAssignment,
 } from '../src/common/database/schema';
 import { AuditService } from '../src/modules/platform/services/audit.service';
 import { OutboxService } from '../src/common/messaging/outbox.service';
 import { BookingService } from '../src/modules/bookings/services/booking.service';
+import { DomainDecisionSelectorService } from '../src/modules/policy/services/domain-decision.service';
 import { createCoreHierarchyFixture, type CoreHierarchyFixture } from './support/core-fixtures';
 
 /**
@@ -38,6 +40,7 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
   let audit: AuditService;
   let outbox: OutboxService;
   let db: DrizzleDatabase;
+  let selector: DomainDecisionSelectorService;
 
   const suffix = randomUUID().slice(0, 8);
   const future = (day: number, hour: number) => `2999-01-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:00:00.000Z`;
@@ -54,7 +57,8 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
   const bookingIds: string[] = [];
   const selectorIds: string[] = [];
   const delegationIds: string[] = [];
-  const shadowDecisionKeys = ['booking-buffer', 'max-booking-duration'];
+  const draftShadowDecisionKeys = ['booking-buffer', 'max-booking-duration'];
+  const shadowDecisionKeys = [...draftShadowDecisionKeys, 'booking-approval-chain'];
 
   const approverPrincipal = (personId: string, role: Principal['roles'][number]['role'] = 'Approver'): Principal => ({
     organizationId: DEFAULT_ORGANIZATION_ID,
@@ -81,6 +85,7 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
     audit = ctx.get(AuditService);
     outbox = ctx.get(OutboxService);
     db = ctx.get<DrizzleDatabase>(DRIZZLE);
+    selector = ctx.get(DomainDecisionSelectorService);
 
     hierarchy = await createCoreHierarchyFixture(db, { suiteCode: `booking_${suffix}` });
     [poolNode] = hierarchy.locationIds;
@@ -445,9 +450,9 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
         eq(domainDecisionComparison.organizationId, DEFAULT_ORGANIZATION_ID),
         eq(domainDecisionComparison.consumer, 'bookings'),
         eq(domainDecisionComparison.requestedScopeNodeId, poolNode),
-        inArray(domainDecisionComparison.decisionKey, shadowDecisionKeys),
+        inArray(domainDecisionComparison.decisionKey, draftShadowDecisionKeys),
       ));
-    expect(comparisons).toEqual(expect.arrayContaining(shadowDecisionKeys.map((decisionKey) => ({
+    expect(comparisons).toEqual(expect.arrayContaining(draftShadowDecisionKeys.map((decisionKey) => ({
       decisionKey,
       mode: 'shadow',
     }))));
@@ -503,6 +508,22 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
             AND result_booking_id = ${id}) AS command_count
     `) as unknown as Array<{ workflow_count: number; command_count: number }>;
     expect(submitRows[0]).toMatchObject({ workflow_count: 1, command_count: 1 });
+    const approvalComparison = await db.select({
+      category: domainDecisionComparison.category,
+      mode: domainDecisionComparison.mode,
+    }).from(domainDecisionComparison).where(and(
+      eq(domainDecisionComparison.organizationId, DEFAULT_ORGANIZATION_ID),
+      eq(domainDecisionComparison.decisionKey, 'booking-approval-chain'),
+      eq(domainDecisionComparison.consumer, 'bookings'),
+      eq(domainDecisionComparison.requestedScopeNodeId, poolNode),
+    ));
+    expect(approvalComparison).toContainEqual({ category: 'MATCH', mode: 'shadow' });
+    const approvalDecision = await db.execute(sql`
+      SELECT count(*)::int AS count
+      FROM fleet.booking_policy_decision
+      WHERE booking_id = ${id} AND decision_key = 'booking-approval-chain'
+    `) as unknown as Array<{ count: number }>;
+    expect(approvalDecision[0]?.count).toBe(1);
     const lineage = await db.execute(sql`
       SELECT wi.definition_deployment_id, count(bars.id)::int AS route_steps
       FROM fleet.workflow_instance wi
@@ -544,6 +565,104 @@ describe('booking core loop (integration — requires DB + Redis)', () => {
 
     // The tamper-evident audit chain stays intact across the loop.
     expect(await audit.verifyChain()).toBe(true);
+  });
+
+  it('rolls back new Booking routes while an in-flight workflow remains pinned', async () => {
+    const selectorRow = await db.select().from(domainDecisionSelector).where(and(
+      eq(domainDecisionSelector.organizationId, DEFAULT_ORGANIZATION_ID),
+      eq(domainDecisionSelector.decisionKey, 'booking-approval-chain'),
+      eq(domainDecisionSelector.scopeNodeId, poolNode),
+      eq(domainDecisionSelector.environment, 'default'),
+    )).limit(1);
+    expect(selectorRow[0]).toBeDefined();
+    let selectorRevision = selectorRow[0]!.revision;
+
+    const reserveAndSubmit = async (pickupAtUtc: string, returnAtUtc: string, keyPrefix: string) => {
+      const id = await draft(okVehicleId, pickupAtUtc, returnAtUtc);
+      await bookings.signConsent(id, {
+        driverPersonId: driverId,
+        consentDocumentVersion: 'booking-consent-test-v1',
+      }, `person:${driverId}`, driverPrincipal, `${keyPrefix}-consent-${randomUUID()}`);
+      return bookings.submit(id, `person:${driverId}`, driverPrincipal, `${keyPrefix}-submit-${randomUUID()}`);
+    };
+
+    try {
+      await selector.setMode(
+        DEFAULT_ORGANIZATION_ID, 'booking-approval-chain', poolNode, 'default',
+        'new-primary-with-legacy-shadow', 100, 100, 'rollback-test', selectorRevision,
+      );
+      selectorRevision += 1;
+      const newPrimary = await reserveAndSubmit('2999-03-01T08:00:00.000Z', '2999-03-01T10:00:00.000Z', 'new-primary');
+      const beforeRollback = await db.execute(sql`
+        SELECT status, definition_deployment_id AS "deploymentId"
+        FROM fleet.workflow_instance WHERE id = ${newPrimary.workflowInstanceId}::uuid
+      `) as unknown as Array<{ status: string; deploymentId: string }>;
+
+      await selector.setMode(
+        DEFAULT_ORGANIZATION_ID, 'booking-approval-chain', poolNode, 'default',
+        'legacy-only', 0, 0, 'rollback-test', selectorRevision,
+      );
+      selectorRevision += 1;
+      const legacyAfterRollback = await reserveAndSubmit('2999-03-02T08:00:00.000Z', '2999-03-02T10:00:00.000Z', 'legacy-rollback');
+      const afterRollback = await db.execute(sql`
+        SELECT status, definition_deployment_id AS "deploymentId"
+        FROM fleet.workflow_instance WHERE id = ${newPrimary.workflowInstanceId}::uuid
+      `) as unknown as Array<{ status: string; deploymentId: string }>;
+      expect(afterRollback[0]).toEqual(beforeRollback[0]);
+
+      const sources = await db.execute(sql`
+        SELECT booking_id AS "bookingId", provenance->>'source' AS source
+        FROM fleet.booking_policy_decision
+        WHERE booking_id IN (${newPrimary.id}::uuid, ${legacyAfterRollback.id}::uuid)
+          AND decision_key = 'booking-approval-chain'
+      `) as unknown as Array<{ bookingId: string; source: string }>;
+      expect(sources).toEqual(expect.arrayContaining([
+        { bookingId: newPrimary.id, source: 'new' },
+        { bookingId: legacyAfterRollback.id, source: 'legacy' },
+      ]));
+    } finally {
+      const current = await db.select({ revision: domainDecisionSelector.revision }).from(domainDecisionSelector).where(and(
+        eq(domainDecisionSelector.organizationId, DEFAULT_ORGANIZATION_ID),
+        eq(domainDecisionSelector.decisionKey, 'booking-approval-chain'),
+        eq(domainDecisionSelector.scopeNodeId, poolNode),
+        eq(domainDecisionSelector.environment, 'default'),
+      )).limit(1);
+      await selector.setMode(
+        DEFAULT_ORGANIZATION_ID, 'booking-approval-chain', poolNode, 'default',
+        'shadow', 0, 100, 'rollback-test', current[0]!.revision,
+      );
+    }
+  });
+
+  it('records matching route parity but creates no workflow when a required approver is unavailable', async () => {
+    const removed = await db.delete(roleAssignment).where(and(
+      eq(roleAssignment.organizationId, DEFAULT_ORGANIZATION_ID),
+      eq(roleAssignment.scopeNodeId, poolNode),
+      eq(roleAssignment.role, 'FleetManager'),
+    )).returning();
+    let id = '';
+    try {
+      id = await draft(okVehicleId, '2999-02-01T08:00:00.000Z', '2999-02-02T08:00:00.000Z');
+      await bookings.signConsent(id, {
+        driverPersonId: driverId,
+        consentDocumentVersion: 'booking-consent-test-v1',
+      }, `person:${driverId}`, driverPrincipal, `unavailable-consent-${randomUUID()}`);
+      await expect(bookings.submit(
+        id, `person:${driverId}`, driverPrincipal, `unavailable-submit-${randomUUID()}`,
+      )).rejects.toMatchObject({ response: { reasons: expect.arrayContaining(['booking-no-approver-resolvable']) } });
+      const comparison = await db.select({ category: domainDecisionComparison.category })
+        .from(domainDecisionComparison)
+        .where(and(
+          eq(domainDecisionComparison.organizationId, DEFAULT_ORGANIZATION_ID),
+          eq(domainDecisionComparison.decisionKey, 'booking-approval-chain'),
+          eq(domainDecisionComparison.consumer, 'bookings'),
+        ));
+      expect(comparison).toContainEqual({ category: 'MATCH' });
+      const workflows = await db.execute(sql`SELECT count(*)::int AS count FROM fleet.workflow_instance WHERE subject_ref = ${`booking:${id}`}`) as unknown as Array<{ count: number }>;
+      expect(workflows[0]?.count).toBe(0);
+    } finally {
+      if (removed.length) await db.insert(roleAssignment).values(removed);
+    }
   });
 
   it('rejects stale Booking and workflow-step versions before a decision', async () => {

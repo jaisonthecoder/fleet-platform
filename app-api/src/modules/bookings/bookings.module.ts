@@ -7,6 +7,7 @@ import { ConsentAdministrationModule } from '../consent-administration/consent-a
 import { BookingsController } from './controllers/bookings.controller';
 import { BookingsRepository } from './repositories/bookings.repository';
 import { BookingService } from './services/booking.service';
+import { LegacyBookingApprovalRouteAdapter } from './internal/legacy-booking-approval-route.adapter';
 import {
   ConsentTemplateProvider,
   GovernedConsentTemplateProvider,
@@ -25,6 +26,7 @@ import {
   providers: [
     BookingsRepository,
     BookingService,
+    LegacyBookingApprovalRouteAdapter,
     {
       provide: ConsentTemplateProvider,
       useClass: GovernedConsentTemplateProvider,

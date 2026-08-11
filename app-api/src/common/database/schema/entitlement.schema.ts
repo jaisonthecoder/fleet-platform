@@ -31,6 +31,7 @@ export const entitlementEligibilityPreview = fleet.table(
     policyRuleId: uuid('policy_rule_id').notNull().references(() => policyRule.id),
     policyVersionId: uuid('policy_version_id').notNull().references(() => policyVersion.id),
     policyVersion: text('policy_version').notNull(),
+    decisionProvenance: jsonb('decision_provenance'),
     decision: text('decision').notNull(),
     reasons: text('reasons').array().notNull().default(sql`'{}'::text[]`),
     permittedVehicleClasses: text('permitted_vehicle_classes').array().notNull().default(sql`'{}'::text[]`),

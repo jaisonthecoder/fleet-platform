@@ -7,16 +7,19 @@ describe('EscalationService', () => {
     const db = {
       insert: () => ({
         values: (vals: Record<string, unknown>) => ({
-          returning: async () => {
-            captured.push(vals);
-            return [{ id: 'sw-1' }];
-          },
+          onConflictDoNothing: () => ({
+            returning: async () => {
+              captured.push(vals);
+              return [{ id: 'sw-1' }];
+            },
+          }),
         }),
       }),
     } as unknown as DrizzleDatabase;
 
     const service = new EscalationService(db);
     const id = await service.escalate({
+      organizationId: 'org-1',
       workType: ESCALATION_WORK_TYPE.pdpFailSafe,
       subjectRef: 'pdp:driver-eligibility',
       reason: 'no active rule',
@@ -40,6 +43,7 @@ describe('EscalationService', () => {
     const service = new EscalationService(db);
     await expect(
       service.escalate({
+        organizationId: 'org-1',
         workType: ESCALATION_WORK_TYPE.workflowSlaTimeout,
         subjectRef: 'wf-1',
         reason: 'sla',

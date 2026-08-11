@@ -53,7 +53,39 @@ const KNOWN_CONSENT_REASONS = new Set([
   'booking-vehicle-unavailable',
   'booking-command-in-progress',
   'booking-idempotency-key-reused',
+  // Compliance/eligibility sub-reasons appended after the umbrella code.
+  'hcm-data-stale',
+  'licence-expired',
+  'licence-missing',
+  'hard-block-registration-expired',
+  'hard-block-insurance-expired',
+  'employment-inactive',
 ])
+
+/** Collapses `access-blocked:<detail>` to its i18n key; others pass through. */
+function consentReasonKey(code: string): string {
+  return code.startsWith('access-blocked') ? 'access-blocked' : code
+}
+
+/** True when the consent step has a specific localized message for the code. */
+function isResolvableConsentReason(code: string): boolean {
+  return code.startsWith('access-blocked') || KNOWN_CONSENT_REASONS.has(code)
+}
+
+/**
+ * Picks the i18n key for the most specific resolvable consent reason, preferring
+ * a concrete compliance sub-reason over the generic `booking-eligibility-denied`
+ * umbrella that the server always lists first.
+ */
+export function pickConsentReasonKey(reasons: string[]): string | null {
+  const chosen =
+    reasons.find(
+      (reason) =>
+        reason !== 'booking-eligibility-denied' &&
+        isResolvableConsentReason(reason),
+    ) ?? reasons.find(isResolvableConsentReason)
+  return chosen ? consentReasonKey(chosen) : null
+}
 
 /** Converts a Date to the local datetime-input representation. */
 function toLocalInput(date: Date): string {
@@ -139,10 +171,8 @@ export function BookVehiclePage() {
     const error =
       submitBooking.error ?? signConsent.error ?? reconcileBooking.error
     if (error instanceof ApiRequestError) {
-      const known = error.reasons?.find((reason) =>
-        KNOWN_CONSENT_REASONS.has(reason),
-      )
-      if (known) return t(`booking.consent.reasons.${known}`)
+      const key = pickConsentReasonKey(error.reasons ?? [])
+      if (key) return t(`booking.consent.reasons.${key}`)
     }
     return t('booking.consent.commandError')
   }

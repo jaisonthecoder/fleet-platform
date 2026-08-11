@@ -10,6 +10,10 @@ import { EntitlementService } from './services/entitlement.service';
 import { EntitlementConsentTemplateProvider, GovernedEntitlementConsentTemplateProvider } from './services/entitlement-consent-template.provider';
 import { EntitlementBsdWorker } from './services/entitlement-bsd.worker';
 import { EntitlementPreviewRetentionWorker } from './services/entitlement-preview-retention.worker';
+import {
+  LegacyDedicatedEligibilityAdapter,
+  LegacyEntitlementApprovalRouteAdapter,
+} from './internal/legacy-entitlement-decision.adapters';
 
 /**
  * Dedicated-vehicle entitlements (M5). Imports the in-process PDP (eligibility +
@@ -22,6 +26,8 @@ import { EntitlementPreviewRetentionWorker } from './services/entitlement-previe
   providers: [
     EntitlementsRepository,
     EntitlementService,
+    LegacyDedicatedEligibilityAdapter,
+    LegacyEntitlementApprovalRouteAdapter,
     EntitlementBsdWorker,
     EntitlementPreviewRetentionWorker,
     { provide: EntitlementConsentTemplateProvider, useClass: GovernedEntitlementConsentTemplateProvider },

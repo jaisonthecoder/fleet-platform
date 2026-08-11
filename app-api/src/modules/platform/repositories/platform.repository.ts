@@ -13,6 +13,20 @@ import {
 } from '../../../common/database/schema';
 import { DEFAULT_ORGANIZATION_ID } from '../../../common/database/schema';
 
+/** Typed set of person credential columns an admin/self update may write. */
+export interface PersonCredentialUpdate {
+  licenceNumber?: string;
+  licenceExpiry?: string;
+  licenceSource?: string;
+  licenceVerified?: boolean;
+  licenceUpdatedByPersonId?: string;
+  emiratesId?: string;
+  emiratesIdExpiry?: string;
+  emiratesIdSource?: string;
+  emiratesIdVerified?: boolean;
+  emiratesIdUpdatedByPersonId?: string;
+}
+
 /** Data access for the platform module (hides Drizzle; enforces active windows). */
 @Injectable()
 export class PlatformRepository {
@@ -22,6 +36,14 @@ export class PlatformRepository {
   async findPerson(id: string) {
     const rows = await this.db.select().from(person).where(eq(person.id, id)).limit(1);
     return rows[0];
+  }
+
+  /** Applies a manual credential update (licence / Emirates ID + provenance). */
+  async updatePersonCredentials(personId: string, set: PersonCredentialUpdate) {
+    await this.db
+      .update(person)
+      .set({ ...set, updatedAtUtc: new Date() })
+      .where(eq(person.id, personId));
   }
 
   /** Active role assignments for a person, joined to their scope node name. */

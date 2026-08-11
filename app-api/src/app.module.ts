@@ -23,6 +23,7 @@ import { HealthModule } from './modules/health/health.module';
 import { IdentityModule } from './modules/identity/identity.module';
 import { MigrationModule } from './modules/migration/migration.module';
 import { OrganizationAdministrationModule } from './modules/organization-administration/organization-administration.module';
+import { PersonDocumentsModule } from './modules/person-documents/person-documents.module';
 import { PlatformModule } from './modules/platform/platform.module';
 import { PolicyAdministrationModule } from './modules/policy-administration/policy-administration.module';
 import { TelematicsDomainModule } from './modules/telematics-domain/telematics-domain.module';
@@ -58,6 +59,7 @@ import { WorkflowModule } from './modules/workflow/workflow.module';
     EntitlementsModule,
     FinesModule,
     DashboardsModule,
+    PersonDocumentsModule,
     HealthModule,
   ],
   providers: [

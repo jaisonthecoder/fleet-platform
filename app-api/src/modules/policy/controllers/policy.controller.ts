@@ -55,6 +55,7 @@ export class PolicyController {
 
     if (verdict.reasons.includes(FAIL_SAFE_ESCALATE_REASON)) {
       await this.escalation.escalate({
+        organizationId: principal.organizationId,
         workType: ESCALATION_WORK_TYPE.pdpFailSafe,
         subjectRef: `pdp:${parsed.data.ruleType}`,
         reason: verdict.reasons.join('; '),

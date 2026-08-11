@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -39,15 +40,24 @@ export class WorkflowService {
 
   /** Starts a chain within the caller's transaction when an executor is supplied. */
   async start(input: StartWorkflow, executor?: WorkflowExecutor): Promise<WorkflowView> {
+    const expectedType = input.definitionKey === 'legacy-booking-approval-v1'
+      ? 'booking-approval'
+      : 'entitlement-approval';
+    if (input.workflowType !== expectedType) {
+      throw new BadRequestException({
+        title: 'Workflow definition does not match its type',
+        reasons: [`workflow-definition-type-mismatch:${input.definitionKey}:${input.workflowType}`],
+      });
+    }
     const snapshot = {
       workflowType: input.workflowType,
-      steps: input.steps.map((step, index) => ({ stepKey: `step-${index + 1}`, assigneePersonId: step.assigneePersonId })),
+      steps: input.steps.map((step, index) => ({ stepKey: `step-${index + 1}`, assignmentKey: step.assignmentKey })),
       slaMinutes: input.slaMinutes ?? null,
     };
     const definitionDeploymentId = await this.repo.ensureDeployment({
       organizationId: input.organizationId,
       workflowType: input.workflowType,
-      definitionKey: input.workflowType,
+      definitionKey: input.definitionKey,
       snapshot,
       sha256: createHash('sha256').update(JSON.stringify(snapshot)).digest('hex'),
     }, executor);
@@ -200,6 +210,7 @@ export class WorkflowService {
     const overdue = await this.repo.findOverduePendingSteps(now, executor);
     for (const row of overdue) {
       await this.escalation.escalate({
+        organizationId: row.organizationId,
         workType: ESCALATION_WORK_TYPE.workflowSlaTimeout,
         subjectRef: row.subjectRef,
         reason: `step ${row.stepSequence} passed SLA (${row.slaDueAt?.toISOString() ?? 'n/a'})`,

@@ -8,6 +8,8 @@ import { DRIZZLE } from '../src/common/database/database.constants';
 import type { DrizzleDatabase } from '../src/common/database/database.module';
 import {
   DEFAULT_ORGANIZATION_ID,
+  domainDecisionComparison,
+  domainDecisionSelector,
   person,
   roleAssignment,
   vehicle,
@@ -15,6 +17,7 @@ import {
 } from '../src/common/database/schema';
 import { AuditService } from '../src/modules/platform/services/audit.service';
 import { EntitlementService } from '../src/modules/entitlements/services/entitlement.service';
+import { DomainDecisionSelectorService } from '../src/modules/policy/services/domain-decision.service';
 import { createCoreHierarchyFixture, type CoreHierarchyFixture } from './support/core-fixtures';
 
 /**
@@ -27,6 +30,7 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
   let ctx: INestApplicationContext;
   let entitlements: EntitlementService;
   let audit: AuditService;
+  let selector: DomainDecisionSelectorService;
   let db: DrizzleDatabase;
 
   const suffix = randomUUID().slice(0, 8);
@@ -38,6 +42,7 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
   let vehicleId = '';
   let entitlementId = '';
   const entitlementIds: string[] = [];
+  const selectorIds: string[] = [];
 
   const rolePrincipal = (personId: string, role: Principal['roles'][number]['role']): Principal => ({
     organizationId: DEFAULT_ORGANIZATION_ID,
@@ -72,10 +77,31 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
     ctx = await NestFactory.createApplicationContext(AppModule, { logger: false });
     entitlements = ctx.get(EntitlementService);
     audit = ctx.get(AuditService);
+    selector = ctx.get(DomainDecisionSelectorService);
     db = ctx.get<DrizzleDatabase>(DRIZZLE);
 
     hierarchy = await createCoreHierarchyFixture(db, { suiteCode: `entitlement_${suffix}` });
     [poolNode] = hierarchy.locationIds;
+
+    const selectors = await db.insert(domainDecisionSelector).values([
+      {
+        organizationId: DEFAULT_ORGANIZATION_ID,
+        decisionKey: 'dedicated-vehicle-eligibility',
+        scopeNodeId: poolNode,
+        mode: 'shadow',
+        comparisonSamplePercentage: 100,
+        updatedBy: `entitlement-${suffix}`,
+      },
+      {
+        organizationId: DEFAULT_ORGANIZATION_ID,
+        decisionKey: 'entitlement-approval-chain',
+        scopeNodeId: poolNode,
+        mode: 'shadow',
+        comparisonSamplePercentage: 100,
+        updatedBy: `entitlement-${suffix}`,
+      },
+    ]).returning({ id: domainDecisionSelector.id });
+    selectorIds.push(...selectors.map(({ id }) => id));
 
     const [manager] = await db
       .insert(person)
@@ -149,6 +175,17 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
     }
     for (const id of [requesterId, managerId, ...routeApproverIds].filter(Boolean)) {
       await db.execute(sql`DELETE FROM fleet.person WHERE id = ${id}`);
+    }
+    await db.execute(sql`
+      DELETE FROM fleet.domain_decision_comparison
+      WHERE consumer IN ('entitlement-eligibility', 'entitlement-approval')
+        AND requested_scope_node_id = ${poolNode}::uuid
+    `);
+    if (selectorIds.length) {
+      await db.execute(sql`
+        DELETE FROM fleet.domain_decision_selector
+        WHERE id IN (${sql.join(selectorIds.map((id) => sql`${id}::uuid`), sql`, `)})
+      `);
     }
     await hierarchy?.cleanupHierarchy();
     await ctx?.close();
@@ -224,6 +261,13 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
     expect(result.policyVersionId).toMatch(/^[0-9a-f-]{36}$/);
     expect(result.previewId).toMatch(/^[0-9a-f-]{36}$/);
     expect(JSON.stringify(result)).not.toMatch(/vin|vendor|lease|insurance|mulkiya/i);
+    const eligibilityEvidence = await db.execute(sql`
+      SELECT decision_provenance->>'source' AS source,
+             decision_provenance->>'mode' AS mode
+      FROM fleet.entitlement_eligibility_preview
+      WHERE id = ${result.previewId}::uuid
+    `) as unknown as Array<{ source: string; mode: string }>;
+    expect(eligibilityEvidence).toEqual([{ source: 'legacy', mode: 'shadow' }]);
 
     const created = await entitlements.create({
       requestType: 'LongTerm',
@@ -262,6 +306,8 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
       current: {
         definitionDeploymentId: expect.stringMatching(/^[0-9a-f-]{36}$/),
         eligibilityPreviewId: result.previewId,
+        source: 'legacy',
+        mode: 'shadow',
       },
     });
     const approvalProvenance = submitted.approvalRouteProvenance as { current: { approvers: string[] } };
@@ -269,6 +315,16 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
       managerId,
       ...routeApproverIds,
     ]);
+    const comparisons = await db.execute(sql`
+      SELECT decision_key AS "decisionKey", category, mode
+      FROM fleet.domain_decision_comparison
+      WHERE requested_scope_node_id = ${poolNode}::uuid
+        AND consumer IN ('entitlement-eligibility', 'entitlement-approval')
+    `) as unknown as Array<{ decisionKey: string; category: string; mode: string }>;
+    expect(comparisons).toEqual(expect.arrayContaining([
+      { decisionKey: 'dedicated-vehicle-eligibility', category: 'MATCH', mode: 'shadow' },
+      { decisionKey: 'entitlement-approval-chain', category: 'MATCH', mode: 'shadow' },
+    ]));
 
     let current = submitted;
     const approvers = [
@@ -438,6 +494,93 @@ describe('entitlement loop (integration — requires DB + Redis)', () => {
     // cleanup this second request
     await db.execute(sql`DELETE FROM fleet.outbox_event WHERE aggregate_id = ${created.id}`);
     await db.execute(sql`DELETE FROM fleet.entitlement_request WHERE id = ${created.id}`);
+  });
+
+  it('rolls approval routing back while an in-flight Entitlement workflow stays pinned', async () => {
+    const selectorRows = await db.execute(sql`
+      SELECT revision
+      FROM fleet.domain_decision_selector
+      WHERE organization_id = ${DEFAULT_ORGANIZATION_ID}::uuid
+        AND decision_key = 'entitlement-approval-chain'
+        AND scope_node_id = ${poolNode}::uuid
+        AND environment = 'default'
+    `) as unknown as Array<{ revision: number }>;
+    let revision = selectorRows[0]!.revision;
+
+    const previewCreateSubmit = async (suffixDate: string, keyPrefix: string) => {
+      const preview = await entitlements.eligibilityPreview({
+        requestType: 'LongTerm',
+        driverOption: 'WithoutDriver',
+        justificationCategory: 'OPERATIONAL_REQUIREMENT',
+        durationStart: `2028-${suffixDate}-01`,
+        durationEnd: `2028-${suffixDate}-28`,
+        locationNodeId: poolNode,
+        requestedVehicleClass: 'SEDAN',
+      }, requesterPrincipal());
+      const created = await entitlements.create({
+        requestType: 'LongTerm',
+        driverOption: 'WithoutDriver',
+        requesterPersonId: requesterId,
+        justificationCategory: 'OPERATIONAL_REQUIREMENT',
+        justificationText: `${keyPrefix} selector rollback proof`,
+        eligibilityPreviewId: preview.previewId!,
+        durationStart: `2028-${suffixDate}-01`,
+        durationEnd: `2028-${suffixDate}-28`,
+        locationNodeId: poolNode,
+      }, requesterId, requesterPrincipal(), `${keyPrefix}-create-${randomUUID()}`);
+      entitlementIds.push(created.id);
+      return entitlements.submit(
+        created.id,
+        { expectedRevision: created.revision },
+        requesterPrincipal(),
+        `${keyPrefix}-submit-${randomUUID()}`,
+      );
+    };
+
+    try {
+      await selector.setMode(
+        DEFAULT_ORGANIZATION_ID, 'entitlement-approval-chain', poolNode, 'default',
+        'new-primary-with-legacy-shadow', 100, 100, `entitlement-${suffix}`, revision,
+      );
+      revision += 1;
+      const newPrimary = await previewCreateSubmit('01', 'entitlement-new-primary');
+      const beforeRollback = await db.execute(sql`
+        SELECT status, definition_deployment_id AS "deploymentId"
+        FROM fleet.workflow_instance
+        WHERE id = ${newPrimary.workflowInstanceId}::uuid
+      `) as unknown as Array<{ status: string; deploymentId: string }>;
+
+      await selector.setMode(
+        DEFAULT_ORGANIZATION_ID, 'entitlement-approval-chain', poolNode, 'default',
+        'legacy-only', 0, 0, `entitlement-${suffix}`, revision,
+      );
+      revision += 1;
+      const legacyAfterRollback = await previewCreateSubmit('02', 'entitlement-legacy-rollback');
+      const afterRollback = await db.execute(sql`
+        SELECT status, definition_deployment_id AS "deploymentId"
+        FROM fleet.workflow_instance
+        WHERE id = ${newPrimary.workflowInstanceId}::uuid
+      `) as unknown as Array<{ status: string; deploymentId: string }>;
+      expect(afterRollback).toEqual(beforeRollback);
+
+      const newProvenance = newPrimary.approvalRouteProvenance as { current: { source: string } };
+      const legacyProvenance = legacyAfterRollback.approvalRouteProvenance as { current: { source: string } };
+      expect(newProvenance.current.source).toBe('new');
+      expect(legacyProvenance.current.source).toBe('legacy');
+    } finally {
+      const current = await db.execute(sql`
+        SELECT revision
+        FROM fleet.domain_decision_selector
+        WHERE organization_id = ${DEFAULT_ORGANIZATION_ID}::uuid
+          AND decision_key = 'entitlement-approval-chain'
+          AND scope_node_id = ${poolNode}::uuid
+          AND environment = 'default'
+      `) as unknown as Array<{ revision: number }>;
+      await selector.setMode(
+        DEFAULT_ORGANIZATION_ID, 'entitlement-approval-chain', poolNode, 'default',
+        'shadow', 0, 100, `entitlement-${suffix}`, current[0]!.revision,
+      );
+    }
   });
 
   it('reports organization-scoped reconciliation findings without mutating state', async () => {

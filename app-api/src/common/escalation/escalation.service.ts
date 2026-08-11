@@ -13,6 +13,7 @@ export const ESCALATION_WORK_TYPE = {
 
 /** Input for enqueuing a human escalation. */
 export interface EscalationRequest {
+  organizationId: string;
   workType: string;
   /** The entity the escalation is about (e.g. `pdp:driver-eligibility`, a workflow id). */
   subjectRef: string;
@@ -42,11 +43,13 @@ export class EscalationService {
       const rows = await this.db
         .insert(scheduledWork)
         .values({
+          organizationId: request.organizationId,
           workType: request.workType,
           subjectRef: request.subjectRef,
           dueAt: request.dueAt ?? new Date(),
           status: 'Pending',
         })
+        .onConflictDoNothing()
         .returning({ id: scheduledWork.id });
       this.logger.warn(
         `escalation queued [${request.workType}] subject=${request.subjectRef} reason=${request.reason}` +

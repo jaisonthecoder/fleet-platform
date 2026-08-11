@@ -98,4 +98,18 @@ describe('DomainDecisionService', () => {
     expect(comparisons[0]).toMatchObject({ category: 'ERROR_DIVERGENCE', newErrorCode: 'TypeError' });
     expect(JSON.stringify(comparisons[0])).not.toContain('secret downstream detail');
   });
+
+  it('routes canary deterministically at the configured percentage', async () => {
+    const canary = service('new-canary', 30, 0);
+    const sources: string[] = [];
+    for (let index = 0; index < 100; index += 1) {
+      sources.push((await canary.evaluate(request(`canary-${index}`), async () => legacy)).provenance.source);
+    }
+    const newCount = sources.filter((source) => source === 'new').length;
+    expect(newCount).toBeGreaterThanOrEqual(20);
+    expect(newCount).toBeLessThanOrEqual(40);
+    const first = await canary.evaluate(request('stable-canary-key'), async () => legacy);
+    const replay = await canary.evaluate(request('stable-canary-key'), async () => legacy);
+    expect(replay.provenance.source).toBe(first.provenance.source);
+  });
 });

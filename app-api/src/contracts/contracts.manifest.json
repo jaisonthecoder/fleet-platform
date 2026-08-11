@@ -76,14 +76,21 @@
     "dashboardScopeQuerySchema"
   ],
   "domain-decision.contract.ts": [
+    "DecisionComparisonSummaryDto",
+    "DecisionComparisonSummaryQuery",
     "DecisionProvenance",
+    "DecisionSelectorStateDto",
     "DomainDecisionMode",
     "DomainDecisionRequest",
     "DomainDecisionResult",
+    "UpdateDecisionSelector",
+    "decisionComparisonSummaryQuerySchema",
     "decisionProvenanceSchema",
+    "decisionSelectorScopeSchema",
     "domainDecisionModeSchema",
     "domainDecisionRequestSchema",
-    "domainDecisionResultSchema"
+    "domainDecisionResultSchema",
+    "updateDecisionSelectorSchema"
   ],
   "entitlement.contract.ts": [
     "AllocateEntitlement",
@@ -289,12 +296,24 @@
     "retireHierarchyNodeSchema",
     "updateHierarchyLevelSchema"
   ],
+  "person-document.contract.ts": [
+    "AddPersonDocument",
+    "PersonDocumentDto",
+    "PersonDocumentType",
+    "addPersonDocumentSchema",
+    "personDocumentTypeSchema"
+  ],
   "platform.contract.ts": [
     "CreateDelegation",
+    "CredentialFieldDto",
+    "CredentialStatus",
     "HierarchyNodeDto",
+    "MeCredentialsResponse",
     "MeResponse",
     "RoleAtScope",
-    "createDelegationSchema"
+    "UpdateCredentials",
+    "createDelegationSchema",
+    "updateCredentialsSchema"
   ],
   "policy-authoring.contract.ts": [
     "AuthoredCondition",
@@ -441,9 +460,11 @@
   "workflow.contract.ts": [
     "DecideStep",
     "StartWorkflow",
+    "WorkflowDefinitionKey",
     "WorkflowStepView",
     "WorkflowView",
     "decideStepSchema",
-    "startWorkflowSchema"
+    "startWorkflowSchema",
+    "workflowDefinitionKeySchema"
   ]
 }

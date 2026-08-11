@@ -52,6 +52,9 @@ const DedicatedAllocationPage = lazy(() =>
 const OperationsPage = lazy(() =>
   import('@/features/operations/operations-page').then((m) => ({ default: m.OperationsPage })),
 )
+const ProfilePage = lazy(() =>
+  import('@/features/profile/profile-page').then((m) => ({ default: m.ProfilePage })),
+)
 const BookingApprovalsPage = lazy(() =>
   import('@/features/approvals/booking-approvals-page').then((m) => ({ default: m.BookingApprovalsPage })),
 )
@@ -195,6 +198,7 @@ export const appRoutes: RouteObject[] = [
         children: [
           { index: true, element: <IndexRedirect /> },
           { path: 'home', element: page(<HomePage />) },
+          { path: 'profile', element: page(<ProfilePage />) },
           { path: 'design', element: page(<DesignShowcasePage />) },
           { path: 'book-sample', element: page(<BookingSamplePage />) },
           {

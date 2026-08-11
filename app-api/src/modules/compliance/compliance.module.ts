@@ -5,6 +5,7 @@ import { ComplianceController } from './controllers/compliance.controller';
 import { ComplianceRepository } from './repositories/compliance.repository';
 import { ComplianceService } from './services/compliance.service';
 import { EligibilityService } from './services/eligibility.service';
+import { LegacyDriverEligibilityAdapter } from './internal/legacy-driver-eligibility.adapter';
 
 /**
  * Compliance + eligibility gate (M7 — built before booking). Imports the PDP
@@ -14,7 +15,7 @@ import { EligibilityService } from './services/eligibility.service';
 @Module({
   imports: [PlatformModule, PolicyCoreModule],
   controllers: [ComplianceController],
-  providers: [ComplianceRepository, EligibilityService, ComplianceService],
+  providers: [ComplianceRepository, EligibilityService, ComplianceService, LegacyDriverEligibilityAdapter],
   exports: [EligibilityService, ComplianceService],
 })
 export class ComplianceModule {}

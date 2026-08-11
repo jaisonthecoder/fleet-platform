@@ -169,8 +169,9 @@ describe('WorkflowService', () => {
     const { service } = makeService();
     const started = await service.start({
       workflowType: 'booking-approval',
+      definitionKey: 'legacy-booking-approval-v1',
       subjectRef: 'BK-1',
-      steps: [{ assigneePersonId: 'mgr1' }, { assigneePersonId: 'ceo1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }, { assigneePersonId: 'ceo1', assignmentKey: 'ClusterCEO' }],
           organizationId: 'org-1',
       slaMinutes: 60,
     });
@@ -195,8 +196,20 @@ describe('WorkflowService', () => {
 
   it('persists a non-default owning organization on the workflow instance', async () => {
     const { service, repo } = makeService();
-    const started = await service.start({ organizationId: 'org-2', workflowType: 'booking-approval', subjectRef: 'BK-ORG-2', steps: [{ assigneePersonId: 'mgr2' }] });
+    const started = await service.start({ organizationId: 'org-2', workflowType: 'booking-approval', definitionKey: 'legacy-booking-approval-v1', subjectRef: 'BK-ORG-2', steps: [{ assigneePersonId: 'mgr2', assignmentKey: 'LineManager' }] });
     expect(repo.instances.get(started.id)?.organizationId).toBe('org-2');
+  });
+
+  it('rejects a governed definition key used with the wrong workflow type', async () => {
+    const { service, repo } = makeService();
+    await expect(service.start({
+      organizationId: 'org-1',
+      workflowType: 'entitlement-approval',
+      definitionKey: 'legacy-booking-approval-v1',
+      subjectRef: 'ENT-WRONG-DEFINITION',
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
+    })).rejects.toMatchObject({ response: { reasons: ['workflow-definition-type-mismatch:legacy-booking-approval-v1:entitlement-approval'] } });
+    expect(repo.instances.size).toBe(0);
   });
 
   it('rejects the whole chain on a rejection', async () => {
@@ -204,8 +217,9 @@ describe('WorkflowService', () => {
     const started = await service.start({
       organizationId: 'org-1',
       workflowType: 'booking-approval',
+      definitionKey: 'legacy-booking-approval-v1',
       subjectRef: 'BK-2',
-      steps: [{ assigneePersonId: 'mgr1' }, { assigneePersonId: 'ceo1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }, { assigneePersonId: 'ceo1', assignmentKey: 'ClusterCEO' }],
     });
     const result = await service.decide(started.id, {
       actorPersonId: 'mgr1',
@@ -230,8 +244,9 @@ describe('WorkflowService', () => {
     const started = await service.start({
       organizationId: 'org-1',
       workflowType: 'entitlement-approval',
+      definitionKey: 'legacy-entitlement-approval-v1',
       subjectRef: 'ENT-1',
-      steps: [{ assigneePersonId: 'mgr1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
     });
     const result = await service.decide(started.id, {
       actorPersonId: 'delegate1',
@@ -257,8 +272,9 @@ describe('WorkflowService', () => {
     const started = await service.start({
       organizationId: 'org-1',
       workflowType: 'booking-approval',
+      definitionKey: 'legacy-booking-approval-v1',
       subjectRef: 'BK-EXPIRED',
-      steps: [{ assigneePersonId: 'mgr1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
     });
 
     await expect(service.decide(started.id, {
@@ -282,8 +298,9 @@ describe('WorkflowService', () => {
     const started = await service.start({
       organizationId: 'org-1',
       workflowType: 'booking-approval',
+      definitionKey: 'legacy-booking-approval-v1',
       subjectRef: 'BK-CROSS-ORG',
-      steps: [{ assigneePersonId: 'mgr1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
     });
     await expect(service.decide(started.id, {
       actorPersonId: 'delegate1',
@@ -297,8 +314,9 @@ describe('WorkflowService', () => {
     const started = await service.start({
       workflowType: 'booking-approval',
           organizationId: 'org-1',
+      definitionKey: 'legacy-booking-approval-v1',
       subjectRef: 'BK-3',
-      steps: [{ assigneePersonId: 'mgr1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
     });
     await expect(
       service.decide(started.id, { actorPersonId: 'stranger', decision: 'APPROVED' }),
@@ -311,7 +329,8 @@ describe('WorkflowService', () => {
       workflowType: 'booking-approval',
       subjectRef: 'BK-4',
           organizationId: 'org-1',
-      steps: [{ assigneePersonId: 'mgr1' }],
+      definitionKey: 'legacy-booking-approval-v1',
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
     });
     await service.decide(started.id, { actorPersonId: 'mgr1', decision: 'APPROVED' });
     await expect(
@@ -324,8 +343,9 @@ describe('WorkflowService', () => {
     const started = await service.start({
       organizationId: 'org-1',
       workflowType: 'booking-approval',
+      definitionKey: 'legacy-booking-approval-v1',
       subjectRef: 'BK-5',
-      steps: [{ assigneePersonId: 'mgr1' }],
+      steps: [{ assigneePersonId: 'mgr1', assignmentKey: 'LineManager' }],
       slaMinutes: 60,
     });
     const wellPastSla = new Date(Date.now() + 2 * 60 * 60 * 1000);

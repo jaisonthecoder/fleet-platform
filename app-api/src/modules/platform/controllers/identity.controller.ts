@@ -4,11 +4,16 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  Param,
+  Patch,
   Post,
 } from '@nestjs/common';
-import { CurrentUser } from '../../../common/auth/auth.decorators';
+import { CurrentUser, Roles } from '../../../common/auth/auth.decorators';
 import type { Principal } from '../../../common/auth/principal';
-import { createDelegationSchema } from '../../../contracts/platform.contract';
+import {
+  createDelegationSchema,
+  updateCredentialsSchema,
+} from '../../../contracts/platform.contract';
 import { AccessService } from '../services/access.service';
 import { DelegationService } from '../services/delegation.service';
 import { HierarchyService } from '../services/hierarchy.service';
@@ -47,6 +52,54 @@ export class IdentityController {
       });
     }
     return this.access.getMe(principal.personId);
+  }
+
+  /** The caller's own driver-credential status (autofill + expiry warnings). */
+  @Get('me/credentials')
+  myCredentials(@CurrentUser() principal: Principal) {
+    if (!principal?.personId) {
+      throw new ForbiddenException({
+        title: 'User not linked',
+        reasons: ['user-not-linked-to-person'],
+      });
+    }
+    return this.access.getMyCredentials(principal.personId);
+  }
+
+  /** Self-service capture of the caller's own licence / Emirates ID (Unverified). */
+  @Patch('me/credentials')
+  updateMyCredentials(
+    @Body() body: unknown,
+    @CurrentUser() principal: Principal,
+  ) {
+    const actor = delegationActor(principal);
+    const parsed = updateCredentialsSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        title: 'Invalid credentials',
+        reasons: parsed.error.issues.map((i) => i.message),
+      });
+    }
+    return this.access.updateMyCredentials(actor, parsed.data);
+  }
+
+  /** Admin/steward capture of any person's licence / Emirates ID (Verified). */
+  @Roles('SystemAdmin', 'DataSteward')
+  @Patch('admin/persons/:personId/credentials')
+  updatePersonCredentials(
+    @Param('personId') personId: string,
+    @Body() body: unknown,
+    @CurrentUser() principal: Principal,
+  ) {
+    const actor = delegationActor(principal);
+    const parsed = updateCredentialsSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        title: 'Invalid credentials',
+        reasons: parsed.error.issues.map((i) => i.message),
+      });
+    }
+    return this.access.updatePersonCredentials(personId, parsed.data, actor);
   }
 
   /** The configurable hierarchy tree (Scope Switcher + roll-up source). */

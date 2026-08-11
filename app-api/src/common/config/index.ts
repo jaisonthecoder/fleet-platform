@@ -1,5 +1,7 @@
 import { appConfig } from './app.config';
+import { complianceConfig } from './compliance.config';
 import { databaseConfig } from './database.config';
+import { hcmConfig } from './hcm.config';
 import { identityConfig } from './identity.config';
 import { loggingConfig } from './logging.config';
 import { messagingConfig } from './messaging.config';
@@ -17,6 +19,8 @@ export { redisConfig } from './redis.config';
 export { messagingConfig } from './messaging.config';
 export { storageConfig } from './storage.config';
 export { identityConfig } from './identity.config';
+export { hcmConfig } from './hcm.config';
+export { complianceConfig } from './compliance.config';
 export { loggingConfig } from './logging.config';
 export { observabilityConfig } from './observability.config';
 export { telematicsConfig } from './telematics.config';
@@ -30,6 +34,8 @@ export const configurations = [
   messagingConfig,
   storageConfig,
   identityConfig,
+  hcmConfig,
+  complianceConfig,
   loggingConfig,
   observabilityConfig,
   telematicsConfig,

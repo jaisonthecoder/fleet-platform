@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, desc, eq, ne } from 'drizzle-orm';
+import { and, asc, desc, eq, ne, sql } from 'drizzle-orm';
 import { DRIZZLE } from '../../../common/database/database.constants';
 import type { DrizzleDatabase } from '../../../common/database/database.module';
 import {
@@ -8,6 +8,7 @@ import {
   eligibilityEvaluation,
   person,
   vehicle,
+  vehicleHierarchyAssignment,
 } from '../../../common/database/schema';
 
 /** Data access for the compliance / eligibility gate. */
@@ -26,6 +27,10 @@ export class ComplianceRepository {
       .select({
         id: person.id,
         licenceExpiry: person.licenceExpiry,
+        licenceNumber: person.licenceNumber,
+        licenceSource: person.licenceSource,
+        licenceVerified: person.licenceVerified,
+        lastHcmSyncedAt: person.lastHcmSyncedAt,
         employmentStatus: person.employmentStatus,
         updatedAtUtc: person.updatedAtUtc,
       })
@@ -57,6 +62,21 @@ export class ComplianceRepository {
       .where(and(eq(accessBlock.organizationId, organizationId), eq(accessBlock.personId, personId), eq(accessBlock.active, true)))
       .limit(1);
     return rows[0];
+  }
+
+  /** Returns the Vehicle's current effective hierarchy scope in its organization. */
+  async findVehicleScope(vehicleId: string, organizationId: string): Promise<string | null> {
+    const rows = await this.db.select({ nodeId: vehicleHierarchyAssignment.nodeId })
+      .from(vehicleHierarchyAssignment)
+      .where(and(
+        eq(vehicleHierarchyAssignment.organizationId, organizationId),
+        eq(vehicleHierarchyAssignment.vehicleId, vehicleId),
+        sql`${vehicleHierarchyAssignment.validFrom} <= now()`,
+        sql`(${vehicleHierarchyAssignment.validTo} IS NULL OR ${vehicleHierarchyAssignment.validTo} > now())`,
+      ))
+      .orderBy(desc(vehicleHierarchyAssignment.validFrom))
+      .limit(1);
+    return rows[0]?.nodeId ?? null;
   }
 
   async insertEvaluation(values: typeof eligibilityEvaluation.$inferInsert) {

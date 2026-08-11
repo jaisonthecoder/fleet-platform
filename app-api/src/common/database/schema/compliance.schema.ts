@@ -3,6 +3,7 @@ import {
   boolean,
   date,
   index,
+  jsonb,
   pgEnum,
   text,
   timestamp,
@@ -53,10 +54,20 @@ export const eligibilityEvaluation = fleet.table(
     decision: text('decision').notNull(),
     reasons: text('reasons').array(),
     policyVersion: text('policy_version'),
+    sourceClassification: text('source_classification').notNull().default('legacy-unknown'),
+    decisionProvenance: jsonb('decision_provenance'),
+    correlationId: text('correlation_id'),
+    factFingerprint: text('fact_fingerprint'),
+    requestedScopeNodeId: uuid('requested_scope_node_id'),
+    resolvedScopeNodeId: uuid('resolved_scope_node_id'),
+    effectiveAtUtc: timestamp('effective_at_utc', { withTimezone: true }),
     dataAsOf: timestamp('data_as_of', { withTimezone: true }),
     evaluatedAtUtc: timestamp('evaluated_at_utc', { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index('eligibility_evaluation_driver_idx').on(t.driverPersonId, t.evaluatedAtUtc)],
+  (t) => [
+    index('eligibility_evaluation_driver_idx').on(t.driverPersonId, t.evaluatedAtUtc),
+    index('eligibility_evaluation_correlation_idx').on(t.organizationId, t.correlationId),
+  ],
 );
 
 /**

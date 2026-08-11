@@ -93,6 +93,22 @@ export const envSchema = z.object({
   STORAGE_CONTAINER_CONSENT: z.string().default('consent-records'),
   STORAGE_CONTAINER_CHECKPOINTS: z.string().default('eventhub-checkpoints'),
 
+  // HCM (Oracle Fusion) person sync + eligibility data freshness. HCM is an
+  // optional accelerator: when disabled the platform runs on manually-maintained
+  // person data and the staleness gate is skipped (only expiry/missing hard
+  // blocks apply). When enabled, person data older than the SLA blocks.
+  HCM_ENABLED: boolFromEnv(false),
+  HCM_FRESHNESS_SLA_MINUTES: z.coerce.number().int().positive().default(1440),
+
+  // Compliance gate toggles. `LICENCE_MISSING_BLOCK` fail-closes booking when a
+  // driver has no licence on file. Default off until the inline capture UX ships
+  // (a blocked user must always have a way to provide the licence).
+  LICENCE_MISSING_BLOCK: boolFromEnv(false),
+
+  // Privacy-minimized shadow comparisons are operational evidence, not permanent
+  // domain history. Retain them only for the configured observation window.
+  DOMAIN_DECISION_COMPARISON_RETENTION_DAYS: z.coerce.number().int().min(7).max(365).default(90),
+
   // Microsoft Entra ID (OIDC/JWT)
   ENTRA_TENANT_ID: z.string().optional(),
   ENTRA_API_CLIENT_ID: z.string().optional(),

@@ -30,7 +30,8 @@ describe('workflow organization provenance (integration)', () => {
     await expect(db.transaction(async (tx) => {
       const [created] = await tx.insert(organization).values({ name: `Workflow Org ${suffix}`, code: `WF-${suffix}` }).returning({ id: organization.id });
       const organizationId = created.id;
-      const started = await workflows.start({ organizationId, workflowType: `it-approval-${suffix}`, subjectRef: `it:${suffix}`, steps: [{ assigneePersonId: randomUUID() }] }, tx);
+      const started = await workflows.start({ organizationId, workflowType: 'booking-approval', definitionKey: 'legacy-booking-approval-v1', subjectRef: `it:${suffix}`, steps: [{ assigneePersonId: randomUUID(), assignmentKey: 'LineManager' }] }, tx);
+      const reassigned = await workflows.start({ organizationId, workflowType: 'booking-approval', definitionKey: 'legacy-booking-approval-v1', subjectRef: `it:reassigned:${suffix}`, steps: [{ assigneePersonId: randomUUID(), assignmentKey: 'LineManager' }] }, tx);
       const rows = await tx.execute(sql`
         SELECT wi.organization_id AS "instanceOrganizationId", wd.organization_id AS "definitionOrganizationId"
         FROM fleet.workflow_instance wi
@@ -39,6 +40,14 @@ describe('workflow organization provenance (integration)', () => {
         WHERE wi.id = ${started.id}::uuid
       `) as unknown as Array<{ instanceOrganizationId: string; definitionOrganizationId: string }>;
       expect(rows[0]).toEqual({ instanceOrganizationId: organizationId, definitionOrganizationId: organizationId });
+      const deployments = await tx.execute(sql`
+        SELECT id, definition_deployment_id AS "deploymentId"
+        FROM fleet.workflow_instance
+        WHERE id IN (${started.id}::uuid, ${reassigned.id}::uuid)
+        ORDER BY id
+      `) as unknown as Array<{ id: string; deploymentId: string }>;
+      expect(deployments).toHaveLength(2);
+      expect(new Set(deployments.map((row) => row.deploymentId)).size).toBe(1);
       throw rollback;
     })).rejects.toBe(rollback);
   });

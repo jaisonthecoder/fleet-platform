@@ -2,12 +2,19 @@ import { z } from 'zod';
 import type { StepDecision, WorkflowStatus } from '../modules/workflow/internal/chain';
 
 /** Request to start a multi-step approval chain (FR-WF-01). */
+export const workflowDefinitionKeySchema = z.enum([
+  'legacy-booking-approval-v1',
+  'legacy-entitlement-approval-v1',
+]);
+export type WorkflowDefinitionKey = z.infer<typeof workflowDefinitionKeySchema>;
+
 export const startWorkflowSchema = z.object({
   organizationId: z.string().min(1),
   workflowType: z.string().min(1),
+  definitionKey: workflowDefinitionKeySchema,
   subjectRef: z.string().min(1),
   steps: z
-    .array(z.object({ assigneePersonId: z.string().min(1) }))
+    .array(z.object({ assigneePersonId: z.string().min(1), assignmentKey: z.string().min(1) }))
     .min(1),
   /** SLA per step in minutes; drives timeout escalation. */
   slaMinutes: z.number().int().positive().optional(),
