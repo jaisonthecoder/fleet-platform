@@ -226,8 +226,8 @@
     }
   },
   "common": {
-    "appName": "Wayfinder",
-    "appShortName": "WF",
+    "appName": "Fleet Hub",
+    "appShortName": "FH",
     "appKicker": "Fleet Platform",
     "subtitle": "Carpool & Fleet Management Platform · AD Ports Group",
     "tagline": "Carpool & fleet management",
