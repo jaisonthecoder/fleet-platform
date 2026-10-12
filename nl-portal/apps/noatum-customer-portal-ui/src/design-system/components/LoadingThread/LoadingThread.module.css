@@ -1,0 +1,31 @@
+/* LD-10 · Boxless thread. Measures from Noatum UI Kit.dc.html. */
+
+.thread {
+  position: relative;
+  block-size: 2px;
+  min-inline-size: 0;
+  overflow: hidden;
+  background: rgb(from var(--noa-color-text) r g b / 0.12);
+}
+
+.run {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  background: var(--noa-color-accent);
+  transform-origin: left;
+  animation-name: var(--noa-anim-run);
+  animation-duration: 1.9s;
+  animation-timing-function: cubic-bezier(0.4, 0.05, 0.6, 0.95);
+  animation-iteration-count: infinite;
+}
+
+/* base.css collapses the duration for a reduced-motion user, which leaves the
+   thread at its un-animated width. Pinning it full keeps the bar visible as a
+   static state rather than depending on where the animation stopped. */
+@media (prefers-reduced-motion: reduce) {
+  .run {
+    transform: scaleX(1);
+  }
+}

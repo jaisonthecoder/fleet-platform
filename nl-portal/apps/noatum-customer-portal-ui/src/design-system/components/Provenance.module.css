@@ -1,0 +1,29 @@
+.provenance {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--noa-space-3);
+  padding: var(--noa-space-3);
+  border-left: 3px solid var(--noa-info-700);
+  background: var(--noa-navy-050);
+}
+.provenance dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--noa-space-3);
+  margin: 0;
+}
+.provenance dl > div {
+  display: inline-flex;
+  gap: var(--noa-space-1);
+}
+.provenance dt {
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-code);
+}
+.provenance dd {
+  margin: 0;
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+}

@@ -1,0 +1,15 @@
+packages:
+  - 'apps/*'
+allowBuilds:
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@scarf/scarf': false
+  '@swc/core': true
+  # Native Argon2id binding: its install script fetches or builds the binary.
+  argon2: true
+  prisma: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - lucide-react@1.45.0
+  - pg-boss@12.31.0
+  - zod@4.6.2

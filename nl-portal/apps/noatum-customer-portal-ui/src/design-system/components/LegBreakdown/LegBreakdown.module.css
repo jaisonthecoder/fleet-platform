@@ -1,0 +1,154 @@
+/* SP-03 · Multimodal leg breakdown. Measures from Noatum UI Kit.dc.html. */
+
+.breakdown {
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-heading-gap);
+  margin-block-end: var(--noa-kit-card-gap);
+}
+
+.title {
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.summary {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.bar {
+  display: flex;
+  block-size: 34px;
+  min-inline-size: 0;
+  border: 1px solid var(--noa-color-border);
+}
+
+.bar > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  --share: 0%;
+  inline-size: var(--share);
+  min-inline-size: 0;
+  border-inline-end: 1px solid var(--noa-color-surface);
+}
+
+.bar > span:last-child {
+  border-inline-end: 0;
+}
+
+.bar svg {
+  inline-size: 15px;
+  block-size: 15px;
+  stroke-width: 1.9;
+}
+
+.legs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.625rem), 1fr)); /* 170px */
+  gap: var(--noa-kit-chip-gap) var(--noa-kit-card-gap);
+  margin: var(--noa-kit-card-gap) 0 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+.leg {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-inline-size: 0;
+}
+
+.swatch {
+  flex: none;
+  inline-size: 10px;
+  block-size: 10px;
+  margin-block-start: var(--noa-space-1);
+}
+
+.copy {
+  min-inline-size: 0;
+}
+
+.label {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-neutral-900);
+}
+
+/* Dwell is named, not only shaded: hidden dwell is the thing this chart exists
+   to expose. */
+.dwell {
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-kit-attention);
+}
+
+.detail {
+  display: block;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-text-muted);
+}
+
+.value {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text);
+}
+
+.share {
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- tones ---------------------------------------------------------------
+   Scoped to the bar segment and the swatch on purpose. A bare [data-tone=…]
+   here is global — CSS Modules rewrites class names, not attribute selectors —
+   and it was painting a red background onto every element in the app that
+   carries the attribute, the DA-06 ring gauge included.
+   ------------------------------------------------------------------------ */
+
+.bar > span[data-tone='navy'],
+.swatch[data-tone='navy'] {
+  background: var(--navy-800);
+  color: var(--noa-color-text-inverse);
+}
+
+.bar > span[data-tone='action'],
+.swatch[data-tone='action'] {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.bar > span[data-tone='attention'],
+.swatch[data-tone='attention'] {
+  background: var(--noa-kit-attention);
+  color: var(--noa-color-text-inverse);
+}
+
+.bar > span[data-tone='neutral'],
+.swatch[data-tone='neutral'] {
+  background: var(--noa-neutral-300);
+  color: var(--noa-neutral-900);
+}
+
+.bar > span[data-tone='tint'],
+.swatch[data-tone='tint'] {
+  background: var(--noa-action-tint-strong);
+  color: var(--noa-color-accent);
+}

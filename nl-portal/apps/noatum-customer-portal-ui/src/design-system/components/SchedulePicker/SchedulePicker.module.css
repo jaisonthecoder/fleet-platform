@@ -1,0 +1,60 @@
+/* DT-04 · Schedule picker. Measures from Noatum UI Kit.dc.html. */
+
+.schedule {
+  min-inline-size: 0;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--noa-kit-block-gap);
+}
+
+.field {
+  min-inline-size: 0;
+}
+
+.label {
+  margin: 0 0 var(--noa-kit-heading-gap);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+.trigger {
+  display: block;
+  inline-size: 100%;
+  padding: 0;
+  text-align: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.trigger:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.triggerDate {
+  inline-size: 100%;
+}
+
+/* The read-back sentence: what was actually agreed, in words. */
+.summary {
+  margin: var(--noa-kit-block-gap) 0 0;
+  padding: var(--noa-kit-heading-gap) var(--noa-kit-card-gap);
+  background: var(--noa-paper);
+  border-inline-start: 3px solid var(--noa-color-accent);
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+/* Opens in place, so the sentence above it never moves. */
+.panel {
+  margin-block-start: var(--noa-kit-block-gap);
+  padding: var(--noa-kit-card-padding);
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+}

@@ -1,0 +1,34 @@
+/*
+ * Identifiers: CargoWise organisation codes, customer slugs, branch codes,
+ * feature keys, source-system mappings.
+ *
+ * These are the strings an operator compares character by character, so they get
+ * a real monospace face and tabular figures. NOATVAL01 against NOATVALO1 in a
+ * proportional face, at 11px, is a support ticket waiting to happen.
+ */
+.code {
+  font-family: var(--noa-font-mono);
+  font-size: var(--noa-text-xs);
+  font-variant-numeric: tabular-nums;
+  /* Mono faces run wide; pull them back so a code column costs no more room
+     than the proportional text it replaced. */
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+/* The identifier is the row's subject - a shipment reference, an org code. */
+.strong {
+  font-weight: var(--noa-weight-semibold);
+  color: var(--noa-neutral-900);
+}
+
+/* Supporting detail beneath a name: a slug, a mapping, a key. */
+.muted {
+  color: var(--noa-color-text-muted);
+}
+
+/* Inside a link the colour belongs to the link, never to this. */
+.code a,
+a .code {
+  color: inherit;
+}

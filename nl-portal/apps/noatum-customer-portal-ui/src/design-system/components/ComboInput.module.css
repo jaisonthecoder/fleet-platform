@@ -1,0 +1,55 @@
+/* IN-02 · The suggestion list under a field. Ours, not the browser's. */
+
+.anchor {
+  display: block;
+  min-inline-size: 0;
+}
+
+/* The shadcn popover ships a 288px padded card. A suggestion list is the width
+   of the field it belongs to, square, and has no padding of its own — the rows
+   carry it, so the highlight runs edge to edge. */
+.panel {
+  inline-size: var(--radix-popover-trigger-width);
+  max-inline-size: none;
+  max-block-size: 250px;
+  overflow-y: auto;
+  padding: 0;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-none);
+  box-shadow: var(--noa-shadow-raised);
+  overscroll-behavior: contain;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.option {
+  padding: 9px var(--space-3);
+  font-size: var(--noa-text-sm);
+  color: var(--noa-neutral-900);
+  cursor: pointer;
+  /* The rail is drawn on every row so the highlighted one does not shift by 3px
+     as the keyboard moves down the list. */
+  border-inline-start: 3px solid transparent;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.option[data-active='true'] {
+  background: var(--red-050);
+  border-inline-start-color: var(--noa-color-accent);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-3);
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}

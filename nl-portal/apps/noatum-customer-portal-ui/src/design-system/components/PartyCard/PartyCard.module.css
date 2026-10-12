@@ -1,0 +1,53 @@
+/* SE-06 · Party card. Measures from Noatum UI Kit.dc.html. */
+
+.card {
+  min-inline-size: 0;
+  padding: var(--noa-kit-card-gap); /* 14px */
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-block-start: 3px solid var(--noa-color-accent);
+}
+
+.card[data-tone='navy'] {
+  border-block-start-color: var(--navy-800);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--noa-space-2);
+}
+
+.role {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  line-height: var(--noa-leading-none);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.badge {
+  padding: 3px 7px;
+  white-space: nowrap;
+  border-radius: var(--radius-btn);
+  background: var(--noa-navy-050);
+  color: var(--navy-800);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+.control {
+  margin-block-start: 9px;
+  min-inline-size: 0;
+}
+
+.detail {
+  margin: var(--noa-space-2) 0 0;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-text);
+}

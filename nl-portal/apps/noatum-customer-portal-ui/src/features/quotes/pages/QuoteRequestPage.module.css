@@ -1,0 +1,788 @@
+/* ============================================================================
+ * Quote request.
+ *
+ * A full-bleed page, not a measured one: CH-09 paints the navy band edge to
+ * edge and the form climbs into its foot. The band and the grid below it share
+ * one measure and one gutter, so the overlap lands on the same column — change
+ * one and you have to change the other.
+ * ========================================================================== */
+
+.page {
+  background: var(--noa-ground);
+  min-block-size: 100%;
+}
+
+.body {
+  max-inline-size: var(--noa-measure-wide);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 0 var(--noa-shell-gutter) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-stack-gap);
+  min-inline-size: 0;
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  margin-block-start: calc(var(--noa-hero-rise) * -1);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--noa-kit-stack-gap);
+  align-items: start;
+  min-inline-size: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-stack-gap);
+  min-inline-size: 0;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-card-gap);
+  min-inline-size: 0;
+  align-self: stretch;
+}
+
+@media (min-width: 1180px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) var(--noa-aside-width);
+  }
+
+  /* One section on screen at a time, so the rail is short enough to follow the
+     customer down it rather than scrolling away above them. */
+  .side {
+    position: sticky;
+    inset-block-start: var(--space-5);
+  }
+}
+
+/* --- CH-07 numbered card --------------------------------------------------- */
+
+.card {
+  background: var(--noa-color-surface);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+  /* Room above a card the sidebar has jumped to, clear of the sticky header. */
+  scroll-margin-top: var(--space-6);
+}
+
+/* The first card is the one that rises into the band, so it carries the deeper
+   shadow: it is over navy, where a 10% shadow disappears. */
+.card:first-child,
+.lifted {
+  box-shadow: var(--noa-shadow-lifted);
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: var(--noa-kit-card-head-pad-y) var(--noa-kit-card-pad-x);
+  border-bottom: 1px solid var(--noa-color-border);
+}
+
+.cardIdentity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.cardNumber {
+  inline-size: 30px;
+  block-size: 30px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--red-050);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--noa-text-card);
+  line-height: var(--noa-leading-card);
+  font-weight: var(--noa-weight-black);
+  color: var(--noa-neutral-900);
+}
+
+.cardHint {
+  margin: 2px 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* Per-card state, so a customer scanning the form does not have to read the
+   sidebar to find out which card is unfinished. */
+.cardState {
+  flex: none;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  padding: 5px var(--noa-kit-chip-gap);
+  border-radius: var(--radius-btn);
+  white-space: nowrap;
+}
+
+.cardState[data-done='true'] {
+  color: var(--noa-kit-success);
+  background: var(--noa-kit-success-surface);
+}
+
+.cardState[data-done='false'] {
+  color: var(--noa-kit-attention);
+  background: var(--noa-kit-attention-surface);
+}
+
+.cardBody {
+  padding: var(--noa-kit-card-body-pad-y) var(--noa-kit-card-pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-stack-gap);
+  min-inline-size: 0;
+}
+
+/* --- fields ---------------------------------------------------------------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--noa-kit-field-gap);
+}
+
+.gridWide {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--noa-kit-chip-gap);
+}
+
+/* The kit's selection groups (SE-01..03) caption themselves with this exact
+   recipe. The page's own captions repeat it rather than a near-miss, or the
+   group labels inside one card render at two different sizes. */
+.fieldset legend,
+.pillCaption,
+.lineHeader {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  padding: 0;
+}
+
+.legendRow {
+  display: flex;
+  inline-size: 100%;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+/* The running total, not a caption, so it keeps sentence case and normal weight. */
+.legendTotal {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: var(--noa-weight-regular);
+  font-size: var(--noa-text-xs);
+}
+
+/* IN-03. Two or three choices that are really one answer, drawn as one control
+   the width of a field so the row lines up with the fields beside it. */
+.segmented {
+  display: flex;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  block-size: var(--noa-control-height-full);
+}
+
+.segment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--noa-color-surface);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.segment[aria-pressed='true'] {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.segment:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.pillRow {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.parties {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: var(--space-3);
+}
+
+.pillGroup {
+  display: grid;
+  gap: var(--noa-kit-label-gap);
+  justify-items: start;
+}
+
+.pillHint {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- loose cargo lines ----------------------------------------------------- */
+
+/*
+ * A data-entry table, drawn as one.
+ *
+ * Fixed pixel columns did not survive contact with the headings: "GROSS KG
+ * EACH" and "VOLUME M³" wrapped, the header drifted out of line with the
+ * fields below it, and the whole thing read as loose boxes rather than a table.
+ * Every column is now minmax(floor, share) against one min-width, so the
+ * heading and its field stay in the same column at any width and the row
+ * scrolls instead of collapsing.
+ */
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  min-inline-size: 0;
+}
+
+.lineScroll {
+  overflow-x: auto;
+  min-inline-size: 0;
+}
+
+.lineGrid {
+  min-inline-size: 700px;
+}
+
+.lineHead,
+.line {
+  display: grid;
+  grid-template-columns:
+    minmax(72px, 0.6fr) minmax(112px, 1fr) minmax(206px, 1.6fr)
+    minmax(96px, 0.8fr) minmax(76px, 0.6fr) 40px;
+  gap: var(--noa-kit-chip-gap);
+  align-items: center;
+  padding-inline: var(--space-3);
+}
+
+/* The header is a band, not a line of small text: the whole point of the
+   complaint was that it did not read as a header at all. */
+.lineHead {
+  padding-block: 9px;
+  background: var(--noa-paper);
+  border-bottom: 1px solid var(--noa-color-border-strong);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  white-space: nowrap;
+}
+
+.line {
+  padding-block: var(--noa-kit-row-y);
+  border-bottom: 1px solid var(--noa-color-border);
+}
+
+.line:last-child {
+  border-bottom: 0;
+}
+
+.line:hover {
+  background: var(--noa-paper);
+}
+
+.dims {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.dims > span {
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-eyebrow);
+}
+
+/* Calculated, never typed — so it is a figure, not a disabled field. */
+.vol,
+.numeric {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.vol {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+.lineRemove {
+  inline-size: 32px;
+  block-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.lineRemove:hover:not(:disabled) {
+  color: var(--noa-color-accent);
+  background: var(--red-050);
+}
+
+.lineRemove:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.lineRemove:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.lineActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-3);
+  border-top: 1px solid var(--noa-color-border);
+}
+
+.addLine {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  cursor: pointer;
+}
+
+.addLine:hover {
+  text-decoration: underline;
+}
+
+.addLine:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.lineNote {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* The figures a pricer reads first. Navy, because this is a statement of what
+   was entered rather than another field. */
+.lineTotals {
+  display: flex;
+  flex-wrap: wrap;
+  /* Figures read right to left, and every grid closes the same way. */
+  justify-content: flex-end;
+  text-align: end;
+  gap: var(--space-3) var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.lineTotals > div {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.totalLead {
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--noa-color-accent);
+}
+
+.totalLabel {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.totalLead .totalLabel {
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.totalValue {
+  margin-block-start: var(--space-1);
+  font-size: var(--noa-text-section);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  font-variant-numeric: tabular-nums;
+}
+
+.totalNote {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-eyebrow);
+  color: var(--noa-color-hero-muted);
+}
+
+/* --- the action card ------------------------------------------------------- */
+
+.submit {
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-shadow-footer);
+  border-top: 3px solid var(--noa-color-accent);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+}
+
+.submitNote {
+  margin: 0;
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+  text-align: center;
+}
+
+.error {
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-xs);
+  margin: 0;
+}
+
+@media (max-width: 600px) {
+  .body {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+}
+
+/* A label above a control that is not an <input>, so it cannot use IN-01's own. */
+.field {
+  min-inline-size: 0;
+}
+
+/* The label is a plain span carrying the global .noa-label recipe, which a
+   module cannot name — so the gap under it is set by position, not by class. */
+.field > span:first-child {
+  display: block;
+  margin-block-end: var(--noa-kit-label-gap);
+}
+
+/* ============================================================================
+ * The stepper.
+ *
+ * Four sections, one on screen at a time, with the rail above them. The rail is
+ * a control as much as a display: every node is a button, and the one thing it
+ * refuses is moving FORWARD past a section that is not finished.
+ * ========================================================================== */
+
+.rail {
+  position: sticky;
+  inset-block-start: var(--space-4);
+  z-index: 9;
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-shadow-lifted);
+  padding: var(--noa-kit-card-head-pad-y) var(--noa-kit-card-pad-x);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-inline-size: 0;
+}
+
+.railHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+.railLede {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+/* The verdict, on the same row of the page as the button that refused. */
+.railBlocked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border-inline-start: 3px solid var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+}
+
+.railStep {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.railHint {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-accent);
+}
+
+.railNodes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+@media (max-width: 720px) {
+  .railNodes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/*
+ * The connector is drawn by the node, not between them: a pseudo-element on each
+ * node reaching left to the one before it survives wrapping, where a single
+ * absolutely positioned line does not.
+ */
+.railNode {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding-block-start: 2px;
+  min-inline-size: 0;
+}
+
+.railNode::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 15px;
+  inset-inline: calc(-1 * var(--space-2) - 50%) 50%;
+  block-size: 2px;
+  background: var(--noa-color-border);
+}
+
+.railNode:first-child::before { display: none; }
+
+/* Green behind a step that is done, because the line says "you came through
+   here", not "this is next". */
+.railNode[data-state='done']::before,
+.railNode[data-state='current']::before { background: var(--noa-kit-success); }
+
+.railMark {
+  inline-size: 30px;
+  block-size: 30px;
+  border-radius: 50%;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  background: var(--surface-section);
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.railNode[data-state='done'] .railMark {
+  background: var(--noa-kit-success);
+  color: var(--noa-color-text-inverse);
+}
+
+.railNode[data-state='current'] .railMark {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+/* Only after a customer has tried to leave it unfinished. */
+.railNode[data-blocked] .railMark {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  box-shadow: 0 0 0 3px var(--noa-color-accent-subtle);
+}
+
+.railMark:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.railLabel {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.railNode[data-state='current'] .railLabel,
+.railNode[data-state='done'] .railLabel { color: var(--text-heading); }
+
+.railState {
+  font-size: var(--noa-text-eyebrow);
+  color: var(--text-muted);
+}
+
+.railNode[data-state='current'] .railState { color: var(--noa-color-accent); }
+.railNode[data-state='done'] .railState { color: var(--noa-kit-success); }
+.railNode[data-blocked] .railState { color: var(--noa-color-accent); }
+
+/* --- one section ----------------------------------------------------------- */
+
+.step { min-inline-size: 0; }
+
+/* The foot of the step, carrying its verdict and its way out. */
+.stepFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--noa-kit-card-pad-x);
+  background: var(--noa-color-surface);
+  box-shadow: var(--shadow-card);
+  border-block-start: 3px solid var(--noa-kit-success);
+  min-inline-size: 0;
+}
+
+/* Red only once the customer has tried to move past something missing. */
+.stepFoot[data-blocked] { border-block-start-color: var(--noa-color-accent); }
+
+.stepStatus { min-inline-size: 0; }
+
+.stepNote {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.stepBlocked {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+}
+
+.stepActions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  flex: none;
+}
+
+/* --- step controls, in the card header ------------------------------------- */
+
+/*
+ * Back, the state, and Continue, in that order.
+ *
+ * In the card's own header rather than under it or up on the rail: the status
+ * chip already says whether this section is finished, so the way out of it
+ * belongs on the same line as the verdict. Icons, with the sentence on the
+ * tooltip and the accessible name.
+ */
+.cardNav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+}
+
+.cardStep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 34px;
+  block-size: 34px;
+  flex: none;
+  border: 1px solid var(--noa-color-border-strong);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-text);
+  cursor: pointer;
+}
+
+.cardStep:hover:not(:disabled) {
+  border-color: var(--noa-color-text);
+}
+
+/* Forward is the one being offered, so it is the filled one. */
+.cardStep[data-lead='true'] {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.cardStep[data-lead='true']:hover:not(:disabled) {
+  background: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent-hover);
+}
+
+.cardStep:disabled {
+  border-color: var(--noa-color-border);
+  background: var(--noa-color-border-strong);
+  color: var(--noa-color-text-inverse);
+  cursor: not-allowed;
+}
+
+.cardStep:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}

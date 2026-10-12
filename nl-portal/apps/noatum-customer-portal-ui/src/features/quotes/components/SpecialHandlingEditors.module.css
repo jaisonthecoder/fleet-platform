@@ -1,0 +1,205 @@
+.panel {
+  display: grid;
+  gap: var(--space-3);
+  background: var(--surface-section);
+  padding: var(--space-4);
+  border-left: 3px solid var(--noa-info-500);
+}
+
+/* Tone carries which capability this is, alongside its heading. */
+.panel[data-tone='warning'] {
+  border-left-color: var(--noa-warning-500);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.intro {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  max-width: 62ch;
+  line-height: var(--noa-leading-normal);
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: var(--space-3);
+}
+
+.flags {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-2);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-3);
+}
+
+.entryHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.entryName {
+  font-size: var(--noa-text-sm);
+  font-weight: 700;
+  color: var(--text-heading);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.remove,
+.add {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  color: var(--text-body);
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.add {
+  justify-self: start;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.summary {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+/* --- entry table ---------------------------------------------------------
+ * The cargo-line grid, applied to repeating entries.
+ *
+ * Six labelled fields per piece meant the labels outnumbered the values and no
+ * two pieces could be compared down a column. Named once in a header band, the
+ * rows read as the table they always were.
+ *
+ * The pattern now exists here and on the quote page's cargo lines. A third use
+ * should lift it into the design system rather than copy it again.
+ */
+.lineScroll {
+  min-inline-size: 0;
+  border: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+}
+
+.lineGrid {
+  min-inline-size: 0;
+}
+
+.lineHead,
+.line {
+  display: grid;
+  /* Fluid, so the table fits its panel instead of scrolling inside it. */
+  grid-template-columns:
+    minmax(0, 2fr) minmax(0, 0.8fr) minmax(0, 0.8fr)
+    minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(0, 1.2fr) 36px;
+  gap: var(--noa-kit-chip-gap);
+  align-items: center;
+  padding-inline: var(--space-3);
+}
+
+.lineHead {
+  padding-block: var(--space-2);
+  background: var(--noa-neutral-100);
+  border-block-end: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.line {
+  padding-block: var(--space-2);
+}
+
+.line + .line {
+  border-block-start: 1px solid var(--noa-color-border);
+}
+
+
+/* Shrinking columns need somewhere for the overflow to go. */
+.lineHead > * {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * The same closing band as the cargo lines: navy, right aligned.
+ * A summary is a statement of what was entered, not another row of the table, so
+ * it is set apart by tone rather than by a heavier border - and all three grids on
+ * this form close the same way, or the eye has to relearn each one.
+ */
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  text-align: end;
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.totals > div {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.totals dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.totals dd {
+  margin: 0;
+  margin-block-start: var(--space-1);
+  font-size: var(--noa-text-section);
+  font-weight: var(--noa-weight-black);
+  color: var(--noa-color-hero-text);
+}
+
+/* The figure that decides something, marked the way the cargo band marks its own. */
+.totals .totalLead {
+  color: var(--noa-color-hero-eyebrow);
+}

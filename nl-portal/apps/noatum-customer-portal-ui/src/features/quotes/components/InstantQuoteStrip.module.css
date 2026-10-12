@@ -1,0 +1,825 @@
+/* ============================================================================
+ * The instant quotation strip.
+ *
+ * To REFERENCE/MOCKUP-htmls-page-vice/Noatum Instant Quote.html, hero section: a
+ * scope row, then a framed strip of four white cells and the send button, laid
+ * across the navy band. White rather than another dark panel on purpose - it is
+ * the one thing on the band you are meant to type in.
+ *
+ * Container queries, not viewport ones: the strip sits inside the hero measure
+ * today and has to survive being put somewhere narrower.
+ * ========================================================================== */
+
+.bar {
+  container-type: inline-size;
+  min-inline-size: 0;
+}
+
+/* --- the scope row -------------------------------------------------------- */
+
+.scopes {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-3);
+}
+
+.scopeLabel {
+  margin-inline-end: 6px;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--noa-on-dark-placeholder);
+}
+
+/* A radio, drawn as a pill. Border and ring carry the state; the dot inside the
+   ring is what makes it read as one answer out of four rather than four
+   independent toggles. */
+.scope {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 14px;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: transparent;
+  color: var(--noa-on-dark);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.scope[aria-checked='true'] {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.scope:focus-visible,
+.radio:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: 2px;
+}
+
+.ring {
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: var(--noa-radius-capsule);
+  border: 2px solid currentColor;
+  box-sizing: border-box;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scope[aria-checked='true'] .ring::after,
+.radio[aria-checked='true'] .ring::after {
+  content: '';
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--noa-radius-capsule);
+  background: currentColor;
+}
+
+/* --- the strip ------------------------------------------------------------ */
+
+.strip {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero-raised);
+  min-inline-size: 0;
+}
+
+/*
+ * One cell per question.
+ *
+ * The label keeps its own name even when the cell is filled: a bar whose columns
+ * only say "ESVLC · Valencia" and "Textiles" stops saying which is which the
+ * moment you look away from it.
+ */
+.cell {
+  flex: 1 1 200px;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: flex-start;
+  text-align: start;
+  padding: 10px 14px;
+  border: 2px solid transparent;
+  background: var(--noa-color-surface);
+  cursor: pointer;
+  font: inherit;
+}
+
+/* The load cell carries the longest answer, so it gets the extra width. */
+.cell[data-wide='true'] { flex: 1.2 1 220px; }
+
+.cell:hover { border-color: var(--noa-color-border-strong); }
+
+.cell[data-open] {
+  border-color: var(--noa-color-accent);
+  background: var(--surface-page);
+}
+
+.cell[data-missing] { border-color: var(--noa-color-accent-subtle); }
+
+.cell:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: -4px;
+}
+
+.cellLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  inline-size: 100%;
+  min-inline-size: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cellName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tick { flex: none; color: var(--noa-kit-success); }
+
+/* Unanswered, after a send was attempted. On the label, not the value: the value
+   is a prompt, and colouring it red would read as a rejected entry. */
+.warn {
+  flex: none;
+  inline-size: 12px;
+  block-size: 12px;
+  border-radius: var(--noa-radius-capsule);
+  border: 1px solid var(--noa-color-accent);
+  box-sizing: border-box;
+  font-size: var(--noa-text-2xs);
+  font-weight: var(--noa-weight-black);
+  line-height: 10px;
+  text-align: center;
+  color: var(--noa-color-accent);
+}
+
+/* Muted until answered, so an unanswered cell reads as a prompt rather than as
+   a value somebody typed. */
+.cellValue {
+  inline-size: 100%;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell[data-filled] .cellValue {
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+}
+
+/*
+ * Not "Get instant quote".
+ *
+ * No rate source is configured anywhere in this platform and every price is
+ * typed by a person, so the button says what actually happens. Same shape as the
+ * mockup's, same weight on the strip.
+ */
+.submit {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 24px;
+  min-block-size: 54px;
+  border: 0;
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.submit:hover { background: var(--noa-color-accent-hover); }
+.submit:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.submit:focus-visible,
+.detailed:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: -4px;
+}
+
+/* The way to the full request, standing beside the short one at the same height.
+   Outlined rather than solid: the strip has exactly one primary action and this
+   is not it. */
+.detailed {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  min-block-size: 54px;
+  border: 1px solid var(--noa-color-accent);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.detailed:hover {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.spin { animation: var(--noa-anim-spin) 0.8s linear infinite; }
+
+/* --- the line under the strip --------------------------------------------- */
+
+.foot {
+  margin: var(--space-3) 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark-muted);
+}
+
+.foot[role='alert'] {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-hero-eyebrow);
+}
+
+/* --- a panel -------------------------------------------------------------- */
+
+/* The mockup's own widths: 720 for a place, 580 for the load, 400 for goods. */
+.panel {
+  inline-size: 720px;
+  max-inline-size: calc(100vw - 16px);
+  padding: 0;
+  background: var(--noa-color-surface);
+  border: 0;
+  border-radius: var(--radius-none);
+  box-shadow: var(--noa-shadow-modal);
+}
+
+.panel[data-width='load'] { inline-size: 580px; }
+.panel[data-width='goods'] { inline-size: 400px; }
+
+.panelBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 18px 20px;
+  max-block-size: min(460px, 60vh);
+  overflow-y: auto;
+  scrollbar-gutter: auto;
+  overscroll-behavior: contain;
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--text-heading);
+}
+
+/* The scope, repeated inside the panel that depends on it. */
+.scopeTag {
+  padding: 5px 9px;
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+}
+
+.panelFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: 12px 20px;
+  border-block-start: 1px solid var(--noa-color-border);
+  background: var(--surface-page);
+}
+
+.panelFoot[data-end='true'] { justify-content: flex-end; }
+
+.footNote {
+  min-inline-size: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.footNote[data-missing] { color: var(--text-muted); }
+
+/* Advances to the next question rather than only closing: four panels in a row
+   is a sequence, and the button is what makes it one. */
+.go {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.go:disabled {
+  background: var(--noa-color-border-strong);
+  cursor: not-allowed;
+}
+
+.add {
+  flex: none;
+  margin-inline-end: auto;
+  padding: 11px 16px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--noa-radius-sm);
+  background: transparent;
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.add:hover { background: var(--noa-color-accent-subtle); }
+
+.go:focus-visible,
+.add:focus-visible,
+.iconButton:focus-visible,
+.tab:focus-visible,
+.pick:focus-visible,
+.rowLine:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+/* --- fields inside a panel ------------------------------------------------ */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: var(--space-3);
+  align-items: start;
+  min-inline-size: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-inline-size: 0;
+}
+
+.fieldLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text-muted);
+}
+
+.aside {
+  font-weight: var(--noa-weight-regular);
+  color: var(--text-muted);
+}
+
+.input {
+  inline-size: 100%;
+  box-sizing: border-box;
+  block-size: 40px;
+  padding-inline: 10px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-color-surface);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.input:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: -1px;
+}
+
+.cityZip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-color-text);
+  cursor: pointer;
+}
+
+.check input {
+  inline-size: 16px;
+  block-size: 16px;
+  margin: 1px 0 0;
+  accent-color: var(--noa-color-accent);
+  flex: none;
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text-muted);
+}
+
+/* An aside from us, not a warning. Navy rule, because it is information. */
+.notice,
+.warning {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0;
+  padding: 10px 12px;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text);
+}
+
+.notice {
+  border-inline-start: 3px solid var(--color-accent-navy);
+  background: var(--surface-section);
+}
+
+.notice svg { flex: none; color: var(--color-accent-navy); margin-block-start: 2px; }
+
+/* A warning: this request cannot go through the short door. */
+.warning {
+  border-inline-start: 3px solid var(--noa-kit-attention);
+  background: var(--noa-kit-attention-surface);
+}
+
+.warning svg { flex: none; color: var(--noa-kit-attention); margin-block-start: 2px; }
+
+.warning a {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+}
+
+/* --- the mode tabs -------------------------------------------------------- */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-block-end: 1px solid var(--noa-color-border);
+  overflow-x: auto;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-block-end: -1px;
+  border: 0;
+  border-block-end: 2px solid transparent;
+  background: none;
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-regular);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  border-block-end-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+  font-weight: var(--noa-weight-bold);
+}
+
+/* --- the load editor ------------------------------------------------------ */
+
+.radios {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.radio .ring { color: var(--noa-color-border-strong); }
+.radio[aria-checked='true'] .ring { color: var(--noa-color-accent); }
+
+/* The one being edited. Red top rule, as the mockup draws it: this is the row
+   the panel is currently about. */
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: 14px;
+  border: 1px solid var(--noa-color-border);
+  border-block-start: 3px solid var(--noa-color-accent);
+  min-inline-size: 0;
+}
+
+.editorHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.editorTitle {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--noa-color-accent);
+}
+
+.iconButton {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--noa-color-accent);
+  cursor: pointer;
+}
+
+.editorGrid {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+  min-inline-size: 0;
+}
+
+/* A load that is not being edited: one line, click to open it. */
+.rowLine {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  text-align: start;
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+.rowIndex {
+  flex: none;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  text-transform: uppercase;
+  color: var(--noa-color-accent);
+}
+
+.rowText {
+  min-inline-size: 0;
+  font-size: var(--noa-text-dense);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stepper {
+  display: flex;
+  block-size: 38px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  overflow: hidden;
+}
+
+.stepper button {
+  inline-size: 32px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--surface-page);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.stepper input {
+  flex: 1;
+  inline-size: 0;
+  border: 0;
+  border-inline: 1px solid var(--noa-color-border);
+  text-align: center;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  color: var(--noa-color-text);
+}
+
+/* The equipment grid, and the package-type row. Segmented rather than a select:
+   six container types are a choice you compare, not a list you search. */
+.picks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  overflow: hidden;
+}
+
+
+
+.pick {
+  block-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 6px;
+  border: 0;
+  border-inline-end: 1px solid var(--noa-color-border);
+  border-block-end: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.pick[aria-pressed='true'] {
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.dims {
+  display: flex;
+  block-size: 38px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  overflow: hidden;
+}
+
+.dims input {
+  flex: 1;
+  inline-size: 0;
+  border: 0;
+  border-inline-end: 1px solid var(--noa-color-border);
+  padding-inline: 9px;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.unit,
+.unitSelect {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding-inline: 10px;
+  border: 0;
+  background: var(--surface-page);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-muted);
+}
+
+.threeUp {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  min-inline-size: 0;
+}
+
+.valueRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 120px;
+  gap: var(--space-3);
+  align-items: end;
+  min-inline-size: 0;
+}
+
+/* The navy strap of totals. The same band the page sits on, so the figures read
+   as the platform's answer rather than another field. */
+.strap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.strap > div {
+  padding: 12px 14px;
+  border-inline-end: 1px solid var(--noa-color-hero-border);
+  min-inline-size: 0;
+}
+
+.strap > div:last-child { border-inline-end: 0; }
+
+.strap[data-four='true'] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* The indication, not a fact: the accent marks it as ours to confirm. */
+.strap > div[data-lead] .strapValue { color: var(--noa-color-hero-eyebrow); }
+
+.strapLabel {
+  display: block;
+  font-size: var(--noa-text-2xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.strapValue {
+  display: block;
+  margin-block-start: 7px;
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+}
+
+/* --- narrow --------------------------------------------------------------- */
+
+@container (max-width: 60rem) {
+  .cell,
+  .cell[data-wide='true'] { flex: 1 1 calc(50% - 6px); }
+  .submit,
+  .detailed { flex: 1 1 calc(50% - 6px); }
+}
+
+@container (max-width: 34rem) {
+  .cell,
+  .cell[data-wide='true'] { flex: 1 1 100%; }
+  .editorGrid,
+  .threeUp,
+  .valueRow { grid-template-columns: minmax(0, 1fr); }
+}

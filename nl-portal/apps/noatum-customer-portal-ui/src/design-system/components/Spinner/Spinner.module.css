@@ -1,0 +1,107 @@
+/* LD-13 · Compact spinners. Measures from Noatum UI Kit.dc.html. */
+
+.wait {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+}
+
+.mark {
+  position: relative;
+  flex: none;
+  display: block;
+  --spinner-size: 16px;
+  inline-size: var(--spinner-size);
+  block-size: var(--spinner-size);
+}
+
+.wait[data-size='14'] .mark {
+  --spinner-size: 14px;
+}
+
+.wait[data-size='16'] .mark {
+  --spinner-size: 16px;
+}
+
+.wait[data-size='18'] .mark {
+  --spinner-size: 18px;
+}
+
+.wait[data-size='20'] .mark {
+  --spinner-size: 20px;
+}
+
+.label {
+  font-size: var(--noa-text-dense);
+  color: var(--noa-color-text);
+}
+
+/* --- arc: one open ring ---------------------------------------------------- */
+
+.wait[data-variant='arc'] .mark {
+  border: 2px solid var(--noa-color-accent-subtle);
+  border-block-start-color: var(--noa-color-accent);
+  border-radius: var(--noa-radius-capsule);
+  animation: var(--noa-anim-spin) 700ms linear infinite;
+}
+
+/* --- twin: two opposed arcs ------------------------------------------------ */
+
+.wait[data-variant='twin'] .mark {
+  border: 2px solid transparent;
+  border-block-color: var(--noa-color-accent);
+  border-radius: var(--noa-radius-capsule);
+  animation: var(--noa-anim-spin) 800ms linear infinite;
+}
+
+/* --- sweep: a bar crossing a track ----------------------------------------- */
+
+.wait[data-variant='sweep'] .mark {
+  overflow: hidden;
+  background: var(--noa-color-accent-subtle);
+  border-radius: var(--noa-radius-capsule);
+}
+
+.wait[data-variant='sweep'] .mark::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inline-size: 40%;
+  background: var(--noa-color-accent);
+  animation: var(--noa-anim-sweep) 900ms ease-in-out infinite;
+}
+
+/* --- orbit: a dot around a ring -------------------------------------------- */
+
+.wait[data-variant='orbit'] .mark {
+  border: 2px solid var(--noa-color-accent-subtle);
+  border-radius: var(--noa-radius-capsule);
+  animation: var(--noa-anim-spin) 1.1s linear infinite;
+}
+
+.wait[data-variant='orbit'] .mark > span {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: -3px;
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  translate: -50% 0;
+}
+
+/* --- cube: a rotating square ----------------------------------------------- */
+
+.wait[data-variant='cube'] .mark {
+  background: var(--noa-color-accent);
+  animation: var(--noa-anim-spin) 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+/* A spinner frozen mid-rotation still reads as a spinner; a sweep frozen at 0
+   does not, so it is pinned to a filled track instead. */
+@media (prefers-reduced-motion: reduce) {
+  .wait[data-variant='sweep'] .mark::after {
+    inline-size: 100%;
+  }
+}

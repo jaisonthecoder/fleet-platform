@@ -1,0 +1,91 @@
+/*
+ * The journey. Five stages, dots joined by the line between them, from the staff
+ * quotation mockup.
+ *
+ * The line is drawn by each stage from its own centre to the next, which is what
+ * keeps it behind the dots and correct at every column width. The card scrolls
+ * sideways below 520px rather than letting the stages crush into each other.
+ */
+.card {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: 16px 20px;
+  overflow-x: auto;
+}
+
+.track {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(96px, 1fr));
+  min-inline-size: 520px;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stage {
+  position: relative;
+  text-align: center;
+  padding-inline: 6px;
+  min-inline-size: 0;
+}
+
+/* From this dot's centre to the next one's. The last stage draws none. */
+.stage:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-inline-end: -50%;
+  inset-block-start: 9px;
+  block-size: 2px;
+  background: var(--noa-color-border);
+}
+
+.stage[data-state='done']::before {
+  background: var(--noa-color-accent);
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  display: block;
+  inline-size: 20px;
+  block-size: 20px;
+  margin-inline: auto;
+  border-radius: var(--noa-radius-capsule);
+  box-sizing: border-box;
+  background: var(--surface-card);
+  border: 2px solid var(--noa-color-border);
+}
+
+/* Reached: filled. Current: ringed but hollow, so "here" and "done" never read
+   as the same thing at a glance. */
+.stage[data-state='done'] .dot {
+  background: var(--noa-color-accent);
+  border-color: var(--noa-color-accent);
+}
+
+.stage[data-state='current'] .dot {
+  border-color: var(--noa-color-accent);
+}
+
+.label {
+  display: block;
+  margin-block-start: 10px;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text-muted);
+}
+
+.stage[data-state='done'] .label,
+.stage[data-state='current'] .label {
+  color: var(--text-heading);
+}
+
+.note {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}

@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Noatum Customer Portal — workflow diagrams</title>
+<style>
+  :root {
+    --red: #AA272F;
+    --red-dark: #8E2027;
+    --navy: #002C5F;
+    --ink: #333333;
+    --body: #58595B;
+    --hair: #E5E5E5;
+    --section: #F5F5F3;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Mulish', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--body);
+    background: var(--white);
+    line-height: 1.55;
+  }
+  header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 40px 48px 32px;
+  }
+  header .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: rgba(255,255,255,.7); margin: 0 0 10px;
+  }
+  header h1 { font-size: 30px; font-weight: 800; margin: 0 0 6px; color: var(--white); }
+  header h1::after {
+    content: ""; display: block; width: 40px; height: 3px;
+    background: var(--red); margin-top: 14px;
+  }
+  header p { margin: 16px 0 0; max-width: 820px; color: rgba(255,255,255,.82); font-size: 15px; }
+  header .meta { margin-top: 18px; font-size: 13px; color: rgba(255,255,255,.6); }
+
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--section);
+    border-bottom: 1px solid var(--hair);
+    padding: 12px 48px;
+    display: flex; flex-wrap: wrap; gap: 6px 18px;
+  }
+  nav a {
+    color: var(--body); text-decoration: none;
+    font-size: 13px; font-weight: 700;
+    padding: 4px 0; border-bottom: 2px solid transparent;
+  }
+  nav a:hover { color: var(--red); border-bottom-color: var(--red); }
+
+  main { padding: 8px 48px 80px; }
+
+  section { padding-top: 40px; }
+  section h2 {
+    font-size: 21px; font-weight: 800; color: var(--ink); margin: 0 0 4px;
+  }
+  section h2::after {
+    content: ""; display: block; width: 40px; height: 3px;
+    background: var(--red); margin-top: 10px;
+  }
+  section .lead { margin: 16px 0 0; max-width: 900px; font-size: 15px; }
+  section .why {
+    margin: 16px 0 0; max-width: 900px; font-size: 14px;
+    border-left: 3px solid var(--red); padding: 4px 0 4px 16px; color: var(--ink);
+  }
+
+  .frame {
+    margin-top: 24px; padding: 28px;
+    background: var(--white); border: 1px solid var(--hair);
+    overflow-x: auto;
+  }
+  .mermaid { display: flex; justify-content: center; }
+
+  footer {
+    background: var(--red); color: var(--white);
+    padding: 32px 48px; font-size: 14px;
+  }
+  footer strong { font-weight: 800; }
+
+  .offline {
+    background: #FDF0D5; border: 1px solid #B4780A; color: #855804;
+    padding: 12px 16px; font-size: 13px; margin: 24px 0 0;
+  }
+
+  @media print {
+    nav { display: none; }
+    section { page-break-inside: avoid; page-break-after: always; }
+    header { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Noatum Logistics · AD Ports Group</p>
+  <h1>Customer Portal — workflow diagrams</h1>
+  <p>
+    A visual companion for the CargoWise working session. Each diagram shows one workflow and,
+    where it matters, the point at which information crosses between the portal and CargoWise.
+    The written detail — what is exchanged, who owns it, direction, volume, frequency and
+    nature — is in the accompanying workflow document.
+  </p>
+  <p class="meta">Version 1.0 · 16.09.2026 · For the CargoWise and integration team</p>
+</header>
+
+<nav>
+  <a href="#d1">1 System context</a>
+  <a href="#d2">2 Exchange classes</a>
+  <a href="#d3">3 Tenant resolution</a>
+  <a href="#d4">4 Onboarding</a>
+  <a href="#d5">5 Quotation</a>
+  <a href="#d6">6 Quote lifecycle</a>
+  <a href="#d7">7 Three entities</a>
+  <a href="#d8">8 Booking</a>
+  <a href="#d9">9 Bulk vs stream</a>
+  <a href="#d10">10 Milestone events</a>
+  <a href="#d11">11 Documents</a>
+  <a href="#d12">12 Invoices</a>
+  <a href="#d13">13 Alerting</a>
+  <a href="#d14">14 Claims</a>
+  <a href="#d15">15 Reporting</a>
+  <a href="#d16">16 Delivery sequence</a>
+</nav>
+
+<main>
+
+  <p class="offline">
+    This page draws its diagrams from a public library the first time it opens, so it needs an
+    internet connection. If you need an offline or editable version, use the draw.io file that
+    accompanies it.
+  </p>
+
+  <section id="d1">
+    <h2>1 · System context</h2>
+    <p class="lead">Who talks to what. CargoWise is the system of record; the portal is a customer window onto it plus a channel for customer requests back into it.</p>
+    <p class="why">The portal never queries CargoWise on a customer keystroke. Every screen is served from its own synchronised projection, and every external system sits behind an adapter interface — so changing the mechanism for one flow changes one adapter and no business logic.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart LR
+  subgraph EXT["External users"]
+    V["Public visitor<br/>no account"]
+    CU["Customer users<br/>standard, quoting, finance,<br/>analyst, claims, admin"]
+  end
+
+  subgraph INT["Noatum users"]
+    CS["Customer Success"]
+    PRI["Pricing and<br/>Pricing Approver"]
+    OPS["Operations"]
+    PAD["Platform Admin"]
+  end
+
+  subgraph PORTAL["Noatum Customer Information Platform"]
+    WEB["Web application<br/>public pages and portal"]
+    API["API<br/>REST, OpenAPI, permissions"]
+    JOBS["Job queue<br/>retry, backoff, replay"]
+    DB[("PostgreSQL<br/>canonical model<br/>row-level security")]
+    BLOB[("Blob storage<br/>documents and PDFs")]
+    ADP["Adapter layer<br/>tracking, quote, booking,<br/>finance, document, rate"]
+  end
+
+  subgraph SRC["Source and partner systems"]
+    CW1["CargoWise One<br/>system of record"]
+    SNOW["Snowflake<br/>existing CargoWise extract"]
+    D365["Dynamics 365<br/>claims"]
+    OMP["Order management<br/>purchase orders"]
+    PBI["Power BI"]
+    AIS["AI email drafting<br/>another Noatum team"]
+  end
+
+  V --> WEB
+  CU --> WEB
+  CS --> WEB
+  PRI --> WEB
+  OPS --> WEB
+  PAD --> WEB
+  WEB --> API
+  API --> DB
+  API --> BLOB
+  API --> JOBS
+  JOBS --> ADP
+  ADP --> CW1
+  CW1 --> ADP
+  SNOW -.-> ADP
+  ADP --> D365
+  OMP --> ADP
+  ADP --> AIS
+  DB --> PBI
+    </pre></div>
+  </section>
+
+  <section id="d2">
+    <h2>2 · How we classify an exchange</h2>
+    <p class="lead">The question that decides the mechanism for every flow in this pack.</p>
+    <p class="why">Your Snowflake extraction is the natural answer for the analytical and bulk class, and very possibly for the initial backfill of the operational class. It is not an answer for the transactional class, and on its own it is unlikely to meet the freshness target for milestone visibility.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  Q1{"Does one person perform a single<br/>business act that must not be lost<br/>or duplicated?"}
+  Q1 -- yes --> T["TRANSACTIONAL<br/>request and response, or an inbound<br/>message with an idempotency key<br/>and a business acknowledgement"]
+  Q1 -- no --> Q2{"Does freshness<br/>matter in minutes?"}
+  Q2 -- yes --> O["OPERATIONAL STREAM<br/>event-driven push, with polling<br/>or an extract as fallback"]
+  Q2 -- no --> Q3{"A large historical set,<br/>or reference data?"}
+  Q3 -- "large history" --> AN["ANALYTICAL AND BULK<br/>scheduled extract, or a replicated<br/>dataset such as Snowflake"]
+  Q3 -- "reference data" --> R["REFERENCE<br/>periodic extract, maintained<br/>in the portal thereafter"]
+  T -.- W1["wrong answer:<br/>a nightly file"]
+  O -.- W2["wrong answer: a synchronous<br/>call on every page view"]
+  AN -.- W3["wrong answer: replaying a message<br/>stream from the beginning"]
+    </pre></div>
+  </section>
+
+  <section id="d3">
+    <h2>3 · Tenant resolution — the rule everything depends on</h2>
+    <p class="lead">How an inbound CargoWise record is assigned to the right customer, and the four gates it must pass before any person sees it.</p>
+    <p class="why">This is why we ask whether a party on a shipment or an invoice carries the organisation code or the address code. The schema shows both are optional, so a party can arrive with neither. One real shipment message with a party block answers it completely.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  IN["Inbound CargoWise record<br/>shipment, invoice, document, quote"]
+  IN --> P["Read the party organisation<br/>codes on the record"]
+  P --> Q{"Does a code match a customer account<br/>a Noatum user deliberately linked?"}
+  Q -- no --> UN["Stored, visible to nobody.<br/>Listed in the Unassigned view as evidence<br/>of an un-onboarded customer"]
+  Q -- yes --> G1{"Gate 1 ELIGIBLE<br/>is the organisation link active?"}
+  G1 -- no --> DENY["Not visible"]
+  G1 -- yes --> G2{"Gate 2 LIVE<br/>is the customer status active?"}
+  G2 -- no --> DENY
+  G2 -- yes --> G3{"Gate 3 VISIBLE<br/>row-level security, plus any<br/>single-office restriction"}
+  G3 -- no --> DENY
+  G3 -- yes --> G4{"Gate 4 ALLOWED<br/>does the user hold the permission,<br/>and is the feature switched on?"}
+  G4 -- no --> DENY
+  G4 -- yes --> SHOW["Visible to that user"]
+    </pre></div>
+  </section>
+
+  <section id="d4">
+    <h2>4 · Customer onboarding and organisation linking</h2>
+    <p class="lead">Built and working today. It consumes the organisation directory and produces the links every other workflow resolves against.</p>
+    <p class="why">The moment organisations are linked, existing shipments, invoices and CargoWise quotes carrying those codes become visible to that customer — before anybody logs in.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart LR
+  I1["Organisation directory<br/>imported from CargoWise"] --> S1["Create customer<br/>name, country, domains, tier"]
+  S1 --> S2["Link CargoWise organisations<br/>with a justification, fully audited"]
+  S2 --> S3["Choose the servicing office"]
+  S3 --> S4["Invite the first Customer Admin"]
+  S4 --> S5{"Go live<br/>guarded transition"}
+  S5 -- blocked --> S5R["Refused, naming exactly<br/>what is missing"]
+  S5 -- allowed --> S6["Customer active"]
+  S6 --> S7["Customer Admin invites colleagues,<br/>assigns roles, may restrict a user<br/>to one office"]
+  S2 -.-> S8["Automatic: existing shipments, invoices<br/>and CargoWise quotes for those codes<br/>become visible"]
+    </pre></div>
+  </section>
+
+  <section id="d5">
+    <h2>5 · Quotation, end to end</h2>
+    <p class="lead">The first capability we deliver, and the only place the portal writes commercial content into CargoWise.</p>
+    <p class="why">No rate management exists today, so every quote is priced by a person, largely in email and spreadsheets. The portal standardises that work. Note the gate: the customer sees no price until CargoWise has confirmed the write-back. Pricing in CargoWise stays fully supported and nobody has to change how they work.</p>
+    <div class="frame"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant C as Customer user
+  participant P as Portal
+  participant Q as Pricing user
+  participant A as Approver
+  participant CW as CargoWise
+
+  C->>P: Submit structured quote request
+  Note over P: Organisation code resolved server side,<br/>never supplied by the client
+  P->>CW: Create quote request, idempotent<br/>on the portal reference
+  P->>Q: Request enters the branch-scoped queue
+  Q->>P: Claim it. Single ownership, expires
+  Q->>P: Charge lines, totals, validity,<br/>carrier, service, transit
+  alt Above the approval threshold
+    Q->>A: Submit for approval
+    A->>P: Approve, or reject with a reason
+  end
+  P->>CW: Write the priced quote, idempotent<br/>on quote and version
+  CW-->>P: Business acceptance
+  Note over P: The customer sees nothing<br/>until this confirmation arrives
+  P->>C: Priced quote, branded, with PDF
+  C->>P: Accept within validity,<br/>or reject with a reason code
+  P->>CW: Accept, reject or cancel
+    </pre></div>
+  </section>
+
+  <section id="d6">
+    <h2>6 · Quote lifecycle</h2>
+    <p class="lead">The states a quote passes through, including the one the customer cannot see.</p>
+    <p class="why">A failed write to CargoWise holds the quote in Pending sync, alerts operations and is retried. The customer never sees an error, and never sees a price CargoWise has not accepted.</p>
+    <div class="frame"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> Draft
+  Draft --> Requested
+  Requested --> InProgress
+  InProgress --> AwaitingApproval
+  AwaitingApproval --> InProgress
+  AwaitingApproval --> PendingSync
+  InProgress --> PendingSync
+  PendingSync --> Quoted
+  PendingSync --> SyncFailed
+  SyncFailed --> PendingSync
+  Quoted --> Accepted
+  Quoted --> Rejected
+  Quoted --> Expired
+  Requested --> Cancelled
+  Quoted --> Cancelled
+  Accepted --> [*]
+    </pre></div>
+  </section>
+
+  <section id="d7">
+    <h2>7 · Quote, booking and shipment — three entities, not a chain</h2>
+    <p class="lead">How the portal models the commercial objects.</p>
+    <p class="why">CargoWise does not convert a quote into a booking. A booking is linked to a quote by quote number, one to many, and is separately converted into a shipment. The portal carries the quote number and lets CargoWise establish the link. A booking may exist with its shipment reference arriving later, or never.</p>
+    <div class="frame"><pre class="mermaid">
+erDiagram
+  QUOTE ||--o{ BOOKING : "linked by quote number"
+  BOOKING ||--o| SHIPMENT : "converted in CargoWise"
+  SHIPMENT ||--o{ CONSOL : "belongs to"
+  SHIPMENT ||--o{ CONTAINER : "carries"
+  SHIPMENT ||--o{ MILESTONE : "records"
+  SHIPMENT ||--o{ DOCUMENT : "holds"
+  SHIPMENT ||--o{ PARTY : "names"
+  SHIPMENT ||--o{ INVOICE : "gives rise to"
+  INVOICE }o--|| ORGANISATION : "addressed to"
+    </pre></div>
+  </section>
+
+  <section id="d8">
+    <h2>8 · Booking, end to end</h2>
+    <p class="lead">From an accepted quote, or directly without one. Both routes are supported.</p>
+    <p class="why">Change and cancellation are blocked once cargo has been picked up or delivered to an off-site location, with a hard stop at the Shipped event. Enforced on the server, and configurable.</p>
+    <div class="frame"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant C as Customer user
+  participant P as Portal
+  participant CW as CargoWise
+
+  alt From an accepted quote
+    C->>P: Book from quote
+    Note over P: Commercial terms copied as a snapshot<br/>for the customer record. CargoWise<br/>remains the authority
+  else Direct booking
+    C->>P: Start a booking with no quote
+  end
+  C->>P: Locations, addresses, cargo,<br/>references, documents
+  Note over P: Uploads size limited and virus<br/>scanned before any transfer
+  P->>CW: Create booking, carrying the quote number
+  CW-->>P: Booking confirmation
+  CW-->>P: Shipment reference, when it exists
+  P->>C: Deep link into track and trace
+  opt Change or cancel
+    C->>P: Request a change or cancellation
+    Note over P: Blocked after pickup or off-site delivery.<br/>Hard stop at Shipped
+    P->>CW: Update or cancel
+  end
+    </pre></div>
+  </section>
+
+  <section id="d9">
+    <h2>9 · Track and trace — one capability, two exchanges</h2>
+    <p class="lead">Historical backfill and ongoing change have different volumes, different freshness needs and different right answers.</p>
+    <p class="why">This is the direct answer to the question of showing a customer all their shipments for the last year. It is never a live call into CargoWise — it is a read of our projection, populated once by backfill and then kept current by change. Design target: list and search at 100,000 rows per customer, list under two seconds.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart LR
+  subgraph ONB["A · Historical backfill, once per customer"]
+    B1["Customer organisations linked"] --> B2["Everything that already exists<br/>for those codes: shipments, consols,<br/>containers, legs, events, invoices"]
+    B2 --> B3["Bulk load"]
+  end
+
+  subgraph RUN["B · Ongoing change, continuously"]
+    S1["CargoWise change"] --> S2["Event push to the portal"]
+    S2 --> S3["Deduplicate on source message id<br/>plus our own reference"]
+    S3 --> S4["Map codes through<br/>the mapping tables"]
+    S4 --> S5["Resolve the customer from<br/>party organisation codes"]
+    S5 --> S6["Apply to the projection"]
+  end
+
+  B3 --> PROJ[("Portal projection<br/>serves every customer screen")]
+  S6 --> PROJ
+  PROJ --> UI["Search, grid, detail, card,<br/>saved views, export, alerts, reports"]
+
+  M1["ANALYTICAL: scheduled extract<br/>or the Snowflake dataset"] -.-> B2
+  M2["OPERATIONAL: event push,<br/>polling as fallback"] -.-> S2
+    </pre></div>
+  </section>
+
+  <section id="d10">
+    <h2>10 · Milestone event pipeline</h2>
+    <p class="lead">The highest-volume flow in the platform, sized for millions of events per month.</p>
+    <p class="why">Events use an exclude-list: show everything except a short flagged set. An unmapped code is stored but never displayed, and raised for classification. Air milestones must be published within three hours of actual occurrence for the Cargo IQ commitment; our internal target is sixty seconds from CargoWise.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  CWE["CargoWise event, including carrier events<br/>arriving through CargoWise integrations"] --> RX["Portal inbound endpoint<br/>archive, log, acknowledge at once"]
+  RX --> IDEM{"Source message id<br/>seen before?"}
+  IDEM -- yes --> DROP["Ignored, already applied"]
+  IDEM -- no --> MAP["Map the event code through<br/>the mapping table"]
+  MAP --> KNOWN{"Is the code mapped?"}
+  KNOWN -- no --> HOLD["Stored, not displayed.<br/>Raised for an administrator to classify"]
+  KNOWN -- yes --> EXC{"On the internal<br/>exclusion list?"}
+  EXC -- yes --> INTU["Internal users only"]
+  EXC -- no --> PUB["Canonical milestone on<br/>the customer timeline"]
+  PUB --> CP{"On the critical path<br/>for this mode?"}
+  CP -- yes --> PT["Public track and trace"]
+  PUB --> VAR["ETA variance against original<br/>and last known"]
+  VAR --> ALERT["Potential delay alert"]
+    </pre></div>
+  </section>
+
+  <section id="d11">
+    <h2>11 · Document visibility — an allow-list</h2>
+    <p class="lead">Only explicitly approved document types ever reach a customer.</p>
+    <p class="why">Document type in CargoWise is assigned manually by the uploading user and is not validated. A mistagged rated bill of lading would expose freight rates to a customer. So anything unmapped, newly introduced or of unknown type stays hidden until somebody classifies it. We already hold the 479-code catalogue; the approved list is owed by Noatum operations.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  DOC["Document arrives from CargoWise<br/>with a manually assigned type"] --> MAPPED{"Type in our<br/>mapping table?"}
+  MAPPED -- no --> HIDE["Hidden from every customer surface:<br/>list, detail, export, alert, assistant, API.<br/>Queued for classification"]
+  MAPPED -- yes --> APPROVED{"Approved as<br/>customer facing?"}
+  APPROVED -- no --> HIDE
+  APPROVED -- yes --> RESTRICTED{"Flagged internal<br/>only or restricted?"}
+  RESTRICTED -- yes --> INTONLY["Internal users holding the<br/>explicit permission only"]
+  RESTRICTED -- no --> FIN{"A financial<br/>document?"}
+  FIN -- yes --> ADDRESSEE["Visible only where the user<br/>organisation is the addressee"]
+  FIN -- no --> VISIBLE["Visible to the customer.<br/>Single and mass download"]
+    </pre></div>
+  </section>
+
+  <section id="d12">
+    <h2>12 · Financial visibility — the addressee rule</h2>
+    <p class="lead">Invoices resolve from the addressee organisation on the transaction, never from the shipment parties.</p>
+    <p class="why">Who is billed depends on Incoterms and the commercial agreement, with no single fixed rule. Two parties on one shipment can each receive their own invoice, and cross-trade billing means a third party such as the notify party can be the paying customer. The addressee field is therefore load-bearing for us.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  INV["Invoice or credit note<br/>from CargoWise"] --> ADDR["Read the ADDRESSEE ORGANISATION<br/>on the transaction"]
+  ADDR --> MATCH{"Addressee matches a<br/>linked customer account?"}
+  MATCH -- no --> NONE["Visible to nobody"]
+  MATCH -- yes --> PERM{"User holds the<br/>finance permission?"}
+  PERM -- no --> DENY["Not visible"]
+  PERM -- yes --> OFFICE{"User restricted<br/>to one office?"}
+  OFFICE -- yes --> ONE["Only that office documents"]
+  OFFICE -- no --> ALL["All the customer<br/>financial documents"]
+    </pre></div>
+  </section>
+
+  <section id="d13">
+    <h2>13 · Alerting and delay detection</h2>
+    <p class="lead">Most alerting is ours to compute. No new CargoWise exchange is required.</p>
+    <p class="why">Carriers do not reliably send a revised ETA, and detection is manual today, so the portal computes ETA variance itself. Customs holds already reach CargoWise and today trigger an email to an operator who then telephones the customer; surfacing the hold automatically removes that work.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart LR
+  E1["Milestone events"] --> CALC["Portal rules engine"]
+  E2["ETA values, original<br/>and last known"] --> CALC
+  E3["Customs hold events"] --> CALC
+  E4["Document and status gaps"] --> CALC
+
+  CALC --> A1["Potential delay, from<br/>ETA variance"]
+  CALC --> A2["Customs hold surfaced<br/>automatically"]
+  CALC --> A3["Crisis event affecting<br/>shipments in progress"]
+  CALC --> A4["ETD close, information missing"]
+  CALC --> A5["Arrived, not cleared in X days"]
+
+  A1 --> DEL["Notification centre,<br/>in-app and deep linked"]
+  A2 --> DEL
+  A3 --> DEL
+  A4 --> DEL
+  A5 --> DEL
+  DEL --> EM["Email by self-service rules.<br/>Recipients validated against<br/>the customer domains"]
+  DEL --> SUB["Per-shipment subscriptions"]
+  NEWS["Noatum news and banners,<br/>global, country or customer"] --> DEL
+    </pre></div>
+  </section>
+
+  <section id="d14">
+    <h2>14 · Claims</h2>
+    <p class="lead">This runs through Dynamics 365, not CargoWise.</p>
+    <p class="why">What we still need here is business input rather than an interface: how a customer raises a claim today, and where staff re-key between systems.</p>
+    <div class="frame"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant C as Customer user
+  participant P as Portal
+  participant D as Dynamics 365
+  participant N as Noatum claims handler
+
+  C->>P: Raise a claim with type, affected<br/>shipments, description, attachments
+  P->>D: Create the case with portal data<br/>and attachments
+  D->>N: Assigned by mode and station
+  N->>D: Update, comment, resolve
+  D-->>P: Status and comments
+  P->>C: Real-time status, two-way comments,<br/>full history, resolution notice
+    </pre></div>
+  </section>
+
+  <section id="d15">
+    <h2>15 · Reporting and analytics</h2>
+    <p class="lead">Four tiers, all reading the portal projection, all subject to the same isolation rule.</p>
+    <p class="why">Noatum assigns a report to a customer; the Customer Admin then grants individual users access. No additional CargoWise exchange is needed.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  PROJ[("Portal projection")] --> T1["Tier 1 · Standard reports<br/>shipment status, volume, spend,<br/>SOP validation. XLSX, PDF, CSV,<br/>scheduled delivery"]
+  PROJ --> T2["Tier 2 · Self-service builder<br/>fields, filters, aggregations,<br/>personal and shared"]
+  PROJ --> T3["Tier 3 · Embedded Power BI<br/>app owns the data,<br/>no customer licence"]
+  PROJ --> T4["Tier 4 · Governed customer<br/>data feed"]
+  PROJ --> PLAT["Platform analytics for Noatum<br/>adoption, features enabled against used,<br/>quote-to-booking conversion,<br/>queue age, time to price"]
+  RLS["Customer isolation applies at every tier,<br/>verified by automated cross-tenant tests"] -.- T1
+  RLS -.- T2
+  RLS -.- T3
+  RLS -.- T4
+    </pre></div>
+  </section>
+
+  <section id="d16">
+    <h2>16 · Delivery sequence</h2>
+    <p class="lead">Sequence and dependency, not dates — and what each phase needs from CargoWise.</p>
+    <p class="why">Phase 1 needs only the organisation extract and the quote messages. Everything else can follow, and until it arrives we continue against our CargoWise simulator.</p>
+    <div class="frame"><pre class="mermaid">
+flowchart TD
+  P1["PHASE 1 · Foundation and quotation<br/>identity, tenancy, onboarding, organisation linking,<br/>integration layer, quote request, internal pricing,<br/>write-back, accept, PDF, dashboard, news"]
+  P2["PHASE 2 · Visibility<br/>track and trace, search, events, documents,<br/>invoices, standard alerts, subscriptions,<br/>full dashboard, standard reports"]
+  P3["PHASE 3 · Booking and claims<br/>booking by both routes, sailing schedule,<br/>claims with Dynamics, advanced alerts,<br/>email rule builder"]
+  P4["PHASE 4 · Intelligence and analytics<br/>predictive ETA, disruption intelligence,<br/>self-service reports, Power BI, assistant"]
+  P5["PHASE 5 · Ecosystem<br/>purchase orders, data feeds, external API,<br/>another transport system, more languages"]
+  DEF["DEFERRED · CO2<br/>calculator, shipment visibility, booking prediction"]
+
+  P1 --> P2
+  P2 --> P3
+  P3 --> P4
+  P4 --> P5
+  DEF -.- P4
+
+  N1["Needs: organisation extract,<br/>quote messages"] -.- P1
+  N2["Needs: shipment and event streams,<br/>historical backfill, documents, invoices"] -.- P2
+  N3["Needs: booking messages<br/>and confirmations"] -.- P3
+  N4["Needs from Noatum operations:<br/>critical-path event list,<br/>document allow-list"] -.- P2
+    </pre></div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>What would unblock the most design work:</strong> one real shipment message containing a party block, redacted as needed.
+  It tells us whether a party carries the organisation code or the address code, and supplies the address-type values we need to map.
+  After that, the organisation extract, then the quote messages.
+</footer>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: 'loose',
+    theme: 'base',
+    themeVariables: {
+      fontFamily: "'Mulish','Segoe UI','Helvetica Neue',Arial,sans-serif",
+      fontSize: '14px',
+      primaryColor: '#F5F5F3',
+      primaryTextColor: '#333333',
+      primaryBorderColor: '#58595B',
+      lineColor: '#58595B',
+      secondaryColor: '#FFFFFF',
+      tertiaryColor: '#FFFFFF',
+      clusterBkg: '#FFFFFF',
+      clusterBorder: '#E5E5E5',
+      actorBkg: '#F5F5F3',
+      actorBorder: '#AA272F',
+      actorTextColor: '#333333',
+      signalColor: '#58595B',
+      signalTextColor: '#333333',
+      noteBkgColor: '#FDF0D5',
+      noteBorderColor: '#B4780A',
+      noteTextColor: '#333333',
+    },
+    flowchart: { curve: 'linear', htmlLabels: true, nodeSpacing: 40, rankSpacing: 55 },
+    sequence: { useMaxWidth: true, wrap: true },
+  });
+</script>
+
+</body>
+</html>

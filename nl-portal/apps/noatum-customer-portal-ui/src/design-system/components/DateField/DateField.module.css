@@ -1,0 +1,174 @@
+/* DT-01 D · Date in a form row. Measures from Noatum UI Kit.dc.html. */
+
+.field {
+  min-inline-size: 0;
+}
+
+.label {
+  margin-block-end: var(--noa-kit-label-gap);
+}
+
+/* Wears the shared field treatment, so it lines up with every other control. */
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  inline-size: 100%;
+  box-sizing: border-box;
+  block-size: var(--noa-control-height-regular);
+  padding-inline: var(--noa-kit-control-pad-x);
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-sm);
+  text-align: start;
+  cursor: pointer;
+}
+
+.trigger:hover:not(:disabled) {
+  border-color: var(--noa-color-border-strong);
+}
+
+.trigger:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.trigger[aria-expanded='true'] {
+  border-color: var(--noa-color-accent);
+}
+
+.trigger:disabled {
+  background: var(--noa-paper);
+  color: var(--noa-color-text-muted);
+  cursor: not-allowed;
+}
+
+.icon {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  color: var(--noa-color-accent);
+}
+
+.value {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--noa-weight-bold);
+}
+
+.placeholder {
+  color: var(--noa-color-text-muted);
+  font-weight: var(--noa-weight-regular);
+}
+
+.relative {
+  flex: none;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+}
+
+.relative[data-tone='success'] {
+  color: var(--noa-kit-success);
+}
+
+.relative[data-tone='attention'] {
+  color: var(--noa-kit-attention);
+}
+
+.relative[data-tone='action'] {
+  color: var(--noa-color-accent);
+}
+
+.relative[data-tone='muted'] {
+  color: var(--noa-color-text-muted);
+}
+
+.chevron {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  color: var(--noa-color-text-muted);
+}
+
+/* The shadcn popover ships a 288px panel with its own padding and radius. The
+   grid plus its shortcuts needs the room, and the kit's panels are square. */
+.panel {
+  inline-size: auto;
+  max-inline-size: min(44rem, calc(100vw - var(--noa-kit-block-gap) * 2));
+  padding: var(--noa-kit-card-padding);
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-none);
+  box-shadow: var(--noa-shadow-raised);
+}
+
+.hint {
+  margin: var(--noa-kit-hint-gap) 0 0;
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+
+/* --- chosen state -------------------------------------------------------
+ * A second trigger design, not a variation of the first.
+ *
+ * Full width, matching its own empty state and every other field in the grid: a
+ * control that changes width when it gains a value makes the whole row jump, and
+ * the label above it then sits over nothing.
+ *
+ * `block-size: auto` is the part that matters - the stamp sets its own height, and
+ * the fixed field height is what made it ride up over the label.
+ */
+.triggerChosen {
+  display: inline-flex;
+  align-items: stretch;
+  gap: var(--noa-space-2);
+  inline-size: 100%;
+  box-sizing: border-box;
+  block-size: auto;
+  /* No leading padding: the stamp's own block sits flush against the border. */
+  padding: 0 var(--noa-space-2) 0 0;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-neutral-900);
+  text-align: start;
+  cursor: pointer;
+  /* Keeps the stamp's square corner inside the rounded border. */
+  overflow: hidden;
+}
+
+.triggerChosen:hover:not(:disabled) {
+  border-color: var(--noa-color-border-strong);
+}
+
+.triggerChosen:focus-visible {
+  outline: 2px solid var(--noa-color-accent);
+  outline-offset: 2px;
+}
+
+.stamp {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+/* Smaller than the field chevron: it trails a block of content, not a row. */
+.chevronSmall {
+  flex: none;
+  align-self: center;
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  color: var(--noa-color-text-muted);
+}
+
+/* Matches the asterisk Field.module.css draws on every other label. */
+.required {
+  color: var(--noa-danger-500);
+  margin-inline-start: var(--noa-space-1);
+}

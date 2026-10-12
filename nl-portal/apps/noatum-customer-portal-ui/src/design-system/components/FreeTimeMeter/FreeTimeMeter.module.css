@@ -1,0 +1,127 @@
+/* SP-05 · Free time and demurrage meter. Measures from Noatum UI Kit.dc.html. */
+
+.meter {
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-heading-gap);
+}
+
+.title {
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.status {
+  padding: 5px var(--noa-kit-chip-gap);
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+.status[data-tone='action'] {
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.status[data-tone='attention'] {
+  background: var(--noa-kit-attention-surface);
+  color: var(--noa-kit-attention);
+}
+
+.status[data-tone='success'] {
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+}
+
+/* --- one cell per day ---------------------------------------------------- */
+
+.days {
+  display: flex;
+  gap: 3px;
+  margin: var(--noa-kit-card-gap) 0 0;
+  padding: 0;
+  list-style: none;
+  min-inline-size: 0;
+}
+
+.day {
+  flex: 1;
+  min-inline-size: 0;
+  block-size: 26px;
+}
+
+.day[data-state='used'] {
+  background: var(--noa-neutral-300);
+}
+
+.day[data-state='remaining'] {
+  background: var(--noa-kit-success);
+}
+
+.day[data-state='chargeable'] {
+  background: var(--noa-color-accent);
+}
+
+.markers {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--noa-space-2);
+  margin: 6px 0 0;
+  font-size: var(--noa-text-code);
+  line-height: 1.4;
+  color: var(--noa-color-text-muted);
+}
+
+.freeEnd {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+}
+
+/* --- the figures --------------------------------------------------------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.875rem), 1fr)); /* 110px */
+  gap: var(--noa-kit-heading-gap);
+  margin: var(--noa-kit-card-gap) 0 0;
+  padding-block-start: var(--noa-kit-card-gap);
+  border-block-start: 1px solid var(--noa-color-border);
+}
+
+.facts dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: 0.06em;
+  line-height: var(--noa-leading-none);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.facts dd {
+  margin: 5px 0 0;
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: 1.1;
+  color: var(--noa-neutral-900);
+}
+
+.facts dd[data-emphasis] {
+  color: var(--noa-color-accent);
+}
+
+/* A demurrage figure without its exclusions is the one that gets disputed. */
+.excluded {
+  margin: var(--noa-kit-heading-gap) 0 0;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-text-muted);
+}

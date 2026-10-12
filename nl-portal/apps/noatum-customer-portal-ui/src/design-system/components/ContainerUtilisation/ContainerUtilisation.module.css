@@ -1,0 +1,154 @@
+/* SP-04 · Container utilisation. Measures from Noatum UI Kit.dc.html. */
+
+.utilisation {
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-heading-gap);
+}
+
+.title {
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.constraint {
+  padding: 5px var(--noa-kit-chip-gap);
+  border-radius: var(--radius-btn);
+  background: var(--noa-kit-attention-surface);
+  color: var(--noa-kit-attention);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+/* --- the drawn container ------------------------------------------------- */
+
+.container {
+  /* Set from TSX; children read it by inheritance. */
+  --fill: 0%;
+  position: relative;
+  block-size: 96px;
+  margin-block-start: var(--noa-kit-card-gap);
+  overflow: hidden;
+  background: var(--noa-ground);
+  border: 2px solid var(--noa-color-accent);
+}
+
+.fill {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: var(--fill);
+  background: var(--noa-color-accent-subtle);
+}
+
+.post {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 6px;
+  background: var(--noa-color-accent);
+}
+
+.post[data-side='start'] {
+  inset-inline-start: 0;
+}
+
+.post[data-side='end'] {
+  inset-inline-end: 0;
+}
+
+.ribs {
+  position: absolute;
+  inset: 8px 16px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgb(from var(--noa-color-accent) r g b / 0.22) 0 1px,
+    transparent 1px 9px
+  );
+}
+
+/* The water line carries its own figure, so the fill is never read by eye alone. */
+.waterline {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: var(--fill);
+  block-size: 2px;
+  background: var(--noa-color-accent);
+}
+
+.waterlineLabel {
+  position: absolute;
+  inset-inline-end: var(--noa-kit-chip-gap);
+  inset-block-end: calc(var(--fill) + 6px);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-accent);
+}
+
+/* --- the two measures ---------------------------------------------------- */
+
+.measures {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-heading-gap);
+  margin: var(--noa-kit-card-gap) 0 0;
+}
+
+.measure {
+  min-inline-size: 0;
+}
+
+.measure dt {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.measure dd {
+  margin: var(--noa-space-1) 0 0;
+}
+
+.track {
+  display: block;
+  block-size: 8px;
+  background: var(--noa-ring-track);
+}
+
+.track > span {
+  display: block;
+  block-size: 100%;
+  --fill: 0%;
+  inline-size: var(--fill);
+  background: var(--noa-color-accent);
+}
+
+.figure {
+  display: block;
+  margin-block-start: var(--noa-space-1);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+.percent {
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text-muted);
+}
+
+.note {
+  margin: var(--noa-kit-heading-gap) 0 0;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-text-muted);
+}

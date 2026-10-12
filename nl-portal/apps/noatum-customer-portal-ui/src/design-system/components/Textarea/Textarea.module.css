@@ -1,0 +1,16 @@
+/*
+ * Only what a textarea needs on top of the shared field treatment.
+ *
+ * Everything else — the label, the hint, the error, the border, the focus ring —
+ * comes from Field.module.css, the same stylesheet Input and Select wear, so a
+ * textarea beside an input in a grid lines up without either being adjusted.
+ */
+.control {
+  /* The field control is a fixed height; a textarea's is its rows. */
+  block-size: auto;
+  min-block-size: calc(var(--noa-control-height-regular) * 2);
+  padding-block: var(--noa-space-3);
+  line-height: var(--noa-leading-relaxed);
+  /* Taller only. Dragging one wider than its column breaks the grid around it. */
+  resize: vertical;
+}

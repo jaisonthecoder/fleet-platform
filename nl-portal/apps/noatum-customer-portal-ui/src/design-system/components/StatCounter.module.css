@@ -1,0 +1,89 @@
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-card-gap);
+  padding: var(--noa-card-padding);
+  background: var(--noa-color-surface);
+  border: var(--noa-card-border);
+  border-radius: var(--noa-radius-md);
+  box-shadow: var(--noa-card-shadow);
+  text-align: left;
+  font-family: inherit;
+}
+
+.clickable {
+  cursor: pointer;
+  transition:
+    border-color var(--noa-duration-fast) var(--noa-ease),
+    box-shadow var(--noa-duration-fast) var(--noa-ease);
+}
+
+.clickable:hover {
+  border-color: var(--noa-color-accent);
+  box-shadow: var(--noa-card-shadow);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--noa-space-2);
+}
+
+.label {
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+  font-weight: var(--noa-weight-medium);
+}
+
+.icon {
+  color: var(--noa-color-accent);
+  display: inline-flex;
+}
+
+.value {
+  font-size: var(--noa-text-3xl);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-color-text);
+  /* Tabular figures so a refreshing counter does not shift width. */
+  font-variant-numeric: tabular-nums;
+}
+
+.delta {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-semibold);
+}
+
+.up {
+  color: var(--noa-success-500);
+}
+
+.down {
+  color: var(--noa-danger-500);
+}
+
+.flat {
+  color: var(--noa-color-text-muted);
+}
+
+.skeleton {
+  display: block;
+  height: var(--noa-text-3xl);
+  width: 60%;
+  border-radius: var(--noa-radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--noa-neutral-100) 25%,
+    var(--noa-neutral-200) 50%,
+    var(--noa-neutral-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}

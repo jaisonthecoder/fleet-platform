@@ -1,0 +1,181 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--noa-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-btn);
+  font-family: var(--noa-font-sans);
+  font-weight: var(--noa-weight-bold);
+  cursor: pointer;
+  /* A label that wraps turns a row of actions into ragged two-line blocks. */
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1;
+  vertical-align: middle;
+  user-select: none;
+  transition:
+    background-color var(--noa-duration-fast) var(--noa-ease),
+    border-color var(--noa-duration-fast) var(--noa-ease),
+    color var(--noa-duration-fast) var(--noa-ease);
+}
+
+/* Icons are usually passed as children, so the label aligns them itself. */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-width: 0;
+}
+
+/* Fixed rather than em-based: call sites pass 13/14/16 and ragged icons show. */
+.button svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.sm svg {
+  width: 14px;
+  height: 14px;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* --- sizes: fixed heights so mixed buttons line up on one row --- */
+.sm {
+  height: var(--noa-control-height-compact);
+  padding: 0 var(--noa-space-4);
+  font-size: var(--noa-text-sm);
+}
+
+.md {
+  height: var(--noa-control-height);
+  padding: 0 var(--noa-space-5);
+  font-size: var(--noa-text-sm);
+}
+
+.lg {
+  height: var(--noa-touch-target);
+  padding: 0 var(--noa-space-6);
+  font-size: var(--noa-text-md);
+}
+
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.sm.iconOnly { width: var(--noa-control-height-compact); }
+.md.iconOnly { width: var(--noa-control-height); }
+.lg.iconOnly { width: var(--noa-touch-target); }
+
+/* --- variants --- */
+.primary {
+  background-color: var(--noa-color-accent);
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.primary:hover:not(:disabled),
+.primary:active:not(:disabled) {
+  background-color: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent-hover);
+}
+
+.outline {
+  background-color: var(--noa-color-surface);
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.outline:hover:not(:disabled),
+.outline:active:not(:disabled) {
+  background-color: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent-hover);
+  color: var(--noa-color-accent-hover);
+}
+
+/*
+ * Third style for repeated row actions, where a grid of outlined red boxes shouts
+ * louder than the data. Reads as a link until pointed at.
+ */
+.quiet {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--noa-color-text-muted);
+}
+
+.quiet:hover:not(:disabled),
+.quiet:active:not(:disabled) {
+  background-color: var(--noa-neutral-50);
+  color: var(--noa-color-accent);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  animation: spin 700ms linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2s; }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================================================
+ * On the navy band.
+ *
+ * The outline variant is a brand-red rule and a brand-red label, which on navy
+ * is neither readable nor on-brand — red is for actions and errors, and the
+ * whole band is already the brand. On dark it becomes the quiet white-outlined
+ * button the hero mockups draw, and the primary keeps its red with a glow so it
+ * is still obviously the one thing to press.
+ * ========================================================================== */
+
+.onDark.outline {
+  background: none;
+  border-color: var(--noa-color-hero-outline);
+  color: var(--text-on-dark);
+}
+
+.onDark.outline:hover:not(:disabled) {
+  background: var(--noa-color-hero-chip);
+  border-color: var(--noa-color-hero-text);
+  color: var(--text-on-dark);
+}
+
+.onDark.primary {
+  box-shadow: 0 4px 16px var(--noa-color-accent-halo);
+}
+
+.onDark.quiet {
+  color: var(--noa-on-dark);
+}
+
+.onDark.quiet:hover:not(:disabled) {
+  background: var(--noa-color-hero-chip);
+  color: var(--text-on-dark);
+}
+
+.onDark:focus-visible {
+  outline-color: var(--text-on-dark);
+}

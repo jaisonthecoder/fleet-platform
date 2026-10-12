@@ -1,0 +1,102 @@
+export const LOGISTICS_ICONS = {
+  'container-ship': [
+    'Container ship',
+    'M2 19c2 1 4 1 6-1 2 2 6 2 8 0 2 2 4 2 6 1M4 15l1-4h14l1 4M8 11V7h8v4M11 7V4h2v3',
+  ],
+  barge: ['Barge', 'M3 18h18l-2 3H5zM6 12h5v3H6zM13 12h5v3h-5zM5 15h14'],
+  'air-freight': ['Air freight', 'M2 14l8 1 4 7 2-1-1-7 6-3c1-1 1-2 0-3l-7 2-5-5-2 1 3 6-8 1z'],
+  truck: [
+    'Truck',
+    'M2 16V6h11v10M13 10h5l3 3v3h-2M9 18h6M5.6 17.4a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0M15.6 17.4a1.8 1.8 0 1 0 3.6 0a1.8 1.8 0 1 0-3.6 0',
+  ],
+  trailer: ['Trailer', 'M2 15h15v3H2zM4 18v2M17 12h3v6h-3z'],
+  'rail-freight': ['Rail freight', 'M6 4h12v11H6zM9 8h6M8 15l-2 5M16 15l2 5M10 20h4'],
+  forklift: ['Forklift', 'M3 17h8V9H3zM11 12h3l2 5M18 5v12h3M4 20h6'],
+  'mobile-crane': ['Mobile crane', 'M6 21h8M10 21V3h9M19 3v6l-3-3M10 8l6-5'],
+  'gantry-crane': ['Gantry crane', 'M3 21V7h18v14M7 21V11h10v10M12 3v4M8 7l4-4 4 4'],
+  warehouse: ['Warehouse', 'M3 21V9l9-5 9 5v12M8 21v-7h8v7'],
+  pallet: ['Pallet', 'M3 14h18v3H3zM3 19h18v2H3zM6 17v2M12 17v2M18 17v2'],
+  carton: ['Carton', 'M3 8l9-4 9 4v9l-9 4-9-4zM3 8l9 4 9-4M12 12v9'],
+  drum: ['Drum', 'M6 4h12v16H6zM6 9h12M6 15h12'],
+  'bagged-cargo': ['Bagged cargo', 'M9 3h6l-1 3c3 2 4 5 4 8a5 5 0 0 1-12 0c0-3 1-6 4-8z'],
+  container: ['Container', 'M3 7h18v10H3zM6 7v10M10 7v10M14 7v10M18 7v10'],
+  reefer: ['Reefer', 'M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9'],
+  'dangerous-goods': ['Dangerous goods', 'M12 3l9 9-9 9-9-9zM12 8v5M12 16v.01'],
+  fragile: ['Fragile', 'M8 3h8l-1 6a3 3 0 0 1-6 0zM12 12v7M9 21h6'],
+  'not-stackable': ['Not stackable', 'M4 9h7v5H4zM13 9h7v5h-7zM4 17h16M6 4h12'],
+  'gross-weight': ['Gross weight', 'M12 4a2 2 0 1 0 0 4a2 2 0 1 0 0-4M5 20h14l-3-10H8z'],
+  dimensions: ['Dimensions', 'M4 6h16M4 4v4M20 4v4M6 12h12v8H6z'],
+  'cargo-ready-date': ['Cargo ready date', 'M4 6h16v14H4zM8 3v4M16 3v4M4 11h16'],
+  'transit-time': ['Transit time', 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M12 7v5l4 2'],
+  place: [
+    'Place',
+    'M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11zM12 8a2.4 2.4 0 1 0 0 4.8a2.4 2.4 0 1 0 0-4.8',
+  ],
+  routing: [
+    'Routing',
+    'M6 4a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5M18 15a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5M8 6h6a3 3 0 0 1 0 6H9a3 3 0 0 0 0 6h6',
+  ],
+  'global-network': [
+    'Global network',
+    'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M3 12h18M12 3c3 4 3 14 0 18M12 3c-3 4-3 14 0 18',
+  ],
+  'port-call': [
+    'Port call',
+    'M12 7a2 2 0 1 0 0-4a2 2 0 1 0 0 4M12 7v14M5 13a7 7 0 0 0 14 0M8 11H4M20 11h-4',
+  ],
+  'customs-cleared': ['Customs cleared', 'M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6zM9 12l2 2 4-4'],
+  'bill-of-lading': [
+    'Bill of lading',
+    'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M8 13h8M8 17h5',
+  ],
+  invoice: ['Invoice', 'M6 3h9l3 3v15H6zM9 9h6M9 13h6M9 17h4'],
+  certificate: ['Certificate', 'M5 4h14v11H5zM9 19l3-2 3 2v-4H9z'],
+  'cargo-insurance': ['Cargo insurance', 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9.6C7.4 20.3 4 16.5 4 12V6z'],
+  inspection: ['Inspection', 'M11 4a7 7 0 1 0 0 14a7 7 0 1 0 0-14M20 20l-4-4'],
+  temperature: ['Temperature', 'M12 4a2 2 0 0 1 2 2v7a4 4 0 1 1-4 0V6a2 2 0 0 1 2-2M12 9v5'],
+  batteries: ['Batteries', 'M3 8h15v8H3zM21 11v2M6 11v2M9 11v2'],
+  fumigation: ['Fumigation', 'M8 9h6v11H8zM10 9V5h2v4M16 6l2-2M16 10h3M16 14l2 2'],
+  emissions: ['Emissions', 'M5 20c0-8 5-13 14-14-1 9-6 14-14 14zM5 20l8-8'],
+  barcode: ['Barcode', 'M4 5v14M7 5v14M10 5v10M13 5v14M16 5v10M20 5v14'],
+  seal: ['Seal', 'M6 11h12v9H6zM9 11V8a3 3 0 0 1 6 0v3M12 15v2'],
+  signature: ['Signature', 'M3 17c3 0 4-9 7-9s1 9 4 9 2-5 4-5 2 2 3 2M4 21h16'],
+  'linked-reference': [
+    'Linked reference',
+    'M9 12a3 3 0 0 1 3-3h2a3 3 0 0 1 0 6h-1M15 12a3 3 0 0 1-3 3h-2a3 3 0 0 1 0-6h1',
+  ],
+  agreement: ['Agreement', 'M2 12l4-3 4 4 4-4 4 3M6 14l4 4 4-4'],
+  'branch-contact': [
+    'Branch contact',
+    'M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4h-3A14 14 0 0 1 5 7z',
+  ],
+  email: ['Email', 'M3 6h18v12H3zM3 7l9 6 9-6'],
+  message: ['Message', 'M4 5h16v11H9l-5 4z'],
+  alerts: ['Alerts', 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21a2 2 0 0 0 4 0'],
+  contact: ['Contact', 'M12 4a4 4 0 1 0 0 8a4 4 0 1 0 0-8M4 21c0-4 4-6 8-6s8 2 8 6'],
+  team: [
+    'Team',
+    'M9 5a3.2 3.2 0 1 0 0 6.4a3.2 3.2 0 1 0 0-6.4M3 20c0-3.4 3-5 6-5s6 1.6 6 5M16 6a3 3 0 0 1 0 6M17 15c2.5.5 4 2.2 4 5',
+  ],
+  'branch-office': ['Branch office', 'M4 21V4h10v17M14 9h6v12M7 8h4M7 12h4M7 16h4M17 13h1M17 17h1'],
+  factory: ['Factory', 'M3 21V11l5 3V11l5 3V8l8 5v8zM6 17h2M11 17h2M16 17h2'],
+  'terminal-gate': ['Terminal gate', 'M4 4v17M4 7h16l-2 4H4M8 21h8'],
+  conveyor: [
+    'Conveyor',
+    'M3 16h18M5 16a2 2 0 1 0 4 0a2 2 0 1 0-4 0M15 16a2 2 0 1 0 4 0a2 2 0 1 0-4 0M8 12h8V8H8z',
+  ],
+  'heavy-lift': ['Heavy lift', 'M12 3v6M9 9h6l-1 4H10zM12 13v3a3 3 0 1 0 3 3'],
+  exception: ['Exception', 'M12 4l9 16H3zM12 10v4M12 17v.01'],
+  flammable: [
+    'Flammable',
+    'M12 3c4 5 6 7 6 10a6 6 0 0 1-12 0c0-2 1-3 3-5 0 2 1 3 2 3 1 0 1-4 1-8z',
+  ],
+  'bulk-liquid': ['Bulk liquid', 'M12 3s6 6 6 10a6 6 0 0 1-12 0c0-4 6-10 6-10z'],
+  compass: ['Compass', 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M15 9l-2 5-4 2 2-5z'],
+  delivered: ['Delivered', 'M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18M8 12l3 3 5-5'],
+  'free-time': ['Free time', 'M12 6a8 8 0 1 0 0 16a8 8 0 1 0 0-16M12 10v4l3 2M9 3h6M12 3v3'],
+} as const;
+
+export type LogisticsIconName = keyof typeof LOGISTICS_ICONS;
+export type LogisticsIconSize = 16 | 20 | 24 | 30;
+
+export const LOGISTICS_ICON_NAMES = Object.keys(LOGISTICS_ICONS) as LogisticsIconName[];

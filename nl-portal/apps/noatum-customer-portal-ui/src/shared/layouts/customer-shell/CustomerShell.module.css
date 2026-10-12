@@ -1,0 +1,385 @@
+/* ============================================================================
+ * The customer shell.
+ *
+ * Deliberately not the staff shell. The distinction is a rule, not a mood:
+ *
+ *   staff    a web application — a fixed 196px rail, fluid width, and the
+ *            dense --noa-space-* ramp, because an operator works one screen
+ *            all day and the cost of whitespace is a scrollbar.
+ *   customer a website — horizontal navigation, a 1170px measure, and the
+ *            marketing --space-* ramp, because a customer visits to do one
+ *            thing and leave, and the page has to look like Noatum.
+ *
+ * If a value here starts with --noa-space-, it is in the wrong shell.
+ * ========================================================================== */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--surface-page);
+}
+
+/* --- the red strip: who you are signed in as, and how to leave ------------- */
+
+.utility {
+  background: var(--surface-topbar);
+  color: var(--text-on-dark);
+  flex-shrink: 0;
+}
+
+/* CH-01. One line, 32px, and it stays one line: the bar names who you are
+   signed in as, which is the least interesting thing on the page until it is
+   wrong. Nothing in it wraps, and nothing in it carries an icon. */
+.utilityInner {
+  block-size: var(--noa-utility-height);
+  padding-inline: var(--noa-chrome-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--noa-text-dense);
+  overflow: hidden;
+}
+
+.utilityContext {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-inline-size: 0;
+}
+
+.utilityWho {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Which side of the product this account is on. Inverted, so it reads as a
+   stamp on the strip rather than another link. */
+.utilityBadge {
+  flex: none;
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-badge);
+  padding: 3px var(--space-2);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.utilityActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex: none;
+}
+
+.utility button,
+.utility a {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.utility button:hover,
+.utility a:hover {
+  text-decoration: underline;
+}
+
+.utility button[aria-pressed='true'] {
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+}
+
+.language {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* --- the brand lockup, matching the sign-in page -------------------------- */
+
+/* Two words, two sizes, one baseline. The tracking on LOGISTICS is what makes
+   the pair read as a lockup rather than a heading with a subtitle. */
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: var(--color-accent-navy);
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  letter-spacing: -0.01em;
+}
+
+.logo small {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-lockup);
+  margin: 0;
+}
+
+/* --- horizontal navigation: the thing the staff shell does not have ------- */
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 12px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  color: var(--text-heading);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  text-decoration: none;
+  white-space: nowrap;
+  background: none;
+  cursor: pointer;
+}
+
+.navLink:hover {
+  color: var(--color-primary);
+  background: var(--surface-page);
+  text-decoration: none;
+}
+
+/* The page you are on, drawn as a tinted block rather than a rule under the
+   word. Colour is not the only signal: aria-current marks it for assistive
+   technology, and the filled shape is a second, non-colour cue. */
+.navLink[aria-current='page'] {
+  color: var(--color-primary);
+  background: var(--red-050);
+}
+
+/*
+ * How many records are behind a section.
+ *
+ * Only drawn when the account overview actually answered. A permanent zero on
+ * a section nobody has looked at is not information, and an invented one is a
+ * lie - so no number means no chip, the same rule the bell badge follows.
+ */
+.navCount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 20px;
+  padding: 1px 5px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-tight);
+}
+
+.navLink[aria-current='page'] .navCount {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Announced and reachable, never silently missing — the same treatment the
+   staff sidebar gives a destination that has not shipped yet. */
+.navLink[aria-disabled='true'] {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+/* --- who is signed in ----------------------------------------------------- */
+
+/*
+ * The account lives on the red strip, not in the white bar.
+ *
+ * The strip's whole job is to say whose session this is, so the person belongs
+ * on it; and putting sign out behind a menu there keeps a destructive control
+ * out of a row of navigation links, where it was one slip from a page change.
+ */
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* Scoped to the strip because `.utility button` above resets padding on every
+   control in it, and that rule outranks a bare class. */
+.utility .accountTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+  max-inline-size: 260px;
+  padding: 2px var(--space-2) 2px 2px;
+  border-radius: var(--radius-btn);
+}
+
+/* The strip underlines its links on hover; this one is a control, not a link. */
+.utility .accountTrigger:hover,
+.utility .accountTrigger[aria-expanded='true'] {
+  background: var(--red-700);
+  text-decoration: none;
+}
+
+.accountTrigger svg:last-child {
+  inline-size: 12px;
+  block-size: 12px;
+  flex: none;
+}
+
+.accountName {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Inverted against the strip: white disc, brand red initials. The dark disc the
+   white bar used would disappear into the red. */
+.utilityAvatar {
+  display: grid;
+  place-items: center;
+  inline-size: 24px;
+  block-size: 24px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--noa-color-surface);
+  color: var(--color-primary);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+.accountMenu {
+  min-inline-size: 240px;
+}
+
+/* Muted grey is decorative only elsewhere; here it carries the role, so it is
+   never the only place the role appears — the account page states it too. */
+.accountDetail {
+  display: block;
+  padding: 0 var(--space-2) var(--space-2);
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-xs);
+}
+
+/* The bell. Count is a real number or the badge is not drawn — a permanent
+   "0" is noise, and an invented one is a lie. */
+.bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  background: none;
+  border: 0;
+  padding: var(--space-1);
+  color: var(--text-heading);
+  cursor: pointer;
+}
+
+.bellCount {
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-end: -3px;
+  background: var(--color-primary);
+  color: var(--text-on-dark);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  padding: 2px 5px;
+  border-radius: var(--space-2);
+}
+
+/* --- content -------------------------------------------------------------- */
+
+/*
+ * Full bleed by default so a page can paint a navy band edge to edge, the way
+ * the sign-in hero does. Pages that are just content wrap themselves in
+ * .measure instead.
+ */
+.main {
+  flex: 1;
+  min-width: 0;
+}
+
+.measure {
+  /* SH-01: full width, 32px gutters. Wide screens are used, not framed. */
+  padding: var(--noa-shell-gutter) var(--noa-shell-gutter) var(--noa-space-8);
+}
+
+.skip {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  transform: translateY(-200%);
+  z-index: var(--noa-z-toast);
+  background: var(--surface-page);
+  padding: var(--space-3);
+}
+
+.skip:focus {
+  transform: none;
+}
+
+/* --- mobile --------------------------------------------------------------- */
+
+.menuButton {
+  display: none;
+}
+
+.mobileNav {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+}
+
+/* A row in a sheet, not a pill: full width, so the rounded block the bar uses
+   would leave a gap at each end of a list item that is meant to fill it. */
+.mobileNav .navLink {
+  height: auto;
+  min-height: 48px;
+  border-radius: 0;
+  border-left: 3px solid transparent;
+  padding-inline: var(--space-4);
+  font: var(--text-body-f);
+  font-weight: 700;
+}
+
+.mobileNav .navLink[aria-current='page'] {
+  border-left-color: var(--color-primary);
+  background: var(--red-050);
+}
+
+@media (max-width: 768px) {
+  .menuButton {
+    display: inline-flex;
+  }
+
+  /* The avatar and the strip's context line already say who this is. */
+  .accountName {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .utilityInner {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+
+  .measure {
+    padding: var(--space-5) var(--noa-shell-gutter-mobile) var(--space-7);
+  }
+}

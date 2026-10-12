@@ -1,0 +1,347 @@
+/*
+ * The request drawer's shell.
+ *
+ * Its own sheet rather than the kit's Dialog: this one carries a tab row in the
+ * header and a tinted body behind white sections, which the Dialog's single
+ * padded surface cannot do without fighting it.
+ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--noa-z-modal) - 1);
+  background: rgb(51 51 51 / 35%);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.sheet {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: min(760px, 100vw);
+  z-index: var(--noa-z-modal);
+  display: flex;
+  flex-direction: column;
+  background: var(--noa-ground);
+  box-shadow: -8px 0 30px rgb(0 0 0 / 18%);
+}
+
+.headTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.close {
+  flex: none;
+  inline-size: 34px;
+  block-size: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--noa-color-text);
+  cursor: pointer;
+}
+
+.close:hover { border-color: var(--noa-color-accent); color: var(--noa-color-accent); }
+
+.close:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/*
+ * The request as the customer submitted it.
+ *
+ * Read only, and it says so: nothing here is a control, because this is the
+ * evidence a quotation is argued from. It sits on the sheet's own tint, with the
+ * numbered sections the mockup uses.
+ */
+.head {
+  padding: 18px 20px 0;
+  min-inline-size: 0;
+  background: var(--surface-card);
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.headTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.reference {
+  margin: 8px 0 0;
+  font-size: var(--noa-text-xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.provenance {
+  margin: 6px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.provenance strong { color: var(--text-heading); }
+
+/* Read only is a fact about this drawer, not a warning, so it is stated in the
+   same quiet line as everything else about where the request came from. */
+.readOnly {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- the section tabs ---------------------------------------------------- */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 0;
+  border-block-end: 2px solid transparent;
+  background: none;
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab[aria-selected='true'] {
+  color: var(--noa-color-accent);
+  border-block-end-color: var(--noa-color-accent);
+}
+
+.tab:hover { color: var(--noa-color-accent); }
+
+.tab:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: -2px;
+}
+
+.tabNumber {
+  color: var(--noa-color-text-muted);
+  font-weight: var(--noa-weight-regular);
+}
+
+.tab[aria-selected='true'] .tabNumber { color: var(--noa-color-accent); }
+
+/* --- a section ----------------------------------------------------------- */
+
+.section {
+  background: var(--surface-card);
+  border-inline-start: 3px solid var(--color-accent-navy);
+  min-inline-size: 0;
+}
+
+/* The second and later sections in a tab are the brand's, so a long tab reads as
+   a sequence rather than as one block repeated. */
+.section + .section { border-inline-start-color: var(--noa-color-accent); }
+
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--surface-section);
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.sectionNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+}
+
+/* What this section covers, in the words the request form used for its own
+   steps - so a pricer can tell at a glance whether the answer is in here. */
+.sectionKeys {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px 20px;
+  margin: 0;
+  padding: 16px;
+}
+
+.fact { min-inline-size: 0; }
+
+.fact dt {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.fact dd {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+
+/* An answer the customer did not give. Distinguished from one they gave as "no",
+   which reads as its own word. */
+.fact dd[data-empty='true'] {
+  color: var(--noa-color-text-muted);
+}
+
+/* A fact whose value is a paragraph rather than a phrase. */
+.wide { grid-column: 1 / -1; }
+
+.block {
+  padding: 0 16px 16px;
+  min-inline-size: 0;
+}
+
+.blockTitle {
+  margin: 0 0 8px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 4px 9px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--surface-section);
+  color: var(--text-heading);
+}
+
+.note {
+  margin: 0;
+  padding: 12px;
+  background: var(--surface-section);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+  white-space: pre-wrap;
+}
+
+.empty {
+  margin: 0;
+  padding: 16px;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- the package lines --------------------------------------------------- */
+
+.lines {
+  margin: 0;
+  padding: 0 16px 16px;
+  min-inline-size: 0;
+  overflow-x: auto;
+}
+
+.lineGrid {
+  min-inline-size: 460px;
+}
+
+.lineRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1.4fr) minmax(0, 1.4fr) 96px 96px;
+  gap: 8px;
+  align-items: center;
+  padding-block: 8px;
+  border-block-end: 1px solid var(--noa-ground);
+  font-size: var(--noa-text-sm);
+  color: var(--text-heading);
+}
+
+.lineHead {
+  padding-block: 6px;
+  border-block-end: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.lineRow > span {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.numeric { text-align: end; }

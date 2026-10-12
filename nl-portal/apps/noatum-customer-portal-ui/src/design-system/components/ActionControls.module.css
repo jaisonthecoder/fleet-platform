@@ -1,0 +1,100 @@
+.switcher {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-color-surface);
+}
+
+.switcher button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--noa-space-2);
+  min-height: 36px;
+  padding-inline: var(--noa-space-5);
+  border: 0;
+  border-left: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+}
+
+.switcher button:first-child {
+  border-left: 0;
+}
+
+.switcher button:hover:not(:disabled) {
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.switcher button[aria-pressed='true'] {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.switcher button:disabled {
+  color: var(--noa-color-text-muted);
+}
+
+.switcher svg {
+  width: var(--noa-space-4);
+  height: var(--noa-space-4);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-3);
+}
+
+.stepper button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--noa-control-height-compact);
+  height: var(--noa-control-height-compact);
+  padding: 0;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+}
+
+.stepper button:hover:not(:disabled) {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+}
+
+.stepper button:disabled {
+  color: var(--noa-color-text-muted);
+}
+
+.stepper output,
+.stepperInput {
+  min-width: var(--noa-space-5);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  text-align: center;
+}
+
+.stepperInput {
+  width: 4rem;
+  padding: var(--noa-space-1);
+  border: 0;
+  background: transparent;
+}
+
+.unit {
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-xs);
+}

@@ -1,0 +1,114 @@
+/* DA-07 · Sparkline trend. Measures from Noatum UI Kit.dc.html. */
+
+.chart {
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-chip-gap);
+}
+
+.copy {
+  min-inline-size: 0;
+}
+
+.title {
+  display: block;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.description {
+  display: block;
+  margin-block-start: var(--noa-space-1);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.trend {
+  padding: 6px var(--noa-kit-chip-gap);
+  white-space: nowrap;
+  border-radius: var(--radius-btn);
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+.chart[data-tone='attention'] .trend {
+  background: var(--noa-kit-attention-surface);
+  color: var(--noa-kit-attention);
+}
+
+.chart[data-tone='action'] .trend {
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.chart[data-tone='neutral'] .trend {
+  background: var(--noa-ground);
+  color: var(--noa-color-text);
+}
+
+.svg {
+  display: block;
+  inline-size: 100%;
+  block-size: 5.625rem; /* 90px */
+  margin-block-start: var(--noa-kit-card-gap);
+}
+
+.area {
+  fill: var(--noa-kit-success-surface);
+}
+
+.line {
+  stroke: var(--noa-kit-success);
+  stroke-width: 2.5;
+}
+
+.chart[data-tone='attention'] .area {
+  fill: var(--noa-kit-attention-surface);
+}
+
+.chart[data-tone='attention'] .line {
+  stroke: var(--noa-kit-attention);
+}
+
+.chart[data-tone='action'] .area {
+  fill: var(--noa-color-accent-subtle);
+}
+
+.chart[data-tone='action'] .line {
+  stroke: var(--noa-color-accent);
+}
+
+.labels {
+  display: flex;
+  margin-block-start: var(--noa-space-2);
+}
+
+.labels > span {
+  flex: 1;
+  text-align: center;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text-muted);
+}
+
+.empty {
+  margin: var(--noa-kit-card-gap) 0 0;
+  padding: var(--noa-kit-card-padding);
+  background: var(--noa-paper);
+  border: 1px dashed var(--noa-color-border);
+  font-size: var(--noa-text-dense);
+  color: var(--noa-color-text-muted);
+}

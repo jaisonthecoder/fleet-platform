@@ -1,0 +1,3327 @@
+{
+  "source": "docs/events_full_list.xlsx",
+  "sha256": "fb603bb63a2f1422d3f9c8f6dc8e4a88711380460a1fa88995db74ac11c35e7a",
+  "extractedAt": "2026-09-12",
+  "items": [
+    {
+      "code": "AAC",
+      "name": "Accreditation Attempt Completed",
+      "isActive": true
+    },
+    {
+      "code": "AAS",
+      "name": "Accreditation Attempt Commenced",
+      "isActive": true
+    },
+    {
+      "code": "ACT",
+      "name": "Set to Active",
+      "isActive": true
+    },
+    {
+      "code": "ACV",
+      "name": "Record Archived",
+      "isActive": true
+    },
+    {
+      "code": "ADC",
+      "name": "Arrival Details Changed",
+      "isActive": true
+    },
+    {
+      "code": "ADD",
+      "name": "Added a record to the system",
+      "isActive": true
+    },
+    {
+      "code": "ADR",
+      "name": "Arrival Documentation Received",
+      "isActive": true
+    },
+    {
+      "code": "ADT",
+      "name": "Record Audited",
+      "isActive": true
+    },
+    {
+      "code": "AED",
+      "name": "All Export Documents Received",
+      "isActive": true
+    },
+    {
+      "code": "AID",
+      "name": "All Import Documents Received",
+      "isActive": true
+    },
+    {
+      "code": "AMD",
+      "name": "Auto Match Done",
+      "isActive": true
+    },
+    {
+      "code": "APP",
+      "name": "Approve Book",
+      "isActive": true
+    },
+    {
+      "code": "ARV",
+      "name": "Arrival",
+      "isActive": true
+    },
+    {
+      "code": "ATC",
+      "name": "Attached",
+      "isActive": true
+    },
+    {
+      "code": "ATH",
+      "name": "Authorized",
+      "isActive": true
+    },
+    {
+      "code": "ATR",
+      "name": "Authorization Rejected",
+      "isActive": true
+    },
+    {
+      "code": "ATW",
+      "name": "Authorization Withdrawn",
+      "isActive": true
+    },
+    {
+      "code": "AUC",
+      "name": "Assigned User Changed",
+      "isActive": true
+    },
+    {
+      "code": "AVF",
+      "name": "Available From",
+      "isActive": true
+    },
+    {
+      "code": "AVS",
+      "name": "Address Validation Status",
+      "isActive": true
+    },
+    {
+      "code": "AVT",
+      "name": "Available To",
+      "isActive": true
+    },
+    {
+      "code": "BAW",
+      "name": "Booking Autorated With Rates Service",
+      "isActive": true
+    },
+    {
+      "code": "BKC",
+      "name": "Booking Confirmed",
+      "isActive": true
+    },
+    {
+      "code": "BKD",
+      "name": "Booked",
+      "isActive": true
+    },
+    {
+      "code": "BKJ",
+      "name": "Booking Rejected",
+      "isActive": true
+    },
+    {
+      "code": "BKL",
+      "name": "Booking Canceled",
+      "isActive": true
+    },
+    {
+      "code": "BKP",
+      "name": "Booking Pending",
+      "isActive": true
+    },
+    {
+      "code": "BKQ",
+      "name": "Booking Requested",
+      "isActive": true
+    },
+    {
+      "code": "BLW",
+      "name": "Canadian CAD Late Sending Warning",
+      "isActive": true
+    },
+    {
+      "code": "BPL",
+      "name": "Batch Processor Log",
+      "isActive": true
+    },
+    {
+      "code": "BQW",
+      "name": "Booking With Quote Autorated With Rates Service",
+      "isActive": true
+    },
+    {
+      "code": "BRU",
+      "name": "Bulk Rate Update",
+      "isActive": true
+    },
+    {
+      "code": "BWS",
+      "name": "Canadian CAD Late Warning Sent",
+      "isActive": true
+    },
+    {
+      "code": "CAC",
+      "name": "Consignment Adjustments Confirmed",
+      "isActive": true
+    },
+    {
+      "code": "CAD",
+      "name": "Cargo Received at Depot",
+      "isActive": true
+    },
+    {
+      "code": "CAE",
+      "name": "Cargo Available for Export Pickup",
+      "isActive": true
+    },
+    {
+      "code": "CAO",
+      "name": "Cargo Accepted at Origin Depot",
+      "isActive": true
+    },
+    {
+      "code": "CAR",
+      "name": "Charges have been auto rated",
+      "isActive": true
+    },
+    {
+      "code": "CAV",
+      "name": "Cargo Available",
+      "isActive": true
+    },
+    {
+      "code": "CBK",
+      "name": "Call Back Client",
+      "isActive": true
+    },
+    {
+      "code": "CCA",
+      "name": "Cartage Advised",
+      "isActive": true
+    },
+    {
+      "code": "CCC",
+      "name": "Customs Commenced",
+      "isActive": true
+    },
+    {
+      "code": "CCD",
+      "name": "Cargo Check-in Discrepancy",
+      "isActive": true
+    },
+    {
+      "code": "CCE",
+      "name": "Credit Check Event",
+      "isActive": true
+    },
+    {
+      "code": "CCF",
+      "name": "Cartage Complete/Finalized",
+      "isActive": true
+    },
+    {
+      "code": "CCI",
+      "name": "Cargo Check-in",
+      "isActive": true
+    },
+    {
+      "code": "CCR",
+      "name": "Customs Contingency Release",
+      "isActive": true
+    },
+    {
+      "code": "CDA",
+      "name": "Credit Approval Granted",
+      "isActive": true
+    },
+    {
+      "code": "CDC",
+      "name": "Collection Document Checked",
+      "isActive": true
+    },
+    {
+      "code": "CDE",
+      "name": "Credit Controls Modified",
+      "isActive": true
+    },
+    {
+      "code": "CDQ",
+      "name": "Credit Approval Requested",
+      "isActive": true
+    },
+    {
+      "code": "CDR",
+      "name": "Credit Approval Response",
+      "isActive": true
+    },
+    {
+      "code": "CEE",
+      "name": "Calculated Estimate",
+      "isActive": true
+    },
+    {
+      "code": "CEN",
+      "name": "Customs Number Entered",
+      "isActive": true
+    },
+    {
+      "code": "CES",
+      "name": "Customs Entry Status",
+      "isActive": true
+    },
+    {
+      "code": "CFP",
+      "name": "CFS container packed",
+      "isActive": true
+    },
+    {
+      "code": "CFU",
+      "name": "CFS container unpacked",
+      "isActive": true
+    },
+    {
+      "code": "CGC",
+      "name": "Cargo Report Records Created",
+      "isActive": true
+    },
+    {
+      "code": "CIC",
+      "name": "Inspection Complete",
+      "isActive": true
+    },
+    {
+      "code": "CID",
+      "name": "Change of Identifier",
+      "isActive": true
+    },
+    {
+      "code": "CIN",
+      "name": "Cargo Information Network France",
+      "isActive": true
+    },
+    {
+      "code": "CIP",
+      "name": "Customs Impediment Received",
+      "isActive": true
+    },
+    {
+      "code": "CJA",
+      "name": "Container Job Added",
+      "isActive": true
+    },
+    {
+      "code": "CJR",
+      "name": "Container Job Removed",
+      "isActive": true
+    },
+    {
+      "code": "CLR",
+      "name": "Customs Cleared",
+      "isActive": true
+    },
+    {
+      "code": "CME",
+      "name": "Container Manifest Exported",
+      "isActive": true
+    },
+    {
+      "code": "CMI",
+      "name": "Commercial Invoice Received",
+      "isActive": true
+    },
+    {
+      "code": "CMP",
+      "name": "Task Completed",
+      "isActive": true
+    },
+    {
+      "code": "CMS",
+      "name": "Customs Manifest Status",
+      "isActive": true
+    },
+    {
+      "code": "CNC",
+      "name": "Canceled",
+      "isActive": true
+    },
+    {
+      "code": "CNR",
+      "name": "Cancel Registration",
+      "isActive": true
+    },
+    {
+      "code": "COF",
+      "name": "Cut Off Date",
+      "isActive": true
+    },
+    {
+      "code": "CPC",
+      "name": "Customs Agent Password Changed",
+      "isActive": true
+    },
+    {
+      "code": "CRA",
+      "name": "Cargo Report Accepted",
+      "isActive": true
+    },
+    {
+      "code": "CRC",
+      "name": "Reported to Customs (Pre-flight)",
+      "isActive": true
+    },
+    {
+      "code": "CRE",
+      "name": "Container Ready for Empty Return",
+      "isActive": true
+    },
+    {
+      "code": "CRF",
+      "name": "Container Ready/Full for Pickup",
+      "isActive": true
+    },
+    {
+      "code": "CRN",
+      "name": "Customs Release Number Entered",
+      "isActive": true
+    },
+    {
+      "code": "CRP",
+      "name": "Customs Ready to Pay",
+      "isActive": true
+    },
+    {
+      "code": "CRR",
+      "name": "Cargo Report Rejected",
+      "isActive": true
+    },
+    {
+      "code": "CRS",
+      "name": "Cargo Report Sent",
+      "isActive": true
+    },
+    {
+      "code": "CRT",
+      "name": "Certificate Received",
+      "isActive": true
+    },
+    {
+      "code": "CRW",
+      "name": "Cargo Report Withdraw",
+      "isActive": true
+    },
+    {
+      "code": "CSO",
+      "name": "Customs Status Override",
+      "isActive": true
+    },
+    {
+      "code": "CTA",
+      "name": "Click Through Agreement Executed",
+      "isActive": true
+    },
+    {
+      "code": "CTF",
+      "name": "Credit Check Failed",
+      "isActive": true
+    },
+    {
+      "code": "CTP",
+      "name": "Customs Tariff Update Pending",
+      "isActive": true
+    },
+    {
+      "code": "CVD",
+      "name": "Cargo Available at De-consolidator",
+      "isActive": true
+    },
+    {
+      "code": "DAC",
+      "name": "Declaration Amended Permit Approved",
+      "isActive": true
+    },
+    {
+      "code": "DAI",
+      "name": "Declaration Amendment had errors",
+      "isActive": true
+    },
+    {
+      "code": "DAP",
+      "name": "Declaration Amendment Queued",
+      "isActive": true
+    },
+    {
+      "code": "DAR",
+      "name": "Declaration Amendment rejected",
+      "isActive": true
+    },
+    {
+      "code": "DAS",
+      "name": "Declaration Amendment Sent",
+      "isActive": true
+    },
+    {
+      "code": "DCA",
+      "name": "Delivery Cartage Advised",
+      "isActive": true
+    },
+    {
+      "code": "DCC",
+      "name": "Declaration Cancellation Queued",
+      "isActive": true
+    },
+    {
+      "code": "DCE",
+      "name": "Declaration has errors",
+      "isActive": true
+    },
+    {
+      "code": "DCF",
+      "name": "Delivery Cartage Complete/Finalized",
+      "isActive": true
+    },
+    {
+      "code": "DCM",
+      "name": "Declaration Permit Approved",
+      "isActive": true
+    },
+    {
+      "code": "DCP",
+      "name": "Declaration Queued",
+      "isActive": true
+    },
+    {
+      "code": "DCR",
+      "name": "Declaration Rejected",
+      "isActive": true
+    },
+    {
+      "code": "DCS",
+      "name": "Declaration Sent to Customs",
+      "isActive": true
+    },
+    {
+      "code": "DDA",
+      "name": "Document Allocated",
+      "isActive": true
+    },
+    {
+      "code": "DDC",
+      "name": "Type/Description changes",
+      "isActive": true
+    },
+    {
+      "code": "DDD",
+      "name": "Document Deleted",
+      "isActive": true
+    },
+    {
+      "code": "DDI",
+      "name": "Document Imported",
+      "isActive": true
+    },
+    {
+      "code": "DDP",
+      "name": "Document Deleted Permanently",
+      "isActive": true
+    },
+    {
+      "code": "DDR",
+      "name": "Duplicate Detected For Review",
+      "isActive": true
+    },
+    {
+      "code": "DDS",
+      "name": "Document Split",
+      "isActive": true
+    },
+    {
+      "code": "DDU",
+      "name": "Document Unallocated",
+      "isActive": true
+    },
+    {
+      "code": "DDV",
+      "name": "Document Delivered",
+      "isActive": true
+    },
+    {
+      "code": "DEF",
+      "name": "Data Export Failure",
+      "isActive": true
+    },
+    {
+      "code": "DEL",
+      "name": "Deleted a record in the system",
+      "isActive": true
+    },
+    {
+      "code": "DEP",
+      "name": "Departure",
+      "isActive": true
+    },
+    {
+      "code": "DET",
+      "name": "Detention/Demurrage Commenced",
+      "isActive": true
+    },
+    {
+      "code": "DEX",
+      "name": "Data Export",
+      "isActive": true
+    },
+    {
+      "code": "DGC",
+      "name": "Dangerous Goods Changed",
+      "isActive": true
+    },
+    {
+      "code": "DHR",
+      "name": "Dehire",
+      "isActive": true
+    },
+    {
+      "code": "DIF",
+      "name": "Data Import Failure",
+      "isActive": true
+    },
+    {
+      "code": "DIM",
+      "name": "Data Import",
+      "isActive": true
+    },
+    {
+      "code": "DJI",
+      "name": "Job Imported",
+      "isActive": true
+    },
+    {
+      "code": "DLI",
+      "name": "Data Linked",
+      "isActive": true
+    },
+    {
+      "code": "DLV",
+      "name": "Delivered",
+      "isActive": true
+    },
+    {
+      "code": "DMD",
+      "name": "Document Moved to Different Job",
+      "isActive": true
+    },
+    {
+      "code": "DMJ",
+      "name": "Moved to Different Job",
+      "isActive": true
+    },
+    {
+      "code": "DND",
+      "name": "Document Not Delivered",
+      "isActive": true
+    },
+    {
+      "code": "DOH",
+      "name": "Delivery Order Handed Over",
+      "isActive": true
+    },
+    {
+      "code": "DOR",
+      "name": "Delivery Order Received",
+      "isActive": true
+    },
+    {
+      "code": "DPA",
+      "name": "Page(s) Added",
+      "isActive": true
+    },
+    {
+      "code": "DPD",
+      "name": "Page(s) Removed",
+      "isActive": true
+    },
+    {
+      "code": "DPE",
+      "name": "Denied Party Status Updated",
+      "isActive": true
+    },
+    {
+      "code": "DPO",
+      "name": "Page(s) Reordered",
+      "isActive": true
+    },
+    {
+      "code": "DPR",
+      "name": "Page Rotated",
+      "isActive": true
+    },
+    {
+      "code": "DPT",
+      "name": "Deposit Taken",
+      "isActive": true
+    },
+    {
+      "code": "DRC",
+      "name": "Destination - Ready for Delivery",
+      "isActive": true
+    },
+    {
+      "code": "DRE",
+      "name": "Document Restored",
+      "isActive": true
+    },
+    {
+      "code": "DRS",
+      "name": "Database Restore Successful",
+      "isActive": true
+    },
+    {
+      "code": "DSM",
+      "name": "Deferred Scheduled Message",
+      "isActive": true
+    },
+    {
+      "code": "DSN",
+      "name": "Document Sent",
+      "isActive": true
+    },
+    {
+      "code": "DSP",
+      "name": "Container Leg Dispatched",
+      "isActive": true
+    },
+    {
+      "code": "DTC",
+      "name": "Detached",
+      "isActive": true
+    },
+    {
+      "code": "DUP",
+      "name": "Duplicate Master Bill allowed",
+      "isActive": true
+    },
+    {
+      "code": "DWC",
+      "name": "Declaration Work Complete",
+      "isActive": true
+    },
+    {
+      "code": "DXA",
+      "name": "Declaration Cancellation Approved",
+      "isActive": true
+    },
+    {
+      "code": "DXE",
+      "name": "Declaration Cancellation had errors",
+      "isActive": true
+    },
+    {
+      "code": "DXR",
+      "name": "Declaration Cancellation rejected",
+      "isActive": true
+    },
+    {
+      "code": "DXS",
+      "name": "Declaration Cancellation Sent",
+      "isActive": true
+    },
+    {
+      "code": "ECC",
+      "name": "Export Customs Cleared",
+      "isActive": true
+    },
+    {
+      "code": "ECM",
+      "name": "Export Customs Commenced",
+      "isActive": true
+    },
+    {
+      "code": "EDT",
+      "name": "Edited a record",
+      "isActive": true
+    },
+    {
+      "code": "ELC",
+      "name": "eLoadList Consolidated",
+      "isActive": true
+    },
+    {
+      "code": "EMC",
+      "name": "Employment Commenced",
+      "isActive": true
+    },
+    {
+      "code": "EMS",
+      "name": "Email Sent",
+      "isActive": true
+    },
+    {
+      "code": "ERA",
+      "name": "Export Receival Advise Printed",
+      "isActive": true
+    },
+    {
+      "code": "ERR",
+      "name": "Error Report",
+      "isActive": true
+    },
+    {
+      "code": "EST",
+      "name": "Estimated Date Changed",
+      "isActive": true
+    },
+    {
+      "code": "EVC",
+      "name": "External Validation Not Completed",
+      "isActive": true
+    },
+    {
+      "code": "EVP",
+      "name": "External Validation Passed",
+      "isActive": true
+    },
+    {
+      "code": "EVX",
+      "name": "External Validation Failed",
+      "isActive": true
+    },
+    {
+      "code": "EXC",
+      "name": "Exception-Scheduled Action Missed (checked daily)",
+      "isActive": true
+    },
+    {
+      "code": "EXD",
+      "name": "Exception-Damage/Lost goods",
+      "isActive": true
+    },
+    {
+      "code": "EXF",
+      "name": "Exception-Workflow time expired",
+      "isActive": true
+    },
+    {
+      "code": "EXH",
+      "name": "Exception-Customs held goods",
+      "isActive": true
+    },
+    {
+      "code": "EXM",
+      "name": "Exception-Flight/Voyage Missed",
+      "isActive": true
+    },
+    {
+      "code": "EXR",
+      "name": "Exception Raised",
+      "isActive": true
+    },
+    {
+      "code": "EXS",
+      "name": "Exception-Container Storage",
+      "isActive": true
+    },
+    {
+      "code": "EXT",
+      "name": "Exception-Container Detention",
+      "isActive": true
+    },
+    {
+      "code": "EXV",
+      "name": "Exception-Data Conversion Issue",
+      "isActive": true
+    },
+    {
+      "code": "EXW",
+      "name": "Ex Works",
+      "isActive": true
+    },
+    {
+      "code": "EXZ",
+      "name": "Exception-Miscellaneous",
+      "isActive": true
+    },
+    {
+      "code": "FCL",
+      "name": "User Marked As Can Login",
+      "isActive": true
+    },
+    {
+      "code": "FCT",
+      "name": "Fumigation Certificate Received",
+      "isActive": true
+    },
+    {
+      "code": "FIN",
+      "name": "Item/Document/Job Finalized",
+      "isActive": true
+    },
+    {
+      "code": "FLM",
+      "name": "Flight Manifested",
+      "isActive": true
+    },
+    {
+      "code": "FLO",
+      "name": "Freight Loaded",
+      "isActive": true
+    },
+    {
+      "code": "FMA",
+      "name": "FMA Message Received from Airline",
+      "isActive": true
+    },
+    {
+      "code": "FNA",
+      "name": "FNA Message Received from Airline",
+      "isActive": true
+    },
+    {
+      "code": "FOH",
+      "name": "Pending 'ready for carriage'",
+      "isActive": true
+    },
+    {
+      "code": "FSR",
+      "name": "FSR Message Sent to Airline",
+      "isActive": true
+    },
+    {
+      "code": "FUL",
+      "name": "Freight Unloaded",
+      "isActive": true
+    },
+    {
+      "code": "GIN",
+      "name": "Gate In",
+      "isActive": true
+    },
+    {
+      "code": "GOU",
+      "name": "Gate Out",
+      "isActive": true
+    },
+    {
+      "code": "GPP",
+      "name": "Gate Pass Printed",
+      "isActive": true
+    },
+    {
+      "code": "HBC",
+      "name": "Held by customs",
+      "isActive": true
+    },
+    {
+      "code": "HLR",
+      "name": "HVLV Ready",
+      "isActive": true
+    },
+    {
+      "code": "HNV",
+      "name": "Handed Over",
+      "isActive": true
+    },
+    {
+      "code": "HSO",
+      "name": "Hold Status Override",
+      "isActive": true
+    },
+    {
+      "code": "HWT",
+      "name": "Hold Awaiting:",
+      "isActive": true
+    },
+    {
+      "code": "HXA",
+      "name": "HXD Received From Shipper",
+      "isActive": true
+    },
+    {
+      "code": "HXB",
+      "name": "HXD To Customs Broker",
+      "isActive": true
+    },
+    {
+      "code": "HXC",
+      "name": "HXD From Customs Broker",
+      "isActive": true
+    },
+    {
+      "code": "HXD",
+      "name": "HXD Returned To Shipper",
+      "isActive": true
+    },
+    {
+      "code": "IAK",
+      "name": "Interchange Acknowledged",
+      "isActive": true
+    },
+    {
+      "code": "IAP",
+      "name": "Transaction Approval Actioned",
+      "isActive": true
+    },
+    {
+      "code": "IAQ",
+      "name": "Incident Approval Requested",
+      "isActive": true
+    },
+    {
+      "code": "IAR",
+      "name": "Intermediate Arrival",
+      "isActive": true
+    },
+    {
+      "code": "ICC",
+      "name": "Internal Cartage Job Created",
+      "isActive": true
+    },
+    {
+      "code": "ICD",
+      "name": "Internal Cartage Job Deleted",
+      "isActive": true
+    },
+    {
+      "code": "ICL",
+      "name": "Incident Closed",
+      "isActive": true
+    },
+    {
+      "code": "IES",
+      "name": "Incident Email Sent",
+      "isActive": true
+    },
+    {
+      "code": "IFA",
+      "name": "Intermediate On Forward Arrival",
+      "isActive": true
+    },
+    {
+      "code": "IIR",
+      "name": "Inspection Instructions Received",
+      "isActive": true
+    },
+    {
+      "code": "IMA",
+      "name": "Item Added",
+      "isActive": true
+    },
+    {
+      "code": "IMR",
+      "name": "Item Removed",
+      "isActive": true
+    },
+    {
+      "code": "INA",
+      "name": "Set to Inactive",
+      "isActive": true
+    },
+    {
+      "code": "INF",
+      "name": "Insurance Finalized",
+      "isActive": true
+    },
+    {
+      "code": "IRA",
+      "name": "Interchange Receipt Acknowledged",
+      "isActive": true
+    },
+    {
+      "code": "IRC",
+      "name": "Interchange Received",
+      "isActive": true
+    },
+    {
+      "code": "IRD",
+      "name": "Interchange Ready",
+      "isActive": true
+    },
+    {
+      "code": "IRJ",
+      "name": "Interchange Rejected",
+      "isActive": true
+    },
+    {
+      "code": "IRO",
+      "name": "Incident Reopened",
+      "isActive": true
+    },
+    {
+      "code": "IRP",
+      "name": "Interim Receipt Produced",
+      "isActive": true
+    },
+    {
+      "code": "ISN",
+      "name": "Interchange Sent",
+      "isActive": true
+    },
+    {
+      "code": "IST",
+      "name": "In Store",
+      "isActive": true
+    },
+    {
+      "code": "ITA",
+      "name": "Intermediate Transhipment Arrival",
+      "isActive": true
+    },
+    {
+      "code": "JBL",
+      "name": "Jobs Linked",
+      "isActive": true
+    },
+    {
+      "code": "JCL",
+      "name": "Job Close",
+      "isActive": true
+    },
+    {
+      "code": "JDS",
+      "name": "Job deactivated by System",
+      "isActive": true
+    },
+    {
+      "code": "JED",
+      "name": "Billing Job Edit",
+      "isActive": true
+    },
+    {
+      "code": "JOP",
+      "name": "Job Open",
+      "isActive": true
+    },
+    {
+      "code": "JQD",
+      "name": "Job Shipment Queue for Declaration",
+      "isActive": true
+    },
+    {
+      "code": "JQR",
+      "name": "Job Shipment Queue for Replacement",
+      "isActive": true
+    },
+    {
+      "code": "JQW",
+      "name": "Job Shipment Queue for Withdrawal",
+      "isActive": true
+    },
+    {
+      "code": "JSA",
+      "name": "Job Shipment Acknowledged",
+      "isActive": true
+    },
+    {
+      "code": "JSE",
+      "name": "Job Shipment Rejected Due To Errors",
+      "isActive": true
+    },
+    {
+      "code": "JSP",
+      "name": "Job Shipment Processed",
+      "isActive": true
+    },
+    {
+      "code": "JSR",
+      "name": "Job Shipment Max Resend Exceeded",
+      "isActive": true
+    },
+    {
+      "code": "JSS",
+      "name": "Job Shipment Sent",
+      "isActive": true
+    },
+    {
+      "code": "LCK",
+      "name": "Lock for Edit",
+      "isActive": true
+    },
+    {
+      "code": "LGI",
+      "name": "Login",
+      "isActive": true
+    },
+    {
+      "code": "LGO",
+      "name": "Logout",
+      "isActive": true
+    },
+    {
+      "code": "LLR",
+      "name": "Liability Cleared",
+      "isActive": true
+    },
+    {
+      "code": "MAA",
+      "name": "Message Accepted",
+      "isActive": true
+    },
+    {
+      "code": "MAN",
+      "name": "Manifested",
+      "isActive": true
+    },
+    {
+      "code": "MCD",
+      "name": "Message: Cancel Detail line",
+      "isActive": true
+    },
+    {
+      "code": "MCH",
+      "name": "Message: Cancel Header",
+      "isActive": true
+    },
+    {
+      "code": "MDL",
+      "name": "Message Delivered",
+      "isActive": true
+    },
+    {
+      "code": "MIS",
+      "name": "Miscellaneous Event",
+      "isActive": true
+    },
+    {
+      "code": "MMD",
+      "name": "Manual Match Done",
+      "isActive": true
+    },
+    {
+      "code": "MPP",
+      "name": "Message Pending Processing",
+      "isActive": true
+    },
+    {
+      "code": "MRA",
+      "name": "Message Response Address",
+      "isActive": true
+    },
+    {
+      "code": "MRD",
+      "name": "Message: Replace Details",
+      "isActive": true
+    },
+    {
+      "code": "MRH",
+      "name": "Message: Replace Header",
+      "isActive": true
+    },
+    {
+      "code": "MRJ",
+      "name": "Message Rejected",
+      "isActive": true
+    },
+    {
+      "code": "MRR",
+      "name": "Message Received",
+      "isActive": true
+    },
+    {
+      "code": "MRS",
+      "name": "Message Requested to be Sent",
+      "isActive": true
+    },
+    {
+      "code": "MSC",
+      "name": "Message: Status Change",
+      "isActive": true
+    },
+    {
+      "code": "MSD",
+      "name": "Manifest to Local Delivery Carrier",
+      "isActive": true
+    },
+    {
+      "code": "MSF",
+      "name": "Manifest Submitted To Forwarder",
+      "isActive": true
+    },
+    {
+      "code": "MSN",
+      "name": "Message Sent",
+      "isActive": true
+    },
+    {
+      "code": "MTA",
+      "name": "Meeting Arranged",
+      "isActive": true
+    },
+    {
+      "code": "MTO",
+      "name": "Meeting Occurred",
+      "isActive": true
+    },
+    {
+      "code": "MVF",
+      "name": "Message Validation Failed",
+      "isActive": true
+    },
+    {
+      "code": "MVP",
+      "name": "Message Validation Passed",
+      "isActive": true
+    },
+    {
+      "code": "MWA",
+      "name": "Message Withdraw/Cancel Accepted",
+      "isActive": true
+    },
+    {
+      "code": "MWR",
+      "name": "Message Withdraw/Cancel Request",
+      "isActive": true
+    },
+    {
+      "code": "NAR",
+      "name": "China Agreement of Declaration Agent Number Received",
+      "isActive": true
+    },
+    {
+      "code": "NRN",
+      "name": "Related Notes Not Read",
+      "isActive": true
+    },
+    {
+      "code": "OBL",
+      "name": "Original Bill Received",
+      "isActive": true
+    },
+    {
+      "code": "OCC",
+      "name": "Invoice Contact Override",
+      "isActive": true
+    },
+    {
+      "code": "OCF",
+      "name": "Order Confirmed",
+      "isActive": true
+    },
+    {
+      "code": "OCI",
+      "name": "Origin Check-in",
+      "isActive": true
+    },
+    {
+      "code": "OCR",
+      "name": "Origin Cargo Received",
+      "isActive": true
+    },
+    {
+      "code": "OIP",
+      "name": "Origin Invoice Paid",
+      "isActive": true
+    },
+    {
+      "code": "OPL",
+      "name": "Order Placed/Finalized",
+      "isActive": true
+    },
+    {
+      "code": "ORP",
+      "name": "Original Message Request Pending",
+      "isActive": true
+    },
+    {
+      "code": "ORS",
+      "name": "Origin - Goods Ready for Shipping",
+      "isActive": true
+    },
+    {
+      "code": "OSH",
+      "name": "Order Shipped",
+      "isActive": true
+    },
+    {
+      "code": "PAA",
+      "name": "Pre Allocated Amount Exceeded",
+      "isActive": true
+    },
+    {
+      "code": "PAC",
+      "name": "Container Pack",
+      "isActive": true
+    },
+    {
+      "code": "PCA",
+      "name": "Pickup Cartage Advised",
+      "isActive": true
+    },
+    {
+      "code": "PCF",
+      "name": "Pickup Cartage Complete/Finalized",
+      "isActive": true
+    },
+    {
+      "code": "PCL",
+      "name": "Period Closed",
+      "isActive": true
+    },
+    {
+      "code": "PDC",
+      "name": "Period Date Changed",
+      "isActive": true
+    },
+    {
+      "code": "PFC",
+      "name": "Profit Share Calculated",
+      "isActive": true
+    },
+    {
+      "code": "PIR",
+      "name": "Personal Information Erasure Request Received",
+      "isActive": true
+    },
+    {
+      "code": "PKC",
+      "name": "Packing Completed",
+      "isActive": true
+    },
+    {
+      "code": "PKD",
+      "name": "Packing Declaration Received",
+      "isActive": true
+    },
+    {
+      "code": "PKM",
+      "name": "Packing Commenced",
+      "isActive": true
+    },
+    {
+      "code": "PLR",
+      "name": "Profit/Loss Reason Code Changed",
+      "isActive": true
+    },
+    {
+      "code": "POF",
+      "name": "Pre-Allocation Cut Off Date",
+      "isActive": true
+    },
+    {
+      "code": "PRE",
+      "name": "Cargo Prepared for Loading",
+      "isActive": true
+    },
+    {
+      "code": "PRO",
+      "name": "Period Reopened",
+      "isActive": true
+    },
+    {
+      "code": "PST",
+      "name": "Transaction Posted",
+      "isActive": true
+    },
+    {
+      "code": "PUP",
+      "name": "Picked Up",
+      "isActive": true
+    },
+    {
+      "code": "QAW",
+      "name": "Quote Autorated With Wise Rates",
+      "isActive": true
+    },
+    {
+      "code": "QCT",
+      "name": "Quarantine Certificate Received",
+      "isActive": true
+    },
+    {
+      "code": "QOA",
+      "name": "Quotation Accepted",
+      "isActive": true
+    },
+    {
+      "code": "QOC",
+      "name": "Quotation Canceled",
+      "isActive": true
+    },
+    {
+      "code": "QOF",
+      "name": "Quotation Finalized/Printed",
+      "isActive": true
+    },
+    {
+      "code": "QOK",
+      "name": "Quarantine Complete",
+      "isActive": true
+    },
+    {
+      "code": "QOP",
+      "name": "Quotation Internally Approved",
+      "isActive": true
+    },
+    {
+      "code": "QRQ",
+      "name": "Quarantine Required",
+      "isActive": true
+    },
+    {
+      "code": "QTV",
+      "name": "Quantity Verified",
+      "isActive": true
+    },
+    {
+      "code": "QUC",
+      "name": "Queue Changed",
+      "isActive": true
+    },
+    {
+      "code": "RCE",
+      "name": "Recruitment Candidate Event",
+      "isActive": true
+    },
+    {
+      "code": "RCF",
+      "name": "Recruitment Checkpoint Failed",
+      "isActive": true
+    },
+    {
+      "code": "RCP",
+      "name": "Recruitment Checkpoint Passed",
+      "isActive": true
+    },
+    {
+      "code": "RCV",
+      "name": "Received",
+      "isActive": true
+    },
+    {
+      "code": "REA",
+      "name": "Task Penetration Reset",
+      "isActive": true
+    },
+    {
+      "code": "REJ",
+      "name": "Reject Book",
+      "isActive": true
+    },
+    {
+      "code": "REN",
+      "name": "Related eDocs Not Read",
+      "isActive": true
+    },
+    {
+      "code": "REQ",
+      "name": "Rejection email queued",
+      "isActive": true
+    },
+    {
+      "code": "RER",
+      "name": "Related eDocs Read",
+      "isActive": true
+    },
+    {
+      "code": "RET",
+      "name": "Returned",
+      "isActive": true
+    },
+    {
+      "code": "REV",
+      "name": "Transaction Reversed",
+      "isActive": true
+    },
+    {
+      "code": "RFC",
+      "name": "Ready for Consolidation",
+      "isActive": true
+    },
+    {
+      "code": "RLD",
+      "name": "Ready for Local Delivery",
+      "isActive": true
+    },
+    {
+      "code": "RLQ",
+      "name": "Release Requested",
+      "isActive": true
+    },
+    {
+      "code": "RLS",
+      "name": "Released",
+      "isActive": true
+    },
+    {
+      "code": "RRN",
+      "name": "Read Related Notes",
+      "isActive": true
+    },
+    {
+      "code": "RSH",
+      "name": "Container Leg Run Sheet",
+      "isActive": true
+    },
+    {
+      "code": "RST",
+      "name": "Reset Entry/Message/Item/Function",
+      "isActive": true
+    },
+    {
+      "code": "RTC",
+      "name": "Receipt Commenced",
+      "isActive": true
+    },
+    {
+      "code": "SAR",
+      "name": "Staff Accident Report",
+      "isActive": true
+    },
+    {
+      "code": "SBR",
+      "name": "Subscription Requested",
+      "isActive": true
+    },
+    {
+      "code": "SCD",
+      "name": "Sea Cargo Depot Event",
+      "isActive": true
+    },
+    {
+      "code": "SCH",
+      "name": "Cleared Hold",
+      "isActive": true
+    },
+    {
+      "code": "SCM",
+      "name": "Clearance Completed",
+      "isActive": true
+    },
+    {
+      "code": "SDF",
+      "name": "Staff Flagged As Device Only",
+      "isActive": true
+    },
+    {
+      "code": "SDL",
+      "name": "Stamp Duty Liability",
+      "isActive": true
+    },
+    {
+      "code": "SDU",
+      "name": "Staff Un-flagged As Device Only",
+      "isActive": true
+    },
+    {
+      "code": "SEC",
+      "name": "Security Modified",
+      "isActive": true
+    },
+    {
+      "code": "SFW",
+      "name": "Staff Final Warning Issued",
+      "isActive": true
+    },
+    {
+      "code": "SGC",
+      "name": "Signature Captured",
+      "isActive": true
+    },
+    {
+      "code": "SHL",
+      "name": "Held",
+      "isActive": true
+    },
+    {
+      "code": "SIR",
+      "name": "Staff Incident Report",
+      "isActive": true
+    },
+    {
+      "code": "SIV",
+      "name": "Service Invoice Posted",
+      "isActive": true
+    },
+    {
+      "code": "SLC",
+      "name": "Slot Confirmed",
+      "isActive": true
+    },
+    {
+      "code": "SLQ",
+      "name": "Slot Requested",
+      "isActive": true
+    },
+    {
+      "code": "SLX",
+      "name": "Slot Canceled",
+      "isActive": true
+    },
+    {
+      "code": "SMO",
+      "name": "Subject to Underbond Movement",
+      "isActive": true
+    },
+    {
+      "code": "SPC",
+      "name": "Special Handling Completed",
+      "isActive": true
+    },
+    {
+      "code": "SPR",
+      "name": "Special Handling Requested",
+      "isActive": true
+    },
+    {
+      "code": "SPV",
+      "name": "Staff Performance Review",
+      "isActive": true
+    },
+    {
+      "code": "SRC",
+      "name": "Storage Commenced",
+      "isActive": true
+    },
+    {
+      "code": "SRF",
+      "name": "Staff Flagged As Robot",
+      "isActive": true
+    },
+    {
+      "code": "SRT",
+      "name": "Startability Changed",
+      "isActive": true
+    },
+    {
+      "code": "SRU",
+      "name": "Staff Un-flagged As Robot",
+      "isActive": true
+    },
+    {
+      "code": "SSC",
+      "name": "Scanned",
+      "isActive": true
+    },
+    {
+      "code": "SSM",
+      "name": "Suppress Sending Message",
+      "isActive": true
+    },
+    {
+      "code": "SSO",
+      "name": "Sorted",
+      "isActive": true
+    },
+    {
+      "code": "STC",
+      "name": "Status Change",
+      "isActive": true
+    },
+    {
+      "code": "STU",
+      "name": "Status Updated",
+      "isActive": true
+    },
+    {
+      "code": "SVC",
+      "name": "Service Completed",
+      "isActive": true
+    },
+    {
+      "code": "SVJ",
+      "name": "Service Rejected",
+      "isActive": true
+    },
+    {
+      "code": "SVM",
+      "name": "Service Commenced",
+      "isActive": true
+    },
+    {
+      "code": "SVN",
+      "name": "Service Canceled",
+      "isActive": true
+    },
+    {
+      "code": "SVR",
+      "name": "Service Requested",
+      "isActive": true
+    },
+    {
+      "code": "SVS",
+      "name": "Service Suspended",
+      "isActive": true
+    },
+    {
+      "code": "SVW",
+      "name": "Staff Verbal Warning Issued",
+      "isActive": true
+    },
+    {
+      "code": "SWW",
+      "name": "Staff Written Warning Issued",
+      "isActive": true
+    },
+    {
+      "code": "TAG",
+      "name": "Tag was added or removed",
+      "isActive": true
+    },
+    {
+      "code": "TAL",
+      "name": "Container Tallied",
+      "isActive": true
+    },
+    {
+      "code": "TCE",
+      "name": "Transfer to Customs Exports Dec.",
+      "isActive": true
+    },
+    {
+      "code": "TCI",
+      "name": "Transfer to Customs Imports Dec.",
+      "isActive": true
+    },
+    {
+      "code": "TCM",
+      "name": "Transfer from Customs to Manifest",
+      "isActive": true
+    },
+    {
+      "code": "TFL",
+      "name": "Interchange failed to be sent",
+      "isActive": true
+    },
+    {
+      "code": "TGC",
+      "name": "Transferred to Customs/Gov. Ctrl.",
+      "isActive": true
+    },
+    {
+      "code": "TIC",
+      "name": "Cashbook Item Ticked Off",
+      "isActive": true
+    },
+    {
+      "code": "TIS",
+      "name": "Trade Information Send",
+      "isActive": true
+    },
+    {
+      "code": "TKS",
+      "name": "TSA Known Shipper Approved Status Changed",
+      "isActive": true
+    },
+    {
+      "code": "TLS",
+      "name": "Sales Trade Lanes Synchronized",
+      "isActive": true
+    },
+    {
+      "code": "TMC",
+      "name": "Transfer from Manifest to Customs",
+      "isActive": true
+    },
+    {
+      "code": "TML",
+      "name": "Tasks and Milestones Loader Event",
+      "isActive": true
+    },
+    {
+      "code": "TRC",
+      "name": "Interchange acknowledged as sent",
+      "isActive": true
+    },
+    {
+      "code": "TRF",
+      "name": "Transferred",
+      "isActive": true
+    },
+    {
+      "code": "TSN",
+      "name": "Interchange in progress",
+      "isActive": true
+    },
+    {
+      "code": "TSW",
+      "name": "TSW Nag Log",
+      "isActive": true
+    },
+    {
+      "code": "UBA",
+      "name": "Underbond Customs Approval",
+      "isActive": true
+    },
+    {
+      "code": "UBC",
+      "name": "Underbond Cancel",
+      "isActive": true
+    },
+    {
+      "code": "UBQ",
+      "name": "Underbond Acquit/Receival Reported",
+      "isActive": true
+    },
+    {
+      "code": "UBR",
+      "name": "Underbond Request",
+      "isActive": true
+    },
+    {
+      "code": "UCK",
+      "name": "Unlock for Edit",
+      "isActive": true
+    },
+    {
+      "code": "UCL",
+      "name": "User Marked As Cannot Login",
+      "isActive": true
+    },
+    {
+      "code": "UCP",
+      "name": "Universal Copy",
+      "isActive": true
+    },
+    {
+      "code": "UNP",
+      "name": "Container Unpack",
+      "isActive": true
+    },
+    {
+      "code": "UOJ",
+      "name": "Underbond Outturn Rejected",
+      "isActive": true
+    },
+    {
+      "code": "UOR",
+      "name": "Underbond split Outturn original rejected",
+      "isActive": true
+    },
+    {
+      "code": "UPC",
+      "name": "Unpacking Completed",
+      "isActive": true
+    },
+    {
+      "code": "UPF",
+      "name": "Upgrade Failed",
+      "isActive": true
+    },
+    {
+      "code": "UPG",
+      "name": "Upgrade Succeeded",
+      "isActive": true
+    },
+    {
+      "code": "UPM",
+      "name": "Unpacking Commenced",
+      "isActive": true
+    },
+    {
+      "code": "UST",
+      "name": "User Seat",
+      "isActive": true
+    },
+    {
+      "code": "UTC",
+      "name": "Cashbook Item Un-Ticked",
+      "isActive": true
+    },
+    {
+      "code": "VCS",
+      "name": "Voiding Compliance Sequence No",
+      "isActive": true
+    },
+    {
+      "code": "WAC",
+      "name": "User Made Adjustments to Warning Acknowledgement",
+      "isActive": true
+    },
+    {
+      "code": "WAS",
+      "name": "Web Access Superseded",
+      "isActive": true
+    },
+    {
+      "code": "WBA",
+      "name": "Waybill/Bill of Lading assigned",
+      "isActive": true
+    },
+    {
+      "code": "WBC",
+      "name": "Cancel the Warehouse Job",
+      "isActive": true
+    },
+    {
+      "code": "WBF",
+      "name": "Warehouse Job can now be Finalized",
+      "isActive": true
+    },
+    {
+      "code": "WBH",
+      "name": "Hold the Warehouse Order",
+      "isActive": true
+    },
+    {
+      "code": "WBU",
+      "name": "Waybill/Bill of Lading unassigned",
+      "isActive": true
+    },
+    {
+      "code": "WCP",
+      "name": "Warehouse Receipt Confirmed Putaway",
+      "isActive": true
+    },
+    {
+      "code": "WED",
+      "name": "Web Document Printed (Doc. Name)",
+      "isActive": true
+    },
+    {
+      "code": "WEM",
+      "name": "Web Module Accessed (Module Name)",
+      "isActive": true
+    },
+    {
+      "code": "WER",
+      "name": "Web Report Printed (Report Name)",
+      "isActive": true
+    },
+    {
+      "code": "WHA",
+      "name": "Warehouse Receipt Arrived",
+      "isActive": true
+    },
+    {
+      "code": "WHC",
+      "name": "Warehouse Order Packing",
+      "isActive": true
+    },
+    {
+      "code": "WHE",
+      "name": "Warehouse Job Entered",
+      "isActive": true
+    },
+    {
+      "code": "WHI",
+      "name": "Warehouse Order Picking",
+      "isActive": true
+    },
+    {
+      "code": "WHL",
+      "name": "Warehouse Receipt Conf. Alt. Locn.",
+      "isActive": true
+    },
+    {
+      "code": "WHN",
+      "name": "Warehouse Pick Canceled",
+      "isActive": true
+    },
+    {
+      "code": "WHP",
+      "name": "Warehouse Receipt Putting Away",
+      "isActive": true
+    },
+    {
+      "code": "WHR",
+      "name": "Warehouse Receival",
+      "isActive": true
+    },
+    {
+      "code": "WHT",
+      "name": "Warehouse Receipt ETA Notification",
+      "isActive": true
+    },
+    {
+      "code": "WHU",
+      "name": "Warehouse Receipt Unloaded",
+      "isActive": true
+    },
+    {
+      "code": "WKS",
+      "name": "Workflow Status Update Pending",
+      "isActive": true
+    },
+    {
+      "code": "WMR",
+      "name": "Modified on Web",
+      "isActive": true
+    },
+    {
+      "code": "WPC",
+      "name": "Web Access Password Changed",
+      "isActive": true
+    },
+    {
+      "code": "WPE",
+      "name": "Web Access Password Email Sent",
+      "isActive": true
+    },
+    {
+      "code": "WPK",
+      "name": "Warehouse Picked",
+      "isActive": true
+    },
+    {
+      "code": "WPT",
+      "name": "Warehouse Putaway",
+      "isActive": true
+    },
+    {
+      "code": "WRK",
+      "name": "Entry - work in progress",
+      "isActive": true
+    },
+    {
+      "code": "WTA",
+      "name": "Workflow Template Applied",
+      "isActive": true
+    },
+    {
+      "code": "WTE",
+      "name": "Workflow Trigger Event",
+      "isActive": true
+    },
+    {
+      "code": "WTR",
+      "name": "Reapply Workflow Templates requested",
+      "isActive": true
+    },
+    {
+      "code": "XFR",
+      "name": "Workflow transferred between system components",
+      "isActive": true
+    },
+    {
+      "code": "Z00",
+      "name": "Booking Request",
+      "isActive": true
+    },
+    {
+      "code": "Z01",
+      "name": "Upload Paybles Invoice",
+      "isActive": true
+    },
+    {
+      "code": "Z02",
+      "name": "Vendor Invoice Approval",
+      "isActive": true
+    },
+    {
+      "code": "Z03",
+      "name": "Docs to Broker",
+      "isActive": true
+    },
+    {
+      "code": "Z04",
+      "name": "PVPO Data/Pre-Key Entry",
+      "isActive": true
+    },
+    {
+      "code": "Z05",
+      "name": "ACE Cargo Release Upload",
+      "isActive": true
+    },
+    {
+      "code": "Z06",
+      "name": "Customs Docs Required Sent",
+      "isActive": true
+    },
+    {
+      "code": "Z07",
+      "name": "Import Broker Assigned",
+      "isActive": true
+    },
+    {
+      "code": "Z08",
+      "name": "Pre-Alert Sent/Recieved",
+      "isActive": true
+    },
+    {
+      "code": "Z09",
+      "name": "Document Cut Off",
+      "isActive": true
+    },
+    {
+      "code": "Z10",
+      "name": "AMS Completed",
+      "isActive": true
+    },
+    {
+      "code": "Z11",
+      "name": "In Transit - Picked up - TMS",
+      "isActive": true
+    },
+    {
+      "code": "Z12",
+      "name": "Turn Off Railinc",
+      "isActive": true
+    },
+    {
+      "code": "Z13",
+      "name": "Haz Documents Submitted",
+      "isActive": true
+    },
+    {
+      "code": "Z14",
+      "name": "Haz Documents Confirmed",
+      "isActive": true
+    },
+    {
+      "code": "Z15",
+      "name": "Complete Haz Documents",
+      "isActive": true
+    },
+    {
+      "code": "Z16",
+      "name": "FWS Commenced",
+      "isActive": true
+    },
+    {
+      "code": "Z17",
+      "name": "OBL/Telex Received",
+      "isActive": true
+    },
+    {
+      "code": "Z18",
+      "name": "Debit Note Received",
+      "isActive": true
+    },
+    {
+      "code": "Z19",
+      "name": "THC Paid",
+      "isActive": true
+    },
+    {
+      "code": "Z20",
+      "name": "Cargo Ready for Transfer",
+      "isActive": true
+    },
+    {
+      "code": "Z21",
+      "name": "Carrier Arrival Notice",
+      "isActive": true
+    },
+    {
+      "code": "Z22",
+      "name": "Warehouse Release",
+      "isActive": true
+    },
+    {
+      "code": "Z23",
+      "name": "Pickup Number Sent",
+      "isActive": true
+    },
+    {
+      "code": "Z24",
+      "name": "NVO Billing Complete",
+      "isActive": true
+    },
+    {
+      "code": "Z25",
+      "name": "Customs Billing Complete",
+      "isActive": true
+    },
+    {
+      "code": "Z26",
+      "name": "Transportation Billing Complete",
+      "isActive": true
+    },
+    {
+      "code": "Z27",
+      "name": "Send Generic EDI - EDI function will be specified in RES paramter on event",
+      "isActive": true
+    },
+    {
+      "code": "Z28",
+      "name": "Global Profit Share - Retrigger",
+      "isActive": true
+    },
+    {
+      "code": "Z29",
+      "name": "Draft Housebill Approved",
+      "isActive": true
+    },
+    {
+      "code": "Z30",
+      "name": "Manufacturer Draft Housebill Approved",
+      "isActive": true
+    },
+    {
+      "code": "Z31",
+      "name": "Customizable Event 31",
+      "isActive": true
+    },
+    {
+      "code": "Z32",
+      "name": "Customizable Event 32",
+      "isActive": true
+    },
+    {
+      "code": "Z33",
+      "name": "Customizable Event 33",
+      "isActive": true
+    },
+    {
+      "code": "Z34",
+      "name": "Customizable Event 34",
+      "isActive": true
+    },
+    {
+      "code": "Z35",
+      "name": "Send Transit Movement to Custom",
+      "isActive": true
+    },
+    {
+      "code": "Z36",
+      "name": "Customizable Event 36",
+      "isActive": true
+    },
+    {
+      "code": "Z37",
+      "name": "Customizable Event 37",
+      "isActive": true
+    },
+    {
+      "code": "Z38",
+      "name": "Customizable Event 38",
+      "isActive": true
+    },
+    {
+      "code": "Z39",
+      "name": "Customizable Event 39",
+      "isActive": true
+    },
+    {
+      "code": "Z40",
+      "name": "Customizable Event 40",
+      "isActive": true
+    },
+    {
+      "code": "Z41",
+      "name": "Customizable Event 41",
+      "isActive": true
+    },
+    {
+      "code": "Z42",
+      "name": "Customizable Event 42",
+      "isActive": true
+    },
+    {
+      "code": "Z43",
+      "name": "Customizable Event 43",
+      "isActive": true
+    },
+    {
+      "code": "Z44",
+      "name": "Customizable Event 44",
+      "isActive": true
+    },
+    {
+      "code": "Z45",
+      "name": "Customizable Event 45",
+      "isActive": true
+    },
+    {
+      "code": "Z46",
+      "name": "Customizable Event 46",
+      "isActive": true
+    },
+    {
+      "code": "Z47",
+      "name": "Customizable Event 47",
+      "isActive": true
+    },
+    {
+      "code": "Z48",
+      "name": "Customizable Event 48",
+      "isActive": true
+    },
+    {
+      "code": "Z49",
+      "name": "Customizable Event 49",
+      "isActive": true
+    },
+    {
+      "code": "Z50",
+      "name": "Customizable Event 50",
+      "isActive": true
+    },
+    {
+      "code": "Z51",
+      "name": "Customizable Event 51",
+      "isActive": true
+    },
+    {
+      "code": "Z52",
+      "name": "Customizable Event 52",
+      "isActive": true
+    },
+    {
+      "code": "Z53",
+      "name": "Customizable Event 53",
+      "isActive": true
+    },
+    {
+      "code": "Z54",
+      "name": "Customizable Event 54",
+      "isActive": true
+    },
+    {
+      "code": "Z55",
+      "name": "Customizable Event 55",
+      "isActive": true
+    },
+    {
+      "code": "Z56",
+      "name": "Customizable Event 56",
+      "isActive": true
+    },
+    {
+      "code": "Z57",
+      "name": "Customizable Event 57",
+      "isActive": true
+    },
+    {
+      "code": "Z58",
+      "name": "Customizable Event 58",
+      "isActive": true
+    },
+    {
+      "code": "Z59",
+      "name": "Customizable Event 59",
+      "isActive": true
+    },
+    {
+      "code": "Z60",
+      "name": "Customizable Event 60",
+      "isActive": true
+    },
+    {
+      "code": "Z61",
+      "name": "Customizable Event 61",
+      "isActive": true
+    },
+    {
+      "code": "Z62",
+      "name": "Customizable Event 62",
+      "isActive": true
+    },
+    {
+      "code": "Z63",
+      "name": "Customizable Event 63",
+      "isActive": true
+    },
+    {
+      "code": "Z64",
+      "name": "Customizable Event 64",
+      "isActive": true
+    },
+    {
+      "code": "Z65",
+      "name": "Customizable Event 65",
+      "isActive": true
+    },
+    {
+      "code": "Z66",
+      "name": "Customizable Event 66",
+      "isActive": true
+    },
+    {
+      "code": "Z67",
+      "name": "Customizable Event 67",
+      "isActive": true
+    },
+    {
+      "code": "Z68",
+      "name": "Customizable Event 68",
+      "isActive": true
+    },
+    {
+      "code": "Z69",
+      "name": "Customizable Event 69",
+      "isActive": true
+    },
+    {
+      "code": "Z70",
+      "name": "Customizable Event 70",
+      "isActive": true
+    },
+    {
+      "code": "Z71",
+      "name": "Customizable Event 71",
+      "isActive": true
+    },
+    {
+      "code": "Z72",
+      "name": "Customizable Event 72",
+      "isActive": true
+    },
+    {
+      "code": "Z73",
+      "name": "Customizable Event 73",
+      "isActive": true
+    },
+    {
+      "code": "Z74",
+      "name": "Customizable Event 74",
+      "isActive": true
+    },
+    {
+      "code": "Z75",
+      "name": "Customizable Event 75",
+      "isActive": true
+    },
+    {
+      "code": "Z76",
+      "name": "Customizable Event 76",
+      "isActive": true
+    },
+    {
+      "code": "Z77",
+      "name": "Customizable Event 77",
+      "isActive": true
+    },
+    {
+      "code": "Z78",
+      "name": "Customizable Event 78",
+      "isActive": true
+    },
+    {
+      "code": "Z79",
+      "name": "Customizable Event 79",
+      "isActive": true
+    },
+    {
+      "code": "Z80",
+      "name": "Customizable Event 80",
+      "isActive": true
+    },
+    {
+      "code": "Z81",
+      "name": "Customizable Event 81",
+      "isActive": true
+    },
+    {
+      "code": "Z82",
+      "name": "Customizable Event 82",
+      "isActive": true
+    },
+    {
+      "code": "Z83",
+      "name": "Customizable Event 83",
+      "isActive": true
+    },
+    {
+      "code": "Z84",
+      "name": "Customizable Event 84",
+      "isActive": true
+    },
+    {
+      "code": "Z85",
+      "name": "Customizable Event 85",
+      "isActive": true
+    },
+    {
+      "code": "Z86",
+      "name": "Customizable Event 86",
+      "isActive": true
+    },
+    {
+      "code": "Z87",
+      "name": "Customizable Event 87",
+      "isActive": true
+    },
+    {
+      "code": "Z88",
+      "name": "Customizable Event 88",
+      "isActive": true
+    },
+    {
+      "code": "Z89",
+      "name": "Customizable Event 89",
+      "isActive": true
+    },
+    {
+      "code": "Z90",
+      "name": "Field Change",
+      "isActive": true
+    },
+    {
+      "code": "Z91",
+      "name": "Field Change with Propagate",
+      "isActive": true
+    },
+    {
+      "code": "Z92",
+      "name": "Customizable Event 92",
+      "isActive": true
+    },
+    {
+      "code": "Z93",
+      "name": "SharePoint Upload",
+      "isActive": true
+    },
+    {
+      "code": "Z94",
+      "name": "Customizable Event 94",
+      "isActive": true
+    },
+    {
+      "code": "Z95",
+      "name": "Third Party Inquiry",
+      "isActive": true
+    },
+    {
+      "code": "Z96",
+      "name": "DOCUMENT FOR REVIEW",
+      "isActive": true
+    },
+    {
+      "code": "Z97",
+      "name": "Reserved for Sending data to Test Systems",
+      "isActive": true
+    },
+    {
+      "code": "Z98",
+      "name": "Google Event",
+      "isActive": true
+    },
+    {
+      "code": "Z99",
+      "name": "Estimated Freight Revenue",
+      "isActive": true
+    },
+    {
+      "code": "AAL",
+      "name": "Accounting Add Log",
+      "isActive": true
+    },
+    {
+      "code": "ACA",
+      "name": "Approved Allocation with Container Weight Limit Exceeded",
+      "isActive": true
+    },
+    {
+      "code": "ACK",
+      "name": "Acknowledged",
+      "isActive": true
+    },
+    {
+      "code": "AEL",
+      "name": "Accounting Edit Log",
+      "isActive": true
+    },
+    {
+      "code": "AER",
+      "name": "All Export Related Documents Received",
+      "isActive": true
+    },
+    {
+      "code": "AIR",
+      "name": "All Import Related Documents Received",
+      "isActive": true
+    },
+    {
+      "code": "ALD",
+      "name": "Allocated",
+      "isActive": true
+    },
+    {
+      "code": "APL",
+      "name": "Approval",
+      "isActive": true
+    },
+    {
+      "code": "APR",
+      "name": "Approved",
+      "isActive": true
+    },
+    {
+      "code": "ARC",
+      "name": "Aspect Review Created",
+      "isActive": true
+    },
+    {
+      "code": "ASN",
+      "name": "Assigned",
+      "isActive": true
+    },
+    {
+      "code": "ATK",
+      "name": "Automation Task Queued",
+      "isActive": true
+    },
+    {
+      "code": "AUN",
+      "name": "Account Unavailable Notification",
+      "isActive": true
+    },
+    {
+      "code": "AUT",
+      "name": "AU Outturn Ready for Sending",
+      "isActive": true
+    },
+    {
+      "code": "AUX",
+      "name": "Auxiliary",
+      "isActive": true
+    },
+    {
+      "code": "BCM",
+      "name": "Broadcast Message",
+      "isActive": true
+    },
+    {
+      "code": "BIA",
+      "name": "Bill Information Amended",
+      "isActive": true
+    },
+    {
+      "code": "BIC",
+      "name": "Bill Information Canceled",
+      "isActive": true
+    },
+    {
+      "code": "BID",
+      "name": "Bill Information Deleted",
+      "isActive": true
+    },
+    {
+      "code": "BIR",
+      "name": "Bill Information Registered",
+      "isActive": true
+    },
+    {
+      "code": "BLU",
+      "name": "Bill Status Updated",
+      "isActive": true
+    },
+    {
+      "code": "CAW",
+      "name": "Catalog Added by Download",
+      "isActive": true
+    },
+    {
+      "code": "CCQ",
+      "name": "Confirmation Correctness Query",
+      "isActive": true
+    },
+    {
+      "code": "CDW",
+      "name": "Catalog not Updated by Download",
+      "isActive": true
+    },
+    {
+      "code": "CEC",
+      "name": "Consolidated Entry Changed",
+      "isActive": true
+    },
+    {
+      "code": "CGU",
+      "name": "Customs Guarantee Updated",
+      "isActive": true
+    },
+    {
+      "code": "CHE",
+      "name": "ECom: Status Change",
+      "isActive": true
+    },
+    {
+      "code": "CHF",
+      "name": "Complete Form",
+      "isActive": true
+    },
+    {
+      "code": "COE",
+      "name": "Confirmation of Exit",
+      "isActive": true
+    },
+    {
+      "code": "CPR",
+      "name": "Complete profile",
+      "isActive": true
+    },
+    {
+      "code": "CRI",
+      "name": "Compliance Risk Interaction",
+      "isActive": true
+    },
+    {
+      "code": "CRV",
+      "name": "Copy Received",
+      "isActive": true
+    },
+    {
+      "code": "CSH",
+      "name": "Clearance Status Changed",
+      "isActive": true
+    },
+    {
+      "code": "CSL",
+      "name": "Cancel automatic startup when loading",
+      "isActive": true
+    },
+    {
+      "code": "CTU",
+      "name": "Container Type Updated",
+      "isActive": true
+    },
+    {
+      "code": "CUN",
+      "name": "Customs Update",
+      "isActive": true
+    },
+    {
+      "code": "CUW",
+      "name": "Catalog Updated by Download",
+      "isActive": true
+    },
+    {
+      "code": "CWP",
+      "name": "All Download Catalog Responses Processed",
+      "isActive": true
+    },
+    {
+      "code": "CWS",
+      "name": "Download Catalog Request Sent",
+      "isActive": true
+    },
+    {
+      "code": "DBU",
+      "name": "Direct Debit Outbound Subscriber Batching Record Update",
+      "isActive": true
+    },
+    {
+      "code": "DDE",
+      "name": "Delivery Date Updated",
+      "isActive": true
+    },
+    {
+      "code": "DGS",
+      "name": "Dangerous Goods Segregation Check",
+      "isActive": true
+    },
+    {
+      "code": "DLY",
+      "name": "Delayed event",
+      "isActive": true
+    },
+    {
+      "code": "DPI",
+      "name": "Document Password Information",
+      "isActive": true
+    },
+    {
+      "code": "DPS",
+      "name": "Document Parse Status Update",
+      "isActive": true
+    },
+    {
+      "code": "DRQ",
+      "name": "Document request by Customs",
+      "isActive": true
+    },
+    {
+      "code": "DRW",
+      "name": "Document request canceled by Customs",
+      "isActive": true
+    },
+    {
+      "code": "DSD",
+      "name": "Document Signed",
+      "isActive": true
+    },
+    {
+      "code": "DTR",
+      "name": "Declaration Activation Rejected",
+      "isActive": true
+    },
+    {
+      "code": "DTS",
+      "name": "Declaration Activation Sent",
+      "isActive": true
+    },
+    {
+      "code": "DVT",
+      "name": "Development test",
+      "isActive": true
+    },
+    {
+      "code": "ECA",
+      "name": "Export Cargo Amended",
+      "isActive": true
+    },
+    {
+      "code": "ECD",
+      "name": "Export Cargo Deleted",
+      "isActive": true
+    },
+    {
+      "code": "ECL",
+      "name": "Employment Change Live",
+      "isActive": true
+    },
+    {
+      "code": "ECR",
+      "name": "Export Cargo Registered",
+      "isActive": true
+    },
+    {
+      "code": "EPC",
+      "name": "Excel Password Changed",
+      "isActive": true
+    },
+    {
+      "code": "EVV",
+      "name": "Electronic Assessment Decision Status",
+      "isActive": true
+    },
+    {
+      "code": "EXA",
+      "name": "Exception Actioned",
+      "isActive": true
+    },
+    {
+      "code": "EXE",
+      "name": "Exception-Future Event",
+      "isActive": true
+    },
+    {
+      "code": "EXL",
+      "name": "Exception Deleted",
+      "isActive": true
+    },
+    {
+      "code": "FQP",
+      "name": "Incident Formal Quote Provided",
+      "isActive": true
+    },
+    {
+      "code": "FRM",
+      "name": "French Customs Message Status",
+      "isActive": true
+    },
+    {
+      "code": "FWP",
+      "name": "All Download Foreign Operator Responses Processed",
+      "isActive": true
+    },
+    {
+      "code": "FWS",
+      "name": "Download Foreign Operator Request Sent",
+      "isActive": true
+    },
+    {
+      "code": "GHG",
+      "name": "Greenhouse Gas Emissions Calculation",
+      "isActive": true
+    },
+    {
+      "code": "IBC",
+      "name": "In-Bond Created",
+      "isActive": true
+    },
+    {
+      "code": "ICX",
+      "name": "Internal Cartage Job Deactivated",
+      "isActive": true
+    },
+    {
+      "code": "IDF",
+      "name": "IDP Import Failure",
+      "isActive": true
+    },
+    {
+      "code": "IDI",
+      "name": "IDP Import",
+      "isActive": true
+    },
+    {
+      "code": "INT",
+      "name": "Interview",
+      "isActive": true
+    },
+    {
+      "code": "IRR",
+      "name": "Inspection Reject",
+      "isActive": true
+    },
+    {
+      "code": "IRS",
+      "name": "Incident Resolved",
+      "isActive": true
+    },
+    {
+      "code": "IWR",
+      "name": "Incident Awaiting Response",
+      "isActive": true
+    },
+    {
+      "code": "JSC",
+      "name": "Job Shipment Selected",
+      "isActive": true
+    },
+    {
+      "code": "LFR",
+      "name": "Last Free Day",
+      "isActive": true
+    },
+    {
+      "code": "LOP",
+      "name": "Location Update",
+      "isActive": true
+    },
+    {
+      "code": "LUL",
+      "name": "Line Unlinked",
+      "isActive": true
+    },
+    {
+      "code": "MAR",
+      "name": "MNR Approval Requested",
+      "isActive": true
+    },
+    {
+      "code": "MDS",
+      "name": "Manual Document Search",
+      "isActive": true
+    },
+    {
+      "code": "MGF",
+      "name": "Message Generation Failed",
+      "isActive": true
+    },
+    {
+      "code": "MSR",
+      "name": "Message Sending Request",
+      "isActive": true
+    },
+    {
+      "code": "NTA",
+      "name": "Note Added",
+      "isActive": true
+    },
+    {
+      "code": "NTD",
+      "name": "Note Deleted",
+      "isActive": true
+    },
+    {
+      "code": "NTM",
+      "name": "Note Modified",
+      "isActive": true
+    },
+    {
+      "code": "OAE",
+      "name": "Operational Action Execute",
+      "isActive": true
+    },
+    {
+      "code": "OCB",
+      "name": "Ocean Carrier Booking by TEU",
+      "isActive": true
+    },
+    {
+      "code": "OED",
+      "name": "Opportunity Edited",
+      "isActive": true
+    },
+    {
+      "code": "OFF",
+      "name": "Contract offer",
+      "isActive": true
+    },
+    {
+      "code": "ONB",
+      "name": "Onboarding",
+      "isActive": true
+    },
+    {
+      "code": "OSD",
+      "name": "Opportunity Scope Disabled",
+      "isActive": true
+    },
+    {
+      "code": "PGD",
+      "name": "Purge Data Completed",
+      "isActive": true
+    },
+    {
+      "code": "PGR",
+      "name": "Profit of G/W Consols Redistributed",
+      "isActive": true
+    },
+    {
+      "code": "PRC",
+      "name": "Promotion Completed",
+      "isActive": true
+    },
+    {
+      "code": "PRF",
+      "name": "Promotion Failed",
+      "isActive": true
+    },
+    {
+      "code": "PSC",
+      "name": "Phase Status Change",
+      "isActive": true
+    },
+    {
+      "code": "PSN",
+      "name": "Phone screen",
+      "isActive": true
+    },
+    {
+      "code": "QEP",
+      "name": "Incident Development Estimate Provided",
+      "isActive": true
+    },
+    {
+      "code": "QOW",
+      "name": "Quotation Client Accepted",
+      "isActive": true
+    },
+    {
+      "code": "QRD",
+      "name": "Quotation Client Requested Discussion",
+      "isActive": true
+    },
+    {
+      "code": "QUR",
+      "name": "Response to Customs Query/Customs request",
+      "isActive": true
+    },
+    {
+      "code": "RCC",
+      "name": "Return Cargo Canceled",
+      "isActive": true
+    },
+    {
+      "code": "RCR",
+      "name": "Return Cargo Registered",
+      "isActive": true
+    },
+    {
+      "code": "RDC",
+      "name": "Reason Description Changed",
+      "isActive": true
+    },
+    {
+      "code": "RDD",
+      "name": "Calculate Delivery Date with Exceptions Requested",
+      "isActive": true
+    },
+    {
+      "code": "RDU",
+      "name": "Recall Date Updated",
+      "isActive": true
+    },
+    {
+      "code": "RFI",
+      "name": "Request Status Change",
+      "isActive": true
+    },
+    {
+      "code": "RFU",
+      "name": "Reefer details updated",
+      "isActive": true
+    },
+    {
+      "code": "RIT",
+      "name": "Request Item Status Change",
+      "isActive": true
+    },
+    {
+      "code": "RLI",
+      "name": "Route Leg inserted",
+      "isActive": true
+    },
+    {
+      "code": "ROF",
+      "name": "Reconcile Outturn Failed",
+      "isActive": true
+    },
+    {
+      "code": "ROL",
+      "name": "Roll back",
+      "isActive": true
+    },
+    {
+      "code": "ROP",
+      "name": "Reconcile Outturn Passed",
+      "isActive": true
+    },
+    {
+      "code": "RQA",
+      "name": "Request Accepted",
+      "isActive": true
+    },
+    {
+      "code": "RQC",
+      "name": "Request Created",
+      "isActive": true
+    },
+    {
+      "code": "RQD",
+      "name": "Request Denied",
+      "isActive": true
+    },
+    {
+      "code": "RQR",
+      "name": "Request Canceled Requested",
+      "isActive": true
+    },
+    {
+      "code": "RQS",
+      "name": "Request Closed",
+      "isActive": true
+    },
+    {
+      "code": "RQX",
+      "name": "Request Canceled",
+      "isActive": true
+    },
+    {
+      "code": "RSW",
+      "name": "Restowed",
+      "isActive": true
+    },
+    {
+      "code": "RTF",
+      "name": "Retry Finished",
+      "isActive": true
+    },
+    {
+      "code": "RUN",
+      "name": "Runnability Changed",
+      "isActive": true
+    },
+    {
+      "code": "SBC",
+      "name": "Sub Style Change",
+      "isActive": true
+    },
+    {
+      "code": "SDT",
+      "name": "Standard test",
+      "isActive": true
+    },
+    {
+      "code": "SHF",
+      "name": "Shifted",
+      "isActive": true
+    },
+    {
+      "code": "SPL",
+      "name": "Split",
+      "isActive": true
+    },
+    {
+      "code": "SST",
+      "name": "Session Started/Renewed",
+      "isActive": true
+    },
+    {
+      "code": "STG",
+      "name": "Stage Change",
+      "isActive": true
+    },
+    {
+      "code": "STT",
+      "name": "Start",
+      "isActive": true
+    },
+    {
+      "code": "SWE",
+      "name": "Ship Window End",
+      "isActive": true
+    },
+    {
+      "code": "SWS",
+      "name": "Ship Window Start",
+      "isActive": true
+    },
+    {
+      "code": "TKN",
+      "name": "Support Login Token Generated",
+      "isActive": true
+    },
+    {
+      "code": "TRE",
+      "name": "Communication Tokens Refresh",
+      "isActive": true
+    },
+    {
+      "code": "TRP",
+      "name": "All Request TTCE Reference File Messages Processed",
+      "isActive": true
+    },
+    {
+      "code": "TRS",
+      "name": "Request TTCE Reference File Message Sent",
+      "isActive": true
+    },
+    {
+      "code": "TSP",
+      "name": "Temporary Storage Presented",
+      "isActive": true
+    },
+    {
+      "code": "UBI",
+      "name": "Unit Biosecurity Inspection",
+      "isActive": true
+    },
+    {
+      "code": "UCU",
+      "name": "Unit Condition Updated",
+      "isActive": true
+    },
+    {
+      "code": "UDU",
+      "name": "Unit Damage Updated",
+      "isActive": true
+    },
+    {
+      "code": "UGU",
+      "name": "Container Grade Updated",
+      "isActive": true
+    },
+    {
+      "code": "UNA",
+      "name": "Unapproved",
+      "isActive": true
+    },
+    {
+      "code": "UTU",
+      "name": "Unit Type Updated",
+      "isActive": true
+    },
+    {
+      "code": "VIR",
+      "name": "Vanning Information Registered",
+      "isActive": true
+    },
+    {
+      "code": "VRF",
+      "name": "Validation Rule Failed",
+      "isActive": true
+    },
+    {
+      "code": "VRP",
+      "name": "Validation Rule Passed",
+      "isActive": true
+    },
+    {
+      "code": "WID",
+      "name": "Warehouse Integration Disabled",
+      "isActive": true
+    },
+    {
+      "code": "WTD",
+      "name": "Workflow Items Deleted",
+      "isActive": true
+    },
+    {
+      "code": "WTM",
+      "name": "Workflow Items Manually Added",
+      "isActive": true
+    }
+  ]
+}

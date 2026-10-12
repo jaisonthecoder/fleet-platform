@@ -1,0 +1,142 @@
+/* The option carousel from the staff mockup: cards choose which option is open. */
+
+.strip {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 20px 0;
+  min-inline-size: 0;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: var(--noa-radius-capsule);
+  border: 1px solid var(--noa-color-border);
+  background: var(--surface-card);
+  color: var(--noa-color-accent);
+  cursor: pointer;
+}
+
+.arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cards {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+  min-inline-size: 0;
+}
+
+.card {
+  display: block;
+  inline-size: 100%;
+  box-sizing: border-box;
+  text-align: start;
+  padding: 10px 13px;
+  border: 2px solid var(--noa-color-border);
+  background: var(--surface-card);
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+/* The open one. Two signals, border and tint, because a single hairline of
+   difference is not enough to say which editor is below. */
+.card[data-open='true'] {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.number {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text-muted);
+}
+
+.recommended {
+  padding: 3px 6px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Each is its own line. They are spans because the card is a button, and a
+   button may not contain a div - without this they run together on one line. */
+.name,
+.meta,
+.total {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.name {
+  margin-block-start: 5px;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.meta {
+  margin-block-start: 2px;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text);
+}
+
+.total {
+  margin-block-start: 8px;
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-accent);
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding-block-start: 10px;
+  margin: 0;
+  list-style: none;
+}
+
+.dot {
+  display: block;
+  inline-size: 6px;
+  block-size: 6px;
+  border: 0;
+  padding: 0;
+  border-radius: 3px;
+  background: var(--noa-color-border);
+  cursor: pointer;
+}
+
+.dot[data-open='true'] {
+  inline-size: 20px;
+  background: var(--noa-color-accent);
+}

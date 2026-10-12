@@ -1,0 +1,533 @@
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--noa-space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--noa-space-3);
+}
+
+.search {
+  min-width: 18rem;
+  flex: 1 1 18rem;
+}
+
+.filters {
+  display: flex;
+  gap: var(--noa-space-1);
+  flex-wrap: wrap;
+}
+
+.nameLink {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nameLink:hover .name,
+.nameLink:focus-visible .name {
+  text-decoration: underline;
+}
+
+.name {
+  font-weight: var(--noa-weight-medium);
+}
+
+.slug,
+.code {
+  font-family: var(--noa-font-mono);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.statusCell {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+}
+
+.blocked {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-warning-700);
+}
+
+.customerDirectory :global(.noa-listing-cards) {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-3);
+}
+
+.customerDirectory :global(.noa-listing-toolbar) > :last-child {
+  margin-left: auto;
+}
+
+.customerDirectory :global(.noa-listing-card) {
+  padding: 0;
+  border-left: 3px solid var(--noa-color-accent);
+  background: var(--noa-color-surface);
+  transition:
+    border-color var(--noa-duration-fast) var(--noa-ease),
+    box-shadow var(--noa-duration-fast) var(--noa-ease);
+}
+
+.customerDirectory :global(.noa-listing-card:hover) {
+  border-color: var(--noa-color-accent);
+  box-shadow: var(--noa-card-shadow);
+}
+
+.customerCard {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.25fr) minmax(420px, 2fr) 32px;
+  align-items: center;
+  gap: var(--noa-space-4);
+  min-height: 76px;
+  padding: var(--noa-space-3) var(--noa-space-4);
+}
+
+.customerCardHeader,
+.customerIdentity,
+.customerCardStatus {
+  display: flex;
+  align-items: center;
+}
+
+.customerCardHeader {
+  justify-content: space-between;
+  gap: var(--noa-space-3);
+  min-width: 0;
+}
+
+.customerIdentity { gap: var(--noa-space-3); min-width: 0; }
+.customerIdentity > div { display: grid; gap: 2px; min-width: 0; }
+
+.customerIcon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.customerIcon svg { width: 16px; height: 16px; }
+
+.customerName {
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-tight);
+  text-decoration: none;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.customerName:hover { color: var(--noa-color-accent); text-decoration: underline; }
+.customerCardStatus { gap: var(--noa-space-2); flex-wrap: wrap; }
+
+.customerFacts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(90px, 1fr));
+  gap: var(--noa-space-3);
+  margin: 0;
+}
+
+.customerFacts > div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.customerFacts dt {
+  color: var(--noa-color-text-muted);
+  font-size: 10px;
+  font-weight: var(--noa-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+}
+
+.customerFacts dd {
+  margin: 0;
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.customerOpen {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: var(--noa-color-accent);
+  border: 1px solid var(--noa-color-border);
+  text-decoration: none;
+}
+
+.customerOpen:hover {
+  background: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent);
+  text-decoration: none;
+}
+
+.customerOpen svg { width: 16px; height: 16px; }
+
+@media (max-width: 1000px) {
+  .customerCard { grid-template-columns: minmax(220px, 1fr) 32px; }
+  .customerFacts { grid-column: 1 / -1; grid-row: 2; }
+  .customerOpen { grid-column: 2; grid-row: 1; }
+}
+
+@media (max-width: 600px) {
+  .customerCard { grid-template-columns: minmax(0, 1fr) 32px; padding: var(--noa-space-3); }
+  .customerFacts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .customerCardHeader { align-items: flex-start; flex-direction: column; }
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+  text-decoration: none;
+  margin-bottom: var(--noa-space-2);
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--noa-neutral-900);
+  text-decoration: underline;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--noa-space-3);
+  flex-wrap: wrap;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  flex-wrap: wrap;
+}
+
+.notice {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  margin: 0;
+  padding: var(--noa-space-2) var(--noa-space-3);
+  background: var(--noa-warning-100);
+  color: var(--noa-warning-700);
+  border-left: 3px solid var(--noa-warning-700);
+  font-size: var(--noa-text-sm);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--noa-space-2);
+  margin-bottom: var(--noa-space-3);
+}
+
+.sectionTitle {
+  margin: 0 0 var(--noa-space-3);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--noa-color-text-muted);
+}
+
+.sectionHeader .sectionTitle {
+  margin-bottom: 0;
+}
+
+.checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--noa-space-2);
+}
+
+.task,
+.taskDone {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-2);
+  border: 1px solid var(--noa-color-border);
+}
+
+.taskDone {
+  border-left: 3px solid var(--noa-success-700);
+}
+
+.task {
+  border-left: 3px solid var(--noa-color-border);
+}
+
+.taskMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--noa-success-700);
+}
+
+.taskBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.taskName {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+}
+
+.taskReason {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* Drawer chrome lives in the design system (.noa-drawer-*); only the copy that
+   sits inside a sheet is styled here. */
+.drawerNote {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--noa-color-text-muted);
+}
+
+/* An inherited office is shown as such, so nobody reads it as set on the link. */
+.servicingCell {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--noa-space-2);
+}
+
+.inherited {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--noa-space-1);
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.result,
+.resultSelected {
+  width: 100%;
+  display: grid;
+  gap: 2px;
+  padding: var(--noa-space-2);
+  text-align: left;
+  background: transparent;
+  border: 1px solid var(--noa-color-border);
+  cursor: pointer;
+}
+
+.resultSelected {
+  border-color: var(--noa-color-accent);
+  border-left-width: 3px;
+}
+
+.result[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.resultMain {
+  display: flex;
+  align-items: baseline;
+  gap: var(--noa-space-2);
+}
+
+.resultName {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+}
+
+.resultMeta {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.resultBlocked {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-warning-700);
+}
+
+.warning {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-warning-700);
+}
+
+/* A refused write, not a caution: red, because the operator's action did not happen. */
+.formError {
+  margin: 0;
+  padding: var(--noa-space-2) var(--noa-space-3);
+  background: var(--noa-danger-100);
+  border-left: 3px solid var(--noa-color-accent);
+  font-size: var(--noa-text-sm);
+  color: var(--noa-neutral-900);
+}
+
+/* Guidance copy: explains what a screen is for before the user has to guess. */
+.intro {
+  margin: 0 0 var(--noa-space-3);
+  max-width: 68ch;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+.tabBody {
+  display: grid;
+  gap: var(--noa-space-3);
+}
+
+.tabIntro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--noa-space-4);
+}
+
+.tabIntro .help {
+  margin: 0;
+}
+
+.help {
+  margin: 0 0 var(--noa-space-3);
+  max-width: 68ch;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+.accessList {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* Badges and quiet buttons sitting together in one table cell. */
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  flex-wrap: wrap;
+}
+
+.drawerBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-space-4);
+}
+
+.drawerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--noa-space-3);
+}
+
+.fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: var(--noa-space-2);
+}
+
+.legend {
+  padding: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+}
+
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-2);
+  border: 1px solid var(--noa-color-border);
+  cursor: pointer;
+}
+
+.choice > span {
+  display: grid;
+  gap: 2px;
+}
+
+.choiceName {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+}
+
+.choiceHint {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.checkList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--noa-space-1);
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.checkItem {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-2);
+  border: 1px solid var(--noa-color-border);
+  cursor: pointer;
+}
+
+.checkItem > span {
+  display: flex;
+  align-items: baseline;
+  gap: var(--noa-space-2);
+}
+
+/* Lets an InfoRibbon take the free width in a header row, so it opens full width. */
+.grow {
+  flex: 1;
+  min-width: 0;
+}

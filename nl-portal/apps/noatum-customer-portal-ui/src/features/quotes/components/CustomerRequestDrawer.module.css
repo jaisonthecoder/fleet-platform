@@ -1,0 +1,85 @@
+/* What goes inside the shared request drawer, for the customer. */
+.blockTitle {
+  margin: 0 0 8px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.spaced { margin-block-start: 18px; }
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 4px 9px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--surface-section);
+  color: var(--text-heading);
+}
+
+.note {
+  margin: 0;
+  padding: 12px;
+  background: var(--surface-section);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+  white-space: pre-wrap;
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+.readOnly {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-muted);
+}
+
+/* The package lines as typed, in the cargo grid's shape. */
+.lines { margin-block-start: 18px; min-inline-size: 0; overflow-x: auto; }
+
+.lineGrid { min-inline-size: 420px; }
+
+.lineRow {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1.3fr) minmax(0, 1.3fr) 110px;
+  gap: 8px;
+  align-items: center;
+  padding-block: 8px;
+  border-block-end: 1px solid var(--noa-ground);
+  font-size: var(--noa-text-sm);
+  color: var(--text-heading);
+}
+
+.lineHead {
+  padding-block: 6px;
+  border-block-end: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.lineRow > span {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.numeric { text-align: end; font-variant-numeric: tabular-nums; }

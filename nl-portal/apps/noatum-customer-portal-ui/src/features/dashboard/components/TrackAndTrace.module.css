@@ -1,0 +1,156 @@
+/* Track and trace, on the welcome band. Measures from "Noatum First Login.html". */
+
+.band {
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  padding: 18px 20px;
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-block-end: 14px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-hero-text);
+}
+
+.icon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  flex: none;
+  color: var(--noa-color-accent);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--noa-text-eyebrow);
+  color: var(--noa-on-dark-muted);
+}
+
+.form {
+  display: flex;
+  gap: var(--space-3);
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+/* The caption sits inside the field rather than above it: the band is short,
+   and "ANY REFERENCE" is the field's own instruction, not a heading. */
+.field {
+  flex: 1 1 21rem;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero-panel);
+  padding-inline: 14px;
+  block-size: 52px;
+}
+
+.field:focus-within {
+  border-color: var(--noa-color-hero-text);
+}
+
+.label {
+  flex: none;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-on-dark-muted);
+  white-space: nowrap;
+}
+
+.input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  inline-size: 100%;
+  min-inline-size: 0;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-hero-text);
+}
+
+.input::placeholder {
+  color: var(--noa-on-dark-muted);
+  font-weight: var(--noa-weight-regular);
+}
+
+.submit {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  block-size: 52px;
+  padding-inline: 28px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--noa-color-accent-hover);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.result:not(:empty) {
+  margin-block-start: 14px;
+}
+
+.state {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-on-dark);
+}
+
+.found {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-kit-block-gap);
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+.route {
+  flex: 1 1 18rem;
+  min-inline-size: 0;
+}
+
+.status {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-on-dark);
+}
+
+.status strong {
+  color: var(--noa-color-hero-text);
+}

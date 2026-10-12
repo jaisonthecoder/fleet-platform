@@ -1,0 +1,146 @@
+/* What the customer will see, as the mockup frames it: one bordered card. */
+
+.panel {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 18px;
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.title {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.which {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.body { padding: 16px 18px; }
+
+.card {
+  border: 1px solid var(--noa-color-border);
+  padding: 14px;
+  min-inline-size: 0;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.name {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.total {
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-accent);
+}
+
+.carrier {
+  margin: 3px 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text-muted);
+}
+
+/* The lane again, at the customer's scale, with the transit time written into
+   the line rather than listed beneath it. */
+.lane {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-start: 12px;
+  min-inline-size: 0;
+}
+
+.port {
+  flex: none;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--text-heading);
+}
+
+.line {
+  position: relative;
+  flex: 1;
+  min-inline-size: 20px;
+  block-size: 2px;
+  background: var(--noa-color-border);
+}
+
+.transit {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: -8px;
+  transform: translateX(-50%);
+  padding-inline: 6px;
+  background: var(--surface-card);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text);
+  white-space: nowrap;
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--surface-section);
+  color: var(--noa-color-text);
+}
+
+/* Free time is the term customers compare after price, so it carries the one
+   colour in this card. */
+.chips li[data-good='true'] {
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+}
+
+.excluded {
+  margin: 12px 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-relaxed);
+  color: var(--noa-color-text-muted);
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}

@@ -1,0 +1,39 @@
+{
+  "name": "noatum-customer-portal",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@12.3.4",
+  "engines": {
+    "node": ">=22.11.0",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter \"./apps/noatum-customer-portal-api\" --filter \"./apps/noatum-customer-portal-ui\" run dev",
+    "dev:api": "pnpm --filter noatum-customer-portal-api run dev",
+    "dev:web": "pnpm --filter noatum-customer-portal-ui run dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint",
+    "format": "pnpm -r run format",
+    "format:check": "pnpm -r run format:check",
+    "typecheck": "pnpm -r run typecheck",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test",
+    "test": "pnpm -r run test",
+    "test:isolation": "pnpm --filter noatum-customer-portal-api run test:isolation",
+    "test:db": "node infra/scripts/local-db.mjs test",
+    "migrate": "pnpm --filter noatum-customer-portal-api run migrate",
+    "migrate:deploy": "pnpm --filter noatum-customer-portal-api run migrate:deploy",
+    "db:up": "node infra/scripts/local-db.mjs up",
+    "db:setup": "node infra/scripts/local-db.mjs setup",
+    "db:seed:dev": "node infra/scripts/seed-dev-users.mjs",
+    "db:seed:lookups": "node infra/scripts/seed-lookups.mjs",
+    "db:seed:orgs": "node infra/scripts/seed-organisations.mjs",
+    "db:extract:cw1": "node infra/scripts/extract-cw1-catalogues.mjs",
+    "data:snapshot": "node infra/azure/export-local-data.mjs",
+    "db:status": "node infra/scripts/local-db.mjs status",
+    "db:down": "node infra/scripts/local-db.mjs down"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "prettier": "^3.9.6"
+  }
+}

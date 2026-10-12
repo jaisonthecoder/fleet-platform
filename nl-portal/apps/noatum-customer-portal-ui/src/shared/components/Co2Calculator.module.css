@@ -1,0 +1,58 @@
+/* ============================================================================
+ * The container's own chrome.
+ *
+ * Only the states it owns and the call to action it passes down. The panel is
+ * SP-09 in the design system and carries every other measurement, so nothing
+ * here restates one — that is how the two ended up drifting before.
+ * ========================================================================== */
+
+/*
+ * Loading, and "there is no catalogue".
+ *
+ * Drawn as a card in its own right rather than as an empty calculator, because
+ * an empty calculator reads as broken. The emissions endpoints are not
+ * implemented server-side today, so this is the state a real environment is in.
+ */
+.state {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: 28px var(--noa-kit-card-pad-x);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text);
+  min-inline-size: 0;
+}
+
+.state p {
+  margin: 0;
+}
+
+.retry,
+.cta {
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  padding: 11px 18px;
+  border-radius: var(--radius-btn);
+  white-space: nowrap;
+  flex: none;
+  background: none;
+  cursor: pointer;
+}
+
+.retry:hover,
+.cta:hover {
+  background: var(--red-050);
+}
+
+.retry:focus-visible,
+.cta:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}

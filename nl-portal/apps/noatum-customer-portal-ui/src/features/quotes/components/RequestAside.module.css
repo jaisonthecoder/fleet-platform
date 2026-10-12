@@ -1,0 +1,281 @@
+/* ── completeness ─────────────────────────────────────────────────────────── */
+
+/* The first card in the column rises into the hero band with the form, so it
+   carries the same deeper shadow rather than a border. */
+.progress {
+  background: var(--surface-card);
+  box-shadow: var(--noa-shadow-lifted);
+}
+
+.progressHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* The completeness ring is DA-06 RingGauge, which owns its own drawing. */
+
+.progressTitle {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.progressNote {
+  margin: 2px 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+  line-height: var(--noa-leading-normal);
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) 0;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  border-left: 3px solid transparent;
+}
+
+.step:hover,
+.step:focus-visible {
+  background: var(--surface-section);
+}
+
+.step[data-done='true'] {
+  border-left-color: var(--noa-success-500);
+}
+
+.stepMark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--noa-color-text-muted);
+  box-sizing: border-box;
+}
+
+.step[data-done='true'] .stepMark {
+  border-color: var(--noa-success-500);
+  background: var(--noa-success-500);
+}
+
+.stepLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  color: var(--text-heading);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.stepNote {
+  grid-column: 2;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The state in words, so the rule and the dot are never the only signal. */
+.stepState {
+  grid-row: 1;
+  grid-column: 3;
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  color: var(--noa-color-text-muted);
+  white-space: nowrap;
+}
+
+.step[data-done='true'] .stepState {
+  color: var(--noa-success-700);
+}
+
+/* ── live summary ─────────────────────────────────────────────────────────── */
+
+.summary {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+}
+
+.summaryHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.summaryLabel,
+.summaryLive {
+  font-size: var(--noa-text-eyebrow);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.summaryLabel {
+  font-weight: 700;
+}
+
+.summaryRows {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.summaryRow dt {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+  flex: none;
+}
+
+.summaryRow dd {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  color: var(--text-heading);
+  text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.summaryRow dd[data-attention='true'] {
+  color: var(--color-primary);
+}
+
+.summaryChips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.summaryChip {
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  padding: var(--space-1) var(--space-2);
+  background: var(--surface-section);
+  color: var(--text-body);
+  white-space: nowrap;
+}
+
+/* ── indicative journey ───────────────────────────────────────────────────── */
+
+.journey {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.journeyHead {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.journeyLabel {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.journeyBody {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+/* A chain, not a chart: each stage is one link, and the rule between them is
+   what says "then". No widths, because there are no durations to be
+   proportional to. */
+.stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--noa-kit-chip-gap);
+  padding-block: 7px;
+}
+
+.stage::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 4px;
+  inline-size: 1px;
+  background: var(--border-subtle);
+}
+
+.stage:first-child::before {
+  inset-block-start: 50%;
+}
+
+.stage:last-child::before {
+  inset-block-end: 50%;
+}
+
+.stageMark {
+  position: relative;
+  flex: none;
+  inline-size: 9px;
+  block-size: 9px;
+  margin-block-start: 5px;
+  border-radius: 50%;
+  background: var(--noa-color-accent);
+}
+
+/* Standing still is drawn hollow as well as named, so the two signals agree. */
+.stage[data-dwell] .stageMark {
+  background: var(--surface-card);
+  box-shadow: inset 0 0 0 2px var(--noa-color-border-strong);
+}
+
+.stageLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.stageDwell {
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text-muted);
+}
+
+.journeyNote {
+  margin: var(--space-2) 0 0;
+  padding-block-start: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+

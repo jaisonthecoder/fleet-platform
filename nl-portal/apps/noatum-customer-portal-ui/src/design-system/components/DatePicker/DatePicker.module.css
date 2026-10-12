@@ -1,0 +1,276 @@
+/* DT-03 · Date picker. Measures from Noatum UI Kit.dc.html. */
+
+.picker {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: var(--noa-kit-block-gap);
+  min-inline-size: 0;
+}
+
+@media (max-width: 40rem) {
+  .picker {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --- shortcuts ----------------------------------------------------------- */
+
+.shortcuts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+}
+
+.shortcutsLabel {
+  margin: 0 0 var(--noa-space-1);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.shortcut {
+  display: flex;
+  align-items: center;
+  block-size: var(--noa-control-height-full);
+  padding-inline: var(--noa-kit-control-pad-x);
+  text-align: start;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-dense);
+  cursor: pointer;
+}
+
+.shortcut:hover {
+  border-color: var(--noa-color-border-strong);
+}
+
+.shortcut:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.shortcut[aria-pressed='true'] {
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+  font-weight: var(--noa-weight-bold);
+}
+
+.done {
+  block-size: var(--noa-control-height-full);
+  margin-block-start: var(--noa-space-1);
+  background: var(--noa-color-accent);
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  cursor: pointer;
+}
+
+.done:hover {
+  background: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent-hover);
+}
+
+.done:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+/* --- grid ---------------------------------------------------------------- */
+
+.grid {
+  min-inline-size: 0;
+}
+
+.calendar {
+  --rdp-accent-color: var(--noa-color-accent);
+}
+
+.caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: var(--noa-control-height-full);
+}
+
+.captionLabel {
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-extrabold);
+  color: var(--noa-neutral-900);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  inset-inline: 0;
+  block-size: var(--noa-control-height-full);
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-accent);
+  cursor: pointer;
+}
+
+.navButton:hover {
+  border-color: var(--noa-color-accent);
+}
+
+.navButton:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.months {
+  position: relative;
+}
+
+.monthGrid {
+  inline-size: 100%;
+  border-collapse: collapse;
+}
+
+.weekdays {
+  block-size: 2rem;
+}
+
+.weekday {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text-muted);
+  text-align: center;
+}
+
+.weekRow {
+  block-size: 2.25rem;
+}
+
+.day {
+  padding: 2px;
+  text-align: center;
+}
+
+.dayButton {
+  position: relative;
+  inline-size: 100%;
+  block-size: 2rem;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-btn);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-dense);
+  cursor: pointer;
+}
+
+.dayButton:hover {
+  background: var(--noa-ground);
+}
+
+.dayButton:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: -1px;
+}
+
+/* A sailing day: tinted cell plus a drawn dot, never the tint alone. */
+.sailing .dayButton {
+  background: var(--noa-color-accent-subtle);
+}
+
+.sailing .dayButton::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-end: 3px;
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  transform: translateX(-50%);
+}
+
+.selected .dayButton {
+  background: var(--noa-color-accent);
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-weight: var(--noa-weight-bold);
+}
+
+.selected .dayButton::after {
+  background: var(--noa-color-text-inverse);
+}
+
+.today .dayButton {
+  border-color: var(--navy-800);
+}
+
+.disabledDay .dayButton {
+  color: var(--noa-color-text-muted);
+  cursor: not-allowed;
+}
+
+.disabledDay .dayButton:hover {
+  background: none;
+}
+
+.outside .dayButton {
+  visibility: hidden;
+}
+
+/* --- legend -------------------------------------------------------------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-card-gap);
+  margin: var(--noa-kit-card-gap) 0 0;
+  padding-block-start: var(--noa-kit-heading-gap);
+  border-block-start: 1px solid var(--noa-color-border);
+  list-style: none;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.keyChosen,
+.keySailing,
+.keyToday,
+.keyPast {
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+.keyChosen {
+  background: var(--noa-color-accent);
+}
+
+.keySailing {
+  background: var(--noa-color-accent-subtle);
+}
+
+.keyToday {
+  border: 1px solid var(--navy-800);
+}
+
+.keyPast {
+  background: var(--noa-color-border);
+}

@@ -1,0 +1,509 @@
+/* ============================================================================
+ * The customer's landing page after sign-in.
+ *
+ * Measures from "Noatum First Login.html". Full-bleed navy band, content on a
+ * 1320 measure with 32px gutters, and the first card rising into the band's
+ * foot — the same overlap CH-09 uses on the request page, so the two pages are
+ * recognisably one product.
+ * ========================================================================== */
+
+.page {
+  background: var(--noa-ground);
+  min-block-size: 100%;
+}
+
+/* --- the band ------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+/* A red wash from the top right, rather than the request page's hairlines:
+   this band opens the product, so it carries the brand rather than a grid. */
+.heroPattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    900px 340px at 82% -30%,
+    var(--noa-color-hero-wash),
+    transparent 70%
+  );
+}
+
+.heroInner {
+  position: relative;
+  max-inline-size: var(--noa-measure-wide);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 30px var(--noa-shell-gutter) 74px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-inline-size: 0;
+}
+
+.heroRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.heroLede {
+  min-inline-size: 0;
+  flex: 1 1 24rem;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-mint-400);
+}
+
+.statusDot {
+  inline-size: 8px;
+  block-size: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--noa-mint-400);
+}
+
+.heading {
+  margin: var(--space-3) 0 0;
+  font-size: var(--noa-text-hero);
+  font-weight: var(--noa-weight-black);
+  line-height: 1.16;
+  color: var(--noa-color-hero-text);
+}
+
+.lede {
+  margin: var(--space-2) 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark);
+  max-inline-size: 37.5rem;
+  min-inline-size: 0;
+}
+
+.heroSetup {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+.heroSteps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+}
+
+.heroSteps li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-on-dark);
+  min-inline-size: 0;
+}
+
+.heroSteps li[data-done='true'] {
+  color: var(--noa-color-hero-text);
+}
+
+.heroStepDot {
+  inline-size: 14px;
+  block-size: 14px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid var(--noa-color-hero-dot);
+  box-sizing: border-box;
+}
+
+.heroSteps li[data-done='true'] .heroStepDot {
+  border-color: var(--noa-mint-400);
+  background: var(--noa-mint-400);
+}
+
+/* --- what rises into the foot -------------------------------------------- */
+
+.body {
+  max-inline-size: var(--noa-measure-wide);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 0 var(--noa-shell-gutter) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-inline-size: 0;
+}
+
+/*
+ * One block to a row.
+ *
+ * The checklist and the calculator shared a row before, which made the page ask
+ * two things at once and gave each of them half a column to do it in. Stacked,
+ * each gets the full measure and the eye gets one decision at a time.
+ */
+
+/* The first block climbs into the band's empty foot, which is what joins the
+   two into one object rather than a band with a page under it. */
+.lead {
+  position: relative;
+  margin-block-start: calc(var(--noa-hero-rise) * -1);
+  min-inline-size: 0;
+}
+
+.lead,
+.calculator {
+  box-shadow: var(--noa-shadow-lifted);
+}
+
+.calculator {
+  min-inline-size: 0;
+}
+
+/*
+ * When there is no checklist left to draw, the calculator is the first block
+ * and takes the climb instead - otherwise the page would start with a gap where
+ * the band expected something to rise into it.
+ */
+.calculator:first-child {
+  position: relative;
+  margin-block-start: calc(var(--noa-hero-rise) * -1);
+}
+
+/* --- start here ----------------------------------------------------------- */
+
+.starters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: 14px;
+}
+
+.starter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--noa-kit-chip-gap);
+  padding: 22px;
+  text-align: start;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  border: 0;
+  border-block-start: 3px solid var(--noa-color-accent);
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+.starter[data-tone='navy'] {
+  border-block-start-color: var(--color-accent-navy);
+}
+
+.starter[data-tone='muted'] {
+  border-block-start-color: var(--noa-kit-success);
+}
+
+.starter:hover {
+  box-shadow: var(--noa-shadow-raised);
+}
+
+.starter:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.starterIcon {
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: var(--radius-btn);
+  background: var(--red-050);
+  color: var(--noa-color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.starter[data-tone='navy'] .starterIcon {
+  background: var(--noa-navy-050);
+  color: var(--color-accent-navy);
+}
+
+.starter[data-tone='muted'] .starterIcon {
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+}
+
+.starterTitle {
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.starterNote {
+  font-size: var(--noa-text-dense);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.starterCta {
+  margin-block-start: auto;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+}
+
+.starter[data-tone='navy'] .starterCta {
+  color: var(--color-accent-navy);
+}
+
+.starter[data-tone='muted'] .starterCta {
+  color: var(--noa-kit-success);
+}
+
+/* --- the lists and the side column ---------------------------------------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+  min-inline-size: 0;
+}
+
+@media (min-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) var(--noa-aside-width);
+  }
+}
+
+.lists,
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  min-inline-size: 0;
+}
+
+.list {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.listHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: var(--space-5) var(--noa-kit-card-pad-x);
+  border-bottom: 1px solid var(--noa-paper);
+}
+
+.listTitle {
+  margin: 0;
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.listNote {
+  margin: 3px 0 0;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-color-text);
+}
+
+.listCount {
+  flex: none;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  color: var(--noa-color-text-muted);
+  border: 1px solid var(--noa-color-border);
+  padding: 6px var(--noa-kit-chip-gap);
+  border-radius: var(--radius-btn);
+  white-space: nowrap;
+}
+
+.listBody {
+  padding: 26px var(--noa-kit-card-pad-x);
+  display: flex;
+  gap: var(--noa-kit-block-gap);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.listIcon {
+  inline-size: 56px;
+  block-size: 56px;
+  flex: none;
+  border-radius: var(--radius-btn);
+  background: var(--noa-ground);
+  color: var(--noa-color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listIcon svg {
+  inline-size: 1.625rem;
+  block-size: 1.625rem;
+}
+
+.listEmptyTitle {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.listEmptyNote {
+  margin: var(--space-1) 0 0;
+  font-size: var(--noa-text-dense);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.listCta {
+  flex: none;
+  border: 1px solid var(--noa-color-accent);
+  background: none;
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  padding: 11px 18px;
+  border-radius: var(--radius-btn);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.listCta:hover {
+  background: var(--red-050);
+}
+
+.listCta:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+/* --- the side panels ------------------------------------------------------ */
+
+.panel {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5) 22px;
+  min-inline-size: 0;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.panelRule {
+  display: block;
+  inline-size: var(--heading-rule-w);
+  block-size: var(--heading-rule-h);
+  background: var(--noa-color-accent);
+  margin: var(--noa-kit-chip-gap) 0 14px;
+}
+
+.facts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.facts dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.facts dd {
+  margin: var(--space-1) 0 0;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-neutral-900);
+  overflow-wrap: anywhere;
+}
+
+.panelNote {
+  margin: var(--space-4) 0 0;
+  padding-block-start: 14px;
+  border-top: 1px solid var(--noa-paper);
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.team {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.member {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--noa-kit-chip-gap) 0;
+  border-bottom: 1px solid var(--noa-paper);
+  min-inline-size: 0;
+}
+
+.member:last-child {
+  border-bottom: 0;
+}
+
+.memberName {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.memberRole {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.memberMail {
+  font-size: var(--noa-text-xs);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .heroInner,
+  .body {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+}

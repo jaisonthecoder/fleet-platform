@@ -1,0 +1,292 @@
+/*
+ * One option, in full, in a sheet beside the others.
+ *
+ * A drawer rather than a page: the comparison is what the customer is in the
+ * middle of, and leaving the page to read one option loses their place in it.
+ */
+.sheet {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: min(640px, 100vw);
+  z-index: var(--noa-z-modal);
+  display: flex;
+  flex-direction: column;
+  background: var(--noa-ground);
+  box-shadow: -8px 0 30px rgb(0 0 0 / 18%);
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--noa-z-modal) - 1);
+  background: rgb(51 51 51 / 35%);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px 28px 18px;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.name {
+  margin: 8px 0 0;
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+}
+
+.sub {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-on-dark-muted);
+}
+
+.close {
+  flex: none;
+  inline-size: 34px;
+  block-size: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--noa-color-hero-outline);
+  border-radius: var(--radius-btn);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  cursor: pointer;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.totalCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 18px 20px;
+}
+
+.label {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.total {
+  margin-block-start: 7px;
+  font-size: var(--noa-text-3xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-color-accent);
+}
+
+.validity { text-align: end; min-inline-size: 0; }
+
+.validityValue {
+  margin-block-start: 7px;
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 20px;
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.cardNote { font-size: var(--noa-text-xs); color: var(--noa-color-text-muted); }
+
+.facts { margin: 0; padding: 6px 20px 14px; }
+
+.facts > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.4fr);
+  gap: 14px;
+  padding-block: 10px;
+  border-block-end: 1px solid var(--noa-ground);
+  min-inline-size: 0;
+}
+
+.facts dt {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-heading);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.lines { margin: 0; padding: 6px 20px 14px; list-style: none; }
+
+.lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding-block: 10px;
+  border-block-end: 1px solid var(--noa-ground);
+  font-size: var(--noa-text-sm);
+}
+
+.lines li span:first-child { min-inline-size: 0; }
+.lines li strong { color: var(--text-heading); white-space: nowrap; }
+
+.linesTotal {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 0 2px;
+}
+
+.linesTotal span {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+}
+
+.linesTotal strong {
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  color: var(--noa-color-accent);
+}
+
+.terms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 18px;
+  padding: 18px 20px;
+}
+
+/* Green for what the price covers, amber for what it does not: the second is
+   the one that causes an argument later, so it is never the quieter of the two. */
+.termsIncluded { color: var(--noa-kit-success); }
+.termsExcluded { color: var(--noa-kit-attention); }
+
+.termsBody {
+  margin: 7px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-relaxed);
+  color: var(--noa-color-text);
+  white-space: pre-wrap;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 28px;
+  background: var(--surface-card);
+  border-block-start: 3px solid var(--noa-color-accent);
+}
+
+.footActions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.download {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-heading);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.download:hover { border-color: var(--noa-color-accent); color: var(--noa-color-accent); }
+
+.download:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.reject {
+  padding: 12px 20px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.reject:hover { background: var(--noa-color-accent-subtle); }
+
+.accept {
+  padding: 12px 22px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.accept:hover:not(:disabled) {
+  background: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent-hover);
+}
+
+.accept:disabled,
+.reject:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.close:focus-visible,
+.reject:focus-visible,
+.accept:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}

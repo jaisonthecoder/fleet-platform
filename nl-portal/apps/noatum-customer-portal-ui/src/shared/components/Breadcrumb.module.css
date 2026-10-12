@@ -1,0 +1,215 @@
+/*
+ * The trail back up.
+ *
+ * An ordered list, because the order is the meaning: each step is one level
+ * nearer the top. The separators are decorative and hidden, so a screen reader
+ * hears "Customers, Iberia Retail Group SL, current page" rather than a string
+ * of chevrons.
+ */
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-width: 0;
+}
+
+.back {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-card-shadow);
+  color: var(--noa-color-accent);
+}
+
+.back:hover {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+}
+
+.back svg { width: 16px; height: 16px; }
+
+.nav {
+  min-width: 0;
+  padding: var(--noa-space-1);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-card-shadow);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav::-webkit-scrollbar { display: none; }
+
+.list {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--noa-text-xs);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-1);
+  min-width: 0;
+}
+
+/*
+ * A long customer name should not push the trail off the row. Intermediate
+ * steps truncate; the current page is allowed to wrap instead, because it is
+ * the one the reader most needs in full.
+ */
+.label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding-inline: var(--noa-space-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 28ch;
+}
+
+.current {
+  max-width: 30ch;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-neutral-900);
+  font-weight: var(--noa-weight-bold);
+}
+
+.start {
+  justify-content: center;
+  width: 28px;
+  padding: 0;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.start svg { width: 14px; height: 14px; }
+
+.connector {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 1px;
+  margin-inline: 2px;
+  background: var(--noa-color-border);
+}
+
+.connector::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -1px;
+  width: 5px;
+  height: 5px;
+  transform: translateY(-50%);
+  border: 1px solid var(--noa-color-border-strong);
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-surface);
+}
+
+/* --- on a page surface ---------------------------------------------------- */
+
+.surface {
+  color: var(--noa-color-text-muted);
+}
+
+.surface a {
+  color: var(--noa-color-accent);
+  text-decoration: none;
+}
+
+.surface a:hover,
+.surface a:focus-visible {
+  text-decoration: underline;
+}
+
+.surface .current {
+  color: var(--noa-neutral-900);
+}
+
+/* --- inside the dark identity band ----------------------------------------
+ *
+ * The band is the surface here, so the trail is drawn ON it rather than in a
+ * white card laid over it: transparent fills, hairline outlines, and the text
+ * doing the work. A white pill on navy reads as a piece of another page that
+ * was dropped on top of this one.
+ */
+
+.hero { color: var(--noa-on-dark); }
+
+.hero .back,
+.hero .nav {
+  background: transparent;
+  border-color: var(--noa-color-hero-border-strong);
+  box-shadow: none;
+}
+
+.hero .back { color: var(--noa-color-hero-text); }
+
+.hero .back:hover {
+  border-color: var(--noa-color-hero-text);
+  background: var(--noa-color-hero-chip);
+}
+
+.hero .label { color: var(--noa-on-dark); }
+
+.hero a {
+  color: var(--noa-on-dark);
+  text-decoration: none;
+}
+
+.hero a:hover,
+.hero a:focus-visible {
+  color: var(--noa-color-hero-text);
+  text-decoration: underline;
+}
+
+/* The home step: a ring, not a filled chip. */
+.hero .start {
+  background: transparent;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  color: var(--noa-color-hero-text);
+}
+
+/* Where you are: the one step that carries weight, on the band's own raised
+   tint rather than on white. */
+.hero .current {
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+.hero .connector { background: var(--noa-color-hero-border-strong); }
+
+.hero .connector::before {
+  border-color: var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero);
+}
+
+/* The join into the current step is brand red: it is the one dot that says
+   "this is the page you are on" rather than "there is another step". */
+.hero .list > .connector:last-of-type::before {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+@media (max-width: 600px) {
+  .back { width: 34px; height: 34px; }
+  .label { max-width: 20ch; }
+  .connector { width: 12px; }
+}
+

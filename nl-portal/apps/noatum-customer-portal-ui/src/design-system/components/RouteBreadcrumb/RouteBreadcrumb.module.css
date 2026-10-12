@@ -1,0 +1,148 @@
+/* CH-04 · Breadcrumb, route line. Measures from Noatum UI Kit.dc.html. */
+
+.trail {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  padding: 5px 16px 5px 6px;
+  max-inline-size: 100%;
+  overflow: hidden;
+}
+
+.trail[data-tone='dark'] {
+  background: var(--noa-color-hero-raised);
+  border: 1px solid var(--noa-color-hero-border-strong);
+}
+
+.trail[data-tone='light'] {
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+}
+
+.home {
+  inline-size: 28px;
+  block-size: 28px;
+  flex: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.trail[data-tone='dark'] .home {
+  background: var(--noa-color-hero-ring-strong);
+  color: var(--noa-color-hero-text);
+}
+
+.trail[data-tone='light'] .home {
+  background: var(--noa-paper);
+  color: var(--noa-color-text);
+}
+
+.homeIcon {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.segment {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+/* The hairline between two places, not a chevron: the trail is a route. */
+.link {
+  inline-size: 18px;
+  block-size: 1px;
+  flex: none;
+  margin: 0 2px;
+}
+
+.trail[data-tone='dark'] .link {
+  background: var(--noa-color-hero-rule-strong);
+}
+
+.trail[data-tone='light'] .link {
+  background: var(--noa-color-border);
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 4px;
+  text-decoration: none;
+  min-inline-size: 0;
+}
+
+.dot {
+  inline-size: 8px;
+  block-size: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.trail[data-tone='dark'] .dot {
+  border: 2px solid var(--noa-color-hero-dot);
+}
+
+.trail[data-tone='light'] .dot {
+  border: 2px solid var(--noa-color-text-muted);
+}
+
+.label {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trail[data-tone='dark'] .label {
+  color: var(--noa-color-hero-label);
+}
+
+.trail[data-tone='light'] .label {
+  color: var(--noa-color-text);
+}
+
+.step:hover .label {
+  text-decoration: underline;
+}
+
+.step:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.trail[data-tone='dark'] .step:focus-visible,
+.trail[data-tone='dark'] .home:focus-visible {
+  outline-color: var(--noa-color-hero-text);
+}
+
+/* Where you are: a filled marker with a halo, on the action tint. */
+.step[data-current='true'] {
+  gap: 8px;
+  background: var(--red-050);
+  border-radius: 14px;
+  padding: 3px 12px 3px 9px;
+}
+
+.step[data-current='true'] .dot {
+  inline-size: 9px;
+  block-size: 9px;
+  border: 0;
+  background: var(--noa-color-accent);
+  box-shadow: 0 0 0 3px var(--noa-color-accent-halo);
+}
+
+.step[data-current='true'] .label,
+.trail[data-tone='dark'] .step[data-current='true'] .label {
+  color: var(--noa-neutral-900);
+  font-weight: var(--noa-weight-black);
+}

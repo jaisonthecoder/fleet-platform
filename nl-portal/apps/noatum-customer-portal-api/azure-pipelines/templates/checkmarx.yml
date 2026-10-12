@@ -1,0 +1,70 @@
+# Checkmarx One SAST/SCA scan, published as Quality Radar evidence.
+#
+# Report-only, like Wave's and JUL's: the scan step is continueOnError, so a
+# finding never blocks delivery, and Quality Radar carries the findings so the
+# gate lives there. This repository is one service, so the report needs no
+# splitting -- the collector attributes it to the registration's own service.
+#
+# The report is written as `checkmarx-report.json` inside the artifact
+# `CheckmarxReports-JSON`: that is the name the collector reads first. Any other
+# name falls back to probing every JSON, which works but is not deterministic.
+
+parameters:
+  - name: serviceSlug
+    type: string
+  - name: checkmarxService
+    type: string
+    default: 'sc-checkmarx-Shared Services-JUL-noatum-customer-portal'
+  - name: tenantName
+    type: string
+    default: maqtacxone
+  - name: scanTypes
+    type: string
+    default: 'sast,sca'
+
+stages:
+  - stage: Checkmarx
+    displayName: 'Checkmarx SAST/SCA scan'
+    dependsOn: []
+    jobs:
+      - job: checkmarx
+        displayName: 'Checkmarx: ${{ parameters.serviceSlug }}'
+        timeoutInMinutes: 40
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: Checkmarx AST@3
+            displayName: 'Checkmarx AST: ${{ parameters.serviceSlug }}'
+            continueOnError: true
+            inputs:
+              CheckmarxService: ${{ parameters.checkmarxService }}
+              projectName: 'abudhabiports/$(System.TeamProject)/${{ parameters.serviceSlug }}'
+              tenantName: ${{ parameters.tenantName }}
+              additionalParams: >
+                --scan-types "${{ parameters.scanTypes }}"
+                --file-source "$(Build.SourcesDirectory)"
+                --branch "$(Build.SourceBranchName)"
+                --report-format json
+                --output-path $(Build.ArtifactStagingDirectory)/checkmarx
+                --output-name checkmarx-report
+
+          - bash: |
+              set -euo pipefail
+              dir="$(Build.ArtifactStagingDirectory)/checkmarx"
+              if ! compgen -G "${dir}/*.json" > /dev/null; then
+                echo "##vso[task.logissue type=warning]Checkmarx produced no JSON report; Quality Radar will show this service as not scanned."
+                exit 0
+              fi
+              ls -la "${dir}"
+              echo "##vso[task.setvariable variable=QR_CHECKMARX_READY]true"
+            displayName: 'Stage the Checkmarx report for Quality Radar'
+            condition: succeededOrFailed()
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish CheckmarxReports-JSON'
+            condition: and(succeededOrFailed(), eq(variables['QR_CHECKMARX_READY'], 'true'))
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/checkmarx'
+              ArtifactName: 'CheckmarxReports-JSON'
+              publishLocation: Container

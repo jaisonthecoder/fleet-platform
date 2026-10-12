@@ -1,0 +1,219 @@
+/* DT-01 · Date field treatments. Measures from Noatum UI Kit.dc.html. */
+
+/* --- A · stamp ----------------------------------------------------------- */
+
+.stamp {
+  display: flex;
+  align-items: stretch;
+  min-inline-size: 0;
+  border: 1px solid var(--noa-color-border);
+}
+
+.stampBlock {
+  flex: none;
+  padding: var(--noa-kit-chip-gap) var(--noa-kit-heading-gap);
+  text-align: center;
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.stampDay {
+  display: block;
+  font-size: var(--noa-text-section);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+}
+
+.stampMonth {
+  display: block;
+  margin-block-start: 5px;
+  font-size: 9px;
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: 0.1em;
+  line-height: var(--noa-leading-none);
+}
+
+.stampCopy {
+  min-inline-size: 0;
+  padding: var(--noa-kit-chip-gap) var(--noa-kit-heading-gap);
+}
+
+.stampWeekday {
+  display: block;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.stampMeta {
+  display: block;
+  margin-block-start: 3px;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-text-muted);
+}
+
+.stampRelative {
+  display: block;
+  margin-block-start: var(--noa-space-1);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: 1.4;
+}
+
+/* --- B · segmented line -------------------------------------------------- */
+
+.lineWrap {
+  min-inline-size: 0;
+}
+
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+  padding-block-end: 9px;
+  border-block-end: 2px solid var(--noa-color-accent);
+}
+
+.lineDay {
+  font-size: 1.5rem; /* 24px */
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.lineMonth {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-extrabold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-accent);
+}
+
+.lineYear {
+  font-size: var(--noa-text-dense);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text-muted);
+}
+
+.lineMeta {
+  margin-inline-start: auto;
+  white-space: nowrap;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text);
+}
+
+.relative {
+  margin: 7px 0 0;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+}
+
+/* --- C · compact chip ---------------------------------------------------- */
+
+.chipWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-inline-size: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  padding: 7px 13px 7px 9px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-filter-pill);
+}
+
+.chipDay {
+  flex: none;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+  text-align: center;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: 22px;
+}
+
+.chipFull {
+  white-space: nowrap;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.chipMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  inline-size: fit-content;
+}
+
+.numeric {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text);
+}
+
+.tag {
+  padding: var(--noa-space-1) 7px;
+  border-radius: 3px;
+  background: var(--noa-ground);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+/* --- relative tones ------------------------------------------------------
+   Scoped: a bare attribute selector in a CSS Module is global.
+   ------------------------------------------------------------------------ */
+
+.relative[data-tone='action'],
+.tag[data-tone='action'],
+.stampRelative[data-tone='action'] {
+  color: var(--noa-color-accent);
+}
+
+.relative[data-tone='success'],
+.tag[data-tone='success'],
+.stampRelative[data-tone='success'] {
+  color: var(--noa-kit-success);
+}
+
+.relative[data-tone='attention'],
+.tag[data-tone='attention'],
+.stampRelative[data-tone='attention'] {
+  color: var(--noa-kit-attention);
+}
+
+.relative[data-tone='muted'],
+.tag[data-tone='muted'],
+.stampRelative[data-tone='muted'] {
+  color: var(--noa-color-text-muted);
+}
+
+.tag[data-tone='success'] {
+  background: var(--noa-kit-success-surface);
+}
+
+.tag[data-tone='attention'] {
+  background: var(--noa-kit-attention-surface);
+}
+
+.tag[data-tone='action'] {
+  background: var(--noa-color-accent-subtle);
+}

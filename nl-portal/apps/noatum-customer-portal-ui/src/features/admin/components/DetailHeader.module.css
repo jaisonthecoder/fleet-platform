@@ -1,0 +1,47 @@
+.header {
+  display: grid;
+  gap: var(--noa-space-3);
+  padding-bottom: var(--noa-space-4);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-3);
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+/* The brand's signature 40x3 rule, left-aligned under a left-aligned heading. */
+.title::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 3px;
+  margin-top: var(--noa-space-2);
+  background: var(--noa-color-accent);
+}
+
+.meta {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+.dot {
+  padding: 0 var(--noa-space-2);
+}
+
+.actions {
+  display: flex;
+  gap: var(--noa-space-2);
+  flex-wrap: wrap;
+  padding-top: var(--noa-space-1);
+}

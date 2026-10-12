@@ -1,0 +1,22 @@
+/* Customer quote list. The grid is ListingGrid and every cell is a design-system
+   component, so the only thing left here is the card view's own header. */
+
+.cardRef {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cardRef strong {
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+/* The customer's own number, in brand red - the same treatment the grid gives it. */
+.cardRef small {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--color-primary);
+}

@@ -1,0 +1,16 @@
+# env & secrets  (never commit real values - use Key Vault backed variable groups)
+.env
+.env.*
+*.pem
+*.pfx
+*.publishsettings
+
+# local state
+*.tfstate
+*.tfstate.*
+.terraform/
+*.local.bicepparam
+
+# logs / dependencies
+*.log
+node_modules/

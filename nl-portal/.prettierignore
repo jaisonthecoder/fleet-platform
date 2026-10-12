@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+dist
+build
+coverage
+.turbo
+apps/noatum-customer-portal-api/prisma/migrations
+apps/noatum-customer-portal-ui/src/api/generated
+

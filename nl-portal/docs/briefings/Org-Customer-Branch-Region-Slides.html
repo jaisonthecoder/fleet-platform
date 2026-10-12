@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Organisations, customers, branches and regions — what we have built</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap');
+
+  :root {
+    --red-600:#AA272F; --red-700:#8E2027; --red-050:#F7ECEC;
+    --navy-800:#002C5F; --navy-950:#041C2C;
+    --gray-900:#333333; --gray-700:#58595B; --gray-400:#A7A7A6;
+    --gray-200:#E5E5E5; --gray-100:#F5F5F3; --white:#FFFFFF;
+    --green:#2E7D32; --amber:#B26A00;
+    --font-sans:'Mulish','Segoe UI','Helvetica Neue',Arial,sans-serif;
+    --container:1170px;
+    --shadow-card:0 2px 14px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; }
+  body {
+    font-family:var(--font-sans);
+    color:var(--gray-700);
+    background:var(--gray-100);
+    display:flex; flex-direction:column; min-height:100vh;
+  }
+
+  .topbar {
+    background:var(--red-600); color:var(--white);
+    font-weight:700; font-size:14px; letter-spacing:0.02em;
+    padding:8px 24px; display:flex; justify-content:space-between; align-items:center;
+  }
+  .topbar .brand span { opacity:0.85; font-weight:400; }
+
+  .stage { flex:1; display:flex; align-items:center; justify-content:center; padding:32px 24px; }
+  .deck { width:100%; max-width:var(--container); }
+
+  .slide { display:none; animation:fade .25s ease; }
+  .slide.active { display:block; }
+  @keyframes fade { from{opacity:0} to{opacity:1} }
+
+  .eyebrow {
+    text-transform:uppercase; letter-spacing:0.06em; font-weight:700;
+    font-size:13px; color:var(--red-600); margin:0 0 10px;
+  }
+  h1 { font-weight:800; font-size:42px; line-height:1.2; color:var(--gray-900); margin:0 0 8px; }
+  h2 { font-weight:800; font-size:30px; line-height:1.25; color:var(--gray-900); margin:0 0 6px; }
+  .rule { width:40px; height:3px; background:var(--red-600); margin:14px 0 22px; }
+  .lede { font-size:18px; line-height:1.6; max-width:70ch; }
+  p { line-height:1.6; }
+
+  .grid { display:grid; gap:18px; }
+  .g3 { grid-template-columns:repeat(3,1fr); }
+  .g2 { grid-template-columns:repeat(2,1fr); }
+
+  .card {
+    background:var(--white); box-shadow:var(--shadow-card);
+    padding:22px; border-radius:0; min-width:0;
+  }
+  .card h3 { margin:0 0 8px; font-size:19px; font-weight:800; color:var(--gray-900); }
+  .card p { margin:0; font-size:15px; }
+  .card .tag {
+    display:inline-block; font-size:12px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.04em; padding:3px 8px; margin-bottom:10px; border-radius:0;
+  }
+  .tag.dir { background:var(--red-050); color:var(--red-700); }
+  .tag.cust { background:#E7EDF4; color:var(--navy-800); }
+  .tag.ops { background:var(--gray-200); color:var(--gray-900); }
+
+  ul.clean { margin:0; padding-left:20px; }
+  ul.clean li { margin:8px 0; font-size:16px; }
+
+  /* flow row of boxes with arrows */
+  .flow { display:flex; align-items:stretch; gap:0; flex-wrap:wrap; }
+  .node {
+    background:var(--white); box-shadow:var(--shadow-card); padding:16px 18px;
+    flex:1 1 0; min-width:150px; border-top:3px solid var(--red-600);
+  }
+  .node .k { font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--gray-400); font-weight:700; }
+  .node .v { font-size:18px; font-weight:800; color:var(--gray-900); margin-top:4px; }
+  .node .d { font-size:13px; margin-top:6px; }
+  .arrow { align-self:center; color:var(--red-600); font-weight:800; font-size:26px; padding:0 10px; }
+
+  .chain { display:flex; align-items:center; gap:0; flex-wrap:wrap; }
+  .chip {
+    background:var(--navy-800); color:var(--white); padding:14px 20px; font-weight:800;
+    font-size:18px; border-radius:0;
+  }
+  .chip.alt { background:var(--red-600); }
+  .chip .s { display:block; font-size:12px; font-weight:600; opacity:0.8; letter-spacing:0.04em; }
+
+  .steps { display:grid; grid-template-columns:repeat(5,1fr); gap:0; }
+  .step { background:var(--white); box-shadow:var(--shadow-card); padding:16px; border-top:3px solid var(--red-600); position:relative; }
+  .step .n { font-size:28px; font-weight:800; color:var(--red-600); line-height:1; }
+  .step .t { font-size:14px; font-weight:700; color:var(--gray-900); margin-top:8px; }
+  .step .x { font-size:12px; color:var(--gray-700); margin-top:4px; }
+
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  th,td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--gray-200); vertical-align:top; }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--gray-700); }
+  td strong { color:var(--gray-900); }
+
+  .pill { display:inline-block; font-size:12px; font-weight:700; padding:2px 8px; border-radius:0; }
+  .pill.done { background:#E3F0E4; color:var(--green); }
+  .pill.pending { background:#FBEFDD; color:var(--amber); }
+
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .quote {
+    background:var(--navy-950); color:var(--white); padding:28px; font-size:19px; line-height:1.6; border-radius:0;
+  }
+  .quote strong { color:var(--white); }
+
+  .note { font-size:13px; color:var(--gray-400); margin-top:16px; }
+
+  .nav {
+    background:var(--white); border-top:1px solid var(--gray-200);
+    padding:10px 24px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .dots { display:flex; gap:8px; }
+  .dot { width:9px; height:9px; background:var(--gray-200); border-radius:50%; border:none; cursor:pointer; padding:0; }
+  .dot.active { background:var(--red-600); }
+  .btns { display:flex; gap:8px; align-items:center; }
+  button.move {
+    font-family:var(--font-sans); font-weight:700; font-size:14px; cursor:pointer;
+    background:var(--red-600); color:var(--white); border:none; padding:9px 16px; border-radius:4px;
+  }
+  button.move.outline { background:var(--white); color:var(--red-600); border:1px solid var(--red-600); }
+  button.move:disabled { opacity:0.4; cursor:default; }
+  .count { font-size:13px; color:var(--gray-700); font-weight:700; min-width:52px; text-align:center; }
+
+  @media (max-width:900px){
+    h1{font-size:32px} h2{font-size:24px}
+    .g3,.g2,.two{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .flow{flex-direction:column}
+    .arrow{transform:rotate(90deg); padding:6px 0}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">NOATUM <span>LOGISTICS · Customer platform</span></div>
+    <div>Internal walkthrough · 14.09.2026</div>
+  </div>
+
+  <div class="stage">
+    <div class="deck" id="deck">
+
+      <!-- 1 -->
+      <section class="slide active">
+        <p class="eyebrow">Customer information platform</p>
+        <h1>Organisations, customers, branches and regions</h1>
+        <div class="rule"></div>
+        <p class="lede">What we have actually built for onboarding a customer, and where regions and branches fit. This is the current implementation, with the pending pieces named plainly.</p>
+        <div class="grid g3" style="margin-top:28px">
+          <div class="card"><span class="tag dir">Read only</span><h3>CargoWise directory</h3><p>Every company CargoWise knows, mirrored into the portal.</p></div>
+          <div class="card"><span class="tag cust">Portal owned</span><h3>Customers</h3><p>The companies we onboard. The portal tenant.</p></div>
+          <div class="card"><span class="tag ops">Portal owned</span><h3>Regions and branches</h3><p>Our own offices, the structure we work from.</p></div>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide">
+        <p class="eyebrow">The mental model</p>
+        <h2>Three separate lists, never mixed</h2>
+        <div class="rule"></div>
+        <p class="lede">Linking is the one deliberate action that connects the CargoWise directory to a customer.</p>
+        <div class="flow" style="margin-top:24px">
+          <div class="node"><div class="k">CargoWise</div><div class="v">Organisations</div><div class="d">System of record</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="k">Portal</div><div class="v">Directory mirror</div><div class="d">Read only, imported</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="k">Portal</div><div class="v">Customer</div><div class="d">Linked by org code</div></div>
+        </div>
+        <p style="margin-top:20px"><strong>Operating structure</strong> sits alongside: regions and branches are the Noatum offices that service a customer. They are not the customer, and not the CargoWise directory.</p>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide">
+        <p class="eyebrow">Linking</p>
+        <h2>One deliberate link, with a safety gate</h2>
+        <div class="rule"></div>
+        <div class="two">
+          <div>
+            <ul class="clean">
+              <li><strong>Organisation level only.</strong> We link a whole organisation, never a single address.</li>
+              <li><strong>One organisation, one customer.</strong> A code can never belong to two customers.</li>
+              <li><strong>One customer, many organisations.</strong> Several offices can link to one customer.</li>
+              <li><strong>Confirmed and active only.</strong> An unconfirmed organisation cannot be linked at all.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>The gate is in the database</h3>
+            <p>The link is a foreign key that only accepts a source-confirmed organisation. A wrong link cannot be created, even by mistake. The screen shows why an organisation is blocked: already linked, not yet confirmed, or inactive.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide">
+        <p class="eyebrow">Customer lifecycle</p>
+        <h2>Going live is refused until the customer is usable</h2>
+        <div class="rule"></div>
+        <div class="flow" style="margin-top:8px">
+          <div class="node"><div class="v">Draft / onboarding</div><div class="d">Being set up</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="v">Active</div><div class="d">In use</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="v">Suspended</div><div class="d">Blocked, data kept</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="v">Closed</div><div class="d">Codes released</div></div>
+        </div>
+        <div class="grid g2" style="margin-top:22px">
+          <div class="card"><h3>Go-live needs two things</h3><p>At least one linked, active organisation, and at least one invited administrator.</p></div>
+          <div class="card"><h3>It names what is missing</h3><p>If either is absent, the action is refused and tells the operator exactly what to fix.</p></div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide">
+        <p class="eyebrow">Regions and branches</p>
+        <h2>A person points at a branch, the branch points at a region</h2>
+        <div class="rule"></div>
+        <p class="lede">There is no region field on a staff member. The region is simply whatever the branch belongs to.</p>
+        <div class="chain" style="margin-top:24px">
+          <div class="chip">Staff user<span class="s">branch_id</span></div>
+          <div class="arrow">&rarr;</div>
+          <div class="chip alt">Branch — Madrid<span class="s">region_id</span></div>
+          <div class="arrow">&rarr;</div>
+          <div class="chip">Region — Iberia</div>
+        </div>
+        <p style="margin-top:22px"><strong>One region, one Madrid branch</strong> is set up as data. Adding a second region or branch later is configuration — new rows — not a code change.</p>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide">
+        <p class="eyebrow">Identifying a staff member's branch</p>
+        <h2>Where it is set, and how the portal knows it</h2>
+        <div class="rule"></div>
+        <div class="two">
+          <div class="card">
+            <h3>Where a human sets it</h3>
+            <p>Administration, then Staff users, then edit a person. The drawer has an Operating branch dropdown next to the roles. A pricing role cannot be granted without a branch, and every change is audited. The region is never picked here — it rides along with the branch.</p>
+          </div>
+          <div class="card">
+            <h3>How the portal reads it</h3>
+            <p>At sign-in the identity lookup returns the branch code and name. It travels in the request and is returned by the profile endpoint, so every request already carries which office the person is from.</p>
+          </div>
+        </div>
+        <div class="flow" style="margin-top:18px">
+          <div class="node"><div class="v">Sign in</div><div class="d">Microsoft Entra</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="v">Identity lookup</div><div class="d">Returns branch code and name</div></div>
+          <div class="arrow">&rarr;</div>
+          <div class="node"><div class="v">Every request</div><div class="d">Carries the branch</div></div>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide">
+        <p class="eyebrow">The detail that causes confusion</p>
+        <h2>The word "branch" means two different things</h2>
+        <div class="rule"></div>
+        <p class="lede">In the pilot both are Madrid, which is why it looks like one thing. They are separate fields.</p>
+        <div class="two" style="margin-top:20px">
+          <div class="card" style="border-top:3px solid var(--red-600)">
+            <h3>Staff branch</h3>
+            <p>The office an <strong>employee</strong> works from. It scopes the pricing queue.</p>
+          </div>
+          <div class="card" style="border-top:3px solid var(--navy-800)">
+            <h3>Servicing branch</h3>
+            <p>The office that <strong>services a customer's</strong> linked organisation. Falls back to the customer default.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide">
+        <p class="eyebrow">The demo</p>
+        <h2>One region, one customer — the path that works today</h2>
+        <div class="rule"></div>
+        <div class="steps" style="margin-top:8px">
+          <div class="step"><div class="n">1</div><div class="t">Region and Madrid branch</div><div class="x">Seeded</div></div>
+          <div class="step"><div class="n">2</div><div class="t">Import the directory</div><div class="x">From the simulator</div></div>
+          <div class="step"><div class="n">3</div><div class="t">Create the customer</div><div class="x">Default branch Madrid</div></div>
+          <div class="step"><div class="n">4</div><div class="t">Link the org code</div><div class="x">Confirmed, active, unique</div></div>
+          <div class="step"><div class="n">5</div><div class="t">Go-live check</div><div class="x">Needs org and admin</div></div>
+        </div>
+        <p class="note">This is the internal, staff-side journey. It runs end to end today.</p>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide">
+        <p class="eyebrow">Honest status</p>
+        <h2>What is built, and what is pending</h2>
+        <div class="rule"></div>
+        <table>
+          <thead><tr><th>Area</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CW1 directory</strong></td><td><span class="pill done">Built</span></td><td>Import with provenance, roles, addresses, run history. Fed by the simulator, not live CargoWise yet.</td></tr>
+            <tr><td><strong>Customer records</strong></td><td><span class="pill done">Built</span></td><td>Create, edit, parent and child, tier, lifecycle.</td></tr>
+            <tr><td><strong>Org to customer linking</strong></td><td><span class="pill done">Built</span></td><td>Database-enforced gate, one org one customer, with audit.</td></tr>
+            <tr><td><strong>Staff branch</strong></td><td><span class="pill done">Built</span></td><td>Set on the Staff users screen, carried on every request.</td></tr>
+            <tr><td><strong>Branch and region editing</strong></td><td><span class="pill pending">Pending</span></td><td>The current screen is read-only.</td></tr>
+            <tr><td><strong>Pricing queue</strong></td><td><span class="pill pending">Pending</span></td><td>The branch is captured; the queue that filters by it is later Phase 1.</td></tr>
+            <tr><td><strong>Customer sign-in</strong></td><td><span class="pill pending">Pending</span></td><td>Invitations exist; the customer login binding is not wired yet.</td></tr>
+            <tr><td><strong>Shipments and invoices visible</strong></td><td><span class="pill pending">Pending</span></td><td>The visibility payoff arrives with Phase 2.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide">
+        <p class="eyebrow">In one paragraph</p>
+        <h2>What to take away</h2>
+        <div class="rule"></div>
+        <div class="quote">
+          We keep three separate lists — the CargoWise directory we mirror read-only, the customer we onboard, and our own regions and branches. Onboarding is import, create, then <strong>link</strong> — one code to one customer, only confirmed organisations, enforced by the database. A staff member is tagged with one branch on the Staff users screen, and the region is whatever that branch belongs to. For the pilot, one region and one customer is data, so a second region later is configuration, not code. The internal journey is ready to demo today; the customer's own login and the live CargoWise feed are the two pieces still pending.
+        </div>
+        <p class="note">Companion document: Org-Customer-Branch-Region-Explained.md</p>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="dots" id="dots"></div>
+    <div class="btns">
+      <button class="move outline" id="prev">Previous</button>
+      <span class="count" id="count">1 / 10</span>
+      <button class="move" id="next">Next</button>
+    </div>
+  </div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const count = document.getElementById('count');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  let i = 0;
+
+  slides.forEach((_, n) => {
+    const d = document.createElement('button');
+    d.className = 'dot' + (n === 0 ? ' active' : '');
+    d.setAttribute('aria-label', 'Go to slide ' + (n + 1));
+    d.addEventListener('click', () => go(n));
+    dotsWrap.appendChild(d);
+  });
+  const dots = Array.from(dotsWrap.children);
+
+  function go(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    dots.forEach((d, k) => d.classList.toggle('active', k === i));
+    count.textContent = (i + 1) + ' / ' + slides.length;
+    prev.disabled = i === 0;
+    next.disabled = i === slides.length - 1;
+  }
+  prev.addEventListener('click', () => go(i - 1));
+  next.addEventListener('click', () => go(i + 1));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') go(i + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(i - 1);
+  });
+  go(0);
+</script>
+</body>
+</html>

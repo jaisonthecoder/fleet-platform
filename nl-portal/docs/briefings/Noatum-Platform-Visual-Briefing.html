@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noatum Customer Information Platform — visual briefing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#AA272F;--red-dark:#8E2027;--red-light:#F7ECEC;
+  --navy:#002C5F;--navy-dark:#041C2C;
+  --g900:#333333;--g700:#58595B;--g400:#A7A7A6;--g200:#E5E5E5;--g100:#F5F5F3;--white:#fff;
+  --font:'Mulish','Segoe UI',Arial,sans-serif;--shadow:0 2px 14px rgba(0,0,0,.10);
+  --green:#2E7D32;--amber:#B26A00;
+}
+*{box-sizing:border-box}
+body{margin:0;font:400 16px/1.6 var(--font);color:var(--g700);background:#fff}
+h1,h2,h3,h4{color:var(--g900);margin:0 0 10px;line-height:1.25}
+h1{font-size:42px;font-weight:800}h2{font-size:34px;font-weight:800}h3{font-size:22px;font-weight:700}h4{font-size:17px;font-weight:700}
+p{margin:0 0 14px}
+.wrap{max-width:1170px;margin:0 auto;padding:0 24px}
+.rule{display:block;width:40px;height:3px;background:var(--red);margin:14px 0 22px}
+section{padding:68px 0}section.alt{background:var(--g100)}
+.lead{font-size:18px;max-width:760px}
+.small{font-size:14px;line-height:1.5}
+.ico{width:52px;height:52px;color:var(--red)}
+.ico svg{width:52px;height:52px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ico.s,.ico.s svg{width:36px;height:36px}
+.ico.w{color:#fff}
+
+.topbar{background:var(--red);color:#fff;font-size:14px}.topbar .wrap{display:flex;justify-content:space-between;height:36px;align-items:center}
+.logoband{border-bottom:1px solid var(--g200)}.logoband .wrap{display:flex;justify-content:space-between;align-items:center;height:76px}
+.logo{font-weight:800;font-size:22px;color:var(--navy)}.logo span{color:var(--red)}
+.meta{font-size:14px;text-align:right;line-height:1.4}
+.toc{border-bottom:1px solid var(--g200)}.toc .wrap{display:flex;flex-wrap:wrap;gap:6px 24px;padding:14px 24px;font-weight:700;font-size:15px}.toc a{color:var(--g900);text-decoration:none}.toc a:hover{color:var(--red)}
+
+.hero{background:var(--navy-dark);color:#fff;padding:72px 0 64px}
+.hero h1{color:#fff;max-width:800px}.hero .rule{background:#fff}.hero p{max-width:700px;font-size:18px;opacity:.92}
+.hero .eyebrow{font-weight:700;font-size:16px;letter-spacing:.02em;text-transform:uppercase;margin-bottom:12px}
+.hero .before-after{display:grid;grid-template-columns:1fr 70px 1fr;gap:20px;align-items:center;margin-top:44px;max-width:1000px}
+.ba{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.25);padding:22px 24px}
+.ba h4{color:#fff;font-size:15px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:12px}
+.ba ul{margin:0;padding:0;list-style:none}.ba li{padding:6px 0;border-top:1px solid rgba(255,255,255,.15);font-size:15px}
+.ba li:first-child{border-top:none}
+.ba.good{border-color:var(--red)}
+.ba-arrow{color:#fff;text-align:center}.ba-arrow svg{width:44px;height:44px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.grid{display:grid;gap:22px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.g6{grid-template-columns:repeat(6,1fr)}
+.card{background:#fff;box-shadow:var(--shadow);padding:24px}
+.tile{background:#fff;box-shadow:var(--shadow);padding:22px 18px;text-align:center}
+.tile .ico{margin:0 auto 12px}.tile h4{font-size:15px;margin-bottom:4px}.tile p{font-size:13px;margin:0}
+.no{border-top:4px solid var(--g400)}.no .ico{color:var(--g400)}
+
+/* stacked layers infographic */
+.stack{max-width:960px;margin:32px auto 0}
+.lay{display:grid;grid-template-columns:72px 240px 1fr;gap:20px;align-items:center;background:#fff;box-shadow:var(--shadow);padding:18px 22px;position:relative}
+.lay+.lay{margin-top:34px}
+.lay+.lay::before{content:"";position:absolute;left:50%;top:-34px;width:2px;height:34px;background:var(--red)}
+.lay+.lay::after{content:"";position:absolute;left:calc(50% - 5px);top:-8px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--red)}
+.lay.ext{background:transparent;box-shadow:none;border:1px dashed var(--g400)}
+.lay .t{font-weight:800;font-size:17px;color:var(--g900)}.lay .t small{display:block;font-weight:400;font-size:13px;color:var(--g700)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chips span{background:var(--g100);border:1px solid var(--g200);padding:5px 11px;font-size:13px;color:var(--g900)}
+.lay.ext .chips span{background:var(--navy);color:#fff;border-color:var(--navy)}
+.lay .who{position:absolute;right:16px;top:-12px;background:var(--red);color:#fff;font-size:12px;font-weight:700;padding:2px 10px}
+
+/* journey strips */
+.journey{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:26px;counter-reset:j}
+.j{position:relative;background:#fff;box-shadow:var(--shadow);padding:22px 16px 18px;text-align:center}
+.j+.j{margin-left:14px}
+.j+.j::before{content:"";position:absolute;left:-14px;top:50%;width:14px;height:2px;background:var(--red)}
+.j .n{counter-increment:j;content:counter(j);display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:14px;margin-bottom:8px}
+.j .n::before{content:counter(j)}
+.j h4{font-size:15px;margin-bottom:4px}.j p{font-size:13px;margin:0}
+.j.cust{border-top:4px solid var(--red)}
+.jlabel{font-weight:800;color:var(--red);font-size:15px;margin-top:40px}
+
+/* tenancy infographic */
+.tenancy{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:30px}
+.tgroup{background:#fff;box-shadow:var(--shadow);padding:20px}
+.tgroup h4{display:flex;align-items:center;gap:10px}
+.tgroup h4 i{width:12px;height:12px;background:var(--red);display:inline-block}
+.tgroup.b h4 i{background:var(--navy)}
+.codes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.codes span{font-weight:700;font-size:13px;padding:5px 10px;border:1px solid var(--red);color:var(--red);background:var(--red-light)}
+.tgroup.b .codes span{border-color:var(--navy);color:var(--navy);background:#EEF2F7}
+.ships{display:grid;gap:8px}
+.ship{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--g200);font-size:14px}
+.ship b{color:var(--g900)}
+.ship .see{font-size:12px;font-weight:700;color:var(--green)}
+.ship.hidden{opacity:.5;border-style:dashed}.ship.hidden .see{color:var(--g400)}
+.shared{grid-column:1 / -1;background:var(--red-light);border-left:3px solid var(--red);padding:14px 18px;font-size:15px}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:30px}
+.step{background:#fff;box-shadow:var(--shadow);padding:18px 14px;text-align:center;position:relative}
+.step .k{width:36px;height:36px;line-height:36px;border-radius:50%;background:var(--red);color:#fff;font-weight:800;margin:0 auto 10px}
+.step .who{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--navy);margin-bottom:6px}
+.step.c .who{color:var(--red)}
+.step h4{font-size:14px;margin-bottom:6px}.step p{font-size:12.5px;margin:0}
+.handover{display:flex;justify-content:center;margin-top:18px}
+.handover span{background:#fff;border:1px solid var(--g200);padding:8px 18px;font-size:13px;font-weight:700}
+
+/* simulator */
+.simrow{display:grid;grid-template-columns:1fr 60px 1fr 60px 1fr;align-items:center;margin-top:30px}
+.simbox{background:#fff;box-shadow:var(--shadow);padding:24px;text-align:center}
+.simbox.dash{border:2px dashed var(--red);box-shadow:none}
+.simbox.navy{background:var(--navy);color:#fff}.simbox.navy h4{color:#fff}
+.simbox h4{margin:10px 0 4px}.simbox p{font-size:13px;margin:0}
+.simarrow{text-align:center;color:var(--red)}.simarrow svg{width:36px;height:36px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.simfacts{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:26px}
+
+/* needs */
+.needs{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:30px}
+.need{background:#fff;box-shadow:var(--shadow);padding:20px 16px}
+.need .ico{margin-bottom:10px}
+.need h4{font-size:15px;margin-bottom:8px}
+.need ul{margin:0;padding-left:16px;font-size:13px}.need li{margin-bottom:3px}
+.need .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border:1px solid;margin-bottom:10px}
+.tag.now{color:var(--red);border-color:var(--red);background:var(--red-light)}
+.tag.next{color:var(--amber);border-color:var(--amber);background:#FCF4E6}
+.tag.later{color:var(--green);border-color:var(--green);background:#EEF6EE}
+
+/* cw1 checklist */
+.check{background:#fff;box-shadow:var(--shadow);padding:32px 36px;margin-top:30px}
+.check .head{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-bottom:1px solid var(--g200);padding-bottom:16px;margin-bottom:8px}
+.check .head p{font-size:14px;margin:0}
+.group{margin-top:26px}
+.group h4{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.group h4 .tag{font-size:11px;padding:2px 8px;border:1px solid}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+.item{display:grid;grid-template-columns:26px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--g200)}
+.item .box{width:18px;height:18px;border:2px solid var(--red);margin-top:3px}
+.item b{color:var(--g900);font-size:14px;display:block}.item span{font-size:13px}
+
+/* decisions */
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px}
+.d{background:#fff;box-shadow:var(--shadow);padding:18px}
+.d .q{font-size:14px;font-weight:700;color:var(--g900);min-height:66px}
+.d .a{font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid var(--g200)}
+.d .a b{color:var(--red)}
+
+/* drawio */
+.canvas{background:#fff;border:1px solid var(--g200);box-shadow:var(--shadow);margin-top:30px;padding:12px}
+.canvas svg{width:100%;height:auto;display:block;font-family:var(--font)}
+.legend{display:flex;flex-wrap:wrap;gap:20px;margin-top:14px;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:8px}.legend i{display:inline-block;width:18px;height:12px;border:1px solid #999}
+.legend i.c{background:#F5F5F3}.legend i.m{background:#fff}.legend i.x{background:#002C5F;border-color:#002C5F}.legend i.l{background:#AA272F;border-color:#AA272F;height:2px}.legend i.d{background:#fff;border:1.5px dashed #AA272F}
+
+footer{background:var(--red);color:#fff;padding:44px 0 0}
+footer .cols{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;padding-bottom:32px}
+footer h5{font:800 16px/1.3 var(--font);text-transform:uppercase;letter-spacing:.02em;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid #fff;display:inline-block}
+footer ul{list-style:none;padding:0;margin:12px 0 0}footer li{margin-bottom:6px;font-size:15px}footer li::before{content:"› ";font-weight:700}
+footer .legal{border-top:1px solid rgba(255,255,255,.4);padding:14px 0;font-size:13px}
+
+@media (max-width:1000px){
+  .g3,.g4,.g6,.journey,.steps,.needs,.dec,.simfacts{grid-template-columns:repeat(2,1fr)}
+  .j+.j{margin-left:0}.j+.j::before{display:none}
+  .lay{grid-template-columns:52px 1fr}.lay .chips{grid-column:1/-1}
+  .hero .before-after{grid-template-columns:1fr}.ba-arrow{transform:rotate(90deg)}
+  .tenancy,.items,.check .head,.simrow{grid-template-columns:1fr}.simarrow{transform:rotate(90deg);height:50px}
+  h1{font-size:32px}h2{font-size:28px}
+}
+@media (max-width:600px){.g2,.g3,.g4,.g6,.journey,.steps,.needs,.dec,.simfacts{grid-template-columns:1fr}footer .cols{grid-template-columns:1fr}}
+@media print{.toc{display:none}section{padding:28px 0;break-inside:avoid}.card,.tile,.lay,.j,.step,.need,.d,.check,.tgroup,.simbox{box-shadow:none;border:1px solid var(--g200)}}
+
+/* phases */
+.phases{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.phase{background:#fff;box-shadow:var(--shadow);padding:20px 16px;border-top:4px solid var(--red);display:flex;flex-direction:column}
+.phase .w{font-size:12px;color:var(--red);font-weight:800;text-transform:uppercase;letter-spacing:.02em}
+.phase h4{font-size:17px;margin:4px 0 10px}
+.phase ul{padding-left:16px;font-size:13px;margin:0}.phase li{margin-bottom:4px}
+.phase .out{margin-top:auto;padding-top:10px;border-top:1px solid var(--g200);font-size:13px}
+.phase .out b{color:var(--g900)}
+.slice{display:grid;grid-template-columns:repeat(4,1fr);max-width:900px;margin:18px auto 0}
+.slice div{background:#fff;padding:16px;text-align:center;border:1px solid var(--g200);border-right:none;font-weight:700;color:var(--g900)}
+.slice div:last-child{border-right:1px solid var(--g200)}
+.slice div small{display:block;font-weight:400;font-size:13px;color:var(--g700)}
+@media (max-width:1000px){.phases,.slice{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.phases,.slice{grid-template-columns:1fr}}
+
+/* journey map */
+.jcanvas{background:#fff;border:1px solid var(--g200);box-shadow:var(--shadow);padding:14px;margin-top:22px;overflow-x:auto}
+.jcanvas svg{width:100%;min-width:1100px;height:auto;display:block;font-family:var(--font)}
+.jlegend{display:flex;flex-wrap:wrap;gap:22px;margin-top:14px;font-size:13px}
+.jlegend span{display:inline-flex;align-items:center;gap:8px}.jlegend i{display:inline-block;width:18px;height:12px;border:1px solid var(--g400)}
+.jlegend i.c{background:#fff;border-color:var(--red);border-width:2px}.jlegend i.s{background:var(--g100)}.jlegend i.m{background:#F7ECEC;border-color:var(--red)}.jlegend i.x{background:var(--navy);border-color:var(--navy)}.jlegend i.a{background:var(--red);height:2px;border:none}.jlegend i.d{background:none;border:none;border-top:2px dashed var(--red);height:0}
+.reads{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px}
+.reads div{background:#fff;box-shadow:var(--shadow);padding:16px 18px;font-size:14px}.reads b{display:block;color:var(--g900);margin-bottom:4px}
+@media (max-width:1000px){.reads{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.reads{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap"><span>AD Ports Group · Noatum Logistics</span><span>Internal briefing · 04.09.2026 · v3</span></div></div>
+<div class="logoband"><div class="wrap"><div class="logo">Noatum <span>Logistics</span></div><div class="meta">Customer Information Platform<br>Visual briefing for management</div></div></div>
+<nav class="toc"><div class="wrap">
+  <a href="#what">What the portal does</a><a href="#how">How it works</a><a href="#approach">Phase by phase</a><a href="#onboard">Onboarding</a><a href="#sim">Simulator</a><a href="#arch">Architecture</a><a href="#need">What we need</a><a href="#cw1">CargoWise requests</a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div class="eyebrow">Customer Information Platform</div>
+  <h1>One portal where our customers see and do everything.</h1>
+  <span class="rule"></span>
+  <p>Track, quote, book, download, pay and get alerts — in one login, in the Noatum brand. The portal connects to the system our operations teams already use, so nothing is typed twice.</p>
+  <div class="before-after">
+    <div class="ba"><h4>Today</h4><ul><li>Customer emails or calls to ask where cargo is</li><li>Quotes prepared by hand and sent as attachments</li><li>Documents and invoices requested one by one</li><li>Several disconnected tools with separate logins</li></ul></div>
+    <div class="ba-arrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+    <div class="ba good"><h4>With the portal</h4><ul><li>Customer sees every shipment and milestone live</li><li>Instant price where rates exist, or a request routed to the branch</li><li>Downloads documents and views invoices themselves</li><li>One login, one Noatum brand, in every country</li></ul></div>
+  </div>
+</div></header>
+
+<!-- WHAT -->
+<section id="what" class="alt"><div class="wrap">
+  <h2>What the portal does</h2><span class="rule"></span>
+  <p class="lead">Everything a customer needs from us, in one place.</p>
+  <div class="grid g6" style="margin-top:28px">
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h4>Track</h4><p>Shipments, containers, flights, live milestones</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h6M9 16h6M9 8h3"/></svg></div><h4>Quote</h4><p>Instant price or branch-priced request</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 8h16v10H4zM4 8l2-4h12l2 4M10 12h4"/></svg></div><h4>Book</h4><p>From a quote or directly, with documents</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 19h16"/></svg></div><h4>Documents</h4><p>Download singly or as a package</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 9h8M8 13h8M8 17h5"/></svg></div><h4>Invoices</h4><p>See charges and credit notes</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/></svg></div><h4>Alerts</h4><p>Delays, customs holds, disruptions</p></div>
+  </div>
+  <div class="grid g4" style="margin-top:22px">
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v6c0 4-3 7-8 8-5-1-8-4-8-8V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h4>Claims</h4><p>Raise and follow incidents</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div><h4>Reports</h4><p>Standard and self-service</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 20c0-2.5 1.5-4.5 4-4.5 1.5 0 2.5.6 3 1.5"/></svg></div><h4>Own users</h4><p>Customer manages its own people</p></div>
+    <div class="tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9M12 3v9h9"/><path d="M12 21a9 9 0 0 1-9-9"/></svg></div><h4>CO2 and insight</h4><p>Emissions per shipment, predictive ETA</p></div>
+  </div>
+  <h3 style="margin-top:44px">What it is not</h3>
+  <div class="grid g4" style="margin-top:14px">
+    <div class="tile no"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></div><h4>Not an operations system</h4><p>Our operations teams keep working in their existing system</p></div>
+    <div class="tile no"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></div><h4>Not a pricing system</h4><p>The portal shows prices; it does not set them</p></div>
+    <div class="tile no"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></div><h4>Not a purchase-order tool</h4><p>Visibility and deep links only</p></div>
+    <div class="tile no"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg></div><h4>Not a brand redesign</h4><p>The Noatum design system is used as it is</p></div>
+  </div>
+</div></section>
+
+<!-- HOW -->
+<section id="how"><div class="wrap">
+  <h2>How the platform works</h2><span class="rule"></span>
+  <p class="lead">Five layers. The customer works on the top one. Shipment updates come in and quote requests go out only through the bottom one.</p>
+  <div class="stack">
+    <div class="lay"><span class="who">Customers and Noatum staff</span><div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1"/><path d="M8 21h8M12 17v4"/></svg></div><div class="t">Customer screens<small>Where the customer tracks, quotes and books</small></div><div class="chips"><span>Track a shipment</span><span>Request a quote</span><span>Make a booking</span><span>Download documents</span><span>View invoices</span><span>Manage users</span></div></div>
+    <div class="lay"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v6c0 4-3 7-8 8-5-1-8-4-8-8V7z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="t">Business rules<small>Decides what each customer may see and do</small></div><div class="chips"><span>Which shipments belong to this customer</span><span>Who may book or see invoices</span><span>When a quote can still be accepted</span><span>When to raise a delay alert</span></div></div>
+    <div class="lay"><div class="ico"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><div class="t">Shipment data<small>Kept in the portal so screens open instantly</small></div><div class="chips"><span>Shipments and milestones</span><span>Containers, vessels, flights</span><span>Quotes and bookings</span><span>Documents and invoices</span><span>Customers and users</span></div></div>
+    <div class="lay"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 12h6M14 12h6M10 8v8M14 8v8"/><path d="M8 5l-4 7 4 7M16 5l4 7-4 7"/></svg></div><div class="t">Integration<small>The single connection to systems outside the portal, inside the same service</small></div><div class="chips"><span>Receives milestones, documents, invoices</span><span>Sends quote requests and bookings</span><span>Looks up rates</span><span>Sends emails and PDFs</span><span>Opens claims</span></div></div>
+    <div class="lay ext"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 17l3-9h12l3 9M3 17h18M7 8V5h10v3"/></svg></div><div class="t">Outside systems<small>Run by other teams</small></div><div class="chips"><span>Operations system (CargoWise One)</span><span>Rate system</span><span>Claims system (Dynamics 365)</span><span>Shipping line and airline data</span></div></div>
+  </div>
+  <div class="grid g3" style="margin-top:36px">
+    <div class="card"><h4>Screens never decide</h4><p class="small">Whether a customer may see a shipment or accept a quote is decided in the business-rules layer and checked again there, whatever the screen shows.</p></div>
+    <div class="card"><h4>Fast because the data is already here</h4><p class="small">Shipment lists and timelines open instantly because the portal holds its own copy. New milestones from operations refresh that copy as they happen.</p></div>
+    <div class="card"><h4>One connection point, many adapters</h4><p class="small">Each outside system has its own adapter in the integration layer, and they all run inside one service. A new carrier feed or a different operations system later means a new adapter, not a new portal.</p></div>
+  </div>
+</div></section>
+
+<!-- APPROACH -->
+<section id="approach" class="alt"><div class="wrap">
+  <h2>Phase by phase — for your confirmation</h2><span class="rule"></span>
+  <p class="lead">We start with one pilot customer in one region and add features in the order below. Each phase is complete and usable on its own. Please confirm the phases you agree with and mark anything you want changed.</p>
+
+  <div class="phases" style="margin-top:28px">
+    <div class="phase"><div class="w">Phase 1</div><h4>Set-up and quotes</h4>
+      <p class="small" style="margin:0 0 8px"><b>The customer can</b></p>
+      <ul><li>Log in with their own users and roles</li><li>Request a quote for air, sea FCL or sea LCL</li><li>Get an instant price where we have rates, otherwise a priced quote from our team</li><li>Accept the quote and download it as a PDF</li></ul>
+      <p class="small" style="margin:8px 0 0"><b>Behind it</b>: customer set-up, data separation, connection to the operations system, Noatum brand.</p>
+      <div class="out"><b>Done when</b> the pilot customer is quoting live</div></div>
+
+    <div class="phase"><div class="w">Phase 2</div><h4>Tracking</h4>
+      <p class="small" style="margin:0 0 8px"><b>The customer can</b></p>
+      <ul><li>See every shipment, container and flight with live milestones</li><li>Download documents</li><li>View invoices and credit notes</li><li>Receive alerts for delays and customs holds</li><li>Run standard reports</li></ul>
+      <p class="small" style="margin:8px 0 0"><b>Behind it</b>: shipment data flowing in from the operations system; public track and trace page.</p>
+      <div class="out"><b>Done when</b> the pilot customer tracks and downloads in the portal</div></div>
+
+    <div class="phase"><div class="w">Phase 3</div><h4>Booking and claims</h4>
+      <p class="small" style="margin:0 0 8px"><b>The customer can</b></p>
+      <ul><li>Book from an accepted quote, or book directly</li><li>Upload their shipping documents</li><li>Pick a sailing</li><li>Raise a claim and follow it</li><li>Set their own email alert rules</li></ul>
+      <p class="small" style="margin:8px 0 0"><b>Behind it</b>: bookings created in the operations system; claims in Dynamics 365.</p>
+      <div class="out"><b>Done when</b> a portal booking runs end to end</div></div>
+
+    <div class="phase"><div class="w">Phase 4</div><h4>Insight</h4>
+      <p class="small" style="margin:0 0 8px"><b>The customer can</b></p>
+      <ul><li>See predicted arrival times</li><li>See CO2 per shipment; use the public CO2 calculator</li><li>Build their own reports; use Power BI dashboards</li><li>Ask the AI assistant</li></ul>
+      <p class="small" style="margin:8px 0 0"><b>Behind it</b>: prediction models, emissions engine, analytics store. Every automated figure can be checked and corrected by a person.</p>
+      <div class="out"><b>Done when</b> predictions and analytics are live for pilot customers</div></div>
+
+    <div class="phase"><div class="w">Phase 5</div><h4>Open up</h4>
+      <p class="small" style="margin:0 0 8px"><b>The customer can</b></p>
+      <ul><li>See purchase orders against shipments</li><li>Pull their data into their own systems</li><li>Use the portal in more languages</li></ul>
+      <p class="small" style="margin:8px 0 0"><b>Behind it</b>: public API, data feeds, more regions and customers, a second operations system if ever needed.</p>
+      <div class="out"><b>Done when</b> a customer consumes our data directly</div></div>
+  </div>
+
+  <div class="grid g3" style="margin-top:36px">
+    <div class="card"><h4>Start small</h4><p class="small">Phase 1 is one customer, one region, one flow: quotes. Nothing else is switched on for them until it is ready.</p></div>
+    <div class="card"><h4>Foundation first</h4><p class="small">Customer set-up, data separation and the connection to the operations system are built in Phase 1 and never rebuilt. Every later phase adds screens on top.</p></div>
+    <div class="card"><h4>Switch on per customer</h4><p class="small">Every feature ships switched off and is turned on customer by customer. Adding the second customer or region is configuration, not a new project.</p></div>
+  </div>
+
+  <h3 style="margin-top:48px">How we build each feature</h3>
+  <div class="slice">
+    <div>Data<small>tables and rules</small></div>
+    <div>Shared contract<small>one definition for all</small></div>
+    <div>Logic<small>with tests</small></div>
+    <div>Screen<small>in Noatum brand</small></div>
+  </div>
+  <p class="small muted" style="text-align:center;margin-top:10px">One feature at a time, in this order, finished and shown before it is handed over.</p>
+</div></section>
+
+<!-- ONBOARD -->
+<section id="onboard"><div class="wrap">
+  <h2>How a customer is onboarded</h2><span class="rule"></span>
+  <p class="lead">Nobody signs up on their own. Our team sets up the company; the company then sets up its own people.</p>
+  <div class="steps">
+    <div class="step"><div class="k">1</div><div class="who">Noatum team</div><h4>Create the customer</h4><p>Company name, country, and which features are switched on</p></div>
+    <div class="step"><div class="k">2</div><div class="who">Noatum team</div><h4>Connect the customer’s records</h4><p>Choose which of our existing records belong to this company. Proposed: a second colleague confirms</p></div>
+    <div class="step"><div class="k">3</div><div class="who">Noatum team</div><h4>Invite the customer’s admin</h4><p>A branded email with a secure link</p></div>
+    <div class="step c"><div class="k">4</div><div class="who">Customer Admin</div><h4>Accept and log in</h4><p>With their company login or a secure account with two-step verification</p></div>
+    <div class="step c"><div class="k">5</div><div class="who">Customer Admin</div><h4>Invite colleagues</h4><p>Assign roles: Standard, Quoting and Booking, Finance, Analyst, Claims, Admin</p></div>
+    <div class="step c"><div class="k">6</div><div class="who">Customer users</div><h4>Ready to work</h4><p>Address book, saved templates, alert preferences. Their shipments are already there</p></div>
+  </div>
+  <div class="handover"><span>After step 3 our team steps back. Adding and removing users belongs to the customer. Every action is recorded.</span></div>
+</div></section>
+
+<!-- SIM -->
+<section id="sim" class="alt"><div class="wrap">
+  <h2>The CargoWise simulator</h2><span class="rule"></span>
+  <p class="lead">The portal needs to talk to our operations system, CargoWise One. Access to a test copy of it depends on another team. So we build a small stand-in first, develop and demo against it, and switch to the real system by changing a setting.</p>
+  <div class="simrow">
+    <div class="simbox"><div class="ico" style="margin:0 auto"><svg viewBox="0 0 24 24"><path d="M4 7h16v4H4zM4 13h16v4H4z"/></svg></div><h4>Our platform</h4><p>Built and tested exactly as it will run in production</p></div>
+    <div class="simarrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6M10 6l-6 6 6 6"/></svg></div>
+    <div class="simbox dash"><div class="ico" style="margin:0 auto"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v10l-8 4-8-4V7z"/><path d="M12 12l8-5M12 12v9M12 12L4 7"/></svg></div><h4>Simulator</h4><p>Pretends to be the operations system. Development and testing only</p></div>
+    <div class="simarrow"><svg viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></svg></div>
+    <div class="simbox navy"><div class="ico w" style="margin:0 auto"><svg viewBox="0 0 24 24"><path d="M3 17l3-9h12l3 9M3 17h18M7 8V5h10v3"/></svg></div><h4>Real operations system</h4><p>Connected when access is granted. Same portal, new setting</p></div>
+  </div>
+  <div class="simfacts">
+    <div class="card"><h4>It does</h4><ul class="small" style="margin:0;padding-left:18px"><li>Accept our quote and booking messages and reply with prices and confirmations</li><li>Push fake shipments, milestones, documents and invoices</li><li>Hold a small test world of organisations, lanes and shared shipments</li></ul></div>
+    <div class="card"><h4>It is not</h4><ul class="small" style="margin:0;padding-left:18px"><li>A copy of the operations system — no business logic</li><li>A second source of truth — switched off in production</li><li>Final until real sample messages are confirmed</li></ul></div>
+    <div class="card"><h4>It gives us</h4><ul class="small" style="margin:0;padding-left:18px"><li>End-to-end demos before real access</li><li>Realistic tests for customer data separation</li><li>A permanent automated test environment</li></ul></div>
+  </div>
+</div></section>
+
+<!-- ARCHITECTURE -->
+<section id="arch"><div class="wrap">
+  <h2>Application architecture</h2><span class="rule"></span>
+  <p class="lead">For the technical team. The portal is deliberately small: one web app, one service, one database. Microsoft Entra handles sign-in, so we write no login code. Background work runs as jobs inside the same service, queued in the same database, so there is no separate worker and no message broker to operate.</p>
+  <div class="canvas">
+  <svg viewBox="0 0 1240 800" role="img" aria-label="Simplified application architecture">
+    <defs>
+      <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#EEEEEC" stroke-width="1"/></pattern>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#AA272F"/></marker>
+      <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#58595B"/></marker>
+    </defs>
+    <rect width="1240" height="800" fill="url(#grid)"/>
+
+    <!-- Entra -->
+    <rect x="300" y="26" width="620" height="46" fill="#002C5F"/>
+    <text x="610" y="47" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Microsoft Entra External ID (customers) · Entra ID (Noatum staff)</text>
+    <text x="610" y="63" font-size="11" fill="#fff" text-anchor="middle">sign-in, passwords, multi-factor, federation to a customer's own identity provider — none of this is our code</text>
+
+    <!-- Actors -->
+    <g font-size="13" font-weight="700" fill="#333333" text-anchor="middle">
+      <rect x="30" y="130" width="150" height="52" fill="#fff" stroke="#58595B"/><text x="105" y="152">Customer user</text><text x="105" y="169" font-size="11" font-weight="400" fill="#58595B">browser, mobile</text>
+      <rect x="30" y="200" width="150" height="52" fill="#fff" stroke="#58595B"/><text x="105" y="222">Public visitor</text><text x="105" y="239" font-size="11" font-weight="400" fill="#58595B">no login</text>
+      <rect x="30" y="270" width="150" height="52" fill="#fff" stroke="#58595B"/><text x="105" y="292">Noatum staff</text><text x="105" y="309" font-size="11" font-weight="400" fill="#58595B">admin, support</text>
+    </g>
+    <line x1="180" y1="156" x2="208" y2="156" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)"/>
+    <line x1="180" y1="226" x2="208" y2="226" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)"/>
+    <line x1="180" y1="296" x2="208" y2="296" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="194" y="120" font-size="10" fill="#AA272F" text-anchor="middle">HTTPS</text>
+
+    <!-- Portal -->
+    <rect x="210" y="100" width="280" height="330" fill="#F5F5F3" stroke="#58595B"/>
+    <rect x="210" y="100" width="280" height="26" fill="#AA272F"/>
+    <text x="221" y="118" font-size="12.5" font-weight="800" fill="#fff">apps/noatum-customer-portal-ui — React + Vite</text>
+    <g font-size="12.5" font-weight="700" fill="#333333" text-anchor="middle">
+      <rect x="225" y="140" width="250" height="50" fill="#fff" stroke="#A7A7A6"/><text x="350" y="160">Public pages</text><text x="350" y="177" font-size="11" font-weight="400" fill="#58595B">track and trace, CO2, schedules</text>
+      <rect x="225" y="200" width="250" height="50" fill="#fff" stroke="#A7A7A6"/><text x="350" y="220">Customer portal</text><text x="350" y="237" font-size="11" font-weight="400" fill="#58595B">dashboard, quotes, bookings, tracking</text>
+      <rect x="225" y="260" width="250" height="50" fill="#fff" stroke="#A7A7A6"/><text x="350" y="280">Customer administration</text><text x="350" y="297" font-size="11" font-weight="400" fill="#58595B">users, roles, address book</text>
+      <rect x="225" y="320" width="250" height="50" fill="#fff" stroke="#A7A7A6"/><text x="350" y="340">Noatum administration</text><text x="350" y="357" font-size="11" font-weight="400" fill="#58595B">customers, org codes, news, flags</text>
+    </g>
+    <text x="350" y="394" font-size="10" fill="#58595B" text-anchor="middle">design-system tokens · MSAL · TanStack Query · zod · i18n EN/ES</text>
+    <text x="350" y="410" font-size="10" fill="#58595B" text-anchor="middle">no business rules, no direct access to data or outside systems</text>
+
+    <!-- portal -> Entra -->
+    <path d="M400 100 V84 H300 V72" fill="none" stroke="#58595B" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ag)"/>
+    <text x="306" y="94" font-size="10" fill="#58595B">sign in (MSAL, PKCE)</text>
+    <!-- Entra -> API -->
+    <path d="M760 72 V100" fill="none" stroke="#58595B" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ag)"/>
+    <text x="770" y="92" font-size="10" fill="#58595B">token validated on every request</text>
+
+    <!-- API -->
+    <rect x="520" y="100" width="380" height="460" fill="#F5F5F3" stroke="#58595B"/>
+    <rect x="520" y="100" width="380" height="26" fill="#AA272F"/>
+    <text x="531" y="118" font-size="12.5" font-weight="800" fill="#fff">apps/noatum-customer-portal-api — NestJS · one deployable</text>
+    <line x1="490" y1="240" x2="518" y2="240" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)" marker-start="url(#a)"/>
+    <text x="504" y="232" font-size="10" fill="#AA272F" text-anchor="middle">REST /v1</text>
+
+    <text x="535" y="146" font-size="11" font-weight="800" fill="#AA272F">REQUEST PATH — business modules</text>
+    <g font-size="11.5" font-weight="700" fill="#333333" text-anchor="middle">
+      <rect x="535" y="154" width="175" height="34" fill="#fff" stroke="#A7A7A6"/><text x="622" y="175">identity · tenancy · authz</text>
+      <rect x="720" y="154" width="165" height="34" fill="#fff" stroke="#A7A7A6"/><text x="802" y="175">users · invitations</text>
+      <rect x="535" y="194" width="175" height="34" fill="#fff" stroke="#A7A7A6"/><text x="622" y="215">quotes · templates</text>
+      <rect x="720" y="194" width="165" height="34" fill="#fff" stroke="#A7A7A6"/><text x="802" y="215">bookings</text>
+      <rect x="535" y="234" width="175" height="34" fill="#fff" stroke="#A7A7A6"/><text x="622" y="255">shipments · documents</text>
+      <rect x="720" y="234" width="165" height="34" fill="#fff" stroke="#A7A7A6"/><text x="802" y="255">finance · reports</text>
+      <rect x="535" y="274" width="175" height="34" fill="#fff" stroke="#A7A7A6"/><text x="622" y="295">notifications · news</text>
+      <rect x="720" y="274" width="165" height="34" fill="#fff" stroke="#A7A7A6"/><text x="802" y="295">admin · audit · claims</text>
+    </g>
+    <rect x="535" y="316" width="350" height="56" fill="#F7ECEC" stroke="#AA272F"/>
+    <text x="710" y="335" font-size="11.5" font-weight="800" fill="#AA272F" text-anchor="middle">On every single request</text>
+    <text x="710" y="351" font-size="10.5" fill="#8E2027" text-anchor="middle">Entra token checked · tenant context · permission guard · feature flags</text>
+    <text x="710" y="365" font-size="10.5" fill="#8E2027" text-anchor="middle">TenantRepository sets the tenant in the database transaction · audit and analytics written</text>
+
+    <text x="535" y="396" font-size="11" font-weight="800" fill="#AA272F">JOBS — same process, queued in PostgreSQL (pg-boss)</text>
+    <g font-size="11" font-weight="700" fill="#333333" text-anchor="middle">
+      <rect x="535" y="404" width="112" height="46" fill="#fff" stroke="#A7A7A6"/><text x="591" y="423">CargoWise adapter</text><text x="591" y="439" font-size="10" font-weight="400" fill="#58595B">Tms*Adapter, XML</text>
+      <rect x="654" y="404" width="112" height="46" fill="#fff" stroke="#A7A7A6"/><text x="710" y="423">Tenant resolver</text><text x="710" y="439" font-size="10" font-weight="400" fill="#58595B">org code to customer</text>
+      <rect x="773" y="404" width="112" height="46" fill="#fff" stroke="#A7A7A6"/><text x="829" y="423">Email and PDF</text><text x="829" y="439" font-size="10" font-weight="400" fill="#58595B">branded templates</text>
+      <rect x="535" y="456" width="112" height="46" fill="#fff" stroke="#A7A7A6"/><text x="591" y="475">Carrier feeds</text><text x="591" y="491" font-size="10" font-weight="400" fill="#58595B">events, provenance</text>
+      <rect x="654" y="456" width="112" height="46" fill="#fff" stroke="#A7A7A6"/><text x="710" y="475">CRM client</text><text x="710" y="491" font-size="10" font-weight="400" fill="#58595B">Dynamics 365 cases</text>
+      <rect x="773" y="456" width="112" height="46" fill="#fff" stroke="#A7A7A6"/><text x="829" y="475">Master data import</text><text x="829" y="491" font-size="10" font-weight="400" fill="#58595B">organisations, codes</text>
+    </g>
+    <text x="710" y="522" font-size="10" fill="#58595B" text-anchor="middle">every job: enqueued in the same transaction as the write · idempotent · retried with backoff · failures kept in the failed-jobs table</text>
+    <text x="710" y="538" font-size="10" fill="#58595B" text-anchor="middle">jobs write with a system tenant, resolved from the CargoWise organisation mapping — never from anything a user typed</text>
+    <text x="710" y="553" font-size="10" fill="#AA272F" text-anchor="middle" font-weight="700">WORKER_MODE=split moves the jobs to their own process when volume needs it — no code change</text>
+
+    <!-- Data -->
+    <rect x="930" y="100" width="280" height="330" fill="#F5F5F3" stroke="#58595B"/>
+    <rect x="930" y="100" width="280" height="26" fill="#AA272F"/>
+    <text x="941" y="118" font-size="12.5" font-weight="800" fill="#fff">Data — Azure</text>
+    <g font-size="13" font-weight="700" fill="#333333" text-anchor="middle">
+      <rect x="945" y="140" width="250" height="126" fill="#fff" stroke="#A7A7A6"/>
+      <text x="1070" y="162">PostgreSQL</text>
+      <text x="1070" y="182" font-size="11" font-weight="400" fill="#58595B">canonical model · row-level security</text>
+      <text x="1070" y="198" font-size="11" font-weight="400" fill="#58595B">customer groups, accounts, users, quotes</text>
+      <text x="1070" y="214" font-size="11" font-weight="400" fill="#58595B">shipment visibility · mapping tables · audit</text>
+      <text x="1070" y="230" font-size="11" font-weight="400" fill="#58595B">raw CargoWise messages (retention deleted)</text>
+      <text x="1070" y="250" font-size="11" font-weight="700" fill="#AA272F">job queue lives here too — no broker</text>
+      <rect x="945" y="282" width="250" height="52" fill="#fff" stroke="#A7A7A6"/><text x="1070" y="303">Blob storage</text><text x="1070" y="320" font-size="11" font-weight="400" fill="#58595B">documents and generated PDFs only</text>
+      <rect x="945" y="350" width="250" height="52" fill="#fff" stroke="#A7A7A6"/><text x="1070" y="371">Application Insights</text><text x="1070" y="388" font-size="11" font-weight="400" fill="#58595B">logs, metrics, one correlation id end to end</text>
+    </g>
+    <text x="1070" y="420" font-size="10" fill="#58595B" text-anchor="middle">no cache layer in the pilot — added only if a measurement asks for it</text>
+
+    <line x1="900" y1="200" x2="943" y2="200" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)" marker-start="url(#a)"/><text x="921" y="192" font-size="10" fill="#AA272F" text-anchor="middle">SQL + RLS</text>
+    <path d="M900 430 H920 V300 H943" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)" marker-start="url(#a)"/><text x="906" y="446" font-size="10" fill="#AA272F">files</text>
+    <path d="M900 478 H928 V376 H943" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)"/><text x="906" y="494" font-size="10" fill="#AA272F">telemetry</text>
+
+    <!-- Externals -->
+    <g font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle">
+      <rect x="210" y="620" width="250" height="56" fill="#002C5F"/><text x="335" y="643">CargoWise One</text><text x="335" y="661" font-size="10.5" font-weight="400">eAdapter · system of record</text>
+      <rect x="480" y="620" width="180" height="56" fill="#002C5F"/><text x="570" y="643">Rate engine</text><text x="570" y="661" font-size="10.5" font-weight="400">CW1 rates or external (OQ-1)</text>
+      <rect x="680" y="620" width="170" height="56" fill="#002C5F"/><text x="765" y="643">Dynamics 365</text><text x="765" y="661" font-size="10.5" font-weight="400">claims and cases</text>
+      <rect x="870" y="620" width="160" height="56" fill="#002C5F"/><text x="950" y="643">Carrier APIs</text><text x="950" y="661" font-size="10.5" font-weight="400">events (OQ-3)</text>
+      <rect x="1050" y="620" width="160" height="56" fill="#002C5F"/><text x="1130" y="643">Email service</text><text x="1130" y="661" font-size="10.5" font-weight="400">invitations, alerts</text>
+    </g>
+    <path d="M591 560 V592 H335 V618" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)" marker-start="url(#a)"/>
+    <text x="342" y="586" font-size="10" fill="#AA272F">eAdapter XML in and out</text>
+    <path d="M622 560 V604 H570 V618" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)" marker-start="url(#a)"/>
+    <text x="470" y="614" font-size="10" fill="#AA272F" text-anchor="end">REST, synchronous — instant quotes</text>
+    <path d="M710 560 V600 H765 V618" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)" marker-start="url(#a)"/>
+    <text x="772" y="600" font-size="10" fill="#AA272F">Dataverse API</text>
+    <path d="M829 560 V588 H950 V618" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="957" y="586" font-size="10" fill="#AA272F">provider API</text>
+    <path d="M860 560 V576 H1130 V618" fill="none" stroke="#AA272F" stroke-width="1.5" marker-end="url(#a)"/>
+    <text x="1137" y="574" font-size="10" fill="#AA272F">SMTP</text>
+
+    <!-- Simulator -->
+    <rect x="210" y="710" width="250" height="52" fill="#fff" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="335" y="732" font-size="12.5" font-weight="700" fill="#AA272F" text-anchor="middle">apps/cw1-simulator</text>
+    <text x="335" y="749" font-size="10.5" fill="#58595B" text-anchor="middle">stands in for CargoWise — development and tests only</text>
+    <path d="M335 708 V680" fill="none" stroke="#AA272F" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#a)"/>
+    <text x="345" y="700" font-size="10" fill="#AA272F">same messages, switched by one setting</text>
+
+    <text x="30" y="786" font-size="11" fill="#58595B">Monorepo: apps/noatum-customer-portal-ui · apps/noatum-customer-portal-api · apps/cw1-simulator · packages/design-system · packages/shared-types — three runtimes in total: the web app, the service, and PostgreSQL.</text>
+  </svg>
+  <div class="legend">
+    <span><i class="c"></i> Application container (ours)</span>
+    <span><i class="m"></i> Module, screen or store</span>
+    <span><i class="x"></i> Run by another team or by Microsoft</span>
+    <span><i class="l"></i> Data flow with protocol</span>
+    <span><i class="d"></i> Development and test only</span>
+  </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:32px">
+    <div class="card"><h4>Deliberately small</h4><p class="small">One web app, one service, one database, plus file storage. No cache server, no message broker, no separate worker, and no login code of our own. Fewer moving parts means fewer things to operate and fewer places to fail.</p></div>
+    <div class="card"><h4>Still flexible</h4><p class="small">Every outside system sits behind an adapter, jobs sit behind a queue interface, and the customer’s login method is a setting. A cache, a broker, a separate worker or a second transport system can be added later without touching the data model.</p></div>
+    <div class="card"><h4>Safety is not simplified</h4><p class="small">Customer separation is enforced twice: by the data-access layer and by the database itself. Every request carries a permission check. Every automated value carries where it came from and can be corrected by a person.</p></div>
+  </div>
+</div></section>
+
+<!-- NEED -->
+<section id="need" class="alt"><div class="wrap">
+  <h2>What we need from other teams</h2><span class="rule"></span>
+  <p class="lead">None of this is code, and none of it can be done by the development team alone. We can progress a long way on the simulator; after that these become blockers.</p>
+  <div class="needs">
+    <div class="need"><span class="tag now">Now</span><div class="ico s"><svg viewBox="0 0 24 24"><path d="M3 17l3-9h12l3 9M3 17h18M7 8V5h10v3"/></svg></div><h4>CargoWise team</h4><ul><li>Named contact</li><li>Sample messages</li><li>How customers are identified</li><li>Organisation list</li><li>Code lists</li><li>Later: test instance with the door enabled</li></ul></div>
+    <div class="need"><span class="tag next">Next</span><div class="ico s"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h4>IT and identity</h4><ul><li>Entra External ID tenant</li><li>App registrations per environment</li><li>Email sending service</li><li>Password and two-factor policy</li></ul></div>
+    <div class="need"><span class="tag next">Next</span><div class="ico s"><svg viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8 6 6 0 0 1 11.5 1A3.5 3.5 0 0 1 18 18z"/></svg></div><h4>Azure and DevOps</h4><ul><li>Subscription and environments</li><li>Database, cache, queue, storage</li><li>Key vault</li><li>Test environment before the pilot</li></ul></div>
+    <div class="need"><span class="tag now">Now, one meeting</span><div class="ico s"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M15 20c0-2.5 1.5-4.5 4-4.5"/></svg></div><h4>Business</h4><ul><li>Customer tier definitions</li><li>Confirm the six roles</li><li>Who approves code links</li><li>Email-domain rule</li><li>Pilot customers</li></ul></div>
+    <div class="need"><span class="tag later">Before pilot</span><div class="ico s"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h6M9 16h6"/></svg></div><h4>Brand and legal</h4><ul><li>Logo files and brand font</li><li>Email wording EN and ES</li><li>Privacy notice and terms</li><li>Retention periods</li></ul></div>
+  </div>
+</div></section>
+
+<!-- CW1 -->
+<section id="cw1"><div class="wrap">
+  <h2>Requests to the CargoWise team</h2><span class="rule"></span>
+  <p class="lead">Written to be forwarded as is. The first seven items take about half a day and unblock a long stretch of work.</p>
+  <div class="check">
+    <div class="head"><div><h3 style="margin-bottom:4px">Customer Information Platform — information and access requests</h3><p>From the platform development team · 04.09.2026</p></div><div><p><b>Purpose.</b> We are building a customer portal that reads shipment, document and invoice data from CargoWise One and sends customer quote requests and bookings back into it. We need the items below to build against an accurate test stand-in first, and connect to a real test instance later.</p></div></div>
+
+    <div class="group"><h4>A. Needed now <span class="tag now">half a day</span></h4>
+      <div class="items">
+        <div class="item"><div class="box"></div><div><b>1. A named contact and a backup</b><span>Answers message-format questions within one working day.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>2. Sample XML messages, anonymised</b><span>UniversalShipment (sea FCL and air), UniversalEvent, UniversalTransaction (invoice), eDoc, quote message if one exists.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>3. Which element identifies each party on a shipment</b><span>Local client, shipper, consignee, notify party, agent — and which one is "the customer" for invoicing. This decides who may see a shipment.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>4. Export of the organisation list</b><span>Code, name, country, branch, status, parent or related link. CSV to start; a scheduled feed later.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>5. Event and milestone codes</b><span>Air and sea, with descriptions, marking internal-only codes.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>6. Charge codes and document types</b><span>In use, with descriptions.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>7. Status values</b><span>For quotes, bookings and shipments as CargoWise sends them.</span></div></div>
+      </div></div>
+
+    <div class="group"><h4>B. Needed next <span class="tag next">before the first real connection</span></h4>
+      <div class="items">
+        <div class="item"><div class="box"></div><div><b>8. Is eAdapter licensed and enabled</b><span>On which instances (TEST, UAT, PROD), and who administers it.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>9. Message types enabled</b><span>Outbound: shipment, event, transaction, eDoc, quote. Inbound: quote request, booking.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>10. How outbound messages are triggered</b><span>Pushed on save, scheduled, or polled; delivery method (HTTPS, SFTP, queue).</span></div></div>
+        <div class="item"><div class="box"></div><div><b>11. Authentication for both directions</b><span>Certificates, credentials, IP allow-listing.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>12. A TEST instance with seeded data</b><span>We may send messages into it and see the result in CargoWise screens.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>13. Where our portal reference can be stored</b><span>AdditionalReference, custom field or note, so replies can be matched.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>14. Source of instant quote prices</b><span>CargoWise rate management or an external engine; if CargoWise, how rates are queried in real time.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>15. Daily volumes</b><span>Shipments, events, documents, invoices per day and peak hours.</span></div></div>
+      </div></div>
+
+    <div class="group"><h4>C. Needed before the pilot <span class="tag later">go-live</span></h4>
+      <div class="items">
+        <div class="item"><div class="box"></div><div><b>16. Pilot customers' organisation codes</b><span>All offices and the owning Noatum branch.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>17. Historical data</b><span>One-time load of open shipments for pilot customers, or start from the connection date.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>18. Change-control process</b><span>How we are told when fields, codes or triggers change.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>19. Behaviour when our endpoint is unavailable</b><span>Retry, queue or drop.</span></div></div>
+        <div class="item"><div class="box"></div><div><b>20. Who signs off</b><span>That a portal-created quote or booking is acceptable to operations.</span></div></div>
+      </div></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="cols">
+    <div><h5>Customer Information Platform</h5><ul><li>Internal briefing for management</li><li>Prepared by the platform development team</li><li>04.09.2026</li></ul></div>
+    <div><h5>Documents</h5><ul><li>PRD v2.1</li><li>Implementation plan</li><li>Vertical-slice backlog</li><li>Design notes</li></ul></div>
+    <div><h5>Contact</h5><ul><li>Sponsor: Mohamed</li><li>Development: Jaison</li><li>#EnablingTrade</li></ul></div>
+  </div>
+  <div class="legal">Noatum Logistics · AD Ports Group · Internal document, not for external distribution.</div>
+</div></footer>
+</body>
+</html>

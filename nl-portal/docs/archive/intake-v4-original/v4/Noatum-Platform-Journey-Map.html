@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noatum Customer Information Platform — the journey in one picture</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--red:#AA272F;--navy:#002C5F;--g900:#333;--g700:#58595B;--g400:#A7A7A6;--g200:#E5E5E5;--g100:#F5F5F3;--font:'Mulish','Segoe UI',Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;font:400 15px/1.55 var(--font);color:var(--g700);background:#fff}
+h1,h2{color:var(--g900);margin:0 0 8px;line-height:1.25}h1{font-size:30px;font-weight:800}h2{font-size:22px;font-weight:800}
+.wrap{max-width:1640px;margin:0 auto;padding:0 20px}
+.rule{display:block;width:40px;height:3px;background:var(--red);margin:12px 0 16px}
+.topbar{background:var(--red);color:#fff;font-size:13px}.topbar .wrap{display:flex;justify-content:space-between;height:34px;align-items:center}
+.logoband{border-bottom:1px solid var(--g200)}.logoband .wrap{display:flex;justify-content:space-between;align-items:center;height:70px}
+.logo{font-weight:800;font-size:20px;color:var(--navy)}.logo span{color:var(--red)}
+section{padding:36px 0}
+.canvas{background:#fff;border:1px solid var(--g200);box-shadow:0 2px 14px rgba(0,0,0,.08);padding:14px;margin-top:14px;overflow-x:auto}
+.canvas svg{width:100%;min-width:1100px;height:auto;display:block;font-family:var(--font)}
+.legend{display:flex;flex-wrap:wrap;gap:22px;margin-top:14px;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:8px}.legend i{display:inline-block;width:18px;height:12px;border:1px solid var(--g400)}
+.legend i.c{background:#fff;border-color:var(--red);border-width:2px}.legend i.s{background:var(--g100)}.legend i.m{background:#F7ECEC;border-color:var(--red)}.legend i.x{background:var(--navy);border-color:var(--navy)}.legend i.a{background:var(--red);height:2px;border:none}.legend i.d{background:none;border:none;border-top:2px dashed var(--red);height:0}
+.reads{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:22px}
+.reads div{background:var(--g100);padding:16px 18px;font-size:14px}.reads b{display:block;color:var(--g900);margin-bottom:4px}
+footer{background:var(--red);color:#fff;padding:18px 0;font-size:13px}
+@media print{.canvas{box-shadow:none}section{padding:16px 0}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>AD Ports Group · Noatum Logistics</span><span>Customer Information Platform · 04.09.2026</span></div></div>
+<div class="logoband"><div class="wrap"><div class="logo">Noatum <span>Logistics</span></div><div style="text-align:right;font-size:13px">The customer journey, the portal behind it,<br>and where the data goes — in one picture</div></div></div>
+
+<section><div class="wrap">
+<h1>From invitation to claim: one picture</h1><span class="rule"></span>
+<p style="max-width:1000px">Read it left to right like a story. The top lane is what Noatum people do. The middle lane is the customer's journey. Under each step you see which part of the portal does the work, and the arrows show what data leaves the portal and what comes back, and from where.</p>
+
+<div class="canvas">
+<svg viewBox="0 0 1600 960" role="img" aria-label="Customer journey map with portal modules and data flows">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#AA272F"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#58595B"/></marker>
+  </defs>
+
+  <!-- lane labels -->
+  <g font-size="11" font-weight="800" fill="#AA272F" letter-spacing=".04em">
+    <text x="40" y="66">NOATUM TEAM</text>
+    <text x="40" y="168">CUSTOMER JOURNEY</text>
+    <text x="40" y="424">PORTAL MODULES AT WORK</text>
+    <text x="40" y="500">DATA OUT (down) AND IN (up)</text>
+    <text x="40" y="684">SYSTEMS OUTSIDE THE PORTAL</text>
+  </g>
+  <g stroke="#E5E5E5"><line x1="40" y1="150" x2="1560" y2="150"/><line x1="40" y1="408" x2="1560" y2="408"/><line x1="40" y1="484" x2="1560" y2="484"/><line x1="40" y1="670" x2="1560" y2="670"/></g>
+
+  <!-- ===== NOATUM TEAM LANE ===== -->
+  <g font-size="10.5" fill="#333">
+    <rect x="50" y="76" width="170" height="64" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <text x="135" y="94" text-anchor="middle" font-weight="700">Customer Success</text>
+    <text x="135" y="109" text-anchor="middle">creates the customer, connects</text>
+    <text x="135" y="122" text-anchor="middle">its CargoWise records,</text>
+    <text x="135" y="135" text-anchor="middle">invites the first admin</text>
+
+    <rect x="430" y="76" width="170" height="64" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <text x="515" y="94" text-anchor="middle" font-weight="700">Branch pricing team</text>
+    <text x="515" y="109" text-anchor="middle">prices requests that have</text>
+    <text x="515" y="122" text-anchor="middle">no ready rate — in CargoWise,</text>
+    <text x="515" y="135" text-anchor="middle">as they do today</text>
+
+    <rect x="620" y="76" width="170" height="64" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <text x="705" y="94" text-anchor="middle" font-weight="700">Operations</text>
+    <text x="705" y="109" text-anchor="middle">confirms the booking</text>
+    <text x="705" y="122" text-anchor="middle">in CargoWise and issues</text>
+    <text x="705" y="135" text-anchor="middle">the shipment reference</text>
+
+    <rect x="1000" y="76" width="170" height="64" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <text x="1085" y="94" text-anchor="middle" font-weight="700">Operations</text>
+    <text x="1085" y="109" text-anchor="middle">records milestones and</text>
+    <text x="1085" y="122" text-anchor="middle">documents in CargoWise</text>
+    <text x="1085" y="135" text-anchor="middle">as the cargo moves</text>
+
+    <rect x="1190" y="76" width="170" height="64" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <text x="1275" y="94" text-anchor="middle" font-weight="700">Customer Success</text>
+    <text x="1275" y="109" text-anchor="middle">publishes news and banners,</text>
+    <text x="1275" y="122" text-anchor="middle">sets alert defaults</text>
+    <text x="1275" y="135" text-anchor="middle">per customer tier</text>
+
+    <rect x="1380" y="76" width="170" height="64" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <text x="1465" y="94" text-anchor="middle" font-weight="700">Claims team</text>
+    <text x="1465" y="109" text-anchor="middle">handles the case in</text>
+    <text x="1465" y="122" text-anchor="middle">Dynamics 365; replies</text>
+    <text x="1465" y="135" text-anchor="middle">appear in the portal</text>
+  </g>
+  <!-- dotted drops from team lane to journey -->
+  <g stroke="#A7A7A6" stroke-dasharray="3 3">
+    <line x1="135" y1="140" x2="135" y2="178"/><line x1="515" y1="140" x2="515" y2="178"/><line x1="705" y1="140" x2="705" y2="178"/><line x1="1085" y1="140" x2="1085" y2="178"/><line x1="1275" y1="140" x2="1275" y2="178"/><line x1="1465" y1="140" x2="1465" y2="178"/>
+  </g>
+
+  <!-- ===== CUSTOMER JOURNEY LANE: 8 cards ===== -->
+  <!-- connector line through the cards -->
+  <line x1="135" y1="290" x2="1465" y2="290" stroke="#AA272F" stroke-width="2"/>
+  <g font-size="11" fill="#58595B">
+    <!-- card template: x = cx-85 -->
+    <!-- 1 -->
+    <rect x="50" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="135" cy="180" r="14" fill="#AA272F"/><text x="135" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">1</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(121 200)"><rect x="2" y="4" width="24" height="16" rx="1"/><path d="M2 6l12 9 12-9"/></g>
+    <text x="135" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Get invited, log in</text>
+    <text x="60" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="60" y="284">Open the invitation email,</text><text x="60" y="297">sign in with your company</text><text x="60" y="310">account</text>
+    <text x="60" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="60" y="350">Your company's dashboard,</text><text x="60" y="363">news from Noatum, and your</text><text x="60" y="376">shipments already there</text>
+
+    <!-- 2 -->
+    <rect x="240" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="325" cy="180" r="14" fill="#AA272F"/><text x="325" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">2</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(311 198)"><circle cx="10" cy="8" r="4"/><circle cx="21" cy="9" r="3"/><path d="M2 24c0-5 3.5-8 8-8s8 3 8 8M17 24c0-3 2-5 4.5-5 1.5 0 2.5.5 3.5 1.5"/></g>
+    <text x="325" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Set up your team</text>
+    <text x="250" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="250" y="284">Invite colleagues, give each</text><text x="250" y="297">a role: track only, quote and</text><text x="250" y="310">book, finance, admin</text>
+    <text x="250" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="250" y="350">Your users list with roles</text><text x="250" y="363">and status. Noatum is no</text><text x="250" y="376">longer involved</text>
+
+    <!-- 3 -->
+    <rect x="430" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="515" cy="180" r="14" fill="#AA272F"/><text x="515" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">3</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(501 198)"><path d="M6 2h12l6 6v18H6z"/><path d="M10 14h10M10 19h10M10 9h4"/></g>
+    <text x="515" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Ask for a price</text>
+    <text x="440" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="440" y="284">Fill the quote form: mode,</text><text x="440" y="297">ports, cargo, extra services.</text><text x="440" y="310">Accept the option you like</text>
+    <text x="440" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="440" y="350">Instant price options, or</text><text x="440" y="363">"our team is pricing it";</text><text x="440" y="376">then a PDF quote</text>
+
+    <!-- 4 -->
+    <rect x="620" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="705" cy="180" r="14" fill="#AA272F"/><text x="705" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">4</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(691 200)"><path d="M3 10h22v13H3zM3 10l3-6h16l3 6M11 15h6"/></g>
+    <text x="705" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Book the shipment</text>
+    <text x="630" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="630" y="284">Click Book on the accepted</text><text x="630" y="297">quote, add addresses and</text><text x="630" y="310">references, upload papers</text>
+    <text x="630" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="630" y="350">Booking confirmed with a</text><text x="630" y="363">Noatum shipment reference</text><text x="630" y="376">that opens in Tracking</text>
+
+    <!-- 5 -->
+    <rect x="810" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="895" cy="180" r="14" fill="#AA272F"/><text x="895" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">5</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(881 198)"><path d="M6 3h16v22H6zM10 9h8M10 14h8M10 19h5"/></g>
+    <text x="895" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Documents and invoices</text>
+    <text x="820" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="820" y="284">Open the shipment, download</text><text x="820" y="297">the papers you need, check</text><text x="820" y="310">the charges</text>
+    <text x="820" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="820" y="350">Bills of lading, certificates</text><text x="820" y="363">as one zip; invoice lines on</text><text x="820" y="376">screen, only yours</text>
+
+    <!-- 6 -->
+    <rect x="1000" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="1085" cy="180" r="14" fill="#AA272F"/><text x="1085" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">6</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(1071 198)"><circle cx="14" cy="14" r="11"/><path d="M14 7v7l5 3"/></g>
+    <text x="1085" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Track it</text>
+    <text x="1010" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="1010" y="284">Search by your reference or</text><text x="1010" y="297">container number, save the</text><text x="1010" y="310">view you like</text>
+    <text x="1010" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="1010" y="350">Live milestones, vessel and</text><text x="1010" y="363">ETA, a map of what is moving,</text><text x="1010" y="376">CO2 later</text>
+
+    <!-- 7 -->
+    <rect x="1190" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="1275" cy="180" r="14" fill="#AA272F"/><text x="1275" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">7</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(1261 198)"><path d="M7 19V12a7 7 0 0 1 14 0v7l2 2H5zM11 24h6"/></g>
+    <text x="1275" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Stay informed</text>
+    <text x="1200" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="1200" y="284">Choose which alerts you want,</text><text x="1200" y="297">subscribe to one shipment,</text><text x="1200" y="310">set email rules for your team</text>
+    <text x="1200" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="1200" y="350">Bell and banners for delays,</text><text x="1200" y="363">customs holds, disruptions;</text><text x="1200" y="376">emails when you asked</text>
+
+    <!-- 8 -->
+    <rect x="1380" y="180" width="170" height="220" fill="#fff" stroke="#AA272F" stroke-width="2"/>
+    <circle cx="1465" cy="180" r="14" fill="#AA272F"/><text x="1465" y="184.5" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">8</text>
+    <g stroke="#AA272F" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(1451 198)"><path d="M4 24V13M11 24V5M18 24v-9M25 24H2"/></g>
+    <text x="1465" y="245" text-anchor="middle" font-size="13" font-weight="800" fill="#333">Report and claim</text>
+    <text x="1390" y="270" font-weight="700" fill="#AA272F">You do</text>
+    <text x="1390" y="284">Run a volume or spend report,</text><text x="1390" y="297">schedule it to your inbox,</text><text x="1390" y="310">raise a claim if cargo is damaged</text>
+    <text x="1390" y="336" font-weight="700" fill="#AA272F">You see</text>
+    <text x="1390" y="350">Exports in Excel or PDF;</text><text x="1390" y="363">claim status and the reply</text><text x="1390" y="376">thread with our team</text>
+  </g>
+
+  <!-- ===== MODULES LANE ===== -->
+  <g font-size="10.5" font-weight="700" fill="#8E2027">
+    <rect x="52" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="135" y="449" text-anchor="middle">identity · tenancy</text><text x="135" y="463" text-anchor="middle">invitations</text>
+    <rect x="242" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="325" y="449" text-anchor="middle">users · roles and</text><text x="325" y="463" text-anchor="middle">permissions · audit</text>
+    <rect x="432" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="515" y="449" text-anchor="middle">quotes · templates ·</text><text x="515" y="463" text-anchor="middle">address book · rate lookup</text>
+    <rect x="622" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="705" y="449" text-anchor="middle">bookings ·</text><text x="705" y="463" text-anchor="middle">document upload</text>
+    <rect x="812" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="895" y="449" text-anchor="middle">documents · finance</text><text x="895" y="463" text-anchor="middle">visibility rules</text>
+    <rect x="1002" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="1085" y="449" text-anchor="middle">shipments · events ·</text><text x="1085" y="463" text-anchor="middle">tenant resolution</text>
+    <rect x="1192" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="1275" y="449" text-anchor="middle">notifications ·</text><text x="1275" y="463" text-anchor="middle">alert engine · news</text>
+    <rect x="1382" y="432" width="166" height="40" fill="#F7ECEC" stroke="#AA272F"/><text x="1465" y="449" text-anchor="middle">reports ·</text><text x="1465" y="463" text-anchor="middle">claims</text>
+  </g>
+
+  <!-- ===== DATA ARROWS ===== -->
+  <g font-size="10" fill="#333">
+    <!-- 1: Entra + email -->
+    <line x1="110" y1="472" x2="110" y2="688" stroke="#AA272F" stroke-width="1.5" marker-start="url(#ar)" marker-end="url(#ar)"/>
+    <text x="116" y="560">login</text><text x="116" y="573">identity</text><text x="116" y="586">token</text>
+    <line x1="215" y1="472" x2="215" y2="800" stroke="#AA272F" stroke-width="1.5" marker-end="url(#ar)"/>
+    <text x="150" y="620">invitation email</text>
+
+    <!-- 2: stays inside -->
+    <line x1="325" y1="472" x2="325" y2="688" stroke="#AA272F" stroke-width="1.5" marker-end="url(#ar)"/>
+    <text x="331" y="560">users, roles,</text><text x="331" y="573">who may see</text><text x="331" y="586">what — stays</text><text x="331" y="599">in the portal</text>
+
+    <!-- 3: rate engine sync + CW1 manual -->
+    <line x1="490" y1="472" x2="490" y2="688" stroke="#AA272F" stroke-width="1.5" marker-start="url(#ar)" marker-end="url(#ar)"/>
+    <text x="405" y="540" text-anchor="end">price request</text><text x="405" y="553" text-anchor="end">↓ instant</text><text x="405" y="566" text-anchor="end">↑ options,</text><text x="405" y="579" text-anchor="end">charges,</text><text x="405" y="592" text-anchor="end">validity</text>
+    <path d="M560 472 V640 H650 V688" fill="none" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-start="url(#ar)" marker-end="url(#ar)"/>
+    <text x="566" y="530">no rate?</text><text x="566" y="543">request to</text><text x="566" y="556">the branch,</text><text x="566" y="569">priced quote</text><text x="566" y="582">comes back</text>
+
+    <!-- 4: booking to CW1 -->
+    <line x1="700" y1="472" x2="700" y2="688" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    <line x1="745" y1="688" x2="745" y2="472" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    <text x="706" y="530">booking +</text><text x="706" y="543">uploaded</text><text x="706" y="556">documents</text>
+    <text x="751" y="600">shipment</text><text x="751" y="613">reference</text>
+
+    <!-- 5: docs + invoices from CW1 -->
+    <line x1="895" y1="688" x2="895" y2="472" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    <text x="901" y="540">documents,</text><text x="901" y="553">invoices and</text><text x="901" y="566">credit notes</text><text x="901" y="579">(only to the</text><text x="901" y="592">addressee)</text>
+
+    <!-- 6: shipments from CW1 + carriers L -->
+    <line x1="1060" y1="688" x2="1060" y2="472" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    <text x="1066" y="530">shipments,</text><text x="1066" y="543">containers,</text><text x="1066" y="556">milestones,</text><text x="1066" y="569">ETA changes</text>
+    <path d="M1275 688 V660 H1125 V472" fill="none" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/>
+    <text x="1131" y="600">carrier and</text><text x="1131" y="613">vessel events</text><text x="1131" y="626">(checked and</text><text x="1131" y="639">merged)</text>
+
+    <!-- 7: alerts to email -->
+    <line x1="1355" y1="472" x2="1355" y2="800" stroke="#AA272F" stroke-width="1.5" marker-end="url(#ar)"/>
+    <text x="1290" y="560" text-anchor="end">alert and</text><text x="1290" y="573" text-anchor="end">digest emails,</text><text x="1290" y="586" text-anchor="end">scheduled</text><text x="1290" y="599" text-anchor="end">reports</text>
+
+    <!-- 8: claims to D365 -->
+    <line x1="1465" y1="472" x2="1465" y2="688" stroke="#AA272F" stroke-width="1.5" stroke-dasharray="5 4" marker-start="url(#ar)" marker-end="url(#ar)"/>
+    <text x="1471" y="530">↓ claim,</text><text x="1471" y="543">attachments,</text><text x="1471" y="556">comments</text><text x="1471" y="580">↑ status,</text><text x="1471" y="593">replies</text>
+  </g>
+
+  <!-- ===== SYSTEMS ROW ===== -->
+  <g font-size="12" font-weight="700" fill="#fff" text-anchor="middle">
+    <rect x="65" y="690" width="140" height="60" fill="#002C5F"/><text x="135" y="714">Microsoft Entra</text><text x="135" y="732" font-size="10.5" font-weight="400">customer and staff logins</text>
+    <rect x="255" y="690" width="140" height="60" fill="#58595B"/><text x="325" y="714">Portal database</text><text x="325" y="732" font-size="10.5" font-weight="400">own data, locked per customer</text>
+    <rect x="420" y="690" width="140" height="60" fill="#002C5F"/><text x="490" y="714">Rate engine</text><text x="490" y="732" font-size="10.5" font-weight="400">CargoWise rates or external</text>
+    <rect x="620" y="690" width="550" height="60" fill="#002C5F"/><text x="895" y="714" font-size="14">CargoWise One — the operations system, source of truth</text><text x="895" y="734" font-size="10.5" font-weight="400">receives quote requests and bookings · sends shipments, milestones, documents, invoices · nothing is typed twice</text>
+    <rect x="1205" y="690" width="140" height="60" fill="#002C5F"/><text x="1275" y="714">Carrier data</text><text x="1275" y="732" font-size="10.5" font-weight="400">shipping lines, airlines</text>
+    <rect x="1395" y="690" width="140" height="60" fill="#002C5F"/><text x="1465" y="714">Dynamics 365</text><text x="1465" y="732" font-size="10.5" font-weight="400">claims and cases</text>
+  </g>
+  <!-- email bar -->
+  <rect x="40" y="800" width="1520" height="40" fill="#F5F5F3" stroke="#A7A7A6"/>
+  <text x="800" y="825" text-anchor="middle" font-size="12" font-weight="700" fill="#333">Email service — invitations, quote status, alerts, digests, scheduled reports · branded, dates DD.MM.YYYY, no emoji</text>
+
+  <!-- ===== BOTTOM: the three things the customer never sees ===== -->
+  <g font-size="11" fill="#58595B">
+    <rect x="40" y="866" width="1520" height="70" fill="#fff" stroke="#E5E5E5"/>
+    <text x="60" y="888" font-weight="800" fill="#AA272F">What never crosses to a customer</text>
+    <text x="60" y="908">another customer's shipments, quotes or invoices · organisation codes · internal notes and internal documents · restricted financial content · party addresses, documents or predictions on the public tracking page</text>
+    <text x="60" y="926">Every automated figure (ETA prediction, merged carrier event, CO2) carries where it came from and can be corrected by a person with a reason.</text>
+  </g>
+</svg>
+</div>
+<div class="legend">
+  <span><i class="c"></i> A step in the customer's journey</span>
+  <span><i class="s"></i> What Noatum people do at that step</span>
+  <span><i class="m"></i> Portal modules doing the work</span>
+  <span><i class="x"></i> A system outside the portal</span>
+  <span><i class="a"></i> Data flow, immediate</span>
+  <span><i class="d"></i> Data flow through the queue (may take a moment)</span>
+</div>
+
+<div class="reads">
+  <div><b>Steps 1–2 stay inside</b>Onboarding and team set-up create nothing in CargoWise. The portal only reads CargoWise's organisation list to know which records belong to the customer.</div>
+  <div><b>Steps 3–4 go down</b>A quote request first asks the rate engine; if there is no ready rate it goes to the branch through CargoWise. A booking always goes to CargoWise and comes back with a shipment reference.</div>
+  <div><b>Steps 5–6 come up</b>Documents, invoices, milestones and ETA changes flow up from CargoWise as operations work; carrier data is merged in with a record of where it came from. The portal decides who may see each item.</div>
+  <div><b>Steps 7–8 fan out</b>Alerts become bell notifications and emails; reports become exports; a claim becomes a Dynamics 365 case whose replies come back into the portal.</div>
+</div>
+</div></section>
+
+<footer><div class="wrap">Noatum Logistics · AD Ports Group · Customer Information Platform · Sources: PRD v2.1 · v2 document set</div></footer>
+</body>
+</html>

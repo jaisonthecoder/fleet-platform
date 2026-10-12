@@ -1,0 +1,798 @@
+<mxfile host="65bd71144e" compressed="false">
+    <diagram id="guide" name="00 Review and concept model">
+        <mxGraphModel dx="0" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1020" background="#FFFFFF" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="NOATUM LOGISTICS | Customer management blueprint" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;fontColor=#002C5F;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="scope" value="11.09.2026 | Proposed UX for approval | Editable native draw.io shapes | No application or requirement changes" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="90" width="1350" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="verdict" value="&lt;b&gt;Verdict: retain the customer workspace; correct its organisation and operating-branch model.&lt;/b&gt;&lt;br&gt;The five screenshots cover useful customer administration, but do not yet define an end-to-end onboarding design." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F7ECEC;strokeColor=#AA272F;fontFamily=Mulish;fontColor=#333333;fontSize=18;align=left;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="145" width="1360" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="keep" value="&lt;b&gt;Keep&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customers list and onboarding entry&lt;br&gt;Overview / organisations / users / hierarchy / audit&lt;br&gt;Organisation-level linking and address expansion&lt;br&gt;Noatum invites first admin; customers manage colleagues&lt;br&gt;Invitation resend/revoke, customer suspension&lt;br&gt;Read-only, reasoned impersonation (FR-IAM-012)" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;fontColor=#333333;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="265" width="650" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="change" value="&lt;b&gt;Correct before implementation&lt;/b&gt;&lt;br&gt;&lt;br&gt;Add a branch becomes Link organisation&lt;br&gt;Separate CW1 directory from unassigned transactions&lt;br&gt;Separate servicing branch from customer addresses&lt;br&gt;Do not mandate second approval unless signed off&lt;br&gt;Feature entitlement is not a user permission or release&lt;br&gt;Remove identity tutorials from every working page" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;fontColor=#333333;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="730" y="265" width="670" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="source" value="&lt;b&gt;CW1 business-party master&lt;/b&gt;&lt;br&gt;Organisation + source identity&lt;br&gt;Repeatable addresses and contacts&lt;br&gt;Source fields read-only&lt;br&gt;Import grants no portal access" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="560" width="360" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="tenant" value="&lt;b&gt;Portal CustomerGroup&lt;/b&gt;&lt;br&gt;Deliberate CustomerAccount links&lt;br&gt;Users, role presets, entitlements&lt;br&gt;Two-level hierarchy only&lt;br&gt;Address is not another tenant link" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="560" width="370" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="ops" value="&lt;b&gt;Noatum operating structure&lt;/b&gt;&lt;br&gt;Source company / servicing branch&lt;br&gt;Staff branch assignment&lt;br&gt;Region model: decision-gated&lt;br&gt;Country does not decide access" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="560" width="360" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="link1" value="Explicit link" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;html=1;fontFamily=Mulish;fontSize=14;" parent="1" source="source" target="tenant" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="link2" value="Servicing association" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;html=1;fontFamily=Mulish;fontSize=14;" parent="1" source="ops" target="tenant" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" value="&lt;b&gt;Reading this file&lt;/b&gt;&lt;br&gt;Pages 01-16 contain the journey and screen wireframes. Click linked navigation shapes or use the draw.io page tabs.&lt;br&gt;White fields = portal inputs; grey fields = source/read-only. Asterisks mark proposed required inputs. Square boxes = checkboxes; &#39;( )&#39; = radio options.&lt;br&gt;Notes below each screen are design annotations, not proposed in-app tutorial text. All sample names/values are illustrative.&lt;br&gt;Source-address/contact fields depend on D-03 / OQ-3a. Region and policy precedence depend on D-18. EN wireframes require EN/ES implementation." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="770" width="1360" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="next" value="Open end-to-end flow" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" parent="1" link="data:page/flow" vertex="1">
+                    <mxGeometry x="1090" y="940" width="310" height="45" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="flow" name="01 End-to-end journey">
+        <mxGraphModel dx="777" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="End-to-end customer onboarding and administration" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;fontColor=#002C5F;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="1360" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="lane1" value="INTEGRATION" style="text;html=1;fontFamily=Mulish;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="100" width="220" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="import" value="Daily CW1 import&lt;br&gt;Validate / upsert source master&lt;br&gt;No access granted" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="85" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="directory" value="02 CW1 directory&lt;br&gt;Search and inspect source&lt;br&gt;03 Organisation detail" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/directory" vertex="1">
+                    <mxGeometry x="640" y="85" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="issues" value="14 Integration issues&lt;br&gt;Missing / ambiguous references&lt;br&gt;Correct at source or link deliberately" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F7ECEC;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/exceptions" vertex="1">
+                    <mxGeometry x="1030" y="85" width="340" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="lane2" value="NOATUM CUSTOMER SUCCESS" style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="235" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="customers" value="04 Customers&lt;br&gt;Onboard customer OR&lt;br&gt;open existing customer" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/customers" vertex="1">
+                    <mxGeometry x="280" y="220" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="onboard" value="05-06 Onboarding wizard&lt;br&gt;Group details + organisation links&lt;br&gt;Servicing + first admin + review" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/onboard1" vertex="1">
+                    <mxGeometry x="640" y="220" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="valid" value="Link valid?&lt;br&gt;Policy resolved?" style="rhombus;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=15;" parent="1" vertex="1">
+                    <mxGeometry x="680" y="360" width="190" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="blocked" value="Return to relevant wizard step&lt;br&gt;Conflict / no source / invalid domain&lt;br&gt;Second-person approval only if approved" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F7ECEC;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="1030" y="370" width="340" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="lane3" value="CUSTOMER + MICROSOFT ENTRA" style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=16;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="530" width="210" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="invite" value="Create customer + send invitation&lt;br&gt;Audited link and email job&lt;br&gt;Customer remains onboarding" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="520" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="accept" value="13 Accept invitation&lt;br&gt;Microsoft-managed authentication&lt;br&gt;Verify invite; bind issuer + subject" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/customeradmin" vertex="1">
+                    <mxGeometry x="280" y="520" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="activate" value="Linked office + accepted admin&lt;br&gt;Customer active&lt;br&gt;Data readiness shown separately" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="280" y="680" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="admin" value="13 Customer administration&lt;br&gt;Invite colleagues; assign roles&lt;br&gt;Optional financial-office restriction" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/customeradmin" vertex="1">
+                    <mxGeometry x="640" y="680" width="270" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="manage" value="07-10 Ongoing Noatum management&lt;br&gt;Links / users / features / policies&lt;br&gt;Hierarchy / audit / controlled support" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=16;" parent="1" link="data:page/detail" vertex="1">
+                    <mxGeometry x="1030" y="680" width="340" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="ops" value="11 Operating structure + 12 Staff users&lt;br&gt;Admin resolves branch mappings and staff permissions before pricing access.&lt;br&gt;Region/policy changes never move tenant links or grant access automatically." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacing=20;" parent="1" link="data:page/operating" vertex="1">
+                    <mxGeometry x="40" y="835" width="1330" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="All routes enforce API permissions and tenant scope. Missing/expired/revoked invites stay on recovery paths (15).&lt;br&gt;Link re-evaluation is asynchronous; an active login is not a promise that every imported shipment is already available.&lt;br&gt;No source organisation creation, password form, automatic contact invitation or arbitrary customer switching is introduced." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=16;fontColor=#58595B;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="960" width="1330" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="import" target="directory" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" value="Exceptions" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="directory" target="issues" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="directory" target="onboard" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="customers" target="onboard" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="onboard" target="valid" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" value="No" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="valid" target="blocked" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" value="Yes" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="valid" target="invite" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="invite" target="accept" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="accept" target="activate" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e10" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="activate" target="admin" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" parent="1" source="admin" target="manage" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="directory" name="02 CW1 organisation directory">
+        <mxGraphModel dx="777" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1020" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="shell" value="NOATUM LOGISTICS     Pricing     Customers     News     Platform                                      EN | ES     Account" style="rounded=0;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Mulish;fontSize=18;fontColor=#FFFFFF;align=left;spacingLeft=24;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="30" width="1380" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="nav" value="CUSTOMER SUCCESS&lt;br&gt;&lt;br&gt;Customers&lt;br&gt;&lt;br&gt;&lt;b&gt;CW1 organisations&lt;/b&gt;&lt;br&gt;&lt;br&gt;Invitations&lt;br&gt;&lt;br&gt;Unassigned entities" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=none;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="95" width="235" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="CW1 organisations" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="125" width="730" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sync" value="Last successful import: 11.09.2026 06:00 UTC     Source: [Configured instance]" style="text;html=1;fontFamily=Mulish;fontSize=16;fontColor=#58595B;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="190" width="1080" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="search" value="Search organisation code or name" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=14;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="245" width="480" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter1" value="Country: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="795" y="245" width="180" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter2" value="Source status: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="995" y="245" width="185" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter3" value="Link: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="1200" y="245" width="175" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="head" value="Organisation / source       Name                         Country / city       CW1 status       Portal customer          Action" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=15;align=left;spacingLeft=12;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="325" width="1080" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="row1" value="[ORG-A] / [source]          [Customer legal name]      Spain / Valencia       Active           [Customer group]       View" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=15;align=left;spacingLeft=12;" parent="1" link="data:page/orgdetail" vertex="1">
+                    <mxGeometry x="295" y="375" width="1080" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="row2" value="[ORG-B] / [source]          [Organisation name]         Spain / Madrid         Active           Not linked                 View" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=15;align=left;spacingLeft=12;" parent="1" link="data:page/orgdetail" vertex="1">
+                    <mxGeometry x="295" y="440" width="1080" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="row3" value="[ORG-C] / [source]          [Organisation name]         France / Lyon          Inactive         Not linked                 View" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=15;align=left;spacingLeft=12;" parent="1" link="data:page/orgdetail" vertex="1">
+                    <mxGeometry x="295" y="505" width="1080" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="pager" value="[Result count] organisations                                                  Rows per page [ ]           Previous     [Page]     Next" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="590" width="1080" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="view" value="View selected organisation" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" parent="1" link="data:page/orgdetail" vertex="1">
+                    <mxGeometry x="295" y="670" width="270" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | New directory, not a replacement for Unassigned entities.&lt;br&gt;Internal permission scope only. No customer-facing global directory. No bulk invitations, master-data editing or Create CW1 organisation.&lt;br&gt;Show classifications/registration search only if supplied and approved. Source identity must disambiguate instances.&lt;br&gt;Row opens 03; Link / Onboard actions occur after inspection. Server paging, filtered empty state, sync failure and access denied are required." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="835" width="1360" height="150" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="orgdetail" name="03 Organisation and source locations">
+        <mxGraphModel dx="777" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="crumb" value="Customers / CW1 organisations / [Organisation name]" style="text;html=1;fontFamily=Mulish;fontSize=16;fontColor=#AA272F;align=left;" parent="1" link="data:page/directory" vertex="1">
+                    <mxGeometry x="40" y="30" width="1000" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="[Organisation name]     [Source active state]" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="900" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="create" value="Onboard customer" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" parent="1" link="data:page/onboard1" vertex="1">
+                    <mxGeometry x="1150" y="80" width="250" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="tabs" value="Overview       Addresses       Contacts       Portal link       Sync history" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=18;align=left;spacingLeft=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="160" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="overview" value="&lt;b&gt;Overview [read-only]&lt;/b&gt;&lt;br&gt;&lt;br&gt;Organisation code: [source code]&lt;br&gt;Source instance/company context: [verified identifier]&lt;br&gt;Name: [source name]     Country / city: [source values]&lt;br&gt;Classification / client flag: [if supplied]&lt;br&gt;Registration: [type + value + jurisdiction, if permitted]&lt;br&gt;Source changed: [if supplied]     Last synced: [UTC time]" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="235" width="850" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="link" value="&lt;b&gt;Portal link&lt;/b&gt;&lt;br&gt;&lt;br&gt;CustomerGroup: [linked / not linked]&lt;br&gt;Office label: [portal display name]&lt;br&gt;Linked by / date / reason&lt;br&gt;Servicing branch: [defined association]&lt;br&gt;&lt;br&gt;Link to existing customer" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" link="data:page/onboard1" vertex="1">
+                    <mxGeometry x="920" y="235" width="480" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="addresses" value="&lt;b&gt;Addresses [repeatable, source read-only]&lt;/b&gt;&lt;br&gt;&lt;br&gt;Address ID       Label / source purpose       Formatted address                         Country       Primary / status&lt;br&gt;[address ID]     [warehouse / supplied type]   [lines, locality, region, postcode]   [country]     [source flags]&lt;br&gt;[address ID]     [registered / supplied type]  [lines, locality, region, postcode]   [country]     [source flags]&lt;br&gt;&lt;br&gt;Select a row: full address, components, contact association and source timestamps. No tenant-link checkbox on addresses." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="480" width="1360" height="205" as="geometry"/>
+                </mxCell>
+                <mxCell id="contacts" value="&lt;b&gt;Contacts [source read-only, approved fields only]&lt;/b&gt;&lt;br&gt;&lt;br&gt;Name       Function       Email / phone       Associated location       Source status&lt;br&gt;[contact]   [if supplied]  [permitted details]  [organisation/address]    [if supplied]&lt;br&gt;No Invite all contacts action." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="710" width="850" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="history" value="&lt;b&gt;Sync history&lt;/b&gt;&lt;br&gt;&lt;br&gt;Run / correlation reference&lt;br&gt;Started / completed UTC&lt;br&gt;Outcome / changed-field summary&lt;br&gt;Open authorised integration issue" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" link="data:page/exceptions" vertex="1">
+                    <mxGeometry x="920" y="710" width="480" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | Sections above specify separate tab contents, not one long combined production page.&lt;br&gt;A linked row shows Open customer instead of Onboard; conflicting ownership cannot be overwritten. Link action uses the same review as 05.&lt;br&gt;Addresses/contacts need the D-03 feed contract; unavailable collection shows Not supplied, not a fabricated empty result.&lt;br&gt;No source write-back. Country-specific address validation, original script and stable IDs. Master correction follows existing support process." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="925" width="1360" height="145" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="customers" name="04 Customers list">
+        <mxGraphModel dx="777" dy="770" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="1020" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="shell" value="NOATUM LOGISTICS     Pricing     Customers     News     Platform                                      EN | ES     Account" style="rounded=0;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Mulish;fontSize=18;fontColor=#FFFFFF;align=left;spacingLeft=24;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="30" width="1380" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="nav" value="CUSTOMER SUCCESS&lt;br&gt;&lt;br&gt;&lt;b&gt;Customers&lt;/b&gt;&lt;br&gt;&lt;br&gt;CW1 organisations&lt;br&gt;&lt;br&gt;Invitations&lt;br&gt;&lt;br&gt;Unassigned entities" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=none;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="95" width="235" height="700" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="Customers" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="125" width="700" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="onboard" value="Onboard customer" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" parent="1" link="data:page/onboard1" vertex="1">
+                    <mxGeometry x="1130" y="125" width="245" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="filters" value="All [count]       Active [count]       Onboarding [count]       Suspended [count]" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="205" width="1080" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="search" value="Search customer, domain or linked organisation" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=14;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="275" width="570" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="country" value="Country: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="885" y="275" width="230" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="branch" value="Servicing branch: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" parent="1" vertex="1">
+                    <mxGeometry x="1135" y="275" width="240" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="thead" value="Customer / country           Linked orgs       Servicing branch       Users       First admin        Tier          Status" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=14;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="355" width="1080" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="row1" value="[Customer A] / Spain             [count]           [branch name]          [count]      Accepted         [tier]        Active" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=14;" parent="1" link="data:page/detail" vertex="1">
+                    <mxGeometry x="295" y="405" width="1080" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="row2" value="[Customer B] / Spain             [count]           [branch name]          [count]      Invited           [tier]        Onboarding" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=14;" parent="1" link="data:page/detail" vertex="1">
+                    <mxGeometry x="295" y="475" width="1080" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="row3" value="[Customer C] / France            [count]           [branch name]          [count]      Accepted         [tier]        Suspended" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=14;" parent="1" link="data:page/detail" vertex="1">
+                    <mxGeometry x="295" y="545" width="1080" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="pager" value="[Results] customers                                        Rows per page [ ]           Previous     [Page]     Next" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="645" width="1080" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="SCREENSHOT 1 | Retain search and status filters; replace tall metric cards with compact filter counts.&lt;br&gt;Do not stack every organisation, branch and address inside a customer row. Detail belongs in Linked organisations.&lt;br&gt;Remove identity-provider configuration from customer subtitles. Last activity / parent / tier can be optional columns.&lt;br&gt;Pending approval is not a fixed lifecycle assumption; show only if approved mapping policy needs it. Header staff branch is not a global customer filter.&lt;br&gt;No counts judged here: sample values are not a product defect. Include source directory and pagination; unassigned entities remains a separate exception view." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="825" width="1360" height="170" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="onboard1" name="05 Onboard - identity and links">
+        <mxGraphModel dx="1440" dy="1100" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1100">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Onboard customer" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="steps" value="1 Customer details     2 Link organisations     3 Servicing     4 First admin     5 Review" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=18;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="100" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="a" value="STEP 1 | Customer details" style="text;html=1;fontFamily=Mulish;fontSize=21;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="180" width="630" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="nameLabel" value="Customer display name *" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="245" width="600" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="name" value="[Prefilled from selected organisation; portal label]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="280" width="620" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="countryLabel" value="Country *                                  Tier *" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="345" width="620" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="country" value="[Prefilled country]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="380" width="300" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="tier" value="[Approved tier options]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="380" width="300" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="domainLabel" value="Company email domains *" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="445" width="620" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="domains" value="[company.example]   [additional verified domain]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="480" width="620" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="localeLabel" value="Default locale *                          Parent customer (optional)" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="545" width="620" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="locale" value="[English / Spanish]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="580" width="300" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="parent" value="[None / permitted group]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="580" width="300" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="features" value="Initial entitlements&lt;br&gt;[Approved defaults]     Review features (09)" link="data:page/settings" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="660" width="620" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="b" value="STEP 2 | Link organisations" style="text;html=1;fontFamily=Mulish;fontSize=21;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="180" width="660" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="search" value="Search CW1 organisation code or name" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="245" width="660" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="choices" value="Select    Organisation / source      Name / country       Existing link&lt;br&gt;&lt;br&gt;[ ]        [ORG-A / source]            [name / country]     Not linked&lt;br&gt;&lt;br&gt;[ ]        [ORG-B / source]            [name / country]     Not linked&lt;br&gt;&lt;br&gt;[locked] [ORG-C / source]            [name / country]     Linked elsewhere" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;verticalAlign=top;spacing=16;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="315" width="660" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="selected" value="Selected organisation [ORG-A]&lt;br&gt;Source name / country / address summary [read-only]&lt;br&gt;Office display name: [portal input]&lt;br&gt;Inspect source details (03)" link="data:page/orgdetail" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacing=16;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="550" width="660" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="reason" value="Link justification *&lt;br&gt;[Customer relationship evidence and reason]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacing=16;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="695" width="660" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="cancel" value="Cancel" link="data:page/customers" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;fontColor=#AA272F;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="835" width="140" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="continue" value="Continue to servicing" link="data:page/onboard2" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1110" y="835" width="290" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | Two consecutive wizard states shown side by side; production displays one step at a time.&lt;br&gt;Link-existing flow reuses Step 2 with the customer fixed. No different-legal-entity auto-exclusion without an approved business rule.&lt;br&gt;Require at least one organisation for activation; no address-level selection for tenancy. Validate duplicate link/domain/parent depth on server.&lt;br&gt;No persistence of partial customer records is newly specified. Cancel confirms unsaved loss. Back preserves entered values within this flow." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="925" width="1360" height="145" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="onboard2" name="06 Onboard - servicing invite review">
+        <mxGraphModel dx="1440" dy="1100" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1100">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Onboard customer | Complete and confirm" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="steps" value="1 Customer details     2 Link organisations     3 Servicing     4 First admin     5 Review" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=18;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="100" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="servicing" value="&lt;b&gt;STEP 3 | Servicing&lt;/b&gt;&lt;br&gt;&lt;br&gt;Linked office: [selected CustomerAccount]&lt;br&gt;Noatum servicing branch *: [approved branch selector]&lt;br&gt;Source company: [derived mapping, read-only]&lt;br&gt;Region: [derived if approved, not customer country]&lt;br&gt;&lt;br&gt;Effective quotation policy [read-only summary]&lt;br&gt;Publication: [Direct / CW1-confirmed]&lt;br&gt;Initial request sync: [effective value]&lt;br&gt;Approval: [effective value + inherited source]&lt;br&gt;Carrier disclosure: [effective value]&lt;br&gt;&lt;br&gt;Open authorised settings (09)&lt;br&gt;Unresolved mapping / policy prevents completion." link="data:page/settings" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="185" width="430" height="500" as="geometry"/>
+                </mxCell>
+                <mxCell id="adminTitle" value="STEP 4 | First Customer Admin" style="text;html=1;fontFamily=Mulish;fontSize=20;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="185" width="420" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="nameLabel" value="Display name *" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="260" width="420" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="name" value="[Name]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="295" width="420" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="emailLabel" value="Company email *" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="365" width="420" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="email" value="[name@company.example]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="400" width="420" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="localeLabel" value="Locale *" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="470" width="420" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="locale" value="[English / Spanish]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="505" width="420" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="role" value="Role: Customer Admin&lt;br&gt;Invitation expiry: [configured duration]&lt;br&gt;No password or MFA fields" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacing=14;" vertex="1" parent="1">
+                    <mxGeometry x="505" y="580" width="420" height="105" as="geometry"/>
+                </mxCell>
+                <mxCell id="review" value="&lt;b&gt;STEP 5 | Review&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer name / country / tier&lt;br&gt;Company domains / locale&lt;br&gt;Parent relationship [if selected]&lt;br&gt;&lt;br&gt;Selected organisation codes + source&lt;br&gt;Office labels + link justification&lt;br&gt;Servicing branch per defined mapping&lt;br&gt;Effective policy and source&lt;br&gt;&lt;br&gt;First admin name / email / role&lt;br&gt;Invitation expiry&lt;br&gt;&lt;br&gt;[ ] Confirm customer relationship *&lt;br&gt;[ ] Confirm access impact *&lt;br&gt;&lt;br&gt;Edit links return to their wizard steps.&lt;br&gt;No source addresses are changed." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="960" y="185" width="440" height="500" as="geometry"/>
+                </mxCell>
+                <mxCell id="back" value="Back" link="data:page/onboard1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;fontColor=#AA272F;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="725" width="140" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="submit" value="Create customer and send invitation" link="data:page/detail" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1010" y="725" width="390" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="result" value="RESULT | Customer created: Onboarding     Linked office: [ready]     First admin: Invited     Invitation delivery: [queued / sent / failed]&lt;br&gt;Open customer (07) / Manage invitations (14). Activate only after valid admin acceptance and linked office; data refresh progress is separate." link="data:page/detail" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;align=left;spacing=18;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="800" width="1360" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | Three consecutive states shown together. Multiple servicing branches per account remain a decision, not an assumed selector.&lt;br&gt;Second-person mapping approval is conditional. If adopted, gate linkage/readiness and show pending approval; never show it as universally required.&lt;br&gt;Creation is retry-safe; email failure does not duplicate the customer. Roles/domains and source linkage validated again at final submit.&lt;br&gt;External ID provisioning sequence remains an Identity-team gate; portal email invitation alone does not create the Microsoft account." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="940" width="1360" height="130" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="detail" name="07 Customer overview and linked organisations">
+        <mxGraphModel dx="1440" dy="1100" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1100">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="crumb" value="Customers / [Customer group]" link="data:page/customers" style="text;html=1;fontFamily=Mulish;fontSize=16;fontColor=#AA272F;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="900" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" value="[Customer group]     [Active / Onboarding / Suspended]" style="text;html=1;fontFamily=Mulish;fontSize=24;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="80" width="950" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="edit" value="Edit customer" link="data:page/onboard1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;fontColor=#AA272F;" vertex="1" parent="1">
+                    <mxGeometry x="1030" y="80" width="185" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="more" value="More actions" link="data:page/safety" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=16;fontColor=#AA272F;" vertex="1" parent="1">
+                    <mxGeometry x="1230" y="80" width="170" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="tab1" value="Overview / Linked organisations" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="160" width="420" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="tab2" value="Users and invitations" link="data:page/users" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="460" y="160" width="300" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="tab3" value="Features and settings" link="data:page/settings" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="760" y="160" width="320" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="tab4" value="Hierarchy / Audit" link="data:page/hierarchy" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="1080" y="160" width="320" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="overview" value="&lt;b&gt;Overview&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer name / country / tier          Company domains                       Default locale&lt;br&gt;[portal values]                                 [verified domain list]                   [EN / ES]&lt;br&gt;&lt;br&gt;First admin / acceptance date           Created by / date                         Parent / children&lt;br&gt;[name, invitation state]                   [actor, DD.MM.YYYY]                  [approved relationship]&lt;br&gt;&lt;br&gt;Onboarding checklist: linked office [ ]    admin accepted [ ]    Data synchronisation: [last result, separate from activation]" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="240" width="1360" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="linkedTitle" value="Linked organisations" style="text;html=1;fontFamily=Mulish;fontSize=22;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="515" width="900" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="link" value="Link organisation" link="data:page/onboard1" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1140" y="510" width="260" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="head" value="Organisation / source        Office label          Noatum servicing branch        Source status       Link state       Actions" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="585" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="row" value="[ORG-A / source]               [office label]          [verified branch association]     Active                Linked           View source" link="data:page/orgdetail" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="635" width="1360" height="65" as="geometry"/>
+                </mxCell>
+                <mxCell id="expanded" value="Expanded organisation&lt;br&gt;Addresses: [count if supplied]     Contacts: [permitted count if supplied]     Last sync: [UTC]&lt;br&gt;Linked by [actor] on [date]     Reason [justification]     Visibility refresh [outcome]&lt;br&gt;View addresses (03)     Edit office label     Review link change (15)" link="data:page/orgdetail" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="700" width="1360" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="SCREENSHOTS 2-3 | Overview and Linked organisations are separate production tabs; combined here to show their field inventories.&lt;br&gt;Edit customer updates portal fields only; it does not rerun onboarding or edit CW1. Existing links remain intact unless explicitly changed.&lt;br&gt;Replace Add a branch / CW1 branch record with Link organisation / CW1 organisation. No mandatory one-legal-entity-per-group filter without sign-off.&lt;br&gt;Move impersonation/suspension under More actions with guards (15). Remove repeated How access works section; retain contextual status, not architecture lessons.&lt;br&gt;A red badge must have an accessible meaning (for example Pending link requests), not an unexplained organisation count." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="895" width="1360" height="175" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="users" name="08 Customer users and invitations">
+        <mxGraphModel dx="1440" dy="1100" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1100">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="[Customer] / Users and invitations" link="data:page/detail" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="970" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="invite" value="Invite Customer Admin" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1110" y="30" width="290" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter" value="Search name or email                                             Status: All      Role: All      Financial office: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="120" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="head" value="User / email                    Role presets               Financial office        Access state       Last sign-in / invitation       Actions" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="200" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="row1" value="[Customer Admin]              Customer Admin            All permitted            Active               [DD.MM.YYYY HH:mm]      View / More" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="250" width="1360" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="row2" value="[Finance user]                    Finance                        [office label]            Active               [DD.MM.YYYY HH:mm]      View / More" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="310" width="1360" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="row3" value="[Invited colleague]             Standard                      Not applicable           Invited              Expires [date]                    Resend / Revoke" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="370" width="1360" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pager" value="[Result count] users / invitations                                         Previous     [Page]     Next" style="text;html=1;fontFamily=Mulish;fontSize=16;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="450" width="1360" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="inviteForm" value="&lt;b&gt;Invite Customer Admin | Dialog&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer: [fixed, authorised group]&lt;br&gt;Display name *: [input]&lt;br&gt;Company email *: [input]&lt;br&gt;Locale *: [English / Spanish]&lt;br&gt;Role: Customer Admin [fixed]&lt;br&gt;Expiry: [configured duration, read-only]&lt;br&gt;&lt;br&gt;Domain mismatch: blocked unless internal exception grant.&lt;br&gt;Exception reason * shown only for that authorised path.&lt;br&gt;&lt;br&gt;Cancel                                Send invitation" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="520" width="650" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="drawer" value="&lt;b&gt;User detail | Drawer&lt;/b&gt;&lt;br&gt;&lt;br&gt;Name / email / customer / locale&lt;br&gt;Assigned role presets + effective module access&lt;br&gt;Financial restriction: [all authorised / single linked office]&lt;br&gt;Identity binding: [linked / pending, no credential fields]&lt;br&gt;Last sign-in / invited by / expiry / acceptance date&lt;br&gt;Audit history; original and effective actor for support&lt;br&gt;&lt;br&gt;Actions by permission: deactivate / reactivate / resend / revoke&lt;br&gt;Customer Admin edits permitted role presets in 13.&lt;br&gt;No last-admin removal; no automatic finance grant." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="730" y="520" width="670" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="SCREENSHOT 4 | The basic invitation ownership is correct. Add the financial-office scope and a clear detail view; identity jargon can be secondary.&lt;br&gt;The first admin is invited by Noatum; ordinary colleagues are invited by their Customer Admin. Additional admin invitation follows approved grants.&lt;br&gt;Last-admin safety and reason/confirmation must exist even though screenshots cannot prove backend checks. Deactivation denies the next API request.&lt;br&gt;Do not claim Microsoft sessions were revoked unless that operation exists; label portal access as deactivated. Invitation delivery differs from acceptance.&lt;br&gt;Rows/forms are design states; no runtime control is implemented here. Customer-user self-service flow is on 13." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="915" width="1360" height="165" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="settings" name="09 Entitlements and quotation settings">
+        <mxGraphModel dx="1440" dy="1150" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1150">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="[Customer] / Features and settings" link="data:page/detail" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="tabs" value="Feature entitlements                                     Effective quotation settings" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=18;align=left;spacingLeft=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="105" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="table" value="&lt;b&gt;Feature                         Customer entitlement       Release readiness            User permission&lt;/b&gt;&lt;br&gt;&lt;br&gt;Quotations                     [on/off control]                 [release catalogue]          Separately assigned&lt;br&gt;Track and trace             [on/off control]                 P2                               Separately assigned&lt;br&gt;Documents                    [on/off control]                 P2                               Separately assigned&lt;br&gt;Invoices                         [on/off control]                 P2                               Addressee + finance scope&lt;br&gt;Bookings                        [on/off control]                 P3                               Separately assigned&lt;br&gt;Claims                            [on/off control]                 P3                               Separately assigned&lt;br&gt;Other approved features [on/off control]                 [actual readiness]            Separately assigned" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="180" width="1360" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="policy" value="&lt;b&gt;Effective quotation settings&lt;/b&gt;&lt;br&gt;&lt;br&gt;Setting                             Effective value                    Inherited from              Override&lt;br&gt;Priced-offer publication     [Direct / CW1-confirmed]     [platform / branch / ...]  [approved scope only]&lt;br&gt;Initial request sync            [enabled / disabled]            [source]                      [state]&lt;br&gt;Internal approval               [enabled + approved rule]    [source]                      [state]&lt;br&gt;Claim expiry                      [approved duration]             [source]                      [state]&lt;br&gt;Cost capture / carrier name [approved values]               [source]                      [state]&lt;br&gt;Validity / terms                  [approved defaults]             [source]                      [state]&lt;br&gt;Email template / drafting    [template / enabled]             [source]                      [state]&lt;br&gt;&lt;br&gt;Policy revision: [revision]       Open quotation settings editor" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="490" width="900" height="355" as="geometry"/>
+                </mxCell>
+                <mxCell id="editor" value="&lt;b&gt;Settings editor | Platform page&lt;/b&gt;&lt;br&gt;&lt;br&gt;Scope type *: [approved options]&lt;br&gt;Scope target *: [permitted target]&lt;br&gt;Setting *: [per-scope catalogue]&lt;br&gt;( ) Inherit     ( ) Override&lt;br&gt;Value: [typed control]&lt;br&gt;Effective preview: [value + source]&lt;br&gt;Reason *: [input]&lt;br&gt;&lt;br&gt;Cancel     Review change&lt;br&gt;&lt;br&gt;Review: affected scope, before/after,&lt;br&gt;revision, in-flight policy treatment.&lt;br&gt;Confirm save / conflict recovery." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="970" y="490" width="430" height="385" as="geometry"/>
+                </mxCell>
+                <mxCell id="save" value="Review entitlement changes" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1080" y="875" width="320" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="SCREENSHOT 5 | Keep feature controls but separate availability from permissions. Carrier disclosure is a quotation policy, not a general module.&lt;br&gt;Future module entitlement may be prepared in P1, but cannot activate unreleased functionality. Show actual release readiness; do not fake toggles that enable it.&lt;br&gt;Changes take effect on the next API request, not only next navigation. Review/confirm/reason/audit; no optimistic saved state after failure.&lt;br&gt;D-18 gates region/branch/customer precedence and values. New work uses new policy; existing quotes retain recorded policy unless approved re-evaluation.&lt;br&gt;Never disable tenancy, permissions, audit, human-send, cost protection or accepted-version immutability. Claim-release authority belongs to role permissions." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="960" width="1360" height="175" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="hierarchy" name="10 Hierarchy and audit">
+        <mxGraphModel dx="1440" dy="1100" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1100">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="[Customer] / Hierarchy and audit" link="data:page/detail" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="hTitle" value="Hierarchy tab" style="text;html=1;fontFamily=Mulish;fontSize=21;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="115" width="900" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="parent" value="Parent CustomerGroup&lt;br&gt;[name + status]" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=18;" vertex="1" parent="1">
+                    <mxGeometry x="240" y="190" width="300" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="child1" value="Child [current customer]&lt;br&gt;[status + linked organisations]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="330" width="330" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="child2" value="Child [other customer]&lt;br&gt;[status + linked organisations]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="450" y="330" width="330" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" value="Authorised downward visibility" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;html=1;fontSize=13;" edge="1" parent="1" source="parent" target="child1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="parent" target="child2">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="edit" value="&lt;b&gt;Edit hierarchy | Dialog&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer: [fixed target]&lt;br&gt;Parent: [None / eligible parent]&lt;br&gt;Impact: [added / removed group visibility]&lt;br&gt;Reason *: [input]&lt;br&gt;[ ] Confirm visibility change *&lt;br&gt;&lt;br&gt;Cancel                 Confirm change&lt;br&gt;Reject cycle, third level and stale edit." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="880" y="170" width="520" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="auditTitle" value="Audit tab" style="text;html=1;fontFamily=Mulish;fontSize=21;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="485" width="1360" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="filters" value="Date range [ ]       Actor [ ]       Action [ ]       Entity [ ]                         Search reference [ ]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="550" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="audit" value="&lt;b&gt;Time / timezone                Actor                     Action                     Target                 Outcome&lt;/b&gt;&lt;br&gt;&lt;br&gt;[DD.MM.YYYY HH:mm]      [original actor]       Organisation linked    [source + org]       [result]&lt;br&gt;[DD.MM.YYYY HH:mm]      [original actor]       User deactivated        [user reference]    [result]&lt;br&gt;[DD.MM.YYYY HH:mm]      [original actor]       Policy changed           [scope + revision] [result]&lt;br&gt;&lt;br&gt;Previous / Next                 Select row to inspect authorised details" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="625" width="1360" height="205" as="geometry"/>
+                </mxCell>
+                <mxCell id="auditDetail" value="Audit event drawer: original/effective actor, target, action, timestamp + timezone, reason, permitted before/after values,&lt;br&gt;correlation reference and policy revision where applicable. No token, credential or unrestricted raw CW1 payload." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacing=18;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="850" width="1360" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | Two separate tabs. Parent hierarchy is a portal visibility decision, not an automatic copy of CW1 parent_org_code.&lt;br&gt;Children cannot see parent/sibling data. Finance permission and addressee rules remain independent. No arbitrary multi-group user membership.&lt;br&gt;Only authorised actors can edit hierarchy; show impact and retain audit. No speculative hierarchy editor beyond two levels.&lt;br&gt;Screenshots do not reveal current Hierarchy/Audit contents; this page supplies proposed designs, not findings of missing backend functionality." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="965" width="1360" height="120" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="operating" name="11 Noatum branches and regions">
+        <mxGraphModel dx="1440" dy="1150" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1150">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Platform / Operating structure" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1000" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="button" value="Configure branch" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1150" y="30" width="250" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="tabs" value="Branches                                         Regions [only if managed-region model approved]" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=18;align=left;spacingLeft=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="115" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter" value="Search code or name          Source company [ ]          Country [ ]          Region [ ]          Status [ ]" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="195" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="table" value="&lt;b&gt;Branch / code         Source company       Country / city       Region               Source state       Portal readiness&lt;/b&gt;&lt;br&gt;&lt;br&gt;[name + code]       [verified mapping]     [source values]      [if approved]       [active flag]        [configured / issue]&lt;br&gt;[name + code]       [verified mapping]     [source values]      [if approved]       [active flag]        [configured / issue]&lt;br&gt;&lt;br&gt;Previous / Next      Open branch" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="275" width="1360" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="branchDetail" value="&lt;b&gt;Branch detail / configure&lt;/b&gt;&lt;br&gt;&lt;br&gt;Source branch *: [approved catalogue selector]&lt;br&gt;Source instance / company: [mapping]&lt;br&gt;Branch code / name: [source read-only if supplied]&lt;br&gt;Country / city / operating address: [source if supplied]&lt;br&gt;Contact / timezone: [approved source/config fields]&lt;br&gt;Legal issuer: [verified relationship, not inferred]&lt;br&gt;Region: [approved assignment or optional label]&lt;br&gt;&lt;br&gt;Portal use: [enabled / disabled, approved lifecycle]&lt;br&gt;Staff assignments: [count] / Open staff (12)&lt;br&gt;Effective quotation settings / Open settings (09)&lt;br&gt;Reason *: [input]    Review / Confirm&lt;br&gt;&lt;br&gt;Readiness: mapping + permitted staff + resolved policy.&lt;br&gt;No live rate source is required or presumed." link="data:page/staff" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="480" width="660" height="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="regionDetail" value="&lt;b&gt;Region view | Decision-gated proposal&lt;/b&gt;&lt;br&gt;&lt;br&gt;Region list: code/name, member branches, status&lt;br&gt;Search / server paging / open region&lt;br&gt;&lt;br&gt;Create or edit region:&lt;br&gt;Region identifier *: [stable portal code]&lt;br&gt;Region name *: [input]&lt;br&gt;Branches: [approved membership selector]&lt;br&gt;Status: [approved lifecycle]&lt;br&gt;Effective settings: [read-only + authorised edit link]&lt;br&gt;Reason *: [input]&lt;br&gt;Review membership and policy impact / Confirm&lt;br&gt;&lt;br&gt;Alternative: region is only a branch label.&lt;br&gt;Then omit this view and region policy inheritance.&lt;br&gt;Do not imply Country &gt; Region &gt; Branch universally." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="480" width="660" height="420" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | This is Noatum&#39;s structure, never customer warehouse management. Place it in Platform, not inside customer organisations.&lt;br&gt;Branch source, multi-branch customer servicing and region membership need D-03/D-18 decisions. No assumed multi-branch database relationship.&lt;br&gt;No source catalogue: require a business-approved maintained mapping, not an invented CW1 record. No write-back creates branches in CW1.&lt;br&gt;Branch code is not a UN/LOCODE or IATA code. Region is not legal issuer. Disabling/reassigning branches needs approved handling for staff, claims and jobs.&lt;br&gt;This blueprint is not approval to build a new Region table, operational HR system or geographical access inheritance." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="960" width="1360" height="170" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="staff" name="12 Staff access assignment">
+        <mxGraphModel dx="1440" dy="1020" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1020">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Platform / Staff users" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="filter" value="Search name or email          Access: Unassigned / All          Branch: All          Role: All" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacingLeft=16;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="115" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="table" value="&lt;b&gt;Staff / email                   Branch                   Role presets                 Access                 Last sign-in            Action&lt;/b&gt;&lt;br&gt;&lt;br&gt;[eligible staff user]          Unassigned             None                            Awaiting assignment [date/time]            Assign access&lt;br&gt;[pricing staff user]          [branch]                  Pricing                         Active                  [date/time]            Review access&lt;br&gt;[platform admin]             [branch]                  Platform Admin             Active                  [date/time]            Review access&lt;br&gt;&lt;br&gt;Previous / Next" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="195" width="1360" height="210" as="geometry"/>
+                </mxCell>
+                <mxCell id="assign" value="&lt;b&gt;Assign / review access | Drawer&lt;/b&gt;&lt;br&gt;&lt;br&gt;Staff name / email / issuer binding [read-only]&lt;br&gt;Branch *: [authorised configured branch]&lt;br&gt;Role presets: [permitted internal multi-select]&lt;br&gt;Effective permissions: [read-only union]&lt;br&gt;Cross-branch pricing: [explicit granted permission]&lt;br&gt;Cost / restricted-content access: [explicit grants]&lt;br&gt;Reason *: [input]&lt;br&gt;&lt;br&gt;Cancel                          Review assignment&lt;br&gt;Review: previous/new branch, permissions, claim impact.&lt;br&gt;Confirm save; stale edit must not overwrite a newer grant." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="445" width="660" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="pending" value="&lt;b&gt;Staff first-login page&lt;/b&gt;&lt;br&gt;&lt;br&gt;NOATUM LOGISTICS&lt;br&gt;&lt;br&gt;Access awaiting assignment&lt;br&gt;[Signed-in name / email]&lt;br&gt;&lt;br&gt;Account        Sign out&lt;br&gt;&lt;br&gt;No business menus or customer data.&lt;br&gt;Only eligible staff identity is created.&lt;br&gt;Admin assignment enables permitted routes.&lt;br&gt;Authentication success is not role assignment." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="740" y="445" width="660" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | This page is distinct from Customer users. Staff roles are portal-managed, not taken from Azure groups or CW1 roles.&lt;br&gt;FR-IAM-002/003: eligible first login creates identity without access; explicit admin assigns roles and branch.&lt;br&gt;Pricing branch scope is enforced on requests; internal tracking is not branch-scoped. A header branch is context, not proof of all-page scoping.&lt;br&gt;Role/branch changes take effect on next request. Active claim recovery after revocation needs an approved rule; no permission persists via old quote policy.&lt;br&gt;No staff invitation/password form, custom role designer or first-login-wins bootstrap administrator." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="835" width="1360" height="165" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="customeradmin" name="13 Customer acceptance and self-service">
+        <mxGraphModel dx="1440" dy="1150" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1150">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Customer-facing journey | Invitation to user administration" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="accept" value="&lt;b&gt;Accept invitation&lt;/b&gt;&lt;br&gt;&lt;br&gt;NOATUM LOGISTICS&lt;br&gt;Invitation to [customer]&lt;br&gt;Invited email: [masked as appropriate]&lt;br&gt;Invitation expiry: [date/time]&lt;br&gt;&lt;br&gt;Continue with Microsoft&lt;br&gt;&lt;br&gt;After Microsoft authentication:&lt;br&gt;Validate invite + identity binding&lt;br&gt;Accept invitation [explicit action]&lt;br&gt;Open customer workspace&lt;br&gt;&lt;br&gt;Expired / revoked / wrong account:&lt;br&gt;safe recovery, no customer data." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="115" width="410" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="list" value="&lt;b&gt;Administration / Users&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer: [fixed own group]&lt;br&gt;Search name/email     Role [ ]     Status [ ]&lt;br&gt;&lt;br&gt;Name / email     Roles     Finance office     Status&lt;br&gt;[user]                [roles]    [office / all]       Active&lt;br&gt;[user]                [roles]    [office / all]       Invited&lt;br&gt;&lt;br&gt;Previous / Next&lt;br&gt;&lt;br&gt;Invite user        Open user&lt;br&gt;Own-group Audit&lt;br&gt;Company profile / linked offices [read-only]&lt;br&gt;&lt;br&gt;No global CW1 directory or staff admin controls." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="485" y="115" width="440" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="form" value="&lt;b&gt;Invite user / Edit roles&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer: [fixed, no editable tenant ID]&lt;br&gt;Display name *: [input]&lt;br&gt;Company email *: [input on invitation]&lt;br&gt;Locale *: [English / Spanish]&lt;br&gt;Role presets *: [external multi-select]&lt;br&gt;Financial office: [All permitted / one office]&lt;br&gt;Expiry: [configured, invitation only]&lt;br&gt;&lt;br&gt;Effective module access [preview]&lt;br&gt;Cancel         Send invitation / Review changes&lt;br&gt;&lt;br&gt;Internal role options never offered.&lt;br&gt;Out-of-domain invite blocked.&lt;br&gt;Last active admin cannot be removed." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="960" y="115" width="440" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="roles" value="&lt;b&gt;Role selector / permission preview&lt;/b&gt;&lt;br&gt;&lt;br&gt;[ ] Standard                 Tracking + approved documents&lt;br&gt;[ ] Quoting and Booking   Standard + quote/booking actions&lt;br&gt;[ ] Finance                    Standard + addressee-authorised finance&lt;br&gt;[ ] Analyst                    Standard + assigned reports&lt;br&gt;[ ] Claims                     Standard + released claim actions&lt;br&gt;[ ] Customer Admin         Standard + own-group administration&lt;br&gt;&lt;br&gt;Compatible roles combine permissions. Entitlement and release readiness are separate.&lt;br&gt;Financial-office restriction is not a shipment, quotation or general customer-office filter." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="530" width="880" height="295" as="geometry"/>
+                </mxCell>
+                <mxCell id="profile" value="&lt;b&gt;Company profile / offices&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer name / country / domains&lt;br&gt;Linked office display names&lt;br&gt;Approved CW1 address information&lt;br&gt;Source freshness / read-only marker&lt;br&gt;&lt;br&gt;Profile name/locale changes use own profile.&lt;br&gt;Master corrections: existing support route.&lt;br&gt;Operational Address book is separate.&lt;br&gt;No individual address tenancy links." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="960" y="530" width="440" height="295" as="geometry"/>
+                </mxCell>
+                <mxCell id="result" value="Invitation sent / delivery pending: return to Users; resend/revoke under configured controls.&lt;br&gt;Accepted user: only authorised, entitled modules; unreleased modules use approved unavailable state, never fabricated live data.&lt;br&gt;Deactivated user: next request denied even with valid Entra token. Customer Admin cannot impersonate another user." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;spacing=18;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="830" width="1360" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | Do not build a local account + MFA pathway. Microsoft-managed external identities can use supported methods configured by Identity team.&lt;br&gt;The screenshot label Local account + MFA is ambiguous, not proof of an implemented custom auth system. Replace with verified identity status only.&lt;br&gt;One external directory is not automatically one dedicated directory per customer. Federation is centrally configured, not an Edit company dropdown.&lt;br&gt;Noatum invites first admin; this is where the customer invites everyone else. Invite is not directory provisioning; identity-team sequence must be confirmed.&lt;br&gt;All module grants follow FR role matrix. Customer Admin is not a finance superuser. No arbitrary multi-company switching." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="975" width="1360" height="165" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="exceptions" name="14 Invitations and unassigned entities">
+        <mxGraphModel dx="1440" dy="1100" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1100">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Customer Success | Invitations and unassigned entities" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="invites" value="&lt;b&gt;Invitations page&lt;/b&gt;&lt;br&gt;&lt;br&gt;Search email / customer       State [ ]       Expiry range [ ]&lt;br&gt;&lt;br&gt;Customer   Email   Roles   Invited by   Sent / expiry   Invite state   Delivery state   Actions&lt;br&gt;[group]      [email] [roles] [actor]         [date/time]     [invited]      [sent]              Open&lt;br&gt;[group]      [email] [roles] [actor]         [date/time]     [expired]     [sent]              Open&lt;br&gt;&lt;br&gt;Row detail: customer, invited identity, role presets, finance office if applicable, expiry, acceptance, resend history.&lt;br&gt;Resend [within policy] / Revoke [confirm] / Open customer. No raw token display.&lt;br&gt;Delivery failed is not invitation revoked; controlled retry does not create another customer/user.&lt;br&gt;Previous / Next" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="115" width="1360" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="unassigned" value="&lt;b&gt;Unassigned entities page&lt;/b&gt;&lt;br&gt;&lt;br&gt;Search source reference       Entity type [available types]       Source instance [ ]       First seen [range]&lt;br&gt;&lt;br&gt;Entity reference    Type             Source org/address code    Resolution issue           First / last seen      Action&lt;br&gt;[reference]           [available]     [source-qualified code]      [unknown / ambiguous] [timestamps]          Inspect&lt;br&gt;&lt;br&gt;Detail: original party reference, source namespace, resolved organisation if known, source record + mapping outcome.&lt;br&gt;No customer visibility granted from inspection. Do not show unsupported shipment/invoice modules as live in P1.&lt;br&gt;Actions: Open source organisation (03) / Link known organisation (05) / Open integration diagnostics.&lt;br&gt;Unknown source/address mapping: resolve with master-data/integration owner; no free-text tenant override.&lt;br&gt;Previous / Next" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="445" width="1360" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="resolution" value="Inspect exception" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="785" width="250" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="resolve" value="Resolve source organisation&lt;br&gt;Known and eligible?" link="data:page/orgdetail" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="385" y="785" width="290" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="link" value="Audited organisation link&lt;br&gt;Reason + confirmation" link="data:page/onboard1" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="770" y="785" width="290" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="refresh" value="Re-evaluate eligible visibility&lt;br&gt;Show outcome" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;" vertex="1" parent="1">
+                    <mxGeometry x="1150" y="785" width="250" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="resolution" target="resolve">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="resolve" target="link">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;endArrow=block;" edge="1" parent="1" source="link" target="refresh">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | CW1 organisations is a master directory; Unassigned entities is a transaction-resolution queue. They are not interchangeable.&lt;br&gt;Unknown or ambiguous party/address codes fail closed under OQ-3a. A known unlinked organisation uses the deliberate linking workflow.&lt;br&gt;No unrestricted source payloads, customer-group discovery or automatic reassignment. Historical quotes retain ownership/snapshot rules; do not bulk move them.&lt;br&gt;Mapping approval list is optional only if signed off. No new ticket system, reconciliation state machine or independent approval-table machinery is approved." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="915" width="1360" height="160" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="safety" name="15 Confirmations recovery and support">
+        <mxGraphModel dx="1440" dy="1150" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1150">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Shared confirmations, recovery and support states" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="impersonation" value="&lt;b&gt;View as customer user | Support dialog&lt;/b&gt;&lt;br&gt;&lt;br&gt;Customer: [fixed]&lt;br&gt;User *: [eligible user selector]&lt;br&gt;Reason *: [mandatory support reason]&lt;br&gt;Duration: [configured; default 60 minutes]&lt;br&gt;Mode: Read-only [fixed]&lt;br&gt;Cancel                    Start read-only view&lt;br&gt;&lt;br&gt;Persistent banner: Viewing as [user] | [time left] | End&lt;br&gt;Original and effective actor in audit. Every write denied.&lt;br&gt;Expired / deactivated: end view and return to support." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="115" width="650" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="suspend" value="&lt;b&gt;Suspend customer / deactivate user&lt;/b&gt;&lt;br&gt;&lt;br&gt;Target: [customer or user]&lt;br&gt;Impact: [all group users / selected user&#39;s access]&lt;br&gt;Reason *: [input]&lt;br&gt;[ ] Confirm access removal *&lt;br&gt;Cancel                    Confirm suspension/deactivation&lt;br&gt;&lt;br&gt;Customer suspension retains source data and ingestion.&lt;br&gt;User action cannot remove last active Customer Admin.&lt;br&gt;Reactivate requires permitted role and current eligibility.&lt;br&gt;Never Delete CW1 organisation as part of this action." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="730" y="115" width="670" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="relink" value="&lt;b&gt;Link / unlink / reassign review&lt;/b&gt;&lt;br&gt;&lt;br&gt;Source organisation: [source-qualified identity]&lt;br&gt;Current customer: [permitted target]&lt;br&gt;Proposed customer/link: [explicit selection]&lt;br&gt;Reason * + access-impact confirmation *&lt;br&gt;Impact: old/new visibility, active office count, affected users&lt;br&gt;No address-level reassignment. Reject conflicting ownership.&lt;br&gt;Last-office removal requires approved activation handling.&lt;br&gt;Historical quote/booking ownership requires explicit policy.&lt;br&gt;Do not implement a one-click reassignment bypass.&lt;br&gt;Optional second-person review only after business sign-off." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="460" width="650" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="states" value="&lt;b&gt;List / form recovery states&lt;/b&gt;&lt;br&gt;&lt;br&gt;Loading: stable row placeholders; no false zero counts.&lt;br&gt;Empty: No customers yet + permitted Onboard action.&lt;br&gt;No matches: retain filters + Clear filters.&lt;br&gt;Sync failure: last success time + authorised issue link.&lt;br&gt;Validation: field-specific error + focus first invalid field.&lt;br&gt;Save failure: preserve inputs; no success badge.&lt;br&gt;Concurrent update: reload latest + review differences.&lt;br&gt;Access denied: no protected fields or hidden data count.&lt;br&gt;Expired invite: request resend via existing admin channel.&lt;br&gt;Unavailable module: no live controls or mock business data." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="730" y="460" width="670" height="310" as="geometry"/>
+                </mxCell>
+                <mxCell id="save" value="Common save flow: edit fields -&gt; validate -&gt; review before/after and impact -&gt; reason/confirmation -&gt; server write + audit -&gt; outcome.&lt;br&gt;Background jobs: show queued/delivery/sync outcome separately. Never repeat a business creation to retry a failed email.&lt;br&gt;Last-admin, duplicate-link and role checks apply under concurrent actions. Tenant IDs from a browser are never trusted for data scope." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#002C5F;fontFamily=Mulish;fontSize=17;align=left;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="810" width="1360" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="DESIGN NOTES | Impersonation is already required by FR-IAM-012; retain it with controls, do not invent full write-capable impersonation.&lt;br&gt;Screenshot buttons do not demonstrate whether protections exist. These are acceptance requirements, not confirmed backend vulnerabilities.&lt;br&gt;Architecture explanations belong in documentation/help, not repeated How access works cards. Labels must still explain actual destructive impact.&lt;br&gt;All dialogs are keyboard reachable, trap/restore focus, have accessible names and announce validation/save outcomes. Reason fields are not credentials." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="980" width="1360" height="145" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="responsive" name="16 Responsive layouts and delivery gates">
+        <mxGraphModel dx="1440" dy="1150" grid="1" gridSize="10" page="1" pageScale="1" pageWidth="1440" pageHeight="1150">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Responsive page patterns and design approval gates" style="text;html=1;fontFamily=Mulish;fontSize=26;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="30" width="1360" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="phone1" value="" style="rounded=0;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="120" width="390" height="675" as="geometry"/>
+                </mxCell>
+                <mxCell id="header1" value="Menu     NOATUM     Account" style="rounded=0;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Mulish;fontSize=18;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="120" width="390" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="listTitle" value="Customers" style="text;html=1;fontFamily=Mulish;fontSize=24;fontStyle=1;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="195" width="350" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="onboard" value="Onboard customer" link="data:page/onboard1" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="250" width="350" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="search" value="Search customer" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="315" width="350" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="filters" value="All / Active / Onboarding     Filters" style="text;html=1;fontFamily=Mulish;fontSize=15;align=left;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="380" width="350" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="row1" value="&lt;b&gt;[Customer name]&lt;/b&gt;     Active&lt;br&gt;[Country] | [linked org count]&lt;br&gt;[Servicing branch]&lt;br&gt;First admin: Accepted       Open" link="data:page/detail" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacing=14;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="440" width="350" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="row2" value="&lt;b&gt;[Customer name]&lt;/b&gt;     Onboarding&lt;br&gt;[Country] | [linked org count]&lt;br&gt;[Servicing branch]&lt;br&gt;First admin: Invited           Open" link="data:page/detail" style="rounded=0;html=1;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=16;align=left;spacing=14;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="575" width="350" height="115" as="geometry"/>
+                </mxCell>
+                <mxCell id="pager" value="Previous        [Page]        Next" style="text;html=1;fontFamily=Mulish;fontSize=16;" vertex="1" parent="1">
+                    <mxGeometry x="60" y="725" width="350" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="phone2" value="" style="rounded=0;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="120" width="390" height="675" as="geometry"/>
+                </mxCell>
+                <mxCell id="header2" value="Back      Invite user      Close" style="rounded=0;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Mulish;fontSize=18;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="120" width="390" height="55" as="geometry"/>
+                </mxCell>
+                <mxCell id="form" value="Customer: [fixed group]&lt;br&gt;&lt;br&gt;Display name *&lt;br&gt;[input]&lt;br&gt;&lt;br&gt;Company email *&lt;br&gt;[input]&lt;br&gt;&lt;br&gt;Locale *&lt;br&gt;[English / Spanish]&lt;br&gt;&lt;br&gt;Role presets *&lt;br&gt;[multi-select]&lt;br&gt;&lt;br&gt;Financial office&lt;br&gt;[All permitted / office]&lt;br&gt;&lt;br&gt;[Validation message near field]" style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="200" width="350" height="485" as="geometry"/>
+                </mxCell>
+                <mxCell id="send" value="Send invitation" style="rounded=0;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Mulish;fontSize=16;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="720" width="350" height="48" as="geometry"/>
+                </mxCell>
+                <mxCell id="gates" value="&lt;b&gt;Approval gates before implementation&lt;/b&gt;&lt;br&gt;&lt;br&gt;1. D-03 / OQ-3a: source IDs, address/contact&lt;br&gt;   collections, source-company branch mapping.&lt;br&gt;&lt;br&gt;2. D-04: exact internal/customer action grants.&lt;br&gt;&lt;br&gt;3. D-13: optional second-person linking policy;&lt;br&gt;   customer/legal-entity grouping constraints.&lt;br&gt;&lt;br&gt;4. D-18: region model, supported setting scopes,&lt;br&gt;   precedence and multi-branch servicing.&lt;br&gt;&lt;br&gt;5. Identity: invitation-only provisioning flow;&lt;br&gt;   no local authentication implementation.&lt;br&gt;&lt;br&gt;6. Unlink / reassignment / branch disable effects&lt;br&gt;   on active users, claims and historical records.&lt;br&gt;&lt;br&gt;Keep runtime and approved FRs unchanged&lt;br&gt;until these design decisions are accepted." style="rounded=0;html=1;whiteSpace=wrap;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Mulish;fontSize=17;align=left;verticalAlign=top;spacing=20;" vertex="1" parent="1">
+                    <mxGeometry x="900" y="120" width="500" height="675" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="RESPONSIVE / ACCESSIBILITY | Narrow layouts use stacked labelled rows or a deliberate scrollable table; preserve primary identity and state.&lt;br&gt;Detail tabs remain keyboard-operable and horizontally scrollable; drawers become full-width dialogs. Forms become single-column.&lt;br&gt;No viewport-scaled fonts, tiny muted metadata or hidden primary actions. Wrap long names/domains; provide visible focus and text labels for states.&lt;br&gt;Implementation uses Noatum tokens, Mulish, square sections, accessible text colours, EN/ES and DD.MM.YYYY with timezone for timestamps.&lt;br&gt;No permanent architecture tutorial, floating section-card nesting or oversized footer consuming an operational workspace.&lt;br&gt;This is a design artifact. XML/link/layout validation does not prove browser accessibility, backend controls or implemented workflows." style="text;html=1;whiteSpace=wrap;fontFamily=Mulish;fontSize=17;fontColor=#58595B;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="850" width="1360" height="220" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

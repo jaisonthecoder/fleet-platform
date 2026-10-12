@@ -1,0 +1,113 @@
+.block {
+  display: grid;
+  gap: var(--noa-space-3);
+  justify-items: start;
+}
+
+/* Keeps the trigger beside the title rather than on a line of its own. */
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  width: 100%;
+}
+
+/* The heading is a full block that carries its own bottom margin; strip it here
+   so the trigger centres on the title line instead of floating below it. The
+   page grid gap, not this margin, spaces the ribbon from the panel below. */
+.head > :first-child {
+  min-width: 0;
+  margin: 0;
+}
+
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--noa-color-info-border);
+  border-radius: 50%;
+  background: var(--noa-color-info-surface);
+  color: var(--noa-info-500);
+  cursor: pointer;
+  transition:
+    background-color var(--noa-duration-fast) var(--noa-ease),
+    border-color var(--noa-duration-fast) var(--noa-ease),
+    color var(--noa-duration-fast) var(--noa-ease);
+}
+
+.trigger:hover,
+.trigger[aria-expanded='true'] {
+  background: var(--noa-info-500);
+  border-color: var(--noa-info-500);
+  color: var(--noa-color-text-inverse);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+/*
+ * Tinted rather than bar-and-border: a heavy left edge reads as a warning, and
+ * this is only an explanation. Small text on a soft navy wash keeps it clearly
+ * secondary to the data beneath it.
+ */
+.ribbon {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--noa-space-3);
+  width: 100%;
+  justify-self: stretch;
+  padding: var(--noa-space-3) var(--noa-space-4);
+  background: var(--noa-color-info-surface);
+  border: 1px solid var(--noa-color-info-border);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--noa-text-xs);
+  line-height: 1.6;
+  color: var(--noa-neutral-700);
+  max-width: 104ch;
+}
+
+.body p {
+  margin: 0 0 var(--noa-space-2);
+}
+
+.body p:last-child {
+  margin-bottom: 0;
+}
+
+.body strong {
+  color: var(--noa-neutral-900);
+  font-weight: var(--noa-weight-semibold);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.close:hover {
+  color: var(--noa-color-accent);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--noa-color-focus);
+  outline-offset: 2px;
+}

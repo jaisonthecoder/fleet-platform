@@ -1,0 +1,36 @@
+# Local dependencies. Postgres only for now — the CW1 simulator joins this file in S1.01
+# once apps/cw1-simulator is a real workspace package.
+#
+# CLAUDE.md and slice S1.01 make `docker compose up` the local workflow, so this file has
+# to exist for `pnpm db:up` to mean anything.
+#
+# No Redis and no message broker: ADR-004 keeps Phase 1 on Postgres and Blob alone.
+
+name: noatum-customer-portal
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: noatum-cp-postgres
+    restart: unless-stopped
+    environment:
+      # Local only. Real credentials come from Key Vault backed variable groups.
+      POSTGRES_USER: ${POSTGRES_USER:?Use pnpm db:up to load local configuration}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Local database password required}
+      POSTGRES_DB: ${POSTGRES_DB:?Local database name required}
+    ports:
+      - '127.0.0.1:${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      # Migrations run as a pipeline step, so anything waiting on this container needs to
+      # know the server is genuinely accepting connections, not merely started.
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
+    name: infra_postgres-data
+    external: true

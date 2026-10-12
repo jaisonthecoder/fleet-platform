@@ -1,0 +1,133 @@
+/* DA-02 · Stat tile with spark bars. Measures from Noatum UI Kit.dc.html. */
+
+.tile {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  padding: var(--noa-kit-card-gap) var(--noa-kit-block-gap); /* 16px 20px */
+  text-align: start;
+  background: var(--noa-color-surface);
+  border: 0;
+  border-block-start: 3px solid var(--noa-color-accent);
+  box-shadow: var(--noa-card-shadow);
+}
+
+button.tile {
+  cursor: pointer;
+}
+
+button.tile:hover {
+  box-shadow: var(--noa-shadow-raised);
+}
+
+button.tile:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--noa-space-2);
+}
+
+.label {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+.figure {
+  font-size: 1.625rem; /* 26px */
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-accent);
+}
+
+/* --- spark bars ---------------------------------------------------------- */
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  block-size: 26px;
+  margin-block-start: var(--noa-kit-chip-gap);
+}
+
+.bars > span {
+  flex: 1;
+  --height: 0%;
+  block-size: var(--height);
+  background: var(--noa-action-tint-strong);
+}
+
+.bars > span[data-emphasis] {
+  background: var(--noa-color-accent);
+}
+
+/* --- tones --------------------------------------------------------------- */
+
+.tile[data-tone='navy'] {
+  border-block-start-color: var(--navy-800);
+}
+
+.tile[data-tone='navy'] .figure {
+  color: var(--navy-800);
+}
+
+.tile[data-tone='navy'] .bars > span {
+  background: var(--noa-navy-050);
+}
+
+.tile[data-tone='navy'] .bars > span[data-emphasis] {
+  background: var(--navy-800);
+}
+
+.tile[data-tone='success'] {
+  border-block-start-color: var(--noa-kit-success);
+}
+
+.tile[data-tone='success'] .figure {
+  color: var(--noa-kit-success);
+}
+
+.tile[data-tone='success'] .bars > span {
+  background: var(--noa-kit-success-surface);
+}
+
+.tile[data-tone='success'] .bars > span[data-emphasis] {
+  background: var(--noa-kit-success);
+}
+
+.tile[data-tone='attention'] {
+  border-block-start-color: var(--noa-kit-attention);
+}
+
+.tile[data-tone='attention'] .figure {
+  color: var(--noa-kit-attention);
+}
+
+.tile[data-tone='attention'] .bars > span {
+  background: var(--noa-kit-attention-surface);
+}
+
+.tile[data-tone='attention'] .bars > span[data-emphasis] {
+  background: var(--noa-kit-attention);
+}
+
+.tile[data-tone='neutral'] {
+  border-block-start-color: var(--noa-neutral-300);
+}
+
+.tile[data-tone='neutral'] .figure {
+  color: var(--noa-neutral-900);
+}
+
+.tile[data-tone='neutral'] .bars > span {
+  background: var(--noa-ring-track);
+}
+
+.tile[data-tone='neutral'] .bars > span[data-emphasis] {
+  background: var(--noa-neutral-300);
+}

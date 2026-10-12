@@ -1,0 +1,108 @@
+/*
+ * Checks before sending, to the staff mockup: a left rail per row, a ringed dot
+ * that fills when the check passes, a label and one line of detail.
+ */
+.panel {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 18px;
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.title {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.count {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.list {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+}
+
+/* Held by somebody else: still readable, because what is outstanding is exactly
+   what you tell them when you walk over. */
+.panel[data-muted='true'] .list { opacity: 0.6; }
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 10px 18px;
+  border-inline-start: 3px solid var(--noa-kit-success);
+  min-inline-size: 0;
+}
+
+/* Outstanding: the rail turns amber, and the words below say which kind it is. */
+.row[data-met='false'] { border-inline-start-color: var(--noa-kit-attention); }
+
+.dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: 18px;
+  block-size: 18px;
+  margin-block-start: 1px;
+  box-sizing: border-box;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-kit-success);
+  border: 2px solid var(--noa-kit-success);
+  color: var(--noa-color-text-inverse);
+}
+
+.row[data-met='false'] .dot {
+  background: var(--surface-card);
+  border-color: var(--noa-kit-attention);
+}
+
+.text { min-inline-size: 0; }
+
+.label {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.row[data-met='false'] .label { color: var(--noa-kit-attention); }
+
+.note {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+/* Colour is never the only signal: an outstanding check says in words whether it
+   stops the send or merely improves it. */
+.state {
+  display: inline-block;
+  margin-inline-end: 5px;
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  font-size: var(--noa-text-code);
+}
+
+.row[data-blocking='true'] .state { color: var(--noa-color-accent); }
+.row[data-blocking='false'] .state { color: var(--noa-kit-attention); }

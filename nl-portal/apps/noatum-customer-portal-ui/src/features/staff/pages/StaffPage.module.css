@@ -1,0 +1,98 @@
+.page { display: grid; gap: var(--noa-workspace-gap); min-width: 0; }
+
+/* Square corners and a soft shadow: cards are never rounded in this brand. */
+.panel {
+  background: var(--noa-color-surface);
+  border: var(--noa-card-border);
+  border-radius: var(--noa-radius-md);
+  box-shadow: var(--noa-card-shadow);
+  padding: var(--noa-card-padding);
+  display: grid;
+  gap: var(--noa-card-gap);
+  min-width: 0;
+}
+
+.toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.toolbar > svg { color: var(--text-muted); flex-shrink: 0; }
+.searchField { flex: 1 1 280px; min-width: 0; }
+
+.saved { font: var(--text-small); color: var(--text-body); margin: 0; }
+.error { font: var(--text-small); color: var(--color-primary); margin: 0; }
+.muted { font: var(--text-small); color: var(--text-muted); }
+
+.personCell { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+
+/* Navy by default, brand red for anyone who can administer staff, so the row
+   reads at a glance. The Roles column still names it: colour is never the only
+   signal. */
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent-navy);
+  color: var(--text-on-dark);
+  font-size: var(--noa-text-xs);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.avatarAdmin { background: var(--color-primary); }
+
+.person { display: grid; gap: var(--space-1); min-width: 0; }
+.person strong { color: var(--text-heading); font-weight: 700; overflow-wrap: anywhere; }
+.person span { font-size: var(--noa-text-xs); color: var(--text-muted); overflow-wrap: anywhere; }
+
+.badges { display: flex; flex-wrap: wrap; gap: var(--space-2); min-width: 0; }
+
+/* --- roles drawer ------------------------------------------------------- */
+
+/* Drawer chrome is the design system's (.noa-drawer-*); the form only has to
+   stretch between the header and the pinned footer. */
+.drawerForm { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.drawerFields { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+
+/* One bordered list rather than five separate cards: less ink, less height. */
+.roleList { border: 1px solid var(--border-subtle); }
+.roleRow {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  box-shadow: inset 3px 0 0 transparent;
+}
+.roleRow:last-child { border-bottom: 0; }
+.roleRowOn { background: var(--red-050); box-shadow: inset 3px 0 0 var(--color-primary); }
+.roleRow p {
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  margin: 0;
+  padding-left: var(--space-6);
+  line-height: var(--noa-leading-tight);
+}
+
+.callout {
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-section);
+  border-left: 3px solid var(--color-accent-navy);
+}
+
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.chips li {
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  background: var(--surface-section);
+  border: 1px solid var(--border-subtle);
+  padding: 2px var(--space-2);
+  line-height: var(--noa-leading-tight);
+}
+
+/* Two row actions sit side by side and must not wrap the grid open. */
+.rowActions {
+  display: flex;
+  gap: var(--noa-space-2);
+  flex-wrap: wrap;
+}

@@ -1,0 +1,653 @@
+/* ============================================================================
+ * The quotations landing page, under the instant quote form.
+ *
+ * A twelve-column grid on the same 1320 measure the rest of the customer side
+ * uses: the wide blocks take eight and the asides four, so "what is waiting"
+ * and "what happened to it" sit side by side rather than stacking into a column
+ * nobody scrolls to the end of.
+ * ========================================================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  min-inline-size: 0;
+}
+
+@media (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .kpis,
+  .wide {
+    grid-column: span 8;
+  }
+
+  .card:not(.wide) {
+    grid-column: span 4;
+  }
+
+  .kpis {
+    grid-column: 1 / -1;
+  }
+}
+
+/* --- the five numbers ------------------------------------------------------ */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 16px 20px 14px;
+  border-inline-end: 1px solid var(--surface-page);
+  min-inline-size: 0;
+}
+
+.kpiLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.kpiValue {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Brand red is for actions and errors: an expiry IS an error about to happen. */
+.alert {
+  color: var(--color-primary);
+}
+
+.good {
+  color: var(--noa-green-600);
+}
+
+.kpiOf {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.kpiNote {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- cards ------------------------------------------------------------------ */
+
+.card {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  min-inline-size: 0;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-4);
+}
+
+.cardLede {
+  min-inline-size: 0;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--text-heading);
+}
+
+.cardNote {
+  margin: 2px 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text-muted);
+}
+
+.cardAside {
+  flex: none;
+  min-inline-size: 0;
+}
+
+.cardFoot {
+  margin: var(--space-4) 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text-muted);
+}
+
+.cardLink,
+.rowLink {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.cardLink:hover,
+.rowLink:hover {
+  text-decoration: underline;
+}
+
+/*
+ * The mark on a generated figure.
+ *
+ * Small and beside the thing it qualifies rather than a banner over the page:
+ * most of this page is measured, and one caveat across all of it would make the
+ * real numbers look invented too.
+ */
+.sample {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: var(--noa-amber-050);
+  color: var(--noa-amber-600);
+  font-size: var(--noa-text-2xs);
+  font-weight: var(--noa-weight-black);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-5) 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- waiting on you --------------------------------------------------------- */
+
+.waiting {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--space-3);
+}
+
+/* The rule on top carries the state and the badge repeats it in words, so the
+   colour is a second signal rather than the only one. */
+.waitCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--noa-color-border);
+  border-block-start: 3px solid var(--color-accent-navy);
+  min-inline-size: 0;
+}
+
+.waitCard[data-state='expiring'] {
+  border-block-start-color: var(--color-primary);
+}
+
+.waitCard[data-state='options_ready'] {
+  border-block-start-color: var(--noa-amber-600);
+}
+
+.waitHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.waitRef {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-muted);
+}
+
+.waitBadge {
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: var(--surface-page);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-2xs);
+  font-weight: var(--noa-weight-black);
+  white-space: nowrap;
+}
+
+.waitCard[data-state='expiring'] .waitBadge {
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+
+.waitCard[data-state='options_ready'] .waitBadge {
+  background: var(--noa-amber-050);
+  color: var(--noa-amber-600);
+}
+
+.waitLane {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+}
+
+.waitLane svg {
+  color: var(--noa-color-text-muted);
+  flex: none;
+}
+
+.waitCargo {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.waitPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-block-start: var(--space-2);
+}
+
+.waitFrom {
+  font-size: var(--noa-text-2xs);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.waitAmount {
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.waitRule {
+  display: block;
+  block-size: 2px;
+  inline-size: 46%;
+  background: var(--color-primary);
+}
+
+.waitValid {
+  margin: 0;
+  flex: 1;
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+}
+
+.waitCta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-block-start: var(--space-2);
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.waitCta:hover {
+  text-decoration: underline;
+}
+
+/* --- the funnel -------------------------------------------------------------- */
+
+.funnel {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.funnelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.funnelLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+}
+
+.funnelCount {
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.funnelTrack {
+  display: block;
+  block-size: 10px;
+  margin-block-start: 5px;
+  background: var(--noa-chart-track);
+}
+
+.funnelFill {
+  display: block;
+  block-size: 100%;
+}
+
+/* The drop between two steps, which is the only number on the panel that says
+   anything a bare count does not. */
+.funnelMove {
+  margin: 6px 0 0;
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+}
+
+.funnelMove::before {
+  content: '↓ ';
+}
+
+/* --- contract against spot ---------------------------------------------------- */
+
+.laneTabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.laneTab {
+  padding: 6px 11px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: 16px;
+  background: var(--surface-card);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.laneTab[aria-pressed='true'] {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--red-050);
+}
+
+.rate {
+  min-inline-size: 0;
+}
+
+.rate svg {
+  inline-size: 100%;
+  block-size: auto;
+  display: block;
+  overflow: visible;
+}
+
+.rateLegend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-3);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.rateLegend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rateSwatchContract {
+  inline-size: 14px;
+  block-size: 3px;
+  background: var(--color-primary);
+}
+
+.rateSwatchSpot {
+  inline-size: 14px;
+  block-size: 0;
+  border-block-start: 2px dashed var(--noa-chart-2);
+}
+
+.rateSaving {
+  margin-inline-start: auto;
+  color: var(--noa-green-600);
+}
+
+.rateGrid {
+  stroke: var(--noa-chart-grid);
+  stroke-width: 1;
+}
+
+.rateAxis {
+  font-size: 9px;
+  font-weight: var(--noa-weight-bold);
+  fill: var(--noa-chart-axis);
+  letter-spacing: var(--noa-tracking-code);
+}
+
+/* The gap between the two lines IS the saving, so it is filled rather than left
+   to be judged by eye. */
+.rateGap {
+  fill: var(--noa-green-050);
+}
+
+.rateSpot {
+  fill: none;
+  stroke: var(--noa-chart-2);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.rateContract {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+
+/* --- how fast a price comes back ------------------------------------------------ */
+
+.speedHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-block-end: var(--space-4);
+  padding-block-end: var(--space-4);
+  border-block-end: 1px solid var(--surface-page);
+}
+
+.speedLede {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text);
+  min-inline-size: 0;
+}
+
+.speedList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.speedList li {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.speedLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+}
+
+/* --- the recent list ------------------------------------------------------------- */
+
+.tableScroll {
+  overflow-x: auto;
+  margin-inline: -20px;
+  padding-inline: 20px;
+  scrollbar-width: thin;
+}
+
+.table {
+  inline-size: 100%;
+  min-inline-size: 660px;
+  border-collapse: collapse;
+}
+
+.table thead th {
+  padding: 9px 10px;
+  background: var(--surface-page);
+  border-block: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.table tbody th,
+.table tbody td {
+  padding: 10px;
+  border-block-end: 1px solid var(--surface-page);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+  text-align: start;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-page);
+}
+
+.numeric {
+  text-align: end !important;
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.next {
+  color: var(--noa-color-text-muted);
+}
+
+/* --- ask again --------------------------------------------------------------------- */
+
+.reuse {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reuse li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px 0;
+  border-block-end: 1px solid var(--surface-page);
+  min-inline-size: 0;
+}
+
+.reuseIcon {
+  display: grid;
+  place-items: center;
+  inline-size: 30px;
+  block-size: 30px;
+  flex: none;
+  border-radius: var(--radius-btn);
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+
+.reuseLede {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.reuseLede strong {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+}
+
+.reuseLede small {
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .kpi {
+    border-block-end: 1px solid var(--surface-page);
+  }
+
+  .speedList li {
+    grid-template-columns: 80px minmax(0, 1fr);
+  }
+}

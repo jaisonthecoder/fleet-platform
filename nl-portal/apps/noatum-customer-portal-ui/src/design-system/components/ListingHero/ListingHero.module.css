@@ -1,0 +1,352 @@
+/* ============================================================================
+ * CH-14 · Listing hero, with the pipeline band.
+ *
+ * The dark band that opens a list page. Distinct from CH-09 (HeroBand), which
+ * opens a page about ONE thing and draws its route: this one opens a page about
+ * MANY things and draws where they all stand.
+ *
+ * The band runs edge to edge while its contents stay on the public measure, so
+ * the band belongs to the window and the content belongs to the page. It keeps
+ * an empty foot below its content and the listing climbs into it - that overlap
+ * is the whole effect, and it is why the band and the page have to agree on the
+ * measure. Change --noa-listing-hero-foot and --noa-listing-hero-rise together.
+ * ========================================================================== */
+
+.page {
+  min-width: 0;
+}
+
+.band {
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  flex: none;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+/* Hairline columns. The same canvas the sign-in panel and CH-09 paint. */
+.pattern {
+  position: absolute;
+  inset: 0;
+  background-image: var(--noa-hero-hairlines);
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  padding-block: var(--space-5) var(--noa-listing-hero-foot);
+  min-width: 0;
+}
+
+.measure {
+  max-width: var(--noa-public-max);
+  margin-inline: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--noa-public-gutter);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* The trail back up, above everything else in the band. */
+.breadcrumb {
+  margin-bottom: var(--space-4);
+  min-width: 0;
+}
+
+/* --- the headline --------------------------------------------------------- */
+
+.headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.lede {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-lockup);
+  color: var(--noa-color-hero-eyebrow);
+  text-transform: uppercase;
+}
+
+.title {
+  margin: var(--space-3) 0 0;
+  font-size: var(--noa-text-page);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-color-hero-text);
+}
+
+/* Held to a reading measure rather than the band's width: a subtitle that runs
+   the full 1320px is a line nobody's eye can return from. */
+.subtitle {
+  margin-top: var(--space-2);
+  max-width: 52ch;
+  font-size: var(--noa-text-body-kit);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark-muted);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  flex: none;
+}
+
+/* --- the pipeline band ---------------------------------------------------- */
+
+.pipeline {
+  margin-top: var(--space-5);
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  padding: var(--space-4) var(--space-4);
+  min-width: 0;
+}
+
+.pipelineHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.pipelineTitle {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  color: var(--noa-color-hero-label);
+  text-transform: uppercase;
+}
+
+.pipelineNote {
+  font-size: var(--noa-text-body-kit);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark-muted);
+}
+
+/*
+ * One bar, cut into segments proportional to the counts.
+ *
+ * A list, not a decoration: each segment is a button that filters, so it is
+ * marked up as one and reachable from the keyboard. The bar is the same
+ * information as the chips below it - which is deliberate, because the bar shows
+ * the shape and the chips carry the words.
+ */
+.bar {
+  display: flex;
+  height: var(--noa-pipe-bar-h);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--noa-color-hero-ring);
+}
+
+.segment {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-right: 2px solid var(--noa-color-hero);
+  background: var(--tone);
+  cursor: pointer;
+  /* Two segments can be the same grey. Opacity is what tells "requested" from
+     "declined" in the bar, and the chip below says which is which. */
+  opacity: var(--noa-pipe-weight, 1);
+}
+
+.segment:last-child {
+  border-right: 0;
+}
+
+/* Dimmed, not hidden: picking one segment has to leave the others visible or
+   the bar stops being a picture of the whole list. */
+.dimmed .segment:not([aria-pressed='true']) {
+  opacity: 0.3;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--noa-color-hero-border-strong);
+  border-radius: var(--radius-none);
+  background: transparent;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  min-width: 0;
+  color: var(--noa-color-hero-text);
+}
+
+.chip:hover {
+  border-color: var(--noa-color-hero-text);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--noa-color-hero-text);
+  background: var(--noa-color-hero-chip);
+}
+
+/* A picked segment leaves the rest quieter but still legible. */
+.dimmed .chip:not([aria-pressed='true']) {
+  color: var(--noa-color-hero-muted);
+}
+
+/*
+ * A state nothing is in. Still drawn, still coloured, still counted - the zero
+ * is the information. It just cannot be filtered to, so it does not pretend to
+ * be a control: no hover, no pointer, out of the tab order.
+ *
+ * Kept well above the 3:1 a disabled control is usually allowed, because this
+ * one is not really disabled - it is a reading of the list that happens to be
+ * empty, and it has to stay as readable as the rest of the legend.
+ */
+.chip[data-empty='true'] {
+  cursor: default;
+  border-color: var(--noa-color-hero-border);
+  color: var(--noa-color-hero-muted);
+}
+
+.chip[data-empty='true']:hover {
+  border-color: var(--noa-color-hero-border);
+}
+
+/* The mark keeps its own colour but steps back, so the legend still teaches you
+   which colour means which state even where the count is zero. */
+.chip[data-empty='true'] .chipMark {
+  opacity: 0.55;
+}
+
+.chipMark {
+  width: var(--noa-pipe-mark);
+  height: var(--noa-pipe-mark);
+  flex: none;
+  background: var(--tone);
+}
+
+/* A legend, not a heading: the filter row reads one step down from the title
+   above it so the band has an order to be read in. */
+.chipLabel {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+}
+
+.chipCount {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+/*
+ * Clearing the filter is an action, so it is drawn as one: a solid brand-red
+ * square the same height as the chips it sits beside. The label is carried by
+ * `aria-label` and a tooltip rather than as text — one glyph reads faster in a
+ * row of counts, and the row stops reflowing as the label's length changes
+ * between languages.
+ */
+.clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: var(--noa-clear-size);
+  block-size: var(--noa-clear-size);
+  border: 0;
+  border-radius: var(--radius-none);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  cursor: pointer;
+}
+
+.clear svg {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+}
+
+.clear:hover {
+  background: var(--noa-color-accent-hover);
+}
+
+.clear:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: var(--noa-focus-offset);
+}
+
+/* --- what rises into the foot -------------------------------------------- */
+
+/*
+ * The page's own content, pulled up into the band's empty foot. It carries the
+ * same measure as the band so the two line up, and it owns the shadow - the
+ * overlap is what makes the listing read as one object with the band rather than
+ * two panels stacked.
+ */
+.rise {
+  position: relative;
+  z-index: 1;
+  max-width: var(--noa-public-max);
+  margin-inline: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--noa-public-gutter);
+  padding-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  margin-top: calc(var(--noa-listing-hero-rise) * -1);
+}
+
+/* The line under the listing that explains it. Never a caption inside the card:
+   it is about the whole grid, not about any row. */
+.footnote {
+  font-size: var(--noa-text-body-kit);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+@media (max-width: 600px) {
+  .measure,
+  .rise {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+
+  .headline {
+    align-items: flex-start;
+  }
+}
+
+/*
+ * The listing rising into the band loses its border and takes the lifted
+ * shadow: an outline would draw a second edge across the navy, and the shadow is
+ * what makes the card look like it is in front of the band rather than cut into
+ * it. Scoped to `.rise`, so a listing anywhere else keeps its own card treatment.
+ */
+.rise :global(.noa-listing),
+.rise :global(.noa-panel) {
+  border: 0;
+  box-shadow: var(--noa-shadow-lifted);
+}

@@ -1,0 +1,143 @@
+/* SE-03 · Chip toggles and group pills. Measures from Noatum UI Kit.dc.html. */
+
+.field {
+  min-inline-size: 0;
+}
+
+.eyebrow {
+  margin: 0 0 var(--noa-kit-chip-gap);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+/* --- multi-select chips -------------------------------------------------- */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--noa-space-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  padding: var(--noa-kit-chip-gap) var(--noa-kit-card-gap); /* 10px 14px */
+  white-space: nowrap;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-filter-pill);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.chip:hover:not([data-disabled]) {
+  border-color: var(--noa-color-border-strong);
+}
+
+.chip:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.chip[data-state='on'] {
+  background: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.chip[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The drawn checkbox is what says "several answers", so it always shows. */
+.box {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: 0.875rem; /* 14px */
+  block-size: 0.875rem;
+  background: var(--noa-color-surface);
+  border: 2px solid var(--noa-neutral-400);
+  border-radius: 3px;
+}
+
+.chip[data-state='on'] .box {
+  background: var(--noa-color-accent);
+  border-color: var(--noa-color-accent);
+}
+
+.tick {
+  inline-size: 9px;
+  block-size: 9px;
+  stroke-width: 3.6;
+  color: var(--noa-color-text-inverse);
+  opacity: 0;
+}
+
+.chip[data-state='on'] .tick {
+  opacity: 1;
+}
+
+/* --- single-select pills ------------------------------------------------- */
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--noa-space-2) var(--noa-kit-heading-gap); /* 8px 12px */
+  white-space: nowrap;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: 18px;
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.pill:hover:not([data-disabled]) {
+  border-color: var(--noa-color-border-strong);
+}
+
+.pill:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.pill[data-state='on'] {
+  background: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.pill[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.count {
+  margin-inline-start: 6px;
+  padding: 3px 5px;
+  background: var(--noa-color-accent);
+  border-radius: 8px;
+  color: var(--noa-color-text-inverse);
+  font-size: 9px;
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+}

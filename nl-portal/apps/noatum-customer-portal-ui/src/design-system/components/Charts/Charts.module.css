@@ -1,0 +1,347 @@
+/* ============================================================================
+ * DA-10 · Chart kit.
+ *
+ * Every chart is inline SVG or plain boxes, and every colour is a token. The
+ * geometry lives in the component's viewBox; this file is the type, the rules
+ * and the parts that are cheaper as elements than as SVG.
+ * ========================================================================== */
+
+.chart {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.chart svg {
+  inline-size: 100%;
+  block-size: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* --- axes and grid --------------------------------------------------------- */
+
+.grid {
+  stroke: var(--noa-chart-grid);
+  stroke-width: 1;
+}
+
+.axis,
+.axisRight {
+  font-size: 9px;
+  font-weight: var(--noa-weight-bold);
+  fill: var(--noa-chart-axis);
+  letter-spacing: var(--noa-tracking-code);
+}
+
+.axisRight {
+  fill: var(--noa-amber-600);
+}
+
+.line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+/* The fill under a trend line. Quiet enough that the line stays the subject. */
+.area {
+  fill: var(--noa-navy-050);
+}
+
+/* A target is drawn, not implied: dashed so it cannot be mistaken for a series,
+   and in the success colour because crossing it is the good outcome. */
+.target {
+  stroke: var(--noa-chart-target);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.targetLabel {
+  font-size: 9px;
+  font-weight: var(--noa-weight-bold);
+  fill: var(--noa-chart-target);
+  letter-spacing: var(--noa-tracking-code);
+}
+
+/* --- legend ---------------------------------------------------------------- */
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.legendSwatch {
+  inline-size: 9px;
+  block-size: 9px;
+  flex: none;
+}
+
+.legendLine {
+  inline-size: 14px;
+  block-size: 2px;
+  flex: none;
+}
+
+/* --- donut ----------------------------------------------------------------- */
+
+.donut {
+  inline-size: 100%;
+  max-inline-size: 190px;
+  margin-inline: auto;
+}
+
+.donut svg {
+  inline-size: 100%;
+  block-size: auto;
+  display: block;
+}
+
+.donutValue {
+  font-size: 30px;
+  font-weight: var(--noa-weight-black);
+  fill: var(--text-heading);
+}
+
+.donutLabel {
+  font-size: 8px;
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  fill: var(--noa-color-text-muted);
+}
+
+/* --- ranges ---------------------------------------------------------------- */
+
+.ranges {
+  min-inline-size: 0;
+}
+
+.rangeGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rangeRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 54px;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rangeLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rangeTrack {
+  position: relative;
+  display: block;
+  block-size: 20px;
+  background: var(--surface-page);
+  min-inline-size: 0;
+}
+
+/* The promise: an outline, because it is a window rather than a measurement. */
+.rangeQuoted {
+  position: absolute;
+  inset-block: 2px;
+  border: 1px dashed var(--color-primary);
+}
+
+/* What happened: solid, because it did. */
+.rangeActual {
+  position: absolute;
+  inset-block: 8px;
+  background: var(--noa-chart-2-soft);
+  min-inline-size: 2px;
+}
+
+.rangeDot {
+  position: absolute;
+  inset-block-start: 7px;
+  inline-size: 7px;
+  block-size: 7px;
+  margin-inline-start: -3px;
+  border-radius: 50%;
+  background: var(--noa-chart-1);
+}
+
+.rangeValue {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.rangeAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-block-start: var(--space-2);
+  margin-inline-start: 162px;
+  padding-inline-end: 66px;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-chart-axis);
+}
+
+/* --- columns --------------------------------------------------------------- */
+
+.columns {
+  min-inline-size: 0;
+}
+
+.columnRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  block-size: 132px;
+}
+
+.column {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+  block-size: 100%;
+}
+
+.columnFill {
+  inline-size: 100%;
+  display: block;
+}
+
+.columnValue {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.columnLabel {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-chart-axis);
+  white-space: nowrap;
+}
+
+/* --- split bar ------------------------------------------------------------- */
+
+.split {
+  min-inline-size: 0;
+}
+
+.splitBar {
+  display: flex;
+  block-size: 16px;
+  inline-size: 100%;
+  background: var(--noa-chart-track);
+  overflow: hidden;
+}
+
+.splitPart {
+  display: block;
+  block-size: 100%;
+}
+
+/* --- in a table cell ------------------------------------------------------- */
+
+.meter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.meterTrack {
+  flex: 1 1 auto;
+  block-size: 5px;
+  background: var(--noa-chart-track);
+  min-inline-size: 28px;
+}
+
+.meterFill {
+  display: block;
+  block-size: 100%;
+  background: var(--noa-chart-1);
+}
+
+.meterFill[data-tone='good'] {
+  background: var(--noa-kit-success);
+}
+
+.meterFill[data-tone='warning'] {
+  background: var(--noa-amber-400);
+}
+
+.meterFill[data-tone='bad'] {
+  background: var(--color-primary);
+}
+
+.meterLabel {
+  flex: none;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.meterLabel[data-tone='good'] {
+  color: var(--noa-kit-success);
+}
+
+.meterLabel[data-tone='warning'] {
+  color: var(--noa-amber-600);
+}
+
+.meterLabel[data-tone='bad'] {
+  color: var(--color-primary);
+}
+
+.mini {
+  inline-size: 62px;
+  block-size: 24px;
+  display: block;
+}
+
+.miniLine {
+  fill: none;
+  stroke: var(--noa-chart-1);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+@media (max-width: 720px) {
+  .rangeRow {
+    grid-template-columns: 110px minmax(0, 1fr) 46px;
+  }
+
+  .rangeAxis {
+    margin-inline-start: 122px;
+    padding-inline-end: 58px;
+  }
+}

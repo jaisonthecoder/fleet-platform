@@ -1,0 +1,15 @@
+/* Dates sit in columns and get compared down the page, so the digits have to
+   line up. Mulish has no tabular figures by default. */
+.date {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.time {
+  color: var(--noa-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.absent {
+  color: var(--noa-color-text-muted);
+}

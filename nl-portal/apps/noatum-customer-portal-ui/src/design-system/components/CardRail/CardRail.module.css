@@ -1,0 +1,97 @@
+/* A row of cards that becomes a rail when there are too many to show at once. */
+
+/* Few enough to fit: an ordinary wrapping grid, and no rail to pay for. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--noa-rail-card)), 1fr));
+  gap: var(--space-3);
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+}
+
+.track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--noa-rail-card), 1fr);
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  /* Room for the focus ring on the first and last card, which a flush edge clips. */
+  padding: var(--noa-focus-width) 2px calc(var(--space-2) + var(--noa-focus-width));
+  min-inline-size: 0;
+}
+
+.track > * {
+  scroll-snap-align: start;
+  min-inline-size: 0;
+}
+
+.track:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+/* Proximity snapping, not mandatory: a card taller than the viewport with a
+   slider in it should never fight the user's own scroll. */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    scroll-behavior: auto;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  align-self: flex-end;
+}
+
+.position {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.step {
+  inline-size: 32px;
+  block-size: 32px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-accent);
+  cursor: pointer;
+}
+
+.step svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+}
+
+.step:hover:not(:disabled) {
+  border-color: var(--noa-color-accent);
+}
+
+.step:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+/* Disabled rather than hidden: a control that disappears at the end of the rail
+   moves the one beside it, and the customer clicks the wrong thing. */
+.step:disabled {
+  color: var(--noa-color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}

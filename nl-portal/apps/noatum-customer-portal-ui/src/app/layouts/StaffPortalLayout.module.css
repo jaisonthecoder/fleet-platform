@@ -1,0 +1,87 @@
+.brand { font: var(--text-h4); letter-spacing: var(--tracking-caps); }
+.brand small { font: var(--text-small); font-weight: 400; letter-spacing: var(--tracking-caps); }
+
+.context { display: inline-flex; align-items: center; gap: var(--space-3); min-width: 0; }
+
+/* Darker brand red keeps the badge legible on the red utility bar. */
+.roleBadge {
+  background: var(--red-700);
+  color: var(--text-on-dark);
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  padding: 2px var(--space-2);
+  white-space: nowrap;
+}
+
+.utilityMenu,
+.profileTrigger,
+.signOutButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: 0;
+  color: inherit;
+  font: var(--text-small);
+  cursor: pointer;
+  padding: var(--space-1);
+}
+
+.utilityMenu,
+.profileTrigger {
+  min-height: 28px;
+}
+
+.utilityMenu:hover,
+.profileTrigger:hover,
+.signOutButton:hover {
+  background: var(--red-700);
+}
+
+.utilityMenu svg:last-child,
+.profileTrigger svg:last-child {
+  width: 12px;
+  height: 12px;
+}
+
+.signOutButton {
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+}
+
+.signOutButton:disabled { cursor: not-allowed; opacity: 0.6; }
+
+.profileTrigger {
+  min-width: 0;
+}
+
+.utilityAvatar {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--text-on-dark);
+  color: var(--color-primary);
+  font-size: 10px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.profileMenu { min-width: 220px; }
+
+.profileEmail {
+  display: block;
+  padding: 0 var(--space-2) var(--space-2);
+  color: var(--text-body);
+  font-size: var(--noa-text-xs);
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .roleBadge { display: none; }
+}

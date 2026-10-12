@@ -1,0 +1,1195 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './motion.css';
+@import './scrollbars.css';
+@import './base.css';
+@import '@fontsource/mulish/400.css';
+@import '@fontsource/mulish/600.css';
+@import '@fontsource/mulish/700.css';
+@import '@fontsource/mulish/800.css';
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--red-600);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-popover: var(--surface-page);
+  --color-popover-foreground: var(--text-body);
+  --color-accent: var(--red-050);
+  --color-accent-foreground: var(--color-primary);
+  --color-input: var(--noa-color-border-strong);
+  --color-destructive: var(--red-600);
+  --color-destructive-foreground: var(--white);
+  --color-secondary: var(--surface-section);
+  --color-secondary-foreground: var(--text-body);
+  --radius-md: var(--radius-btn);
+  --radius-sm: var(--radius-none);
+  --radius-lg: var(--radius-none);
+}
+
+.noa-select-content,
+.noa-dropdown-content {
+  z-index: var(--noa-z-toast);
+  background: var(--surface-page);
+  color: var(--text-body);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-none);
+  box-shadow: var(--noa-card-shadow);
+  max-width: calc(100vw - var(--space-4));
+  font: var(--text-small);
+}
+.noa-select-content { max-height: min(320px, var(--radix-select-content-available-height)); }
+.noa-select-content [role='option'],
+.noa-dropdown-content [role^='menuitem'] {
+  min-height: 44px;
+  padding-block: var(--space-2);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.noa-select-content [data-highlighted],
+.noa-dropdown-content [data-highlighted] {
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+.noa-select-content [data-state='checked'] { color: var(--color-primary); font-weight: 700; }
+
+body {
+  font: var(--text-body-f);
+  letter-spacing: 0;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+svg {
+  width: var(--space-4);
+  height: var(--space-4);
+  flex-shrink: 0;
+  stroke-width: 1.5;
+}
+h1,
+h2,
+h3 {
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+h1 {
+  font: var(--text-h3);
+}
+h2 {
+  font: var(--text-h4);
+}
+h3 {
+  font: var(--text-small);
+  font-weight: 800;
+}
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+.noa-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-7);
+  height: var(--space-7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-btn);
+  background: var(--surface-page);
+  color: var(--text-heading);
+  flex-shrink: 0;
+}
+.noa-icon-button:hover {
+  background: var(--surface-section);
+}
+.noa-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--navy-950);
+  opacity: 0.55;
+  z-index: var(--noa-z-modal);
+}
+.noa-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: var(--noa-z-modal);
+  width: min(560px, calc(100% - var(--space-6)));
+  max-height: calc(100dvh - var(--space-6));
+  overflow: auto;
+  background: var(--surface-page);
+  padding: var(--noa-card-padding);
+  border: var(--noa-card-border);
+  box-shadow: var(--noa-card-shadow);
+  display: grid;
+  gap: var(--noa-card-gap);
+}
+.noa-dialog h2 {
+  padding-right: var(--space-7);
+}
+.noa-dialog-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  border: 0;
+}
+/* A side sheet is a workspace, not a card: the sheet itself is the page tint and
+   the white blocks inside it separate one group of fields from the next. */
+.noa-sheet-left,
+.noa-sheet-right {
+  top: 0;
+  height: 100dvh;
+  max-height: 100dvh;
+  transform: none;
+  width: min(760px, 96vw);
+  align-content: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--surface-section);
+}
+
+.noa-drawer-header {
+  flex-shrink: 0;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--noa-card-padding) var(--noa-space-5);
+  padding-right: var(--space-7);
+  background: var(--surface-card);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* The header already clears the close button, so the title needs no inset. */
+.noa-drawer-header h2 {
+  padding-right: 0;
+}
+
+.noa-drawer-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  gap: var(--noa-workspace-gap);
+  align-content: start;
+  padding: var(--noa-card-padding) var(--noa-space-5);
+}
+
+.noa-drawer-card {
+  display: grid;
+  gap: var(--noa-card-gap);
+  padding: var(--noa-card-padding);
+  background: var(--surface-card);
+  border: var(--noa-card-border);
+  box-shadow: var(--noa-card-shadow);
+}
+
+.noa-drawer-card-title {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Two fields to a row where they fit; one below the drawer's narrow breakpoint. */
+.noa-drawer-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.noa-drawer-fields > .noa-drawer-wide {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 620px) {
+  .noa-drawer-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.noa-drawer-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--noa-space-3) var(--noa-space-5);
+  background: var(--surface-card);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.noa-sheet-left {
+  left: 0;
+}
+.noa-sheet-right {
+  left: auto;
+  right: 0;
+}
+.noa-choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--space-7);
+}
+.noa-choice label {
+  cursor: pointer;
+}
+.noa-checkbox {
+  width: var(--space-5);
+  height: var(--space-5);
+  border: 1px solid var(--text-body);
+  background: var(--surface-page);
+  color: var(--text-on-dark);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.noa-checkbox[data-state='checked'],
+.noa-switch[data-state='checked'] {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.noa-choice:has(:disabled) {
+  opacity: 0.6;
+}
+.noa-switch {
+  width: var(--space-7);
+  height: var(--space-5);
+  padding: 2px;
+  border: 1px solid var(--text-body);
+  border-radius: var(--radius-btn);
+  background: var(--text-body);
+  flex-shrink: 0;
+}
+.noa-switch-thumb {
+  display: block;
+  width: var(--space-4);
+  height: var(--space-4);
+  background: var(--white);
+  transition: transform var(--noa-duration-fast) ease;
+}
+.noa-switch-thumb[data-state='checked'] {
+  transform: translateX(var(--space-5));
+}
+.noa-tooltip {
+  z-index: var(--noa-z-toast);
+  background: var(--text-heading);
+  color: var(--text-on-dark);
+  padding: var(--space-2) var(--space-3);
+  font: var(--text-small);
+  max-width: 260px;
+}
+.noa-tab-list {
+  display: flex;
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-x: auto;
+}
+.noa-tab {
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-3) var(--space-5);
+  background: var(--gray-200);
+  color: var(--text-heading);
+  min-height: var(--space-7);
+  font-weight: 700;
+}
+.noa-tab[data-state='active'] {
+  background: var(--surface-page);
+  border-bottom-color: var(--surface-page);
+  color: var(--color-primary);
+}
+.noa-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  font: var(--text-small);
+  font-weight: 700;
+  background: var(--surface-section);
+  color: var(--text-body);
+  border: 0;
+  border-radius: var(--radius-none);
+  box-shadow: none;
+}
+.noa-badge-info {
+  color: var(--navy-800);
+}
+.noa-badge-error {
+  color: var(--red-700);
+  background: var(--red-050);
+}
+.noa-badge-success {
+  color: var(--noa-success-700);
+  background: var(--noa-success-100);
+}
+.noa-badge-warning {
+  color: var(--noa-warning-700);
+  background: var(--noa-warning-100);
+}
+.noa-panel {
+  background: var(--surface-page);
+  padding: var(--space-7) var(--noa-listing-pad-x);
+  min-width: 0;
+}
+
+.noa-listing {
+  background: var(--surface-page);
+  border: var(--noa-card-border);
+  box-shadow: var(--noa-card-shadow);
+  min-width: 0;
+  font: var(--text-small);
+}
+.noa-listing-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  /* 16px above and below, 20px in from the card edge - the same 20px the rows
+     use, so the search lines up with the first column. */
+  padding: var(--space-4) var(--noa-listing-pad-x);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/*
+ * The search is a bordered BOX with a borderless field inside it, not a field
+ * with an icon floated over it. That is what lets the glyph, the text and the
+ * clear control share one outline at one height, and it is why the outline is
+ * the quiet table line rather than the heavier control line a lone input wears.
+ */
+.noa-listing-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1 1 300px;
+  min-width: 180px;
+  box-sizing: border-box;
+  height: var(--noa-listing-control-h);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-btn);
+  background: var(--surface-page);
+}
+
+.noa-listing-search:focus-within {
+  border-color: var(--color-primary);
+}
+
+.noa-listing-search > svg {
+  flex: none;
+  color: var(--color-primary);
+}
+
+/* The field itself carries no chrome: the box above is the control. */
+.noa-listing-search > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.noa-listing-search input {
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: var(--noa-text-sm);
+}
+
+.noa-listing-search input:focus,
+.noa-listing-search input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.noa-tool-button,
+.noa-view-switch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--noa-listing-control-h);
+  padding: 0 var(--space-4);
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--text-body);
+  background: var(--surface-page);
+}
+.noa-tool-button,
+.noa-view-switch {
+  /* The group line, a shade darker than the table rule: these are controls
+     sitting on the card, not divisions of it. */
+  border: 1px solid var(--noa-kit-group-line);
+  border-radius: var(--noa-radius-pagination);
+}
+.noa-view-switch {
+  display: flex;
+  overflow: hidden;
+  height: var(--noa-listing-control-h);
+  margin-inline-start: auto;
+}
+.noa-view-switch button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.noa-view-switch button + button {
+  border-left: 1px solid var(--border-subtle);
+}
+/* Navy, not black: the picked view is the application stating a mode, and navy
+   is the colour this brand uses for that. */
+.noa-view-switch [aria-pressed='true'] {
+  color: var(--text-on-dark);
+  background: var(--noa-color-hero);
+}
+.noa-counted-tabs {
+  padding-inline: var(--space-5);
+}
+.noa-counted-tabs .noa-tab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 0;
+  border-bottom: var(--heading-rule-h) solid transparent;
+  background: var(--surface-page);
+  white-space: nowrap;
+  padding: var(--space-3);
+  font: var(--text-small);
+  font-weight: 700;
+}
+.noa-counted-tabs .noa-tab[data-state='active'] {
+  border-bottom-color: var(--color-primary);
+}
+.noa-tab-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--space-5);
+  padding-inline: var(--space-1);
+  font-size: var(--noa-text-xs);
+  background: var(--surface-section);
+  color: var(--text-body);
+  border-radius: var(--radius-btn);
+}
+.noa-counted-tabs [data-state='active'] .noa-tab-count {
+  background: var(--color-primary);
+  color: var(--white);
+}
+
+/* Saved views: pills between the search and the view switch. Rounded where
+   nothing else in this brand is, because a pill is a choice among a few and a
+   square control is a button that does something. */
+.noa-listing-views {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.noa-listing-view {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--noa-radius-filter-pill);
+  background: var(--surface-page);
+  color: var(--text-heading);
+  padding: 11px var(--space-4);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.noa-listing-view:hover {
+  border-color: var(--color-primary);
+}
+
+.noa-listing-view > span {
+  font-weight: var(--noa-weight-regular);
+  color: var(--text-muted);
+}
+
+.noa-listing-view[aria-pressed='true'] {
+  border-color: var(--color-primary);
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+
+/* The bulk bar. Navy, because it is the application talking rather than the
+   list: it appears above the rows and pushes them down, never covering one. */
+.noa-listing-bulk {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-3) var(--space-5);
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-dense);
+  min-width: 0;
+}
+
+.noa-listing-bulk-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* An outline button on navy has to be outlined in white, or it is dark on dark.
+   The bar owns this rather than Button growing an on-dark variant: this is the
+   only navy surface in the product that carries ordinary buttons. */
+.noa-listing-bulk-actions button {
+  border-color: var(--noa-color-hero-outline);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+}
+
+.noa-listing-bulk-actions button:hover:not(:disabled) {
+  border-color: var(--noa-color-hero-text);
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+.noa-listing-bulk-clear {
+  margin-inline-start: auto;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.noa-table-scroll {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.noa-listing .noa-table {
+  min-width: var(--noa-table-min, 900px);
+  border-collapse: collapse;
+}
+/*
+ * Column spacing.
+ *
+ * The mockup lays a row out as a CSS grid with a 14px gap and 20px of padding at
+ * each end. A table has no gap, so half the gap goes on each side of every cell
+ * and the outer edges take the difference - which is why the first and last
+ * cells are addressed separately rather than the row being given padding it
+ * cannot have.
+ */
+.noa-listing .noa-table th,
+.noa-listing .noa-table td {
+  padding-inline: calc(var(--noa-listing-gap) / 2);
+}
+.noa-listing .noa-table th:first-child,
+.noa-listing .noa-table td:first-child {
+  padding-inline-start: var(--noa-listing-pad-x);
+}
+.noa-listing .noa-table th:last-child,
+.noa-listing .noa-table td:last-child {
+  padding-inline-end: var(--noa-listing-pad-x);
+}
+
+.noa-listing .noa-table th {
+  background: var(--noa-paper);
+  font-weight: var(--noa-weight-bold);
+  font-size: var(--noa-text-code);
+  line-height: var(--noa-leading-compact);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-block: 11px;
+  height: auto;
+  white-space: nowrap;
+}
+.noa-listing .noa-table th[aria-sort] {
+  color: var(--color-primary);
+}
+/* Height comes from the padding and the two lines inside, not from a fixed
+   figure: a row with a wrapped cargo line has to be allowed to be taller. */
+.noa-listing .noa-table td {
+  vertical-align: middle;
+  padding-block: var(--noa-listing-row-y);
+  border-bottom: 1px solid var(--surface-section);
+}
+/* Figures read down their right edge, and the action column sits at the end of
+   the row where the eye finishes. */
+.noa-listing .noa-table [data-align='end'] {
+  text-align: end;
+}
+/* The quiet second line, everywhere it appears: 11px, which is one step below
+   the 12px the route codes and the status pill use and two below the 14px
+   headline. Three sizes in a row is the whole typographic system of this grid. */
+.noa-listing .noa-table small,
+.noa-listing-card small {
+  display: block;
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-muted);
+}
+.noa-listing .noa-table strong {
+  color: var(--text-heading);
+}
+.noa-listing .noa-table tbody tr:hover {
+  background: var(--noa-paper);
+}
+
+/* A row action is a control inside a cell, not a form button under a field:
+   its height is what sets the height of the row, so it is the kit's smallest. */
+.noa-listing .noa-table td button:not([role='checkbox']) {
+  min-height: 34px;
+  height: 34px;
+  padding-inline: 13px;
+  font-size: var(--noa-text-xs);
+  white-space: nowrap;
+}
+
+/*
+ * The rail: a status stripe down the left of the row, drawn inside the first
+ * cell. A border on a <tr> does not paint in a collapsed table, and separating
+ * the borders to make it would cost every other rule in this block.
+ */
+.noa-listing .noa-table tbody tr[data-tone] > *:first-child {
+  box-shadow: inset var(--noa-listing-rail) 0 0 var(--tone);
+}
+
+.noa-listing .noa-table tbody tr[data-selected] {
+  background: var(--red-050);
+}
+
+.noa-table-select {
+  width: var(--space-6);
+}
+
+/* A checkbox in a form row reserves 48px so it can be hit comfortably beside
+   its label. In a grid cell it has no label and the ROW is the hit area, so the
+   reservation only makes every row 14px taller than the mockup draws it. */
+.noa-listing .noa-table .noa-choice {
+  min-height: 0;
+}
+
+/* 16px, not the 24px a form uses: in a row of 11 and 12 pixel type a 24px box is
+   the loudest thing on the line, and the row itself is the generous hit area. */
+.noa-listing .noa-table .noa-checkbox {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  border-radius: 3px;
+}
+
+.noa-listing .noa-table .noa-checkbox svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* --- listing cells -------------------------------------------------------- */
+
+.noa-stacked-cell {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.noa-stacked-cell > strong {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noa-stacked-cell > small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The customer's own number, in brand red: it is the string they will quote back
+   at us, and the one thing on the row that is theirs rather than ours. */
+.noa-stacked-cell a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.noa-stacked-cell a:hover,
+.noa-stacked-cell a:focus-visible {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.noa-stacked-cell[data-accent='true'] > small {
+  color: var(--color-primary);
+  font-weight: var(--noa-weight-bold);
+}
+
+.noa-route-cargo {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.noa-route-cargo-lane {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.noa-route-cargo-lane > strong {
+  flex: none;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+.noa-route-cargo-track {
+  position: relative;
+  flex: 1;
+  min-width: 18px;
+  height: 2px;
+  background: var(--border-subtle);
+}
+
+.noa-route-cargo-run {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  height: 2px;
+  background: var(--tone);
+}
+
+/* The marker rides the end of the run: a ring, so the line reads through it. */
+.noa-route-cargo-marker {
+  position: absolute;
+  inset-block-start: -5px;
+  margin-inline-start: -6px;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border: 2px solid var(--tone);
+  border-radius: 50%;
+  background: var(--surface-page);
+}
+
+.noa-route-cargo-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-compact);
+}
+
+.noa-route-cargo-line > svg {
+  flex: none;
+  color: var(--text-muted);
+}
+
+.noa-route-cargo-line > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.noa-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: var(--radius-btn);
+  background: var(--tone-surface);
+  color: var(--tone-ink);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+}
+
+.noa-status-pill-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+
+.noa-amount-cell {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.noa-amount-cell > strong {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  white-space: nowrap;
+}
+
+.noa-amount-cell > small {
+  white-space: nowrap;
+  font-size: var(--noa-text-eyebrow);
+  color: var(--text-muted);
+}
+
+/* A figure nobody has written yet is quiet, and says so in words underneath -
+   an em dash on its own is indistinguishable from a rendering fault. */
+.noa-amount-cell[data-muted='true'] > strong {
+  color: var(--text-muted);
+}
+
+.noa-validity {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.noa-validity > strong {
+  color: var(--tone-ink);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-tight);
+  white-space: nowrap;
+}
+
+.noa-validity-meter {
+  display: block;
+  height: var(--noa-listing-meter-h);
+  background: var(--border-subtle);
+}
+
+.noa-validity-meter > span {
+  display: block;
+  height: var(--noa-listing-meter-h);
+  background: var(--tone);
+}
+.noa-listing /* CH-11 · Pagination.
+   A leading list glyph, the rows-per-page group, then one outlined control
+   group: previous, the red page rule, the counter, next and last. Both groups
+   are 40px tall with a 6px radius and the slightly darker group line. */
+
+.noa-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  /* The same 20px the rows use, so "Showing 1-10 of 10" sits under the first
+     column rather than floating in from the card edge. */
+  padding: var(--space-4) var(--noa-listing-pad-x);
+  border-top: 1px solid var(--border-subtle);
+  font-size: var(--noa-text-sm);
+  color: var(--text-body);
+}
+
+/* The range reads as a sentence about the table, not as a control beside it. */
+.noa-pagination > span {
+  min-width: 0;
+  font-size: var(--noa-text-dense);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-body);
+}
+
+.noa-pagination-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-heading-gap);
+  max-width: 100%;
+}
+
+/* The rows-per-page group stands on its own, outside the arrows. */
+.noa-page-size {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  height: var(--noa-control-height-regular);
+  padding-inline: var(--noa-kit-affix-pad-x);
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-kit-group-line);
+  border-radius: var(--noa-radius-pagination);
+}
+
+.noa-page-size select,
+.noa-page-size button {
+  height: auto;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-bold);
+}
+
+.noa-page-size > svg {
+  color: var(--noa-color-text);
+}
+
+/* Previous, rule, counter, next and last share one outline. */
+.noa-pagination-group {
+  display: flex;
+  align-items: stretch;
+  height: var(--noa-control-height-regular);
+  overflow: hidden;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-kit-group-line);
+  border-radius: var(--noa-radius-pagination);
+}
+
+.noa-pagination-group > * + * {
+  border-left: 1px solid var(--noa-color-border);
+}
+
+.noa-pagination-group .noa-icon-button {
+  width: var(--noa-control-height-regular);
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  color: var(--noa-color-text-muted);
+}
+
+.noa-pagination-group .noa-icon-button:hover:not(:disabled) {
+  background: var(--noa-color-accent-subtle);
+}
+
+.noa-icon-button:disabled {
+  opacity: 0.45;
+}
+
+/* Fixed, not a progress bar: the kit draws a rule, not a measure. */
+.noa-page-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--noa-space-4);
+}
+
+.noa-page-progress > span {
+  display: block;
+  width: var(--noa-kit-page-rule-w);
+  height: var(--noa-kit-page-rule-h);
+  background: var(--noa-kit-page-rule);
+  border-radius: var(--noa-radius-tight);
+}
+
+.noa-page-number {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--noa-space-4);
+  white-space: nowrap;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text);
+}
+
+.noa-page-number strong {
+  margin-inline: var(--noa-space-1);
+  color: var(--noa-neutral-900);
+  font-weight: var(--noa-weight-extrabold);
+}
+
+edia (max-width: 420px) {
+  .noa-page-progress {
+    width: var(--space-5);
+    margin-inline: var(--space-1);
+  }
+  .noa-page-number {
+    padding-inline: var(--space-2);
+  }
+}
+.noa-swatch-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.noa-swatch {
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-3);
+  font: var(--text-small);
+}
+.noa-swatch-color {
+  height: var(--space-8);
+  margin-bottom: var(--space-3);
+}
+.noa-swatch-primary {
+  background: var(--color-primary);
+}
+.noa-swatch-navy {
+  background: var(--navy-800);
+}
+.noa-swatch-text {
+  background: var(--text-heading);
+}
+.noa-swatch-body {
+  background: var(--text-body);
+}
+.noa-swatch-surface {
+  background: var(--surface-section);
+}
+.noa-swatch-border {
+  background: var(--border-subtle);
+}
+.noa-display-sample {
+  font: var(--text-h3);
+}
+.noa-production-state {
+  max-width: var(--container-max);
+  margin: var(--space-8) auto;
+  padding: var(--space-5);
+}
+@media (max-width: 760px) {
+  .noa-field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .noa-swatch-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ========================================================================== */
+/* IN-01 · Fields                                                             */
+/*                                                                            */
+/* One treatment, applied by the shadcn primitives themselves, so every field  */
+/* in the product is correct without a component restyling it. Measures from   */
+/* Noatum UI Kit.dc.html: 40px tall, 1px #E5E5E5, 4px radius, 11/12 padding,   */
+/* 14px ink text, focus ringed inset in the action colour.                     */
+/* ========================================================================== */
+
+.noa-control {
+  width: 100%;
+  box-sizing: border-box;
+  height: var(--noa-control-height-regular);
+  padding-inline: var(--noa-kit-control-pad-x);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-surface);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-sm);
+}
+
+.noa-control::placeholder {
+  color: var(--noa-color-text-muted);
+}
+
+.noa-control:hover:not(:disabled):not([aria-invalid='true']) {
+  border-color: var(--noa-color-border-strong);
+}
+
+/* Fields ring inside their own border; buttons and pills ring outside. */
+.noa-control:focus-visible,
+.noa-control:focus {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.noa-control[aria-invalid='true'] {
+  border-color: var(--noa-color-accent);
+}
+
+.noa-control:disabled {
+  background: var(--noa-paper);
+  color: var(--noa-color-text-muted);
+  cursor: not-allowed;
+}
+
+/* A textarea grows, so it is padded rather than fixed, and keeps a reading
+   line-height the single-line control does not need. */
+.noa-control-multiline {
+  height: auto;
+  min-height: calc(var(--noa-control-height-regular) * 2);
+  padding-block: var(--noa-kit-control-pad-x);
+  line-height: var(--noa-leading-body);
+  resize: vertical;
+}
+
+.noa-label {
+  display: block;
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+/* "optional", never "required": the kit marks the exception, not the rule. */
+.noa-label small {
+  margin-inline-start: var(--noa-space-1);
+  color: var(--noa-color-text-muted);
+  font-weight: var(--noa-weight-regular);
+}
+
+/* --- the card view --------------------------------------------------------
+ *
+ * The same rows at a width where a nine-column grid stops being readable. Not a
+ * second design: the same cells, stacked, with the status rail moved from the
+ * left edge to the top because a card is read downwards.
+ */
+.noa-listing-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  min-width: 0;
+}
+
+.noa-listing-card {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+  border: 1px solid var(--border-subtle);
+  border-top: var(--noa-listing-rail) solid var(--tone, var(--noa-pipe-requested));
+  background: var(--surface-card);
+  padding: var(--space-4);
+  min-width: 0;
+}
+
+
+.noa-listing-card:hover {
+  box-shadow: var(--noa-shadow-raised);
+}
+
+.noa-listing-card > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* The card's own foot: the figure on the left, how long is left on the right. */
+.noa-listing-card .noa-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-3);
+  border-top: 1px solid var(--surface-section);
+  padding-top: var(--space-3);
+  min-width: 0;
+}
+
+.noa-listing-card .noa-row .noa-validity {
+  justify-items: end;
+  min-width: 96px;
+}

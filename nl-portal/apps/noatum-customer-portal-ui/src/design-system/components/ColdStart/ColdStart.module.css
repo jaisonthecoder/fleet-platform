@@ -1,0 +1,338 @@
+/* LD-05 … LD-09 · Cold start. Measures from Noatum UI Kit.dc.html. */
+
+.splash {
+  min-inline-size: 0;
+  box-shadow: var(--noa-card-shadow);
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 7px;
+}
+
+.word {
+  font-size: 1.625rem; /* 26px */
+  font-weight: var(--noa-weight-extrabold);
+  letter-spacing: -0.01em;
+  line-height: var(--noa-leading-none);
+}
+
+.suffix {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: 0.14em;
+  line-height: var(--noa-leading-none);
+}
+
+.message {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+}
+
+/* --- LD-05 dark / LD-06 light -------------------------------------------- */
+
+.splash[data-variant='dark'],
+.splash[data-variant='light'] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 44px var(--noa-kit-block-gap);
+}
+
+.splash[data-variant='dark'] {
+  background-color: var(--navy-950);
+  background-image: radial-gradient(
+    700px 260px at 80% -40%,
+    rgb(from var(--noa-color-accent) r g b / 0.4),
+    transparent 70%
+  );
+  color: var(--noa-color-text-inverse);
+}
+
+.splash[data-variant='dark'] .message {
+  color: var(--noa-on-dark-muted);
+}
+
+.splash[data-variant='light'] {
+  background: var(--noa-color-surface);
+  color: var(--navy-800);
+}
+
+.splash[data-variant='light'] .suffix {
+  color: var(--navy-800);
+}
+
+.splash[data-variant='light'] .message {
+  color: var(--noa-color-text-muted);
+}
+
+/* The single red leg: the whole brand gesture in one line. */
+.leg {
+  position: relative;
+  display: block;
+  inline-size: min(300px, 100%);
+  block-size: 2px;
+  background: var(--noa-color-hero-ring);
+}
+
+.splash[data-variant='light'] .leg {
+  background: var(--noa-color-border);
+}
+
+/* Layer one: the line itself, clipped so it grows rather than slides. */
+.legClip {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  overflow: hidden;
+}
+
+.legRun {
+  display: block;
+  inline-size: 100%;
+  block-size: 2px;
+  background: var(--noa-color-accent);
+  transform-origin: left;
+  animation: var(--noa-anim-run) 2.2s cubic-bezier(0.4, 0.05, 0.6, 0.95) infinite;
+}
+
+/* Layer two: the dot riding the leading edge. */
+.legSlide {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  animation: var(--noa-anim-slide) 2.2s cubic-bezier(0.4, 0.05, 0.6, 0.95) infinite;
+}
+
+.legDot {
+  position: absolute;
+  inset-inline-end: -4px;
+  inset-block-start: -3px;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+}
+
+/* LD-06: a light sweep crosses the wordmark once per cycle. */
+.splash[data-variant='light'] .brand {
+  position: relative;
+  overflow: hidden;
+  padding: 2px 4px;
+}
+
+.sweep {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 38px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(from var(--noa-color-accent) r g b / 0.16),
+    transparent
+  );
+  animation: var(--noa-anim-sweep) 2.6s ease-in-out infinite;
+}
+
+/* --- LD-07 loading bays --------------------------------------------------- */
+
+.splash[data-variant='bays'] {
+  padding: 32px var(--noa-kit-block-gap);
+  background: var(--navy-950);
+  color: var(--noa-color-text-inverse);
+}
+
+.splash[data-variant='bays'] .word {
+  font-size: var(--noa-text-lg);
+}
+
+.splash[data-variant='bays'] .suffix {
+  font-size: 9px;
+  color: var(--noa-color-hero-muted);
+}
+
+.bays {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--noa-space-2);
+  align-items: end;
+  margin-block-start: 22px;
+}
+
+.bays > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+}
+
+.bays i {
+  display: block;
+  inline-size: 100%;
+  block-size: 54px;
+  background: var(--noa-color-accent);
+  border: 1px solid var(--noa-color-hero-border);
+  transform-origin: bottom;
+  animation: var(--noa-anim-bay) 3s ease-in-out infinite;
+}
+
+.bays i[data-tone='success'] {
+  background: var(--noa-mint-400);
+}
+
+.bays i[data-tone='attention'] {
+  background: var(--noa-amber-400);
+}
+
+.bays small {
+  font-size: var(--noa-text-code);
+  line-height: var(--noa-leading-card);
+  text-align: center;
+  color: var(--noa-color-hero-muted);
+}
+
+/* --- LD-08 network rotation ----------------------------------------------- */
+
+.splash[data-variant='network'] {
+  padding: 32px var(--noa-kit-block-gap);
+  background: var(--navy-950);
+  color: var(--noa-color-text-inverse);
+}
+
+.splash[data-variant='network'] .word {
+  font-size: var(--noa-text-lg);
+}
+
+.splash[data-variant='network'] .suffix {
+  font-size: 9px;
+  color: var(--noa-color-hero-muted);
+}
+
+.network {
+  display: grid;
+  gap: var(--noa-kit-chip-gap);
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.network li {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  font-size: var(--noa-text-dense);
+  color: var(--noa-on-dark);
+  animation: var(--noa-anim-rise) 2.4s ease-in-out infinite;
+}
+
+.network i {
+  flex: none;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+}
+
+.network i[data-tone='success'] {
+  background: var(--noa-mint-400);
+}
+
+.network strong {
+  margin-inline-start: auto;
+  color: var(--noa-color-text-inverse);
+}
+
+/* --- LD-09 arrivals board ------------------------------------------------- */
+
+.splash[data-variant='board'] {
+  background: var(--noa-color-surface);
+}
+
+.splash[data-variant='board'] .brand {
+  justify-content: flex-start;
+  padding: var(--noa-kit-card-gap) var(--noa-kit-block-gap);
+  background: var(--navy-950);
+  color: var(--noa-color-text-inverse);
+}
+
+.splash[data-variant='board'] .word {
+  font-size: var(--noa-text-body-kit);
+}
+
+.splash[data-variant='board'] .suffix {
+  font-size: 8px;
+  color: var(--noa-color-hero-muted);
+}
+
+.board {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.board li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--noa-kit-heading-gap);
+  padding: var(--noa-kit-heading-gap) var(--noa-kit-block-gap);
+  border-block-end: 1px solid var(--noa-ground);
+  font-size: var(--noa-text-dense);
+  color: var(--noa-color-text);
+  animation: var(--noa-anim-board) 2.6s ease-out infinite;
+}
+
+.board li:last-child {
+  border-block-end: 0;
+}
+
+.board strong {
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-extrabold);
+  color: var(--noa-neutral-900);
+}
+
+.board strong[data-tone='action'] {
+  color: var(--noa-color-accent);
+}
+
+.board strong[data-tone='success'] {
+  color: var(--noa-kit-success);
+}
+
+.board strong[data-tone='attention'] {
+  color: var(--noa-kit-attention);
+}
+
+/* A cold start frozen mid-sequence looks broken, so every staged element
+   settles at its finished state instead. */
+@media (prefers-reduced-motion: reduce) {
+  .legRun {
+    transform: scaleX(1);
+  }
+
+  .legSlide,
+  .sweep {
+    animation: none;
+  }
+
+  .legDot {
+    inset-inline-end: -4px;
+  }
+
+  .bays i {
+    transform: scaleY(1);
+  }
+
+  .network li,
+  .board li {
+    opacity: 1;
+    transform: none;
+  }
+}

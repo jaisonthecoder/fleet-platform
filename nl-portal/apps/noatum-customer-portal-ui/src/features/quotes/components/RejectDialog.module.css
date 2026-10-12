@@ -1,0 +1,235 @@
+/* Rejecting a quotation, with the reason that lets the desk re-price. */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--noa-z-modal) - 1);
+  background: rgb(51 51 51 / 40%);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dialog {
+  position: fixed;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+  inline-size: min(520px, 92vw);
+  max-block-size: calc(100dvh - var(--space-6));
+  overflow-y: auto;
+  z-index: var(--noa-z-modal);
+  box-sizing: border-box;
+  background: var(--surface-card);
+  box-shadow: var(--noa-shadow-modal);
+}
+
+.head {
+  padding: 20px 24px;
+  border-block-start: 3px solid var(--noa-color-accent);
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--noa-text-xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.note {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.label {
+  display: block;
+  margin-block-end: 7px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.optional { color: var(--noa-color-text-muted); font-weight: var(--noa-weight-regular); }
+
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/*
+ * Whole rows rather than a radio and a label beside it: the target is the
+ * sentence, and a 14px dot is a hard thing to hit when you are annoyed enough
+ * to be rejecting a quotation.
+ */
+.reason {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1px solid var(--noa-color-border);
+  background: var(--surface-card);
+  text-align: start;
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+.reason:hover { border-color: var(--noa-color-accent); }
+
+.reason[data-on='true'] {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+}
+
+.reason:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: -2px;
+}
+
+.dot {
+  flex: none;
+  inline-size: 14px;
+  block-size: 14px;
+  box-sizing: border-box;
+  border-radius: var(--noa-radius-capsule);
+  border: 2px solid var(--noa-color-border-strong);
+  background: var(--surface-card);
+}
+
+.reason[data-on='true'] .dot {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+}
+
+.reasonText {
+  min-inline-size: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text);
+}
+
+.reason[data-on='true'] .reasonText { color: var(--noa-color-accent); }
+
+.textarea {
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 11px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  font-family: inherit;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-heading);
+  background: var(--surface-card);
+  resize: vertical;
+}
+
+.textarea:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.revision {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  inline-size: 100%;
+  box-sizing: border-box;
+  border: 0;
+  padding: 0;
+  background: none;
+  text-align: start;
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+.box {
+  flex: none;
+  inline-size: 16px;
+  block-size: 16px;
+  margin-block-start: 2px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--noa-color-border-strong);
+  border-radius: 3px;
+  background: var(--surface-card);
+  color: var(--noa-color-text-inverse);
+}
+
+.revision[data-on='true'] .box {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+}
+
+.revisionText {
+  min-inline-size: 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  border-block-start: 1px solid var(--noa-color-border);
+}
+
+.cancel {
+  padding: 12px 18px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-heading);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.confirm {
+  padding: 12px 22px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+/* Grey until a reason is picked: "why" is the whole point of this dialog. */
+.confirm:disabled {
+  background: var(--noa-neutral-400);
+  border-color: var(--noa-neutral-400);
+  cursor: not-allowed;
+}
+
+.cancel:focus-visible,
+.confirm:focus-visible,
+.revision:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}

@@ -1,0 +1,90 @@
+/* DA-05 · Mode ladder. Measures from Noatum UI Kit.dc.html. */
+
+.ladder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+}
+
+.row {
+  display: block;
+  inline-size: 100%;
+  min-inline-size: 0;
+  padding: 0;
+  text-align: start;
+  background: none;
+  border: 0;
+}
+
+button.row {
+  cursor: pointer;
+}
+
+button.row:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--noa-kit-chip-gap);
+  margin-block-end: 5px;
+}
+
+.label {
+  min-inline-size: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.row[data-tone='selected'] .label,
+.row[data-tone='selected'] .value {
+  color: var(--noa-color-accent);
+}
+
+.row[data-tone='preferred'] .label,
+.row[data-tone='preferred'] .value {
+  color: var(--noa-kit-success);
+}
+
+.detail {
+  margin-inline-start: 7px;
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text);
+}
+
+.value {
+  white-space: nowrap;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.track {
+  display: block;
+  block-size: 10px;
+  min-inline-size: 0;
+  background: var(--noa-ring-track);
+}
+
+.track > span {
+  display: block;
+  block-size: 10px;
+  --fill: 0%;
+  inline-size: var(--fill);
+  background: var(--noa-neutral-400);
+}
+
+.row[data-tone='selected'] .track > span {
+  background: var(--noa-color-accent);
+}
+
+.row[data-tone='preferred'] .track > span {
+  background: var(--noa-kit-success);
+}

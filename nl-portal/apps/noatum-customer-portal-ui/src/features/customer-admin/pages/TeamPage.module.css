@@ -1,0 +1,349 @@
+/*
+ * The customer surface, not the administration one.
+ *
+ * This page does the same job as the staff Customers screen, but it lives in the
+ * customer shell, so it uses the marketing --space-* ramp and the website card
+ * treatment rather than the dense --noa-space-* rail language. Same feature, two
+ * surfaces, on purpose: the shell boundary is what tells a customer they are on
+ * their own portal rather than inside Noatum's.
+ */
+
+.hero {
+  background-color: var(--noa-color-hero);
+  background-image: var(--noa-hero-pattern);
+  color: var(--noa-color-hero-text);
+  overflow: hidden;
+}
+
+.heroInner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--space-7) var(--space-5);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.heading {
+  margin: 0;
+  font: var(--text-h1);
+  color: inherit;
+}
+
+.rule {
+  width: 40px;
+  height: 3px;
+  background: var(--color-primary);
+}
+
+.lede {
+  margin: 0;
+  font: var(--text-body);
+  color: var(--noa-color-hero-muted);
+  max-width: 62ch;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+}
+
+.card {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-width: 0;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cardTitle {
+  margin: 0;
+  font: var(--text-h3);
+  color: var(--text-heading);
+}
+
+.cardNote {
+  margin: var(--space-1) 0 0;
+  font: var(--text-small);
+  color: var(--text-muted);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-6) var(--space-5);
+  font: var(--text-body);
+  color: var(--text-muted);
+}
+
+/* The table scrolls rather than the page, so the header stays put on a phone. */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--text-small);
+}
+
+.table th {
+  text-align: left;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--text-muted);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+  color: var(--text-body);
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.person {
+  display: block;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.email {
+  display: block;
+  color: var(--text-muted);
+}
+
+.roles {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.role {
+  border: 1px solid var(--border-subtle);
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+/* Colour is never the only signal: the word is the status, the tint supports it. */
+.status {
+  font-weight: 700;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.status[data-status='active'] {
+  color: var(--noa-green-600);
+  background: var(--noa-green-050);
+}
+
+.status[data-status='invited'] {
+  color: var(--noa-amber-600);
+  background: var(--noa-amber-050);
+}
+
+.status[data-status='disabled'] {
+  color: var(--text-muted);
+  background: var(--surface-muted, var(--noa-ring-track));
+}
+
+.rowActions {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  white-space: nowrap;
+}
+
+.link,
+.linkDanger {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.link { color: var(--color-accent-navy); }
+.linkDanger { color: var(--color-primary); }
+
+.link:disabled,
+.linkDanger:disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+/* --- failure ------------------------------------------------------------- */
+
+.state {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  border-left: 6px solid var(--color-primary);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.state p { margin: 0; }
+
+.stateTitle {
+  font: var(--text-h3);
+  color: var(--text-heading);
+}
+
+/* --- dialog -------------------------------------------------------------- */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 28, 44, 0.55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--space-5);
+  overflow-y: auto;
+  z-index: 40;
+}
+
+.dialog {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+  width: min(560px, 100%);
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dialogTitle {
+  margin: 0 0 var(--space-2);
+  font: var(--text-h2);
+  color: var(--text-heading);
+}
+
+.dialogNote {
+  margin: 0 0 var(--space-2);
+  font: var(--text-small);
+  color: var(--text-muted);
+}
+
+.dialogActions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: var(--space-4);
+}
+
+.spacer { flex: 1 1 auto; }
+
+.label {
+  font: var(--text-small);
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-top: var(--space-3);
+}
+
+.hint {
+  margin: var(--space-1) 0 0;
+  font: var(--text-small);
+  color: var(--text-muted);
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-btn);
+  padding: 10px 12px;
+  font: var(--text-body);
+  color: var(--text-heading);
+  background: var(--surface-card);
+  margin-top: var(--space-1);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--noa-color-focus);
+  outline-offset: 1px;
+}
+
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  min-width: 0;
+}
+
+.roleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.roleOption {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+}
+
+.roleOption:hover { border-color: var(--color-primary); }
+
+.roleName {
+  display: block;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.roleDesc {
+  display: block;
+  font: var(--text-small);
+  color: var(--text-muted);
+}
+
+.error {
+  margin: var(--space-3) 0 0;
+  border-left: 4px solid var(--color-primary);
+  background: var(--red-050);
+  padding: var(--space-2) var(--space-3);
+  font: var(--text-small);
+  color: var(--text-body);
+}
+
+.notice {
+  margin: var(--space-3) 0 0;
+  border-left: 4px solid var(--noa-green-600);
+  background: var(--noa-green-050);
+  padding: var(--space-2) var(--space-3);
+  font: var(--text-small);
+  color: var(--text-body);
+  overflow-wrap: anywhere;
+}
+
+.code {
+  font-family: var(--noa-font-mono);
+  font-size: 12px;
+}

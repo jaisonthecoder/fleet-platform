@@ -1,0 +1,72 @@
+# Rewrites the SF: paths of an lcov report so SonarQube can resolve them.
+#
+# The report was written by the unit-test job, on another agent, with paths
+# relative to wherever that tool decided (absolute, repo-relative, or relative
+# to its rootDir). SonarQube resolves a relative SF: path against the PROJECT
+# BASE DIR only, and sonarqube-scan-v2.yml fails the scan when it was handed
+# coverage it could not use -- so every path is made repo-relative here, and a
+# path that names no file in this checkout is dropped rather than guessed.
+#
+# A missing input is not an error: the tests may have produced no coverage, and
+# the scan template skips a coverage path that does not exist.
+
+parameters:
+  - name: lcov
+    type: string
+  - name: output
+    type: string
+
+steps:
+  - bash: |
+      set -euo pipefail
+      node <<'NODE'
+      const fs = require('node:fs');
+      const path = require('node:path');
+      const input = process.env.QR_LCOV_IN;
+      const output = process.env.QR_LCOV_OUT;
+      const root = process.env.QR_SOURCE_ROOT;
+      if (!fs.existsSync(input)) {
+        console.log(`##vso[task.logissue type=warning]No unit coverage report at ${input}; SonarQube will run without coverage.`);
+        process.exit(0);
+      }
+      const inside = (candidate) => {
+        const relative = path.relative(root, candidate);
+        return relative && !relative.startsWith('..') && !path.isAbsolute(relative)
+          && fs.existsSync(candidate) && fs.statSync(candidate).isFile();
+      };
+      let kept = 0;
+      let dropped = 0;
+      let skipping = false;
+      const lines = [];
+      for (const line of fs.readFileSync(input, 'utf8').split(/\r?\n/)) {
+        if (line.startsWith('SF:')) {
+          const reported = line.slice(3).replaceAll('\\', '/');
+          const afterWorkspace = reported.includes('/s/') ? reported.slice(reported.lastIndexOf('/s/') + 3) : reported;
+          const resolved = [reported, afterWorkspace, path.join('src', reported)]
+            .map((candidate) => path.resolve(root, candidate))
+            .find(inside);
+          skipping = !resolved;
+          if (skipping) {
+            dropped += 1;
+            continue;
+          }
+          kept += 1;
+          lines.push(`SF:${path.relative(root, resolved).split(path.sep).join('/')}`);
+          continue;
+        }
+        if (skipping) {
+          if (line === 'end_of_record') skipping = false;
+          continue;
+        }
+        lines.push(line);
+      }
+      fs.mkdirSync(path.dirname(output), { recursive: true });
+      fs.writeFileSync(output, `${lines.join('\n')}\n`);
+      console.log(`Rebased ${kept} source file(s) to the checkout; dropped ${dropped} that name no file here.`);
+      NODE
+    displayName: 'Rebase coverage paths to this checkout'
+    condition: succeededOrFailed()
+    env:
+      QR_LCOV_IN: ${{ parameters.lcov }}
+      QR_LCOV_OUT: ${{ parameters.output }}
+      QR_SOURCE_ROOT: $(Build.SourcesDirectory)

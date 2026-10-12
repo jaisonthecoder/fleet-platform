@@ -1,0 +1,197 @@
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: var(--noa-space-3);
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+}
+
+.modeGrid,
+.radioGrid {
+  display: grid;
+  gap: var(--noa-space-3);
+}
+
+.modeGrid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--noa-selection-mode-min)), 1fr));
+}
+
+.radioGrid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--noa-selection-radio-min)), 1fr));
+}
+
+.optionLabel {
+  min-width: 0;
+  cursor: pointer;
+}
+
+.optionLabel:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.modeCard,
+.radioCard {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-text);
+}
+
+.modeCard {
+  flex-direction: column;
+  gap: var(--noa-space-2);
+  padding: var(--noa-selection-card-padding);
+  border-width: 2px;
+}
+
+.radioCard {
+  align-items: flex-start;
+  gap: var(--noa-space-3);
+  padding: var(--noa-space-4);
+}
+
+.optionLabel input:checked + .modeCard,
+.optionLabel input:checked + .radioCard {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+}
+
+.optionLabel input:focus-visible + .modeCard,
+.optionLabel input:focus-visible + .radioCard,
+.optionLabel input:focus-visible + .chip {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-space-1);
+}
+
+.iconTile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--noa-icon-tile-size);
+  height: var(--noa-icon-tile-size);
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-neutral-50);
+  color: var(--noa-color-text);
+}
+
+.optionLabel input:checked + .modeCard .iconTile {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.optionText {
+  display: grid;
+  gap: var(--noa-space-1);
+  min-width: 0;
+}
+
+.optionText strong {
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-tight);
+}
+
+.optionText small {
+  color: var(--noa-color-text-muted);
+  font-size: var(--noa-text-code);
+  line-height: var(--noa-leading-normal);
+}
+
+.radioMark {
+  flex: none;
+  width: var(--noa-space-4);
+  height: var(--noa-space-4);
+  box-sizing: border-box;
+  border: 2px solid var(--noa-color-border-strong);
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-surface);
+  box-shadow: inset 0 0 0 2px var(--noa-color-surface);
+}
+
+.optionLabel input:checked + .radioCard .radioMark {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--noa-space-2);
+}
+
+.chip,
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-height: var(--noa-control-height-regular);
+  padding-inline: var(--noa-space-4);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-filter-pill);
+  background: var(--noa-color-surface);
+  color: var(--noa-neutral-900);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+}
+
+.optionLabel input:checked + .chip {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.checkboxMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--noa-space-4);
+  height: var(--noa-space-4);
+  box-sizing: border-box;
+  border: 2px solid var(--noa-color-border-strong);
+  border-radius: var(--noa-radius-sm);
+  color: transparent;
+  font-size: var(--noa-text-code);
+}
+
+.optionLabel input:checked + .chip .checkboxMark {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.chip small {
+  color: var(--noa-color-text-muted);
+  font-weight: var(--noa-weight-regular);
+}
+
+.filterChip {
+  cursor: pointer;
+}
+
+.filterChip:hover {
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.filterChip strong {
+  padding: var(--noa-space-1) var(--noa-space-2);
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-code);
+}

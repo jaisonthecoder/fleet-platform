@@ -1,0 +1,179 @@
+# Quality pipeline for noatum-customer-portal-ui: unit tests, SonarQube and
+# Checkmarx, published as Quality Radar evidence.
+#
+# REPORT-ONLY. Nothing here deploys, and a red scan never blocks delivery:
+# a first scan of an existing codebase finds a backlog, and Quality Radar owns
+# the gates so they stay visible and adjustable. Test failures still turn the
+# run red, as they should.
+#
+# What Quality Radar collects from this run (no credential leaves ADO; the
+# collector pulls the artifacts after the run completes):
+#   [qr:unit] JUnit run + qr-evidence-unit-<slug>        -> Testing tab
+#   qr-evidence-sonarqube-<slug>/sonarqube-report.json   -> Code quality
+#   CheckmarxReports-JSON/checkmarx-report.json          -> Security > SAST
+# The artifact names are the contract with the collector's classifier; do not
+# rename them.
+#
+# Credentials are service connections, never variables in this file:
+#   SonarQube-Stg                                          sonarqubestg.adports.ae
+#   sc-checkmarx-Shared Services-JUL-noatum-customer-portal Checkmarx One
+
+name: 'quality $(Date:yyyyMMdd).$(Rev:r)'
+
+trigger:
+  branches:
+    include:
+      - main
+pr: none
+
+resources:
+  repositories:
+    # Pinned tag, never a branch: a moving ref changes what this pipeline runs
+    # without anyone editing it. At least v1.4.13: earlier tags' Sonar stage
+    # installs the old npm sonar-scanner 3.1 wrapper, which ignores
+    # -Dsonar.token and is refused (401) by sonarqubestg.
+    - repository: adpQualityTemplates
+      type: git
+      name: Quality_Radar/adp-pipeline-templates
+      ref: refs/tags/v1.4.13
+    # The UI generates src/api/generated/ from the API's openapi.json, read from
+    # a sibling checkout (scripts/generate-api.mjs --offline). The generated
+    # files are gitignored, so the tests cannot compile without it.
+    - repository: noatumApi
+      type: git
+      name: noatum-customer-portal-api
+      ref: refs/heads/main
+
+variables:
+  - name: serviceSlug
+    value: noatum-customer-portal-ui
+  # 24: @nestjs/common 12 ships ESM only, and Jest loads ESM from a CommonJS
+  # test through Node's native require(esm), which needs Node 24.9 or newer.
+  # SonarQube's scanner needs 22.12+, so one version serves every job.
+  - name: nodeVersion
+    value: '24.x'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: UnitTests
+    displayName: 'Unit tests with coverage'
+    dependsOn: []
+    jobs:
+      - job: unit
+        displayName: 'Unit: ${{ variables.serviceSlug }}'
+        timeoutInMinutes: 30
+        steps:
+          # `path: s` keeps this repository at $(Build.SourcesDirectory), where
+          # a single checkout would put it; the API lands beside it, which is
+          # the relative path the generator expects.
+          - checkout: self
+            fetchDepth: 1
+            path: s
+          - checkout: noatumApi
+            fetchDepth: 1
+            path: noatum-customer-portal-api
+
+          - task: NodeTool@0
+            displayName: 'Use Node.js $(nodeVersion)'
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          # No lockfile is committed yet, so this resolves the tree fresh.
+          # --legacy-peer-deps: the repo was a pnpm workspace, which tolerates
+          # peer ranges npm rejects (eslint-plugin-react does not yet list
+          # eslint 10). Lint plugins do not affect the test run. The
+          # coverage provider is added for this run only (--no-save), pinned to
+          # the vitest that was installed, because the two must match exactly.
+          - script: |
+              set -euo pipefail
+              npm install --legacy-peer-deps --no-audit --no-fund
+              vitest_version="$(node -p "require('vitest/package.json').version")"
+              # --legacy-peer-deps also skips installing peers, so the one the tests
+              # import (a peer of @testing-library/react) is named explicitly.
+              npm install --no-save --legacy-peer-deps --no-audit --no-fund "@vitest/coverage-v8@${vitest_version}" @testing-library/dom
+            displayName: 'Install dependencies'
+
+          - script: node scripts/generate-api.mjs --offline
+            displayName: 'Generate the API client from openapi.json'
+
+          - script: >
+              npx vitest run --environment jsdom --exclude "e2e/**"
+              --reporter=default --reporter=junit --outputFile.junit=junit.xml
+              --coverage.enabled=true --coverage.provider=v8 --coverage.reportOnFailure=true
+              --coverage.reporter=lcov --coverage.reporter=json-summary --coverage.reporter=cobertura
+            displayName: 'Run unit tests with coverage'
+
+          - task: PublishTestResults@2
+            displayName: 'Publish unit JUnit results'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: JUnit
+              testResultsFiles: 'junit*.xml'
+              # `[qr:unit]` is the collector's suite key. Do not reword it.
+              testRunTitle: '[qr:unit] ${{ variables.serviceSlug }} ($(Build.SourceBranchName))'
+              failTaskOnFailedTests: false
+              mergeTestResults: true
+
+          - template: stages/qr-publish-evidence.yml@adpQualityTemplates
+            parameters:
+              suite: unit
+              serviceSlug: ${{ variables.serviceSlug }}
+              flatten:
+                - 'coverage/*'
+                - 'junit*.xml'
+              recurse:
+                - 'coverage/lcov-report'
+
+  - stage: SonarQube
+    displayName: 'SonarQube analysis'
+    dependsOn: [UnitTests]
+    # A failing test suite is exactly when static analysis is worth having.
+    condition: not(canceled())
+    jobs:
+      - job: sonarqube
+        displayName: 'SonarQube: ${{ variables.serviceSlug }}'
+        timeoutInMinutes: 30
+        steps:
+          # Full history: SonarQube SCM blame needs more than a shallow clone.
+          - checkout: self
+            fetchDepth: 0
+
+          - task: NodeTool@0
+            displayName: 'Use Node.js $(nodeVersion)'
+            inputs:
+              versionSpec: $(nodeVersion)
+
+          - task: DownloadBuildArtifacts@1
+            displayName: 'Download unit coverage evidence'
+            continueOnError: true
+            inputs:
+              buildType: current
+              downloadType: single
+              artifactName: 'qr-evidence-unit-${{ variables.serviceSlug }}'
+              downloadPath: '$(Pipeline.Workspace)/qr-coverage'
+
+          - template: templates/sonar-credentials.yml
+            parameters:
+              projectKey: ${{ variables.serviceSlug }}
+
+          - template: templates/rebase-lcov.yml
+            parameters:
+              lcov: '$(Pipeline.Workspace)/qr-coverage/qr-evidence-unit-${{ variables.serviceSlug }}/lcov.info'
+              output: '$(Pipeline.Workspace)/qr-coverage/unit.lcov'
+
+          - template: stages/sonarqube-scan-v2.yml@adpQualityTemplates
+            parameters:
+              workingDirectory: '.'
+              projectKey: ${{ variables.serviceSlug }}
+              serviceSlug: ${{ variables.serviceSlug }}
+              requireConfiguration: true
+              scannerVersion: '5.0.0'
+              extraArgs: '-Dsonar.sources=src -Dsonar.exclusions=**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx -Dsonar.sourceEncoding=UTF-8 -Dsonar.projectVersion=$(Build.BuildId) -Dsonar.scm.revision=$(Build.SourceVersion)'
+              lcovReportPaths:
+                - '$(Pipeline.Workspace)/qr-coverage/unit.lcov'
+
+  - template: templates/checkmarx.yml
+    parameters:
+      serviceSlug: ${{ variables.serviceSlug }}

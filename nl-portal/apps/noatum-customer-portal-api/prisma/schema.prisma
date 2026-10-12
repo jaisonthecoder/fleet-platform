@@ -1,0 +1,1514 @@
+// Noatum Customer Platform - API data model.
+//
+// Conventions:
+//  - snake_case table and column names via @@map / @map.
+//  - Every table holding customer data carries customer_group_id and is covered by an RLS
+//    policy created in SQL under prisma/migrations. Prisma does not manage RLS; the SQL does.
+//  - The app connects as a limited role (portal_app); migrations run as portal_owner.
+
+generator client {
+  provider        = "prisma-client-js"
+}
+
+datasource db {
+  provider   = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum CustomerTier {
+  basic
+  standard
+  premium
+
+  @@map("customer_tier")
+}
+
+/// Lifecycle from the onboarding design. `active` is a guarded transition, not a
+/// value anybody may simply set: it requires a confirmed link and an accepted
+/// administrator. `closed` releases the links so the codes can be reused.
+enum CustomerStatus {
+  draft
+  onboarding
+  active
+  suspended
+  closed
+
+  @@map("customer_status")
+}
+
+/// How a directory row came to exist. `manual` rows stay provisional until a
+/// source run confirms them.
+enum OrgSourceKind {
+  feed
+  file
+  manual
+
+  @@map("org_source_kind")
+}
+
+enum OrgImportMode {
+  snapshot
+  delta
+
+  @@map("org_import_mode")
+}
+
+enum OrgImportOutcome {
+  running
+  succeeded
+  failed
+  aborted
+
+  @@map("org_import_outcome")
+}
+
+enum UserStatus {
+  /// Signed in and recognised, but holds no roles yet - the access-pending state.
+  registered
+  invited
+  active
+  suspended
+  disabled
+
+  @@map("user_status")
+}
+
+enum InvitationStatus {
+  pending
+  accepted
+  expired
+  revoked
+
+  @@map("invitation_status")
+}
+
+/// Purpose binding for local-auth tokens. A token issued for one purpose is never
+/// accepted for another, so a reset link cannot complete an activation.
+enum LocalChallengePurpose {
+  activation
+  password_reset
+  mfa_enrolment
+  bootstrap
+
+  @@map("local_challenge_purpose")
+}
+
+enum QuoteStatus {
+  draft
+  /// The customer has asked. Nobody has picked it up.
+  requested
+  /// A named person owns it. The claim expires after the `claimExpiry` setting.
+  claimed
+  /// Answered, and deliberately NOT visible to the customer yet.
+  priced
+  /// Second-person check, required only above the `threshold` setting.
+  approved
+  /// Released. The customer can see the options and decide.
+  published
+  /// Deprecated, superseded by `requested`. Retained because enum values cannot be dropped in place.
+  submitted
+  /// Deprecated, superseded by `published` - it already meant customer-visible.
+  quoted
+  /// Deprecated, superseded by `priced` under pubMode = cw1.
+  pending_sync
+  /// Deprecated. Rate-engine states kept only as the seam behind quotations.instant_rate.
+  rated
+  rate_failed
+  expired
+  accepted
+  rejected
+  withdrawn
+
+  @@map("quote_status")
+}
+
+enum TransportMode {
+  air
+  sea
+  road
+  rail
+
+  @@map("transport_mode")
+}
+
+enum JobStatus {
+  queued
+  running
+  succeeded
+  failed
+  dead
+
+  @@map("job_status")
+}
+
+// ---------------------------------------------------------------------------
+// Tenancy
+// ---------------------------------------------------------------------------
+
+/// The tenant boundary. Every RLS policy keys off customer_group_id.
+model CustomerGroup {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// Customer hierarchy, portal-owned. NOT a CargoWise organisation hierarchy.
+  parentId  String?      @map("parent_id") @db.Uuid
+  name      String       @db.VarChar(200)
+  legalName String?      @map("legal_name") @db.VarChar(240)
+  countryCode String?    @map("country_code") @db.Char(2)
+  slug      String       @unique @db.VarChar(80)
+  tier      CustomerTier @default(standard)
+  /// Domains a Customer Admin may invite without a Noatum override.
+  emailDomains String[]  @default([]) @map("email_domains")
+  status    CustomerStatus @default(draft)
+  /// Used when a link does not name its own servicing office.
+  defaultServicingBranchId String? @map("default_servicing_branch_id") @db.Uuid
+  /// Feature flags, seeded from TIER_DEFAULT_FLAGS then overridden per group.
+  flags     Json         @default("{}")
+  isActive  Boolean      @default(true) @map("is_active")
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  parent      CustomerGroup?  @relation("CustomerHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children    CustomerGroup[] @relation("CustomerHierarchy")
+  defaultServicingBranch Branch? @relation("CustomerDefaultServicing", fields: [defaultServicingBranchId], references: [id], onDelete: SetNull)
+  accounts    CustomerAccount[]
+  users       User[]
+  invitations Invitation[]
+  quotes      Quote[]
+  quoteReferenceCounter QuoteReferenceCounter?
+  addresses   AddressBookEntry[]
+  templates   QuoteTemplate[]
+  auditEvents AuditEvent[]
+  integrationMessages IntegrationMessage[]
+
+  @@index([parentId])
+  @@index([status])
+  @@map("customer_group")
+}
+
+/// A billing/operational account inside a group, mapped to one CW1 organisation.
+model CustomerAccount {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String   @map("customer_group_id") @db.Uuid
+  name            String   @db.VarChar(200)
+  /// CW1 organisation code - the join key into CargoWise. Globally unique on its
+  /// normalised form: one code belongs to exactly one customer.
+  cw1OrgCode      String   @map("cw1_org_code") @db.VarChar(40)
+  /// The directory row this account is linked to. The database refuses a link to
+  /// an organisation that no source has confirmed.
+  orgId           String?  @map("org_id") @db.Uuid
+  /// Why this organisation was linked. Recorded, not approved by a second person.
+  justification   String?
+  linkedByUserId  String?  @map("linked_by_user_id") @db.Uuid
+  linkedAt        DateTime? @map("linked_at") @db.Timestamptz(6)
+  /// Noatum office servicing this link; falls back to the customer's default.
+  servicingBranchId String? @map("servicing_branch_id") @db.Uuid
+  countryCode     String?  @map("country_code") @db.Char(2)
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group  CustomerGroup       @relation(fields: [customerGroupId], references: [id], onDelete: Cascade)
+  org    MasterOrg?          @relation(fields: [orgId], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  linkedBy   User?           @relation("AccountLinkedBy", fields: [linkedByUserId], references: [id], onDelete: SetNull)
+  servicingBranch Branch?    @relation("AccountServicing", fields: [servicingBranchId], references: [id], onDelete: SetNull)
+  access UserAccountAccess[]
+  quotes Quote[]
+  invitations Invitation[]
+
+  @@unique([customerGroupId, cw1OrgCode])
+  @@index([customerGroupId])
+  @@index([orgId])
+  @@index([servicingBranchId])
+  @@map("customer_account")
+}
+
+/// Read model of CW1 organisations, used by admin search when linking accounts.
+///
+/// Two columns exist in the database but deliberately not here: `code_norm` and
+/// `customer_account.org_confirmed` are GENERATED ALWAYS ... STORED, which Prisma
+/// cannot express and must never try to write. Query them through raw SQL.
+///
+/// Writes go through app.apply_organisation_batch(), never through this client:
+/// the runtime role has no INSERT/UPDATE/DELETE grant on the table.
+model MasterOrg {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// The organisation code as the source spells it.
+  sourceCode String @map("source_code") @db.VarChar(40)
+  sourceSystem   String        @default("cw1") @map("source_system") @db.VarChar(20)
+  /// CargoWise instance namespace. Placeholder until ORG-D02 names the real ones.
+  sourceInstance String        @default("unassigned") @map("source_instance") @db.VarChar(40)
+  sourceKind     OrgSourceKind @default(feed) @map("source_kind")
+
+  name        String  @db.VarChar(240)
+  legalName   String? @map("legal_name") @db.VarChar(240)
+  /// OrgHeader.Category. Code list is not published; nothing keys off it yet.
+  category    String? @db.VarChar(3)
+  /// The CargoWise Is* role flags that were true, spelled as the source spells them.
+  sourceRoles String[] @default([]) @map("source_roles")
+  countryCode String? @map("country_code") @db.Char(2)
+  city        String? @db.VarChar(120)
+  state       String? @db.VarChar(120)
+  postcode    String? @db.VarChar(40)
+
+  /// CargoWise ControllingBranch, NOT the Noatum servicing branch.
+  sourceBranchCode String? @map("source_branch_code") @db.VarChar(40)
+  /// CargoWise ControllingCustomer.Code. Evidence only; never an access grant.
+  sourceControllingCustomerCode String? @map("source_controlling_customer_code") @db.VarChar(40)
+
+  /// Portal-derived: CargoWise has no IsCustomer field. See category/sourceRoles.
+  isCustomer Boolean @default(false) @map("is_customer")
+  /// Portal-derived. See category/sourceRoles.
+  isSupplier Boolean @default(false) @map("is_supplier")
+  isActive   Boolean @default(true) @map("is_active")
+
+  /// The link gate. Only a confirmed organisation can be linked to a customer,
+  /// enforced by composite foreign key rather than by a service check.
+  isSourceConfirmed Boolean @default(false) @map("is_source_confirmed")
+  confirmedByRunId  String? @map("confirmed_by_run_id") @db.Uuid
+
+  sourceVersion String?   @map("source_version") @db.VarChar(80)
+  sourceHash    String?   @map("source_hash") @db.Char(64)
+  firstSeenAt   DateTime  @default(now()) @map("first_seen_at") @db.Timestamptz(6)
+  lastSeenAt    DateTime? @map("last_seen_at") @db.Timestamptz(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  confirmedByRun OrgImportRun?      @relation(fields: [confirmedByRunId], references: [id], onDelete: SetNull)
+  addresses      OrgAddress[]
+  registrations  OrgRegistrationId[]
+  contacts       OrgContact[]
+  changes        OrgChangeLog[]
+  accounts       CustomerAccount[]
+
+  @@unique([id, isSourceConfirmed], map: "master_org_id_is_source_confirmed_key")
+  @@index([name])
+  @@index([isActive])
+  @@index([category])
+  @@index([countryCode])
+  @@map("master_org")
+}
+
+/// Addresses beneath an organisation. No customer column and no link table:
+/// FR-ORG-005 forbids address-level linking, so it is given nowhere to live.
+model OrgAddress {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orgId             String   @map("org_id") @db.Uuid
+  sourceAddressCode String   @map("source_address_code") @db.VarChar(60)
+  /// OrgAddressCapability.AddressType codes. Display and routing only.
+  purposes          String[] @default([])
+  isPrimary         Boolean  @default(false) @map("is_primary")
+  companyNameOverride String? @map("company_name_override") @db.VarChar(100)
+  addressLine1      String?  @map("address_line_1") @db.VarChar(200)
+  addressLine2      String?  @map("address_line_2") @db.VarChar(200)
+  city              String?  @db.VarChar(120)
+  state             String?  @db.VarChar(120)
+  postcode          String?  @db.VarChar(40)
+  countryCode       String?  @map("country_code") @db.Char(2)
+  /// UN/LOCODE from OrgAddress.RelatedPortCode.
+  relatedPortCode   String?  @map("related_port_code") @db.VarChar(5)
+  email             String?  @db.VarChar(254)
+  phone             String?  @db.VarChar(20)
+  /// The source's own formatting, kept verbatim.
+  formatted         String?
+  isActive          Boolean  @default(true) @map("is_active")
+  sourceHash        String?  @map("source_hash") @db.Char(64)
+  firstSeenAt       DateTime @default(now()) @map("first_seen_at") @db.Timestamptz(6)
+  lastSeenAt        DateTime? @map("last_seen_at") @db.Timestamptz(6)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  org      MasterOrg    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  contacts OrgContact[]
+
+  @@unique([orgId, sourceAddressCode])
+  @@index([orgId])
+  @@map("org_address")
+}
+
+/// Repeatable and jurisdiction-qualified. Never one universal VAT field.
+model OrgRegistrationId {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orgId        String   @map("org_id") @db.Uuid
+  /// OrgCusCode.CodeType. Code list comes from Noatum CargoWise.
+  scheme       String   @db.VarChar(40)
+  schemeDescription String? @map("scheme_description") @db.VarChar(35)
+  value        String   @db.VarChar(254)
+  jurisdiction String?  @db.Char(2)
+  isCountryDefault Boolean @default(false) @map("is_country_default")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  org MasterOrg @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@map("org_registration_id")
+}
+
+/// Created empty and left unpopulated until ORG-D05 clears. A contact is never
+/// an identity, an invitation or a recipient authorisation.
+model OrgContact {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  addressId String?  @map("address_id") @db.Uuid
+  fullName  String   @map("full_name") @db.VarChar(200)
+  jobTitle  String?  @map("job_title") @db.VarChar(160)
+  email     String?  @db.VarChar(320)
+  phone     String?  @db.VarChar(60)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  org     MasterOrg   @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  address OrgAddress? @relation(fields: [addressId], references: [id], onDelete: SetNull)
+
+  @@index([orgId])
+  @@map("org_contact")
+}
+
+/// One row per import run. Reinstated as a recorded exception to simplification
+/// register C6 - the mockups need last-run counts, error totals, snapshot versus
+/// delta and next scheduled run, which is more than one audit blob should carry.
+/// Acceptance is gate ORG-D07.
+model OrgImportRun {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceKind     OrgSourceKind    @map("source_kind")
+  sourceSystem   String           @default("cw1") @map("source_system") @db.VarChar(20)
+  sourceInstance String           @map("source_instance") @db.VarChar(40)
+  mode           OrgImportMode
+  /// Only an authoritative run may deactivate organisations absent from it.
+  isAuthoritative Boolean         @default(false) @map("is_authoritative")
+  startedById    String?          @map("started_by_id") @db.Uuid
+  fileName       String?          @map("file_name") @db.VarChar(260)
+  fileHash       String?          @map("file_hash") @db.Char(64)
+  rowsRead       Int              @default(0) @map("rows_read")
+  rowsCreated    Int              @default(0) @map("rows_created")
+  rowsUpdated    Int              @default(0) @map("rows_updated")
+  rowsUnchanged  Int              @default(0) @map("rows_unchanged")
+  rowsDeactivated Int             @default(0) @map("rows_deactivated")
+  rowsRejected   Int              @default(0) @map("rows_rejected")
+  errors         Json             @default("[]")
+  outcome        OrgImportOutcome @default(running)
+  startedAt      DateTime         @default(now()) @map("started_at") @db.Timestamptz(6)
+  finishedAt     DateTime?        @map("finished_at") @db.Timestamptz(6)
+
+  confirmed MasterOrg[]
+  changes   OrgChangeLog[]
+  startedBy User?         @relation(fields: [startedById], references: [id], onDelete: SetNull)
+
+  @@index([startedAt(sort: Desc)])
+  @@map("org_import_run")
+}
+
+/// Written only when a row's hash actually changes, not on every touch.
+model OrgChangeLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orgId      String   @map("org_id") @db.Uuid
+  runId      String?  @map("run_id") @db.Uuid
+  changeType String   @map("change_type") @db.VarChar(20)
+  before     Json?
+  after      Json?
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  org MasterOrg     @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  run OrgImportRun? @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  @@index([orgId, createdAt(sort: Desc)])
+  @@index([runId])
+  @@map("org_change_log")
+}
+
+// ---------------------------------------------------------------------------
+// Noatum operating structure
+//
+// Deliberately separate from customer data: a Region/Branch is where Noatum
+// works from, not where a customer is. Internal reference data, never tenant
+// scoped.
+// ---------------------------------------------------------------------------
+
+/// A grouping of operating branches. Membership and policy precedence are still
+/// open (D-16/D-18), so this carries no behaviour beyond grouping.
+model Region {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code      String   @unique @db.VarChar(20)
+  name      String   @db.VarChar(120)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  branches Branch[]
+
+  @@map("region")
+}
+
+/// A Noatum operating office. Staff are assigned to one; the pricing queue is
+/// branch scoped.
+model Branch {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  regionId    String? @map("region_id") @db.Uuid
+  /// Portal-owned identifier. NOT a CargoWise branch code.
+  code        String  @unique @db.VarChar(40)
+  name        String  @db.VarChar(160)
+  city        String? @db.VarChar(120)
+  countryCode String? @map("country_code") @db.Char(2)
+  /// The CargoWise branch code, once that contract is confirmed (D-03). Never
+  /// invented here, and never written back to the source.
+  sourceBranchCode String? @map("source_branch_code") @db.VarChar(40)
+  /// Where the record came from: `manual` until an authoritative import exists.
+  source      String   @default("manual") @db.VarChar(20)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  region Region? @relation(fields: [regionId], references: [id], onDelete: SetNull)
+  users  User[]
+  servicedLinks     CustomerAccount[] @relation("AccountServicing")
+  defaultForCustomers CustomerGroup[] @relation("CustomerDefaultServicing")
+
+  @@index([regionId])
+  @@map("branch")
+}
+
+// ---------------------------------------------------------------------------
+// Identity and authorization
+// ---------------------------------------------------------------------------
+
+model User {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String?    @map("customer_group_id") @db.Uuid
+  /// Entra object id. Null until first sign-in for invited users.
+  entraObjectId   String?    @unique @map("entra_object_id") @db.Uuid
+  /// Token issuer. With idpSubject this is the identity anchor - never email alone.
+  idpIssuer       String?    @map("idp_issuer") @db.VarChar(256)
+  /// Token subject claim, stable per issuer.
+  idpSubject      String?    @map("idp_subject") @db.VarChar(128)
+  email           String     @unique @db.Citext
+  displayName     String     @map("display_name") @db.VarChar(200)
+  locale          String     @default("en-US") @db.VarChar(10)
+  status          UserStatus @default(invited)
+  /// True for Noatum staff, who are not scoped to a single customer group.
+  isInternal      Boolean    @default(false) @map("is_internal")
+  /// The operating branch a member of staff works from. Pricing scope depends on it.
+  branchId        String?    @map("branch_id") @db.Uuid
+  lastLoginAt     DateTime?  @map("last_login_at") @db.Timestamptz(6)
+  createdAt       DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group    CustomerGroup?      @relation(fields: [customerGroupId], references: [id], onDelete: SetNull)
+  branch   Branch?             @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  roles    UserRole[]
+  accounts UserAccountAccess[]
+  importRuns       OrgImportRun[]
+  linkedAccounts   CustomerAccount[] @relation("AccountLinkedBy")
+  localCredential    LocalCredential?
+  localSessions      LocalSession[]
+  localChallenges    LocalSecurityChallenge[]
+  localMfaFactor     LocalMfaFactor?
+  localRecoveryCodes LocalRecoveryCode[]
+  integrationMessages IntegrationMessage[]
+  claimedQuotes   Quote[] @relation("QuoteClaimedBy")
+  pricedQuotes    Quote[] @relation("QuotePricedBy")
+  uploadedFiles   StoredFile[]
+  approvedQuotes  Quote[] @relation("QuoteApprovedBy")
+  publishedQuotes Quote[] @relation("QuotePublishedBy")
+  decidedQuotes   Quote[] @relation("QuoteDecidedBy")
+  settingChanges  SettingValue[] @relation("SettingUpdatedBy")
+  recordedCosts   QuoteChargeLineCost[] @relation("ChargeCostRecordedBy")
+
+  @@unique([idpIssuer, idpSubject])
+  @@index([customerGroupId])
+  @@index([branchId])
+  @@map("user")
+}
+
+model Role {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key         String   @unique @db.VarChar(60)
+  name        String   @db.VarChar(120)
+  description String?  @db.VarChar(400)
+  /// Noatum-internal roles are not assignable by customer admins.
+  isInternal  Boolean  @default(false) @map("is_internal")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@map("role")
+}
+
+model Permission {
+  /// Matches a constant in src/contracts, e.g. "quotes.create".
+  key         String  @id @db.VarChar(80)
+  description String? @db.VarChar(400)
+
+  roles RolePermission[]
+
+  @@map("permission")
+}
+
+model RolePermission {
+  roleId        String @map("role_id") @db.Uuid
+  permissionKey String @map("permission_key") @db.VarChar(80)
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionKey], references: [key], onDelete: Cascade)
+
+  @@id([roleId, permissionKey])
+  @@map("role_permission")
+}
+
+model UserRole {
+  userId       String   @map("user_id") @db.Uuid
+  roleId       String   @map("role_id") @db.Uuid
+  /// The administrator who granted this role. Null for migration/bootstrap grants.
+  assignedById String?  @map("assigned_by_id") @db.Uuid
+  assignedAt   DateTime @default(now()) @map("assigned_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_role")
+}
+
+/// Restricts a user to a subset of the accounts in their group. No rows means all accounts.
+model UserAccountAccess {
+  userId    String @map("user_id") @db.Uuid
+  accountId String @map("account_id") @db.Uuid
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account CustomerAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@id([userId, accountId])
+  @@map("user_account_access")
+}
+
+model Invitation {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String           @map("customer_group_id") @db.Uuid
+  email           String           @db.Citext
+  /// Hash only - the raw token is emailed and never stored.
+  tokenHash       String           @unique @map("token_hash") @db.VarChar(128)
+  status          InvitationStatus @default(pending)
+  expiresAt       DateTime         @map("expires_at") @db.Timestamptz(6)
+  invitedById     String?          @map("invited_by_id") @db.Uuid
+  acceptedAt      DateTime?        @map("accepted_at") @db.Timestamptz(6)
+  /// Role keys granted on acceptance. Decided when the invitation is sent, never
+  /// by the person opening the link. Customer presets only.
+  roleKeys        String[]         @default([]) @map("role_keys")
+  /// Captured at invitation time so a pending list shows names, not addresses.
+  displayName     String?          @map("display_name") @db.VarChar(200)
+  /// Capped at three by the onboarding design.
+  resendCount     Int              @default(0) @map("resend_count")
+  /// Optional single-office restriction, applied to user_account_access on accept.
+  officeAccountId String?          @map("office_account_id") @db.Uuid
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  group         CustomerGroup            @relation(fields: [customerGroupId], references: [id], onDelete: Cascade)
+  officeAccount CustomerAccount?         @relation(fields: [officeAccountId], references: [id], onDelete: SetNull)
+  challenges    LocalSecurityChallenge[]
+
+  @@index([customerGroupId, status])
+  @@index([officeAccountId])
+  @@map("invitation")
+}
+
+// ---------------------------------------------------------------------------
+// Phase 1 features
+// ---------------------------------------------------------------------------
+
+model Quote {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String        @map("customer_group_id") @db.Uuid
+  accountId       String?       @map("account_id") @db.Uuid
+  reference       String        @db.VarChar(40)
+  status          QuoteStatus   @default(draft)
+  mode            TransportMode
+  /// load_type lookup code (FCL, LCL, FTL, LTL). Null where the mode has none.
+  /// A different axis from `mode`: a road request is FTL or LTL on the same one.
+  loadType        String?       @map("load_type") @db.VarChar(8)
+  originCode      String        @map("origin_code") @db.VarChar(20)
+  destinationCode String        @map("destination_code") @db.VarChar(20)
+  /// Incoterms 2020 rule. FOB, CFR, CIF and FAS are sea-only; the service enforces that.
+  incoterm        String?       @db.VarChar(11)
+  /// When the cargo is available. Not the requested arrival, not the quote validity.
+  readyDate       DateTime?     @map("ready_date") @db.Timestamptz(6)
+  customerReference String?     @map("customer_reference") @db.VarChar(60)
+  serviceLevel    String?       @map("service_level") @db.VarChar(40)
+  /// Line items, packages and dimensions as submitted.
+  payload         Json          @default("{}")
+  /// Rate engine response, verbatim, for audit.
+  rateResponse    Json?         @map("rate_response")
+  grossWeightKg   Decimal?      @map("gross_weight_kg") @db.Decimal(12, 3)
+  /// As submitted. Chargeable weight derives from it, so it has to survive.
+  volumeM3        Decimal?      @map("volume_m3") @db.Decimal(12, 3)
+  chargeableKg    Decimal?      @map("chargeable_kg") @db.Decimal(12, 3)
+  /// The CUSTOMER's remarks, captured with the request. Never written by staff.
+  notes           String?
+  /// The pricer's covering message. Drafted while pricing, sent only on publish.
+  messageToCustomer String?     @map("message_to_customer")
+  /// Minor units. Never a float.
+  totalMinorUnits BigInt?       @map("total_minor_units")
+  currency        String?       @db.Char(3)
+  validUntil      DateTime?     @map("valid_until") @db.Timestamptz(6)
+  /// Customer-visible. Incremented when an already-published quote is re-priced.
+  version         Int           @default(1)
+  /// Internal holder of the pricing claim. NEVER projected into a customer DTO.
+  claimedById     String?       @map("claimed_by_id") @db.Uuid
+  claimedAt       DateTime?     @map("claimed_at") @db.Timestamptz(6)
+  pricedById      String?       @map("priced_by_id") @db.Uuid
+  pricedAt        DateTime?     @map("priced_at") @db.Timestamptz(6)
+  approvedById    String?       @map("approved_by_id") @db.Uuid
+  approvedAt      DateTime?     @map("approved_at") @db.Timestamptz(6)
+  publishedById   String?       @map("published_by_id") @db.Uuid
+  publishedAt     DateTime?     @map("published_at") @db.Timestamptz(6)
+  /// Which priced option the customer chose. The booking and invoice hang off this.
+  acceptedOptionId String?      @map("accepted_option_id") @db.Uuid
+  /// Optional: a customer owes no explanation for declining.
+  declineReason   String?       @map("decline_reason") @db.VarChar(400)
+  decidedAt       DateTime?     @map("decided_at") @db.Timestamptz(6)
+  decidedById     String?       @map("decided_by_id") @db.Uuid
+  createdById     String?       @map("created_by_id") @db.Uuid
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group     CustomerGroup    @relation(fields: [customerGroupId], references: [id], onDelete: Cascade)
+  account   CustomerAccount? @relation(fields: [accountId], references: [id], onDelete: SetNull)
+  claimedBy User?            @relation("QuoteClaimedBy", fields: [claimedById], references: [id], onDelete: SetNull)
+  pricedBy  User?            @relation("QuotePricedBy", fields: [pricedById], references: [id], onDelete: SetNull)
+  approvedBy User?           @relation("QuoteApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  publishedBy User?          @relation("QuotePublishedBy", fields: [publishedById], references: [id], onDelete: SetNull)
+  decidedBy   User?          @relation("QuoteDecidedBy", fields: [decidedById], references: [id], onDelete: SetNull)
+  acceptedOption QuoteOption? @relation("QuoteAcceptedOption", fields: [acceptedOptionId], references: [id], onDelete: SetNull)
+  options   QuoteOption[]
+  dangerousGoods QuoteDangerousGoods[]
+  equipment QuoteEquipment[]
+  temperatureControl QuoteTemperatureControl?
+  oversizeItems QuoteOversizeItem[]
+  documents QuoteDocument[]
+
+  @@unique([customerGroupId, reference])
+  @@index([customerGroupId, status, createdAt])
+  @@map("quote")
+}
+
+/// Dangerous goods captured with a request: one row per UN number and packaging
+/// variant, never one per quote.
+///
+/// NOT a dangerous goods declaration. 49 CFR 172.204(d)(1) requires that to be
+/// signed by the shipper or their agent, and CargoWise owns it. This exists so a
+/// specialist can price the request and ask a carrier whether it will accept -
+/// nothing here authorises transport.
+///
+/// Columns are nullable because the DATABASE holds what different entries can
+/// have: class 2 and class 7 carry no packing group, only class 3 carries a
+/// flashpoint. What a customer must SUPPLY is a validation rule, and a stricter
+/// one - see `dangerousGoodsSchema` and docs/gaps.md G3.
+model QuoteDangerousGoods {
+  id           String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId      String  @map("quote_id") @db.Uuid
+  position     Int
+  /// Four digits, stored as typed. Leading zeros are part of the number.
+  unNumber     String  @map("un_number") @db.VarChar(4)
+  /// Class or division against the hazard_class lookup. Free text, not an enum:
+  /// divisions move between editions and an enum would need a migration to follow.
+  hazardClass  String  @map("hazard_class") @db.VarChar(8)
+
+  properShippingName String?  @map("proper_shipping_name") @db.VarChar(240)
+  subsidiaryRisks    String[] @map("subsidiary_risks")
+  /// Nullable and must stay so: class 2 and class 7 entries never carry one.
+  packingGroup       String?  @map("packing_group") @db.VarChar(4)
+  technicalName      String?  @map("technical_name") @db.VarChar(240)
+  flashpointCelsius  Decimal? @map("flashpoint_celsius") @db.Decimal(6, 2)
+  emsCode            String?  @map("ems_code") @db.VarChar(40)
+  isMarinePollutant  Boolean  @default(false) @map("is_marine_pollutant")
+
+  packagingType          String?  @map("packaging_type") @db.VarChar(80)
+  unPackagingCode        String?  @map("un_packaging_code") @db.VarChar(20)
+  packageCount           Int?     @map("package_count")
+  netQuantityPerPackage  Decimal? @map("net_quantity_per_package") @db.Decimal(12, 3)
+  quantityUnit           String?  @map("quantity_unit") @db.VarChar(8)
+  transportRegime        String?  @map("transport_regime") @db.VarChar(40)
+  isInOverpack           Boolean  @default(false) @map("is_in_overpack")
+
+  /// `lineId` values from quote.payload.packages, validated by the service on
+  /// write. Becomes a real link table once cargo lines get their own table.
+  appliesToLines String[] @map("applies_to_lines")
+
+  notes     String?  @db.VarChar(2000)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@unique([quoteId, position])
+  @@index([quoteId])
+  @@index([hazardClass])
+  @@index([unNumber])
+  @@map("quote_dangerous_goods")
+}
+
+/// Containers requested on a full-container quote. One row per type; `quantity`
+/// carries the count.
+///
+/// `unitId` shares a namespace with `payload.packages[].lineId`, so a dangerous
+/// goods entry can name either a package line or a container as the cargo it
+/// sits in without a second column or a discriminator.
+model QuoteEquipment {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId       String   @map("quote_id") @db.Uuid
+  position      Int
+  unitId        String   @map("unit_id") @db.VarChar(64)
+  /// container_type lookup code. Free text against the lookup, not an enum.
+  containerType String   @map("container_type") @db.VarChar(20)
+  quantity      Int
+  /// Not validated against the type's payload: the binding figure is on the
+  /// individual container's CSC plate. The form warns; nothing refuses.
+  grossWeightPerUnitKg Decimal? @map("gross_weight_per_unit_kg") @db.Decimal(12, 3)
+  notes         String?  @db.VarChar(400)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@unique([quoteId, position])
+  @@unique([quoteId, unitId])
+  @@index([quoteId])
+  @@index([containerType])
+  @@map("quote_equipment")
+}
+
+/// Reefer settings. One row per quote, and its existence is what makes the
+/// request temperature controlled - which is why this is not six nullable
+/// columns on `quote` that mean nothing on every dry shipment.
+///
+/// If a request ever needs a different set point per container this gains a
+/// nullable equipment id. That is the seam; nothing needs it today.
+model QuoteTemperatureControl {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId  String @unique @map("quote_id") @db.Uuid
+  /// Negative is ordinary: deep frozen runs at -25.
+  setPointCelsius  Decimal  @map("set_point_celsius") @db.Decimal(5, 2)
+  /// Plus or minus. Zero means no tolerance, which differs from not stated.
+  toleranceCelsius Decimal? @map("tolerance_celsius") @db.Decimal(5, 2)
+  /// reefer_ventilation lookup code.
+  ventilation      String?  @db.VarChar(20)
+  controlledAtmosphere Boolean @default(false) @map("controlled_atmosphere")
+  preCoolingRequired   Boolean @default(false) @map("pre_cooling_required")
+  /// reefer_data_logger lookup code.
+  dataLogger String?  @map("data_logger") @db.VarChar(20)
+  notes      String?  @db.VarChar(400)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@map("quote_temperature_control")
+}
+
+/// One oversized or heavy piece. A list, not a summary: lifting equipment is
+/// quoted per piece, so recording only the longest and heaviest is how a second
+/// crane goes unbooked.
+model QuoteOversizeItem {
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId     String  @map("quote_id") @db.Uuid
+  position    Int
+  description String  @db.VarChar(240)
+  lengthCm    Decimal @map("length_cm") @db.Decimal(10, 2)
+  widthCm     Decimal @map("width_cm") @db.Decimal(10, 2)
+  heightCm    Decimal @map("height_cm") @db.Decimal(10, 2)
+  weightKg    Decimal @map("weight_kg") @db.Decimal(12, 3)
+  /// lifting_method lookup code.
+  liftingMethod String? @map("lifting_method") @db.VarChar(30)
+  notes       String?  @db.VarChar(400)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  quote Quote @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@unique([quoteId, position])
+  @@index([quoteId])
+  @@map("quote_oversize_item")
+}
+
+/// One priced option. A quote carries one or more; a person types every field.
+/// Nothing here derives, compares or ranks - there is no rate table to derive from.
+model QuoteOption {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId         String    @map("quote_id") @db.Uuid
+  /// Display order as the pricer arranged it, not the cheapest first.
+  position        Int
+  name            String?   @db.VarChar(120)
+  /// Free text. No carrier catalogue exists and inventing one would slow the pricer down.
+  carrierName     String?   @map("carrier_name") @db.VarChar(160)
+  serviceRouting  String?   @map("service_routing") @db.VarChar(240)
+  transitDaysMin  Int?      @map("transit_days_min")
+  transitDaysMax  Int?      @map("transit_days_max")
+  nextDepartures  String?   @map("next_departures") @db.VarChar(120)
+  freeTimeDays    Int?      @map("free_time_days")
+  /// Minor units, maintained as the sum of the charge lines by the service.
+  totalMinorUnits BigInt?   @map("total_minor_units")
+  currency        String?   @db.Char(3)
+  validUntil      DateTime? @map("valid_until") @db.Timestamptz(6)
+  isRecommended   Boolean   @default(false) @map("is_recommended")
+  notes           String?
+  termsIncluded   String?   @map("terms_included")
+  termsExcluded   String?   @map("terms_excluded")
+  termsPayment    String?   @map("terms_payment") @db.VarChar(400)
+  termsSubjectTo  String?   @map("terms_subject_to") @db.VarChar(400)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  quote       Quote            @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  chargeLines QuoteChargeLine[]
+  acceptedOnQuotes Quote[]     @relation("QuoteAcceptedOption")
+
+  @@unique([quoteId, position])
+  @@index([quoteId])
+  @@map("quote_option")
+}
+
+/// One line of an option's price breakdown. `code` is free text with a hint list,
+/// NOT a foreign key - no charge-code catalogue exists.
+model QuoteChargeLine {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteOptionId    String   @map("quote_option_id") @db.Uuid
+  position         Int
+  code             String?  @db.VarChar(40)
+  description      String   @db.VarChar(240)
+  /// "Per container", "Per shipment", "Per B/L". Free text.
+  basis            String?  @db.VarChar(60)
+  quantity         Decimal  @default(1) @db.Decimal(12, 3)
+  rateMinorUnits   BigInt   @default(0) @map("rate_minor_units")
+  currency         String   @db.Char(3)
+  /// quantity x rate, computed by the API. The browser never owns a PDF figure.
+  amountMinorUnits BigInt   @default(0) @map("amount_minor_units")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  option QuoteOption          @relation(fields: [quoteOptionId], references: [id], onDelete: Cascade)
+  cost   QuoteChargeLineCost?
+
+  @@unique([quoteOptionId, position])
+  @@index([quoteOptionId])
+  @@map("quote_charge_line")
+}
+
+/// Internal cost per charge line.
+///
+/// A SEPARATE TABLE, not a column on QuoteChargeLine, because PostgreSQL row-level
+/// security is row level and cannot hide a column. A cost column on a
+/// customer-readable row is one forgotten `select` away from being published. Here,
+/// the policy denies a customer session outright and no service bug can undo it.
+///
+/// Margin is deliberately not stored: it is sell minus cost, and a stored copy of a
+/// subtraction is a second source of truth waiting to disagree.
+model QuoteChargeLineCost {
+  quoteChargeLineId String   @id @map("quote_charge_line_id") @db.Uuid
+  costMinorUnits    BigInt   @map("cost_minor_units")
+  currency          String   @db.Char(3)
+  recordedById      String?  @map("recorded_by_id") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  chargeLine QuoteChargeLine @relation(fields: [quoteChargeLineId], references: [id], onDelete: Cascade)
+  recordedBy User?           @relation("ChargeCostRecordedBy", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@map("quote_charge_line_cost")
+}
+
+/// One row per customer group holding the last quote reference allocated.
+///
+/// Written only by app.next_quote_reference(); portal_app deliberately holds no
+/// rights on the table, so Prisma can describe it but must never write it.
+model QuoteReferenceCounter {
+  customerGroupId String   @id @map("customer_group_id") @db.Uuid
+  nextValue       BigInt   @default(1) @map("next_value")
+  updatedAt       DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  group CustomerGroup @relation(fields: [customerGroupId], references: [id], onDelete: Cascade)
+
+  @@map("quote_reference_counter")
+}
+
+model QuoteTemplate {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String   @map("customer_group_id") @db.Uuid
+  name            String   @db.VarChar(160)
+  payload         Json     @default("{}")
+  ownerId         String?  @map("owner_id") @db.Uuid
+  /// Visible to the whole group rather than only the owner.
+  isShared        Boolean  @default(false) @map("is_shared")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group CustomerGroup @relation(fields: [customerGroupId], references: [id], onDelete: Cascade)
+
+  @@unique([customerGroupId, name])
+  @@index([customerGroupId])
+  @@map("quote_template")
+}
+
+model AddressBookEntry {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String   @map("customer_group_id") @db.Uuid
+  name            String   @db.VarChar(200)
+  contactName     String?  @map("contact_name") @db.VarChar(200)
+  email           String?  @db.Citext
+  phone           String?  @db.VarChar(40)
+  line1           String?  @db.VarChar(200)
+  line2           String?  @db.VarChar(200)
+  city            String?  @db.VarChar(120)
+  state           String?  @db.VarChar(120)
+  postcode        String?  @db.VarChar(20)
+  countryCode     String?  @map("country_code") @db.Char(2)
+  /// Optional CW1 organisation link when the address is a known org.
+  cw1OrgCode      String?  @map("cw1_org_code") @db.VarChar(40)
+  isDefault       Boolean  @default(false) @map("is_default")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group CustomerGroup @relation(fields: [customerGroupId], references: [id], onDelete: Cascade)
+
+  @@index([customerGroupId, name])
+  @@map("address_book_entry")
+}
+
+/// Noatum-authored news. Global rows have customer_group_id null and are readable by everyone.
+model NewsItem {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String?   @map("customer_group_id") @db.Uuid
+  title           String    @db.VarChar(240)
+  slug            String    @unique @db.VarChar(240)
+  body            String
+  locale          String    @default("en-US") @db.VarChar(10)
+  publishedAt     DateTime? @map("published_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([publishedAt])
+  @@map("news_item")
+}
+
+// ---------------------------------------------------------------------------
+// Reference data (lookup management)
+//
+// One store for the option lists behind onboarding, quotation and pricing, so
+// a screen never carries its own hard-coded array. Global data: a lookup
+// belongs to the platform, never to a customer, so nothing here is tenant
+// scoped. Customer reach is granted per item by `is_customer_visible`, which is
+// off by default - an unreviewed row cannot leak into a customer surface.
+//
+// Physical model per the lookup management plan (LM-02). Applicability
+// (one option valid for several modes or services) is deliberately absent: no
+// Phase 1 consumer needs it yet, and LM-D04 has not settled the rules.
+// ---------------------------------------------------------------------------
+
+/// Who may change a lookup, which decides what the UI offers.
+enum LookupOwnership {
+  /// Maintained in the portal by authorised staff.
+  portal
+  /// Imported from an external system. Read-only here; a refresh owns it.
+  source
+  /// Mirrors a code-level contract such as an enum. Shown, never edited.
+  system
+}
+
+/// A named list. Structural fields are deployment-controlled (LM-D04): staff
+/// maintain items, not the rules a category imposes on them.
+model LookupCategory {
+  id          String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String          @unique @db.VarChar(60)
+  name        String          @db.VarChar(120)
+  description String?         @db.VarChar(400)
+  ownership   LookupOwnership
+  /// Namespace of the owning system for imported categories, eg `cw1`.
+  sourceSystem String?        @map("source_system") @db.VarChar(40)
+  /// Provenance of the seeded content: a standard, a workbook, or a code enum.
+  sourceRef    String?        @map("source_ref") @db.VarChar(240)
+  defaultLocale String        @default("en-US") @map("default_locale") @db.VarChar(10)
+  /// Category an item's parent must belong to. Null means the list is flat.
+  parentCategoryId String?    @map("parent_category_id") @db.Uuid
+  /// Rail order. Ties break on name.
+  sortOrder   Int             @default(0) @map("sort_order")
+  /// Inert governance notes. Nothing reads this; no rule may key off it.
+  metadata    Json?
+  isActive    Boolean         @default(true) @map("is_active")
+  createdAt   DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  parentCategory  LookupCategory?  @relation("LookupCategoryParent", fields: [parentCategoryId], references: [id], onDelete: Restrict)
+  childCategories LookupCategory[] @relation("LookupCategoryParent")
+  items           LookupItem[]
+
+  @@index([sortOrder, name])
+  @@map("lookup_category")
+}
+
+/// One option. `code` is the identity and is immutable once referenced; a label
+/// change is a translation edit, never a code edit.
+model LookupItem {
+  id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId String  @map("category_id") @db.Uuid
+  code       String  @db.VarChar(80)
+  parentId   String? @map("parent_id") @db.Uuid
+  sortOrder  Int     @default(0) @map("sort_order")
+  isActive   Boolean @default(true) @map("is_active")
+  /// Allow-list gate. False keeps the row out of every customer-facing surface:
+  /// list, detail, export, alert, chatbot and API.
+  isCustomerVisible Boolean @default(false) @map("is_customer_visible")
+  /// The identifier this row carries in its source system, when it has one.
+  sourceRef  String? @map("source_ref") @db.VarChar(120)
+  /// Inert integration notes. Nothing reads this; no rule may key off it.
+  metadata   Json?
+  /// Bumped on every write so a stale editor is rejected rather than merged.
+  version    Int      @default(1)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  category     LookupCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  parent       LookupItem?             @relation("LookupItemParent", fields: [parentId], references: [id], onDelete: Restrict)
+  children     LookupItem[]            @relation("LookupItemParent")
+  translations LookupItemTranslation[]
+
+  @@unique([categoryId, code])
+  @@index([categoryId, isActive, sortOrder])
+  @@index([parentId])
+  @@map("lookup_item")
+}
+
+/// Content translation, kept apart from UI text: i18next owns the chrome, the
+/// API owns the option labels.
+model LookupItemTranslation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  itemId      String   @map("item_id") @db.Uuid
+  locale      String   @db.VarChar(10)
+  label       String   @db.VarChar(240)
+  description String?  @db.VarChar(600)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  item LookupItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([itemId, locale])
+  @@map("lookup_item_translation")
+}
+
+// ---------------------------------------------------------------------------
+// Integration and platform
+// ---------------------------------------------------------------------------
+
+/// Lookup tables translating portal values to CW1 codes and back.
+model MappingEntry {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  domain     String   @db.VarChar(60)
+  portalCode String   @map("portal_code") @db.VarChar(80)
+  cw1Code    String   @map("cw1_code") @db.VarChar(80)
+  notes      String?  @db.VarChar(400)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([domain, portalCode])
+  @@index([domain, cw1Code])
+  @@map("mapping_entry")
+}
+
+/// Platform feature switches. The catalogue lives in contracts/feature-switches.ts;
+/// this stores only the state of a switch an administrator has changed. A row whose
+/// key is not in the catalogue is ignored, so a stale key cannot resurrect a capability.
+model FeatureSwitch {
+  key               String   @id @db.VarChar(80)
+  isEnabled         Boolean  @map("is_enabled")
+  /// Recorded approval for switches the catalogue marks as requiring one.
+  approvalReference String?  @map("approval_reference") @db.VarChar(200)
+  reason            String   @db.VarChar(400)
+  updatedById       String?  @map("updated_by_id") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("feature_switch")
+}
+
+enum SettingScope {
+  global
+  region
+  branch
+  customer
+
+  @@map("setting_scope")
+}
+
+/// Product usage. Append-only, internally readable, swept on a retention schedule.
+///
+/// Distinct from AuditEvent on purpose: audit is evidence and is kept for years,
+/// analytics is disposable and is aggregated. One table would mean either keeping
+/// click data for seven years or deleting evidence.
+model AnalyticsEvent {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  /// Null for a staff action, which has no customer group to attribute to.
+  customerGroupId String?  @map("customer_group_id") @db.Uuid
+  actorUserId     String?  @map("actor_user_id") @db.Uuid
+  action          String   @db.VarChar(120)
+  entityType      String?  @map("entity_type") @db.VarChar(80)
+  entityId        String?  @map("entity_id") @db.VarChar(80)
+  /// Counts and shapes, never personal data - which is why it can be swept.
+  metadata        Json     @default("{}")
+  correlationId   String?  @map("correlation_id") @db.VarChar(80)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([action, createdAt])
+  @@index([createdAt])
+  @@map("analytics_event")
+}
+
+/// ADR-010. Scoped settings: the same key resolving differently per region, branch
+/// or customer, which a feature switch cannot express.
+///
+/// Overrides ONLY. The catalogue - which keys exist, their types and defaults - is
+/// code, in contracts/settings.ts. Resolution is global < region < branch < customer,
+/// most specific wins, and the resolver reports which layer supplied the value.
+model SettingValue {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key         String       @db.VarChar(80)
+  scope       SettingScope
+  /// Region code, branch code, or a customer_group_id as text. Null only for global.
+  scopeId     String?      @map("scope_id") @db.VarChar(64)
+  value       Json
+  /// Mandatory. Shown in the settings change log beside the before and after values.
+  reason      String       @db.VarChar(400)
+  updatedById String?      @map("updated_by_id") @db.Uuid
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  updatedBy User? @relation("SettingUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@index([key])
+  @@map("setting_value")
+}
+
+/// Durable record of integration work. pg-boss owns scheduling; this is the audit view.
+model JobRun {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String    @db.VarChar(120)
+  status       JobStatus @default(queued)
+  attempt      Int       @default(0)
+  payload      Json      @default("{}")
+  errorMessage String?   @map("error_message")
+  startedAt    DateTime? @map("started_at") @db.Timestamptz(6)
+  finishedAt   DateTime? @map("finished_at") @db.Timestamptz(6)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([name, status, createdAt])
+  @@map("job_run")
+}
+
+model AuditEvent {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  customerGroupId String?  @map("customer_group_id") @db.Uuid
+  actorUserId     String?  @map("actor_user_id") @db.Uuid
+  /// Set when a Noatum user is impersonating a customer user.
+  onBehalfOfId    String?  @map("on_behalf_of_id") @db.Uuid
+  action          String   @db.VarChar(120)
+  entityType      String   @map("entity_type") @db.VarChar(80)
+  entityId        String?  @map("entity_id") @db.VarChar(80)
+  metadata        Json     @default("{}")
+  ipAddress       String?  @map("ip_address") @db.Inet
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  group CustomerGroup? @relation(fields: [customerGroupId], references: [id], onDelete: SetNull)
+
+  @@index([customerGroupId, createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_event")
+}
+
+// ---------------------------------------------------------------------------
+// Local authentication (ADR-006 pilot scope)
+//
+// Invited customers and the provisioned bootstrap administrator sign in here
+// instead of through Entra. Staff SSO is untouched.
+//
+// These five tables hold credential material, so unlike every other table in
+// this schema they carry NO grant to portal_app and NO permissive RLS policy.
+// The runtime reaches them only through the narrow app.local_* SECURITY DEFINER
+// functions, which is why the models below are never queried through the Prisma
+// client. They exist so the schema stays an honest description of the database.
+// ---------------------------------------------------------------------------
+
+/// Sign-in attempt budgets, counted here rather than in process memory so the
+/// limit holds across every instance. Like the local-auth tables it carries no
+/// grant to portal_app and no permissive policy: the runtime reaches it only
+/// through app.rate_limit_*. Modelled so the schema stays an honest description
+/// of the database, never queried through the Prisma client.
+model AuthRateLimit {
+  key       String   @id @db.Text
+  points    Int      @default(0)
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([expiresAt])
+  @@map("auth_rate_limit")
+}
+
+enum IntegrationDirection {
+  inbound
+  outbound
+
+  @@map("integration_direction")
+}
+
+enum IntegrationMessageStatus {
+  /// Recorded, not yet handed to a transport. Where an outbound message rests
+  /// while the CargoWise mechanism is still being agreed.
+  pending
+  sending
+  sent
+  /// The far side confirmed it, which is more than "the transport accepted it".
+  acknowledged
+  failed
+  /// Deliberately not sent, for example because the sync switch is off. Recorded
+  /// rather than absent, so "we chose not to" is distinguishable from "we lost it".
+  skipped
+
+  @@map("integration_message_status")
+}
+
+/// Every exchange with an external system, both directions.
+///
+/// Outbound rows are written in the same transaction as the business change that
+/// caused them, so a quote and its CargoWise copy cannot disagree. Inbound rows
+/// are archived before anything interprets them, so a mapping bug is fixed by
+/// replay rather than by asking the far side to resend.
+model IntegrationMessage {
+  id                String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  direction         IntegrationDirection
+  status            IntegrationMessageStatus @default(pending)
+  sourceSystem      String                   @default("cw1") @map("source_system") @db.VarChar(40)
+  sourceInstance    String                   @default("unassigned") @map("source_instance") @db.VarChar(40)
+  /// The port method that produced it, e.g. `quote.request.create`. Business
+  /// vocabulary, never a transport verb.
+  operation         String                   @db.VarChar(80)
+  portalRef         String?                  @map("portal_ref") @db.VarChar(80)
+  /// `<portalRef>:v<n>` — stable across retries, new on a re-price.
+  idempotencyKey    String?                  @map("idempotency_key") @db.VarChar(160)
+  sourceMessageId   String?                  @map("source_message_id") @db.VarChar(160)
+  externalReference String?                  @map("external_reference") @db.VarChar(160)
+  /// Canonical shape, not the external system's shape: converting is the transport's job.
+  payload           Json                     @default("{}")
+  attempts          Int                      @default(0)
+  lastError         String?                  @map("last_error")
+  nextAttemptAt     DateTime?                @map("next_attempt_at") @db.Timestamptz(6)
+  sentAt            DateTime?                @map("sent_at") @db.Timestamptz(6)
+  customerGroupId   String?                  @map("customer_group_id") @db.Uuid
+  createdByUserId   String?                  @map("created_by_user_id") @db.Uuid
+  correlationId     String?                  @map("correlation_id") @db.VarChar(80)
+  createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  group CustomerGroup? @relation(fields: [customerGroupId], references: [id], onDelete: SetNull)
+  actor User?          @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([sourceSystem, sourceInstance, sourceMessageId], map: "integration_message_source_unique")
+  @@unique([direction, idempotencyKey], map: "integration_message_idempotency_unique")
+  @@index([status, nextAttemptAt], map: "integration_message_relay_idx")
+  @@index([portalRef])
+  @@index([customerGroupId, createdAt])
+  @@map("integration_message")
+}
+
+model LocalCredential {
+  userId          String    @id @map("user_id") @db.Uuid
+  /// Argon2id PHC string, produced and verified only inside the local-auth module.
+  passwordHash    String    @map("password_hash") @db.VarChar(255)
+  /// Bumped by a password change or forced revocation. Sessions pinned to an older
+  /// value stop resolving, which is how "sign out everywhere" takes effect.
+  securityVersion Int       @default(1) @map("security_version")
+  passwordSetAt   DateTime  @default(now()) @map("password_set_at") @db.Timestamptz(6)
+  /// Set when local sign-in is withdrawn without deleting the portal user.
+  disabledAt      DateTime? @map("disabled_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("local_credential")
+}
+
+model LocalSession {
+  /// SHA-256 of the cookie value. The value itself is never stored, so a database
+  /// reader cannot replay a session.
+  tokenHash         String    @id @map("token_hash") @db.Char(64)
+  userId            String    @map("user_id") @db.Uuid
+  /// pending_mfa until the second factor succeeds. Only `authenticated` carries
+  /// business access; a pending session can do nothing but finish signing in.
+  assurance         String    @default("pending_mfa") @db.VarChar(20)
+  securityVersion   Int       @map("security_version")
+  /// Allow-listed cookie envelope only. No permissions, roles or profile data:
+  /// those are resolved per request so a revoked grant cannot survive in a session.
+  data              Json      @default("{}")
+  idleExpiresAt     DateTime  @map("idle_expires_at") @db.Timestamptz(6)
+  absoluteExpiresAt DateTime  @map("absolute_expires_at") @db.Timestamptz(6)
+  revokedAt         DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastUsedAt        DateTime  @default(now()) @map("last_used_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([absoluteExpiresAt])
+  @@map("local_session")
+}
+
+model LocalSecurityChallenge {
+  id           String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  purpose      LocalChallengePurpose
+  /// SHA-256 of the emailed token. Single use and purpose bound.
+  tokenHash    String                @unique @map("token_hash") @db.Char(64)
+  userId       String                @map("user_id") @db.Uuid
+  invitationId String?               @map("invitation_id") @db.Uuid
+  expiresAt    DateTime              @map("expires_at") @db.Timestamptz(6)
+  consumedAt   DateTime?             @map("consumed_at") @db.Timestamptz(6)
+  attempts     Int                   @default(0)
+  createdAt    DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invitation Invitation? @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, purpose])
+  @@index([expiresAt])
+  @@map("local_security_challenge")
+}
+
+model LocalMfaFactor {
+  userId          String    @id @map("user_id") @db.Uuid
+  type            String    @default("totp") @db.VarChar(20)
+  /// Encrypted TOTP secret. The key is held outside the database, so a dump alone
+  /// does not yield working second factors.
+  secretEncrypted String    @map("secret_encrypted")
+  confirmedAt     DateTime? @map("confirmed_at") @db.Timestamptz(6)
+  /// Highest accepted TOTP step, so a code cannot be replayed inside its window.
+  lastUsedStep    BigInt?   @map("last_used_step")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("local_mfa_factor")
+}
+
+model LocalRecoveryCode {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  /// SHA-256 of a high-entropy code. A slow hash buys nothing against 128 random
+  /// bits and would make verifying ten codes cost a second.
+  codeHash  String    @unique @map("code_hash") @db.Char(64)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("local_recovery_code")
+}
+
+/// An object we stored. Owner-agnostic on purpose: quote, booking and claim
+/// attachments all point at this, so the upload pipeline is written once.
+model StoredFile {
+  id               String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  blobContainer    String                @map("blob_container") @db.VarChar(120)
+  /// Generated by the API, never a client filename - that is what makes path
+  /// traversal and silent overwriting impossible rather than merely unlikely.
+  blobName         String                @map("blob_name") @db.VarChar(400)
+  /// Display and the download filename only. Never used as a path.
+  originalFilename String                @map("original_filename") @db.VarChar(200)
+  /// The verified type, decided from the leading bytes rather than the browser claim.
+  contentType      String                @map("content_type") @db.VarChar(120)
+  sizeBytes        Int                   @map("size_bytes")
+  checksumSha256   String                @map("checksum_sha256") @db.Char(64)
+  /// Scanning is deferred, so rows arrive `skipped`. The column exists now so
+  /// enabling it later is a backfill, not a migration over live customer files.
+  scanStatus       StoredFileScanStatus  @default(skipped) @map("scan_status")
+  uploadedByUserId String?               @map("uploaded_by_user_id") @db.Uuid
+  uploadedAt       DateTime              @default(now()) @map("uploaded_at") @db.Timestamptz(6)
+
+  uploadedBy User?           @relation(fields: [uploadedByUserId], references: [id], onDelete: SetNull)
+  quoteLinks QuoteDocument[]
+
+  @@unique([blobContainer, blobName], map: "stored_file_object_unique")
+  @@map("stored_file")
+}
+
+/// A file attached to a quote, in either direction. Tenancy comes through the
+/// parent quote, matching quote_option and quote_equipment.
+model QuoteDocument {
+  id              String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quoteId         String                 @map("quote_id") @db.Uuid
+  storedFileId    String                 @map("stored_file_id") @db.Uuid
+  /// Allow-listed portal code, never free text (v4 rule 6).
+  documentType    String                 @map("document_type") @db.VarChar(40)
+  direction       QuoteDocumentDirection
+  /// False means absent from every customer surface, not hidden on one.
+  customerVisible Boolean                @default(true) @map("customer_visible")
+  position        Int
+  createdAt       DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime               @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  quote Quote      @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  file  StoredFile @relation(fields: [storedFileId], references: [id], onDelete: Restrict)
+
+  @@unique([quoteId, position], map: "quote_document_position_unique")
+  @@unique([quoteId, storedFileId], map: "quote_document_file_unique")
+  @@index([quoteId], map: "quote_document_quote_idx")
+  @@index([storedFileId], map: "quote_document_file_idx")
+  @@map("quote_document")
+}
+
+enum StoredFileScanStatus {
+  pending
+  clean
+  infected
+  /// Today's state: scanning is deferred, and a row must say so rather than
+  /// imply a clean result nobody checked.
+  skipped
+
+  @@map("stored_file_scan_status")
+}
+
+enum QuoteDocumentDirection {
+  /// Papers supporting the request - a safety data sheet, a packing list.
+  from_customer
+  /// The branch answering with a document rather than only a number.
+  to_customer
+
+  @@map("quote_document_direction")
+}
+
+/// UN/LOCODE directory backing route autocomplete.
+///
+/// Deliberately outside the lookup tables: those hold curated lists of five to
+/// twenty rows, and the full directory is ~100k rows reissued twice a year.
+/// Nothing points at this by foreign key - a quote keeps the code and the name it
+/// was given as its own text, so a later edition never rewrites an agreed quote.
+model Port {
+  /// The UN/LOCODE: two-letter country, three-letter location.
+  code        String  @id @db.Char(5)
+  name        String  @db.VarChar(120)
+  /// ISO 3166-1 alpha-2, matching the `country` lookup's codes.
+  countryCode String  @map("country_code") @db.Char(2)
+  subdivision String? @db.VarChar(80)
+  /// UN/LOCODE's function classifier, reduced to the two this platform routes on.
+  isSeaport   Boolean @default(false) @map("is_seaport")
+  isAirport   Boolean @default(false) @map("is_airport")
+  latitude    Decimal? @db.Decimal(8, 5)
+  longitude   Decimal? @db.Decimal(8, 5)
+  /// Whether Noatum offers this location. Noatum's decision, never the UN's, so an
+  /// import must not switch it back on.
+  isActive    Boolean @default(true) @map("is_active")
+  /// Which edition or load this row came from, so its authority is readable.
+  source      String  @db.VarChar(60)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("port")
+}

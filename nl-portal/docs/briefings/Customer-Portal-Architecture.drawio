@@ -1,0 +1,341 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="portal-architecture" name="Customer Portal — architecture, adapters, queue and data flow">
+    <mxGraphModel dx="2400" dy="1560" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== title ===== -->
+        <mxCell id="title" value="Noatum Customer Portal &#8212; architecture, adapters, background queue and data flow" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=26;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="1500" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="titleRule" value="" style="shape=line;strokeColor=#AA272F;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="40" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" value="One picture of the whole platform. Colour shows what is BUILT, what is built but NOT YET CONNECTED, and what is still TO BUILD. CargoWise is the system of record; the portal keeps a synchronised copy and serves every screen from it." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="88" width="1780" height="22" as="geometry" />
+        </mxCell>
+
+        <!-- ===== legend ===== -->
+        <mxCell id="lg" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;" vertex="1" parent="1">
+          <mxGeometry x="1860" y="30" width="500" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="lgT" value="LEGEND" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontStyle=1;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1874" y="36" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="lg1" value="Built and working" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1874" y="58" width="150" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg2" value="Built, not yet connected" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="2034" y="58" width="150" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg3" value="To build" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="2194" y="58" width="152" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="lg4" value="&#9312; numbered boxes = the changes I am proposing, listed bottom right" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontColor=#AA272F;" vertex="1" parent="1">
+          <mxGeometry x="1874" y="88" width="480" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 1 : people ===== -->
+        <mxCell id="b1" value="" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="132" width="1780" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="b1t" value="PEOPLE" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontStyle=1;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="54" y="138" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="Public visitor&#10;&lt;br&gt;no account" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="160" width="300" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="Customer users&#160;&#160;&#183;&#160;&#160;standard, quoting and booking, finance, analyst, claims, customer admin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="380" y="160" width="700" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="Noatum staff&#160;&#160;&#183;&#160;&#160;Customer Success, Pricing, Pricing Approver, Operations, Platform Admin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="160" width="700" height="48" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 2 : web app ===== -->
+        <mxCell id="b2" value="" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="244" width="1780" height="128" as="geometry" />
+        </mxCell>
+        <mxCell id="b2t" value="WEB APPLICATION &#8212; React and Vite, one single-page app, Noatum design tokens, English and Spanish" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontStyle=1;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="54" y="250" width="900" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="w1" value="&#9312;&#160;&#160;Public pages&#10;&lt;br&gt;track and trace, sailing schedule, CO2&#10;&lt;br&gt;&lt;i&gt;UI exists against a browser stand-in&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="60" y="272" width="300" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="w2" value="Customer portal&#160;&#160;/app&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;Dashboard&lt;/b&gt;&#160;&#160;&#183;&#160;&#160;&lt;b&gt;Account security&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="380" y="272" width="330" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="w3" value="Shipments&#160;&#183;&#160;Quotations&#160;&#183;&#160;Bookings&#160;&#183;&#160;Invoices&#10;&lt;br&gt;Documents&#160;&#183;&#160;Claims&#160;&#183;&#160;Reports&#10;&lt;br&gt;&lt;i&gt;shown in the menu as not yet released&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="730" y="272" width="350" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="w4" value="Staff portal&#160;&#160;/portal&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;Organisations&#160;&#183;&#160;Customers&#160;&#183;&#160;Unassigned&#160;&#183;&#160;Lookups&lt;/b&gt;&#10;&lt;br&gt;&lt;b&gt;Feature switches&#160;&#183;&#160;Branches and regions&#160;&#183;&#160;Staff&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="272" width="440" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="w5" value="Pricing queue&#10;&lt;br&gt;Pricing screen&#10;&lt;br&gt;Approvals" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1560" y="272" width="240" height="88" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 3 : guards ===== -->
+        <mxCell id="b3" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="392" width="1780" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="b3t" value="API &#8212; NestJS, REST, OpenAPI.&#160;&#160;EVERY request passes four gates, in this order. A route that declares no permission is REFUSED, not allowed." style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontStyle=1;fontColor=#AA272F;" vertex="1" parent="1">
+          <mxGeometry x="54" y="398" width="1400" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="g1" value="1&#160;&#160;AuthGuard&#10;&lt;br&gt;portal session cookie, or Entra token.&#10;&lt;br&gt;Roles come from OUR database, never the token" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="422" width="420" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="g2" value="2&#160;&#160;TenantGuard&#10;&lt;br&gt;which customer is in scope.&#10;&lt;br&gt;A customer can never ask for another" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="500" y="422" width="420" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="g3" value="3&#160;&#160;PermissionGuard&#10;&lt;br&gt;54 permission codes, 11 role presets.&#10;&lt;br&gt;Fails CLOSED" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="940" y="422" width="420" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="g4" value="4&#160;&#160;FeatureGuard&#10;&lt;br&gt;is this capability switched on&#10;&lt;br&gt;for this customer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="422" width="420" height="64" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 4 : modules ===== -->
+        <mxCell id="b4" value="" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="516" width="1780" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="b4t" value="BUSINESS MODULES &#8212; thin controller, rules in the service, data access only through TenantRepository" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontStyle=1;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="54" y="522" width="900" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" value="Identity&#10;&lt;br&gt;/api/me" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m2" value="Local auth&#10;&lt;br&gt;password, MFA, sessions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="277" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m3" value="Customers&#10;&lt;br&gt;onboarding, linking, users" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="494" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m4" value="Organisations&#10;&lt;br&gt;directory and imports" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="711" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m5" value="Staff and roles" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="928" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m6" value="Operating&#10;&lt;br&gt;regions and branches" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1145" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="Lookups&#10;&lt;br&gt;code lists and mapping" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1362" y="546" width="205" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m8" value="Feature switches" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1579" y="546" width="221" height="42" as="geometry" />
+        </mxCell>
+
+        <mxCell id="m9" value="&#9313;&#160;&#160;Quotes&#160;&#160;&#8212;&#160;&#160;&lt;i&gt;legacy rate-centric scaffold. Needs the v4 flow: request, price, approve, write back&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="594" width="640" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m10" value="Pricing queue, claim, price, approve" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="711" y="594" width="422" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="m11" value="Shipments&#160;&#183;&#160;Documents&#160;&#183;&#160;Finance&#160;&#183;&#160;Bookings&#160;&#183;&#160;Claims&#160;&#183;&#160;Reports&#160;&#183;&#160;News&#160;&#183;&#160;Notifications&#160;&#160;&#8212;&#160;&#160;&lt;i&gt;module folders exist, empty&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1145" y="594" width="655" height="42" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 5 : PORTS ===== -->
+        <mxCell id="b5" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="666" width="1780" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="b5t" value="THE ADAPTER LAYER (PORTS) &#8212; src/contracts/adapters.&#160;&#160;Business code calls ONLY these. It never calls CargoWise, and never stores a CargoWise shape.&#160;&#160;This is what lets us change HOW we talk to CargoWise &#8212; message, extract or dataset &#8212; without touching business logic." style="text;html=1;align=left;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#AA272F;" vertex="1" parent="1">
+          <mxGeometry x="54" y="674" width="1750" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="a1" value="EmailAdapter&#10;&lt;br&gt;&lt;br&gt;&lt;i&gt;the only port in the&lt;/i&gt;&#10;&lt;br&gt;&lt;i&gt;right place today&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="&#9314;&#160;&#160;RateEngineAdapter&#10;&lt;br&gt;&lt;br&gt;&lt;i&gt;exists, but sits in&lt;/i&gt;&#10;&lt;br&gt;&lt;i&gt;modules/quotes &#8212; move it&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="277" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="&#9315;&#160;&#160;TmsTrackingAdapter&#10;&lt;br&gt;&lt;br&gt;shipments, consols,&#10;&lt;br&gt;containers, milestones" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="494" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="&#9315;&#160;&#160;TmsQuoteAdapter&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;the Phase 1 write-back.&lt;/b&gt;&#10;&lt;br&gt;&lt;b&gt;No code exists today&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#AA272F;dashed=1;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#AA272F;" vertex="1" parent="1">
+          <mxGeometry x="711" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" value="&#9315;&#160;&#160;TmsBookingAdapter&#10;&lt;br&gt;&lt;br&gt;create, update, cancel,&#10;&lt;br&gt;confirmations" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="928" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" value="&#9315;&#160;&#160;TmsFinanceAdapter&#10;&lt;br&gt;&lt;br&gt;invoices and credit notes,&#10;&lt;br&gt;by addressee" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1145" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" value="&#9315;&#160;&#160;TmsDocumentAdapter&#10;&lt;br&gt;&lt;br&gt;metadata and retrieval,&#10;&lt;br&gt;approved types only" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1362" y="700" width="205" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" value="&#9315;&#160;&#160;EmissionsAdapter&#10;&lt;br&gt;&lt;br&gt;&lt;i&gt;deferred with CO2&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=12;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1579" y="700" width="221" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" value="&#9316;&#160;&#160;TODAY&#39;S GAP:&#160;&#160;Cw1ShipmentAdapter is a concrete class with NO port above it, so any business code using it would bind directly to CargoWise. Put it behind TmsTrackingAdapter before anything calls it." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FDF0D5;strokeColor=#B4780A;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=12;fontColor=#855804;" vertex="1" parent="1">
+          <mxGeometry x="60" y="788" width="1740" height="38" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 6 : integration implementations ===== -->
+        <mxCell id="b6" value="" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;" vertex="1" parent="1">
+          <mxGeometry x="40" y="856" width="1780" height="118" as="geometry" />
+        </mxCell>
+        <mxCell id="b6t" value="INTEGRATION MODULE &#8212; the only place that talks to the outside world. It decides what backs each port: the simulator locally, the real interface in production, by configuration alone." style="text;html=1;align=left;fontFamily=Helvetica;fontSize=11;fontStyle=1;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="54" y="862" width="1500" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="i1" value="Cw1Client&#10;&lt;br&gt;HTTP, credentials, timeouts.&#10;&lt;br&gt;Never logs body or headers" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="886" width="270" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="i2" value="XmlCodec&#10;&lt;br&gt;build and parse&#10;&lt;br&gt;CargoWise XML" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="342" y="886" width="230" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="i3" value="MappingService&#10;&lt;br&gt;portal value to CargoWise code.&#10;&lt;br&gt;&lt;b&gt;Never hard-coded&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="584" y="886" width="270" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="i4" value="TenantResolverService&#10;&lt;br&gt;&lt;b&gt;the choke point.&lt;/b&gt; Turns the customer&#10;&lt;br&gt;in scope into the org codes we may query" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="866" y="886" width="330" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="i5" value="OrganisationImportService&#10;&lt;br&gt;CSV import, change detection,&#10;&lt;br&gt;&lt;b&gt;truncated-snapshot brake&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1208" y="886" width="300" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="i6" value="&#9317;&#160;&#160;Inbound endpoint&#10;&lt;br&gt;receive, archive, acknowledge,&#10;&lt;br&gt;de-duplicate, replay" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1520" y="886" width="280" height="76" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 7 : queue ===== -->
+        <mxCell id="b7" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="40" y="994" width="1780" height="204" as="geometry" />
+        </mxCell>
+        <mxCell id="b7t" value="BACKGROUND WORK QUEUE &#8212; pg-boss, inside the same PostgreSQL. No RabbitMQ, no Redis, no extra Azure resource (ADR-008)" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#002C5F;" vertex="1" parent="1">
+          <mxGeometry x="54" y="1002" width="1400" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q0" value="PRODUCERS&#10;&lt;br&gt;&lt;br&gt;&#9318;&#160;&#160;&lt;b&gt;None today.&lt;/b&gt; enqueue() has&#10;&lt;br&gt;no callers anywhere in the code" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#AA272F;dashed=1;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#AA272F;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1028" width="290" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="q1" value="JobsService &#8212; the port&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;enqueue(transaction, name, payload, identity)&lt;/b&gt;&#10;&lt;br&gt;&lt;br&gt;&#183;&#160;&#160;written INSIDE the business transaction&#10;&lt;br&gt;&#183;&#160;&#160;de-duplicated by a deterministic id&#10;&lt;br&gt;&#183;&#160;&#160;3 retries with backoff, then dead-letter&#10;&lt;br&gt;&#183;&#160;&#160;fresh tenant context per job, never inherited" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="366" y="1028" width="420" height="150" as="geometry" />
+        </mxCell>
+
+        <mxCell id="q2" value="master-org.sync&#10;&lt;br&gt;&lt;i&gt;handler real, but bypassed &#8212;&lt;/i&gt;&#10;&lt;br&gt;&lt;i&gt;import runs inline from HTTP&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="810" y="1028" width="290" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="q3" value="quote.expiry&#160;&#160;&#183;&#160;&#160;shipment.refresh&#10;&lt;br&gt;&lt;i&gt;registered, but log-only stubs&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="810" y="1108" width="290" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="q4" value="&#9319;&#160;&#160;TO WIRE:&#160;&#160;send quote request&#160;&#183;&#160;write priced quote back&#160;&#183;&#160;accept, reject, cancel&#160;&#183;&#160;booking&#160;&#183;&#160;invitation and reset email&#10;&lt;br&gt;&lt;br&gt;&#9320;&#160;&#160;TO ADD:&#160;&#160;a scheduler, so the nightly organisation refresh actually runs&#160;&#160;&#183;&#160;&#160;queue metrics: depth, oldest job, failures" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1116" y="1028" width="684" height="150" as="geometry" />
+        </mxCell>
+
+        <!-- ===== BAND 8 : data ===== -->
+        <mxCell id="b8" value="" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1218" width="1780" height="196" as="geometry" />
+        </mxCell>
+        <mxCell id="b8t" value="DATA &#8212; one PostgreSQL server holds the business data, the security functions and the queue. Customer separation is enforced by the database, not by application code." style="text;html=1;align=left;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#002C5F;" vertex="1" parent="1">
+          <mxGeometry x="54" y="1226" width="1500" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="public schema&#10;&lt;br&gt;&lt;br&gt;customers &#183; organisations &#183; users &#183; roles&#10;&lt;br&gt;quotes &#183; lookups &#183; branches &#183; audit&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;Row-level security FORCED on every&lt;/b&gt;&#10;&lt;br&gt;&lt;b&gt;tenant table. 35 migrations applied&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1252" width="400" height="146" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="app schema&#10;&lt;br&gt;&lt;br&gt;~40 security-definer functions&#10;&lt;br&gt;&lt;br&gt;identity resolution &#183; organisation batch&#10;&lt;br&gt;import &#183; all credential access&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;Credential tables carry NO grant at all&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="476" y="1252" width="400" height="146" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" value="pgboss schema&#10;&lt;br&gt;&lt;br&gt;the waiting list&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;No Azure resource.&lt;/b&gt; Created once per&#10;&lt;br&gt;environment by the deployment, because&#10;&lt;br&gt;the application will not create it" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;strokeWidth=2;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="892" y="1252" width="400" height="146" as="geometry" />
+        </mxCell>
+        <mxCell id="d4" value="&#9317;&#160;&#160;integration_message&#10;&lt;br&gt;&lt;br&gt;raw CargoWise messages, 13-month&#10;&lt;br&gt;retention, replay&#10;&lt;br&gt;&lt;br&gt;&lt;b&gt;Does not exist yet &#8212; so there is&lt;/b&gt;&#10;&lt;br&gt;&lt;b&gt;no archive and no replay today&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1308" y="1252" width="240" height="146" as="geometry" />
+        </mxCell>
+        <mxCell id="d5" value="Azure Blob&#10;&lt;br&gt;&lt;br&gt;documents&#10;&lt;br&gt;and PDFs&#10;&lt;br&gt;&lt;br&gt;&lt;i&gt;provisioned,&lt;/i&gt;&#10;&lt;br&gt;&lt;i&gt;not yet used&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1564" y="1252" width="236" height="146" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EXTERNAL SYSTEMS ===== -->
+        <mxCell id="ex" value="" style="rounded=0;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1860" y="132" width="500" height="1282" as="geometry" />
+        </mxCell>
+        <mxCell id="ext" value="EXTERNAL SYSTEMS" style="text;html=1;align=left;fontFamily=Helvetica;fontSize=12;fontStyle=1;fontColor=#002C5F;" vertex="1" parent="1">
+          <mxGeometry x="1874" y="140" width="300" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" value="Microsoft Entra&#10;&lt;br&gt;&lt;br&gt;staff single sign-on.&#10;&lt;br&gt;We write no login code for staff" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="166" width="460" height="76" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e2" value="CARGOWISE ONE&#10;&lt;br&gt;&lt;b&gt;system of record&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Helvetica;fontSize=15;fontStyle=1;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="262" width="460" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="e2a" value="&lt;b&gt;OUT to the portal&lt;/b&gt;&#10;&lt;br&gt;organisations &#183; quotes priced in CargoWise&#10;&lt;br&gt;shipments, consols, containers &#183; milestone events&#10;&lt;br&gt;documents &#183; invoices &#183; booking confirmations&#10;&lt;br&gt;reference and code lists" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="330" width="460" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="e2b" value="&lt;b&gt;IN from the portal&lt;/b&gt;&#10;&lt;br&gt;quote request &#183; &lt;b&gt;priced quote&lt;/b&gt; &#183; accept, reject, cancel&#10;&lt;br&gt;booking create, update, cancel, with documents&#10;&lt;br&gt;&lt;br&gt;&lt;i&gt;Every inbound write is idempotent, and the customer&lt;/i&gt;&#10;&lt;br&gt;&lt;i&gt;sees no price until CargoWise confirms&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="434" width="460" height="106" as="geometry" />
+        </mxCell>
+        <mxCell id="e2c" value="OPEN QUESTION, and our highest risk&#10;&lt;br&gt;&lt;br&gt;Is a party on a shipment or invoice stored as the&#10;&lt;br&gt;ORGANISATION code or the ADDRESS code?&#10;&lt;br&gt;Our whole visibility model resolves from the&#10;&lt;br&gt;organisation code" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="548" width="460" height="112" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" value="Snowflake&#10;&lt;br&gt;&lt;br&gt;Noatum&#39;s existing CargoWise extract.&#10;&lt;br&gt;&lt;b&gt;Candidate source for the two bulk cases:&lt;/b&gt;&#10;&lt;br&gt;the organisation directory, and the one-off&#10;&lt;br&gt;historical backfill per customer" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;dashed=1;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="676" width="460" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="CW1 SIMULATOR&#10;&lt;br&gt;our own fake CargoWise. Lets us build and&#10;&lt;br&gt;demonstrate before access arrives. The portal&#10;&lt;br&gt;cannot tell it apart &#8212; that is configuration" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="796" width="460" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="Azure Communication Services / Microsoft Graph&#10;&lt;br&gt;&lt;i&gt;email transport &#8212; adapter written, returns&lt;/i&gt;&#10;&lt;br&gt;&lt;i&gt;&#8220;not configured&#8221;. Provider decision outstanding&lt;/i&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="900" width="460" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="Dynamics 365&#160;&#160;&#8212;&#160;&#160;claims&#10;&lt;br&gt;Order management&#160;&#160;&#8212;&#160;&#160;purchase orders&#10;&lt;br&gt;AI email drafting&#160;&#160;&#8212;&#160;&#160;another Noatum team&#10;&lt;br&gt;Power BI&#160;&#160;&#8212;&#160;&#160;embedded analytics&#10;&lt;br&gt;Rate source&#160;&#160;&#8212;&#160;&#160;&lt;b&gt;none exists; every quote is priced by a person&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;dashed=1;align=left;spacingLeft=14;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="988" width="460" height="104" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e7" value="THE PROPOSAL, IN ORDER&#10;&lt;br&gt;&lt;br&gt;&#9314;&#160;&#160;Move RateEngineAdapter into contracts/adapters&#10;&lt;br&gt;&#9315;&#160;&#160;Create the six missing ports&#10;&lt;br&gt;&#9316;&#160;&#160;Put Cw1ShipmentAdapter behind a port&#10;&lt;br&gt;&#9317;&#160;&#160;Add integration_message and the inbound endpoint&#10;&lt;br&gt;&#9318;&#160;&#160;Wire the first producers: email, then the import&#10;&lt;br&gt;&#9319;&#160;&#160;Build the quote write-back &#8212; the Phase 1 promise&#10;&lt;br&gt;&#9320;&#160;&#160;Add a scheduler and queue metrics&#10;&lt;br&gt;&lt;br&gt;Plus, before running on more than one server:&#10;&lt;br&gt;move the login-attempt limiter from memory to PostgreSQL" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;align=left;spacingLeft=16;spacingTop=8;verticalAlign=top;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="1108" width="460" height="290" as="geometry" />
+        </mxCell>
+
+        <!-- ===== flow edges ===== -->
+        <mxCell id="f1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="p2" target="w2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="p3" target="w4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.25;entryY=0;fontFamily=Helvetica;fontSize=10;fontColor=#58595B;" edge="1" parent="1" source="w2" target="b3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.75;entryY=0;fontFamily=Helvetica;fontSize=10;fontColor=#58595B;" edge="1" parent="1" source="w4" target="b3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" value="passes all four gates" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#AA272F;strokeWidth=2;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontFamily=Helvetica;fontSize=11;fontColor=#AA272F;" edge="1" parent="1" source="b3" target="b4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" value="business code calls the PORT only" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#AA272F;strokeWidth=2;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontFamily=Helvetica;fontSize=11;fontColor=#AA272F;" edge="1" parent="1" source="b4" target="b5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f7" value="the module decides what backs each port" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontFamily=Helvetica;fontSize=11;fontColor=#58595B;" edge="1" parent="1" source="b5" target="b6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" value="anything that leaves the portal goes on the queue" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#002C5F;strokeWidth=2;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontFamily=Helvetica;fontSize=11;fontColor=#002C5F;" edge="1" parent="1" source="b6" target="b7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f9" value="the job and the business write commit TOGETHER" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#002C5F;strokeWidth=2;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontFamily=Helvetica;fontSize=11;fontColor=#002C5F;" edge="1" parent="1" source="b7" target="b8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f10" value="XML over HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#AA272F;strokeWidth=3;startArrow=block;startFill=1;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontFamily=Helvetica;fontSize=11;fontColor=#AA272F;" edge="1" parent="1" source="i1" target="e2b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f11" value="bulk" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#002C5F;dashed=1;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontFamily=Helvetica;fontSize=11;fontColor=#002C5F;" edge="1" parent="1" source="e3" target="i5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;dashed=1;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="e4" target="i1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f13" value="token" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontFamily=Helvetica;fontSize=10;fontColor=#58595B;" edge="1" parent="1" source="e1" target="p3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ===== bottom rule ===== -->
+        <mxCell id="foot" value="THE ONE SENTENCE:&#160;&#160;the portal keeps its own synchronised copy of CargoWise data and serves every screen from it, talks to the outside world only through ports, and puts everything it sends outward on a waiting list that commits in the same breath as the business record." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;align=left;spacingLeft=20;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1434" width="2320" height="56" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,1019 @@
+/* ============================================================================
+ * The customer's analytics dashboard.
+ *
+ * Measures from "Noatum Customer Dashboard.html": a 1320 measure with 32px
+ * gutters, 18px between everything, white cards with a soft shadow and square
+ * corners. No card carries a border as well as a shadow - one or the other, and
+ * on this page it is the shadow.
+ * ========================================================================== */
+
+.page {
+  background: var(--noa-ground);
+  min-block-size: 100%;
+}
+
+/* While a filter change is in flight the old figures stay and step back, rather
+   than nine panels blanking to skeletons every time somebody presses a chip. */
+.page[data-busy='true'] .body {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* --- the band ------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.heroPattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    900px 340px at 82% -30%,
+    var(--noa-color-hero-wash),
+    transparent 70%
+  );
+}
+
+.heroInner {
+  position: relative;
+  max-inline-size: var(--noa-measure-wide);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 20px var(--noa-shell-gutter) 70px;
+  min-inline-size: 0;
+}
+
+.heroTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* When the figures were last refreshed, and from where. Small, permanent and
+   never omitted: it is the line that stops a sample being read as a fact. */
+.asOf {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-hero-muted);
+}
+
+.asOfDot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: var(--noa-mint-400);
+}
+
+/*
+ * Sample figures are stated, not whispered — but they are stated on the same
+ * line as everything else about provenance, not in a box that competes with the
+ * headline. Amber rather than green: the dot is where a live feed would put one,
+ * and this is not a live feed.
+ */
+.sample {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--noa-amber-400);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-black);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: var(--space-4) 0 0;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-mint-400);
+}
+
+.statusDot {
+  inline-size: 8px;
+  block-size: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--noa-mint-400);
+}
+
+/* The actions sit level with the headline, not with the bottom of the sentence
+   under it: they answer "what do you want to do", which is the same question the
+   greeting asks, and dropping them to the baseline of a two-line subtitle makes
+   their position depend on how long the office list happens to be. */
+.heroRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  margin-block-start: var(--space-3);
+}
+
+.heroLede {
+  min-inline-size: 0;
+  flex: 1 1 24rem;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--noa-text-hero);
+  font-weight: var(--noa-weight-black);
+  line-height: 1.16;
+  color: var(--noa-color-hero-text);
+}
+
+.lede {
+  margin: 6px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark);
+  max-inline-size: 39rem;
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  gap: var(--noa-kit-chip-gap);
+  flex: none;
+  flex-wrap: wrap;
+}
+
+/* --- the content column --------------------------------------------------- */
+
+.body {
+  max-inline-size: var(--noa-measure-wide);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 0 var(--noa-shell-gutter) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-inline-size: 0;
+  transition: opacity 120ms linear;
+}
+
+/* --- filters -------------------------------------------------------------- */
+
+/*
+ * The slicers, IN the band rather than on a white card over it.
+ *
+ * They govern every panel below, so they belong with the headline that says
+ * whose freight this is. A white card here read as the page's first panel and
+ * competed with "Needs you" for the overlap; a translucent inset reads as part
+ * of the band, which is what it is.
+ */
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-block-start: var(--space-4);
+  padding: 9px 14px;
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  min-inline-size: 0;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+.filterLabel {
+  flex: none;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+/*
+ * Period is a segmented control and mode is a row of chips, on purpose.
+ *
+ * They are different questions: a period is one of three points on a scale, and
+ * the joined segments say so; a mode is one of a set of named things, each with
+ * its own colour on every chart below. Drawing both the same way made the bar
+ * read as six equal buttons with no relationship between them.
+ */
+.periodGroup {
+  border: 1px solid var(--noa-color-hero-border-strong);
+  gap: 0;
+  overflow: hidden;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 13px;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* The mode chips are pills; the period segments are not. */
+.filterGroup:not(.periodGroup) .chip {
+  border-color: var(--noa-color-hero-border-strong);
+  border-radius: 16px;
+}
+
+.chip:hover {
+  background: var(--noa-color-hero-chip);
+}
+
+/* The chosen slice is filled white, not merely tinted: the dashboard changes
+   under it, so which one is active has to be readable without relying on
+   colour, and white is the only fill that carries on this band. */
+.chip[aria-pressed='true'] {
+  background: var(--noa-color-surface);
+  border-color: var(--noa-color-surface);
+  color: var(--noa-color-hero);
+}
+
+.chip:focus-visible {
+  outline: var(--noa-focus-width) solid var(--text-on-dark);
+  outline-offset: calc(var(--noa-focus-offset) * -1);
+}
+
+.chipDot {
+  inline-size: 8px;
+  block-size: 8px;
+  flex: none;
+  border-radius: 50%;
+}
+
+/* A hairline between the two groups, as the band draws it. */
+.filterRule {
+  inline-size: 1px;
+  block-size: 26px;
+  flex: none;
+  background: var(--noa-color-hero-border-strong);
+}
+
+.filterSummary {
+  margin: 0 0 0 auto;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-on-dark);
+}
+
+/* --- panels --------------------------------------------------------------- */
+
+.panel {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  min-inline-size: 0;
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-block-end: var(--space-4);
+}
+
+.panelLede {
+  min-inline-size: 0;
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--text-heading);
+}
+
+.panelCaption {
+  margin: 2px 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text-muted);
+}
+
+.panelAside {
+  flex: none;
+  min-inline-size: 0;
+}
+
+.panelLink {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.panelLink:hover {
+  text-decoration: underline;
+}
+
+.panelFigure {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  line-height: var(--noa-leading-none);
+}
+
+.panelFigure small {
+  margin-block-start: 4px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-regular, 400);
+  color: var(--noa-color-text-muted);
+}
+
+.panelNote {
+  margin: var(--space-3) 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--color-primary);
+}
+
+.subHead {
+  margin: var(--space-5) 0 var(--space-1);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+/* --- rows ----------------------------------------------------------------- */
+
+.twoUp,
+.threeUp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  min-inline-size: 0;
+}
+
+@media (min-width: 900px) {
+  .twoUp {
+    /* The time series is the subject; the mix is the aside. */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  /* Reliability and transit are two readings of the same promise, so neither
+     is the aside: they take half the row each. */
+  .evenUp {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 820px) {
+  .threeUp {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1180px) {
+  .threeUp {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* --- needs you ------------------------------------------------------------ */
+
+/* The first card climbs into the band's empty foot, which is what joins the
+   two into one object rather than a band with a page under it. */
+.needs {
+  position: relative;
+  margin-block-start: calc(var(--noa-hero-rise) * -1);
+  box-shadow: var(--noa-shadow-lifted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 560px) {
+  .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1180px) {
+  .actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/*
+ * One card per thing waiting on the customer.
+ *
+ * The rule on top carries the urgency and the badge repeats it in words, so the
+ * colour is a second signal rather than the only one.
+ */
+.action {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--noa-color-border);
+  border-block-start: 3px solid var(--noa-color-border-strong);
+  min-inline-size: 0;
+}
+
+.action[data-tone='action'] {
+  border-block-start-color: var(--color-primary);
+}
+
+.action[data-tone='warning'] {
+  border-block-start-color: var(--noa-amber-600);
+}
+
+.action[data-tone='info'] {
+  border-block-start-color: var(--color-accent-navy);
+}
+
+.action:hover {
+  box-shadow: var(--shadow-card);
+}
+
+.action header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.actionIcon {
+  display: grid;
+  place-items: center;
+  inline-size: 26px;
+  block-size: 26px;
+  border-radius: var(--radius-btn);
+  background: var(--surface-page);
+  color: var(--noa-color-text);
+}
+
+.action[data-tone='action'] .actionIcon {
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+
+.action[data-tone='warning'] .actionIcon {
+  background: var(--noa-amber-050);
+  color: var(--noa-amber-600);
+}
+
+.actionBadge {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-black);
+  padding: 5px 7px;
+  border-radius: 3px;
+  background: var(--surface-page);
+  color: var(--noa-color-text);
+  white-space: nowrap;
+}
+
+.action[data-tone='action'] .actionBadge {
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+
+.action[data-tone='warning'] .actionBadge {
+  background: var(--noa-amber-050);
+  color: var(--noa-amber-600);
+}
+
+.actionTitle {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.actionDetail {
+  margin: 0;
+  flex: 1;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.actionCta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.actionCta:hover {
+  text-decoration: underline;
+}
+
+/* A destination that has not shipped says so rather than offering a dead link. */
+.actionSoon {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- the five numbers ----------------------------------------------------- */
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 18px 20px 16px;
+  border-inline-end: 1px solid var(--surface-page);
+  border-block-end: 1px solid var(--surface-page);
+  min-inline-size: 0;
+}
+
+.kpiLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+/* The tile's own colour, matching the series it summarises elsewhere. */
+.kpiMark {
+  inline-size: 8px;
+  block-size: 8px;
+  flex: none;
+  background: var(--noa-chart-1);
+}
+
+.kpiMark[data-key='on_time'] {
+  background: var(--noa-chart-5);
+}
+
+.kpiMark[data-key='door_to_door'] {
+  background: var(--noa-chart-2);
+}
+
+.kpiMark[data-key='spend'] {
+  background: var(--noa-chart-4);
+}
+
+.kpiMark[data-key='balance'] {
+  background: var(--color-primary);
+}
+
+.kpiValue {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.kpiUnit {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.kpiFoot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.kpiDelta {
+  padding: 3px 6px;
+  border-radius: 3px;
+  background: var(--surface-page);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-black);
+}
+
+.kpiDelta[data-tone='good'] {
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+}
+
+.kpiDelta[data-tone='bad'] {
+  background: var(--noa-amber-050);
+  color: var(--noa-amber-600);
+}
+
+.kpiCaption {
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- mode mix ------------------------------------------------------------- */
+
+.mixPanel {
+  display: flex;
+  flex-direction: column;
+}
+
+.mixList,
+.splitList,
+.stages,
+.emissionModes {
+  list-style: none;
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.mixList li,
+.splitList li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  padding: 9px 0;
+  border-block-start: 1px solid var(--surface-page);
+}
+
+.mixSwatch {
+  inline-size: 10px;
+  block-size: 10px;
+  flex: none;
+}
+
+.mixLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mixCount {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.mixSpend,
+.mixShare {
+  inline-size: 74px;
+  text-align: end;
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.mixShare {
+  inline-size: 36px;
+}
+
+/* --- in flight ------------------------------------------------------------ */
+
+.stages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3);
+}
+
+.stages li {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: var(--space-2);
+  align-items: center;
+}
+
+.stageSwatch {
+  inline-size: 8px;
+  block-size: 8px;
+}
+
+.stageLabel {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+  line-height: var(--noa-leading-compact);
+}
+
+.stageCount {
+  grid-column: 2;
+  font-size: var(--noa-text-xl);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  line-height: var(--noa-leading-none);
+  margin-block-start: 6px;
+}
+
+.arrivals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.arrival {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 1.3fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 0;
+  border-block-start: 1px solid var(--surface-page);
+  min-inline-size: 0;
+}
+
+.arrivalDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 0;
+  border: 1px solid var(--noa-color-border);
+}
+
+.arrivalDate strong {
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--text-heading);
+}
+
+.arrivalDate small {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-2xs);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  color: var(--color-primary);
+}
+
+.arrivalRef {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.arrivalRef strong {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrivalRef small {
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+}
+
+.arrivalNote {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-inline-size: 0;
+}
+
+@media (max-width: 760px) {
+  .arrival {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+  }
+
+  .arrivalNote {
+    grid-column: 2 / -1;
+    white-space: normal;
+  }
+}
+
+/* --- the lane table ------------------------------------------------------- */
+
+.tableScroll {
+  overflow-x: auto;
+  margin-inline: -20px;
+  padding-inline: 20px;
+  scrollbar-width: thin;
+}
+
+.table {
+  inline-size: 100%;
+  min-inline-size: 880px;
+  border-collapse: collapse;
+}
+
+.table thead th {
+  padding: 10px 12px;
+  background: var(--noa-paper, var(--surface-page));
+  border-block: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  text-align: start;
+  white-space: nowrap;
+}
+
+.table tbody th,
+.table tbody td {
+  padding: 11px 12px;
+  border-block-end: 1px solid var(--surface-page);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-page);
+}
+
+.numeric {
+  text-align: end !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.lane {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.laneEnd {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.laneEnd strong {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+}
+
+.laneEnd small {
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.laneArrow {
+  flex: none;
+  color: var(--color-primary);
+}
+
+.modeTag {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 3px;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+  background: var(--noa-navy-050);
+  color: var(--color-accent-navy);
+}
+
+.modeTag[data-mode='air'] {
+  background: var(--red-050);
+  color: var(--color-primary);
+}
+
+.transit {
+  display: flex;
+  flex-direction: column;
+}
+
+.transit strong {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.transit small {
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- money and carbon ----------------------------------------------------- */
+
+.credit {
+  margin-block-start: var(--space-5);
+}
+
+.creditRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0 0 7px;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.creditRow strong {
+  color: var(--text-heading);
+}
+
+.emissionTotal {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0 0 var(--space-3);
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.emissionTotal span {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-green-600);
+}
+
+.emissionModes li {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  padding: 6px 0;
+}
+
+@media (max-width: 600px) {
+  .heroInner,
+  .body {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+
+  .filterSummary {
+    margin-inline-start: 0;
+  }
+}
+
+/* --- the calculator, last ------------------------------------------------- */
+
+/*
+ * The emissions panel links down to this, so it needs room above it when the
+ * browser scrolls it into view - otherwise it lands under the sticky header and
+ * the customer sees the middle of a panel with no title.
+ */
+.calculator {
+  min-inline-size: 0;
+  scroll-margin-block-start: calc(var(--noa-header-height) + var(--noa-utility-height) + var(--space-4));
+}

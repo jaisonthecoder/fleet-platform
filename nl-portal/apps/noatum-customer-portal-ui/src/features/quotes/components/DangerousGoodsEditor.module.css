@@ -1,0 +1,310 @@
+.panel {
+  display: grid;
+  gap: var(--space-3);
+  border-left: 3px solid var(--color-primary);
+  background: var(--surface-section);
+  padding: var(--space-4);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+.intro {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  max-width: 62ch;
+  line-height: var(--noa-leading-normal);
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.entry {
+  display: grid;
+  gap: var(--space-3);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  padding: var(--space-3);
+}
+
+.entryHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.entryName {
+  font-size: var(--noa-text-sm);
+  font-weight: 700;
+  color: var(--text-heading);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--space-3);
+}
+
+.flags {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.links {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-3);
+}
+
+.legend {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  padding: 0;
+}
+
+.lineChoices {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* Colour is never the only signal: the text itself states what is missing. */
+.warn {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-warning-700);
+  background: var(--noa-warning-100);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--noa-warning-500);
+}
+
+.footnote {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+  line-height: var(--noa-leading-normal);
+}
+
+/* --- the register -------------------------------------------------------- */
+
+.register {
+  border: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  min-inline-size: 0;
+}
+
+.registerHead,
+.registerRow {
+  display: grid;
+  /*
+   * `minmax(0, …)` on every flexible column, so they shrink with the panel rather
+   * than forcing a scrollbar. Fixed minimums made the grid wider than its own
+   * card and put a horizontal bar inside the panel — the one place a scrollbar
+   * should never be, because the row it hides is the row being read.
+   */
+  grid-template-columns:
+    38px minmax(0, 2.2fr) minmax(0, 1.1fr) 40px
+    minmax(0, 1fr) minmax(0, 1.2fr) 58px;
+  gap: var(--space-2);
+  align-items: center;
+  padding-inline: var(--space-3);
+}
+
+/* Shrinking columns need somewhere for the overflow to go. */
+.registerHead > *,
+.registerRow > span {
+  min-inline-size: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.registerHead {
+  padding-block: var(--space-2);
+  background: var(--noa-neutral-100);
+  border-block-end: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.registerRow {
+  padding-block: var(--space-3);
+  border-block-start: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-sm);
+}
+
+/* The open row and its detail read as one block. */
+.registerRow[data-open] {
+  background: var(--red-050);
+}
+
+/*
+ * The placard, not an icon: a rotated square with the class number in it is what
+ * is actually stuck to the package, so it is recognised before it is read.
+ */
+.diamond {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 30px;
+  block-size: 30px;
+  transform: rotate(45deg);
+  border: 2px solid var(--noa-color-accent);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+}
+
+.diamond > * {
+  transform: rotate(-45deg);
+}
+
+/* Classes 8 and 9 are not flammable; the neutral border says so at a glance. */
+.diamond[data-class='9'],
+.diamond[data-class='8'] {
+  border-color: var(--noa-neutral-900);
+  color: var(--noa-neutral-900);
+}
+
+.rowName {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.rowMuted {
+  color: var(--noa-color-text-muted);
+}
+
+.rowStrong {
+  font-weight: var(--noa-weight-bold);
+}
+
+.rowUnlinked {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+}
+
+.rowActions {
+  display: inline-flex;
+  gap: var(--space-1);
+  justify-content: flex-end;
+}
+
+.disclose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 26px;
+  block-size: 26px;
+  background: none;
+  border: none;
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.disclose:hover {
+  color: var(--noa-color-accent);
+}
+
+/* The detail belongs to the row above it, so it carries the same tint. */
+.detail {
+  display: block;
+  padding: var(--space-4) var(--space-3) var(--space-5);
+  background: var(--red-050);
+  border-block-start: 1px solid var(--noa-color-border);
+}
+
+/* A section heading inside the detail, in the same voice as a column header. */
+.group {
+  margin-block: 0 var(--space-2);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.detail .fields + .group {
+  margin-block-start: var(--space-5);
+}
+
+/*
+ * The same closing band as the cargo lines: navy, right aligned.
+ * A summary is a statement of what was entered, not another row of the table, so
+ * it is set apart by tone rather than by a heavier border - and all three grids on
+ * this form close the same way, or the eye has to relearn each one.
+ */
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  text-align: end;
+  gap: var(--space-3) var(--space-5);
+  margin: 0;
+  padding: var(--space-4) var(--space-5);
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.totals > div {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.totals dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.totals dd {
+  margin: 0;
+  margin-block-start: var(--space-1);
+  font-size: var(--noa-text-section);
+  font-weight: var(--noa-weight-black);
+  color: var(--noa-color-hero-text);
+}
+
+/* The figure that decides something, marked the way the cargo band marks its own. */
+.totals .totalLead {
+  color: var(--noa-color-hero-eyebrow);
+}

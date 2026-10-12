@@ -1,0 +1,25 @@
+/*
+ * Layout only. The container card is SE-04 ContainerSelector and the group
+ * filter is the ChipToggles FilterPills variant, so nothing here paints a
+ * border, a chip, a stepper or a payload meter — that would be a second,
+ * drifting copy of the kit's container card.
+ */
+
+.picker {
+  display: grid;
+  gap: var(--space-3);
+  /* The rail scrolls inside this, so the grid must not widen to fit it. */
+  min-inline-size: 0;
+}
+
+.note,
+.summary {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.summary {
+  font-weight: 700;
+  color: var(--text-heading);
+}

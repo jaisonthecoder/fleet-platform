@@ -1,0 +1,121 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--noa-z-sticky);
+  background: var(--noa-color-surface);
+  border-bottom: 1px solid var(--noa-color-border);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-header-gap);
+  height: var(--noa-header-height);
+  padding: 0 var(--noa-chrome-gutter);
+  min-width: 0;
+}
+
+/* Edge to edge, for a public surface where the bar is the brand. */
+.full {
+  max-width: none;
+  padding-inline: var(--noa-chrome-gutter);
+}
+
+@media (max-width: 600px) {
+  .full {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+}
+
+/*
+ * The brand, and the column that decides where the links begin.
+ *
+ * The page below the bar is a centred measure, so on a wide screen its first
+ * word is nowhere near the window edge — while the header runs edge to edge and
+ * the links ended up tucked against the wordmark with a third of the screen
+ * empty to their right. The brand column is therefore grown to the width of
+ * that empty margin, so the first link lands on the same vertical as the
+ * content under it.
+ *
+ * `100%` is the header's own content box, hence the gutters added back: the
+ * page's left margin is (window - measure) / 2, and this expresses it from
+ * inside a box already inset by one gutter on each side. Below the measure the
+ * margin is nothing, `max` returns zero, and the row falls back to the brand's
+ * natural width with the ordinary gap after it.
+ */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-3);
+  flex-shrink: 0;
+  min-inline-size: max(
+    0px,
+    calc(
+      (100% - var(--noa-measure-wide) + 2 * var(--noa-chrome-gutter)) / 2 - var(--noa-header-gap)
+    )
+  );
+}
+
+.brand :global(img),
+.brand :global(svg) {
+  height: 32px;
+  width: auto;
+}
+
+.productName {
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-semibold);
+  color: var(--noa-color-text);
+  /* Separator instead of a second logo lockup. */
+  padding-left: var(--noa-space-3);
+  border-left: 1px solid var(--noa-color-border);
+}
+
+/* Runs the full height so a link can carry its active rule on the bar's edge,
+   and shrinks before the brand or the account do. */
+.nav {
+  display: flex;
+  align-items: stretch;
+  gap: 18px;
+  block-size: 100%;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Impersonation: warning colours, full width, above everything. Deliberately loud. */
+.impersonation {
+  position: sticky;
+  top: 0;
+  z-index: calc(var(--noa-z-sticky) + 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--noa-space-3);
+  padding: var(--noa-space-2) var(--noa-space-4);
+  background: var(--noa-warning-100);
+  color: var(--noa-warning-700);
+  border-bottom: 2px solid var(--noa-warning-500);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-semibold);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .productName {
+    display: none;
+  }
+
+  .nav {
+    display: none;
+  }
+}

@@ -1,0 +1,76 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.tablist {
+  display: flex;
+  gap: var(--noa-space-6);
+  border-bottom: 1px solid var(--noa-color-border);
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-2) 0 var(--noa-space-3);
+  /* Pull the 3px indicator down so it sits on the list's hairline, not above it. */
+  margin-bottom: -1px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--noa-color-text-muted);
+  font-family: var(--noa-font-sans);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-semibold);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--noa-duration-fast) var(--noa-ease),
+    border-color var(--noa-duration-fast) var(--noa-ease);
+}
+
+.tab:hover:not(:disabled) {
+  color: var(--noa-neutral-900);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.selected {
+  color: var(--noa-neutral-900);
+  font-weight: var(--noa-weight-bold);
+  border-bottom-color: var(--noa-color-accent);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--noa-space-1);
+  border-radius: 9px;
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+}
+
+.panel {
+  padding-top: var(--noa-space-5);
+}
+
+/* The panel is focusable for keyboard users; do not draw a box around a whole page. */
+.panel:focus-visible {
+  outline-offset: -2px;
+}

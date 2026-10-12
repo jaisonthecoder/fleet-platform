@@ -1,0 +1,103 @@
+/* SE-01 · Transport mode cards. Measures from Noatum UI Kit.dc.html. */
+
+/* Same caption recipe as SE-02 and SE-03, so three selection groups stacked in
+   one card read as one family rather than three. */
+.field {
+  display: block;
+}
+
+.eyebrow {
+  margin: 0 0 var(--noa-kit-chip-gap);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.375rem), 1fr)); /* 150px */
+  gap: var(--noa-kit-chip-gap);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+  padding: var(--noa-kit-card-gap); /* 14px */
+  text-align: start;
+  background: var(--noa-color-surface);
+  border: 2px solid var(--noa-color-border);
+  border-radius: var(--radius-none);
+  cursor: pointer;
+}
+
+.card:hover:not([data-disabled]) {
+  border-color: var(--noa-color-border-strong);
+}
+
+.card:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.card[data-state='checked'] {
+  background: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent);
+}
+
+.card[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* The tile inverts with the card: tinted normally, solid once chosen. */
+.tile {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--noa-icon-tile-size);
+  block-size: var(--noa-icon-tile-size);
+  background: var(--noa-color-accent-subtle);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-accent);
+}
+
+.card[data-state='checked'] .tile {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.tile svg {
+  inline-size: 1.0625rem; /* 17px */
+  block-size: 1.0625rem;
+  stroke-width: 1.9;
+}
+
+.copy {
+  display: block;
+  min-inline-size: 0;
+}
+
+.title {
+  display: block;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.card[data-state='checked'] .title {
+  color: var(--noa-color-accent);
+}
+
+.sub {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-text-muted);
+}

@@ -1,0 +1,470 @@
+/*
+ * The pricing work area, to the staff quotation mockup.
+ *
+ * Three cards on the paper ground: what the service is, what it costs, and where
+ * that price sits. Each opens with the brand's short rule and an eyebrow, which
+ * is how every section in the kit announces itself.
+ */
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  margin-block-start: 14px;
+  border-block-start: 1px solid var(--noa-color-border);
+  background: var(--noa-paper);
+}
+
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--noa-color-border);
+  padding: 18px;
+  min-inline-size: 0;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tick {
+  display: block;
+  inline-size: 16px;
+  block-size: 3px;
+  margin-block-end: 9px;
+  background: var(--noa-color-accent);
+}
+
+.eyebrow {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.headNote {
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+.headActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Link-weight actions, not buttons: duplicating an option is a small act beside
+   the send at the foot of the page, and three solid buttons here compete with it. */
+.linkAction {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--link);
+  cursor: pointer;
+}
+
+.linkAction[data-quiet='true'] { color: var(--noa-color-text); }
+.linkAction:hover { color: var(--link-hover); }
+
+/* --- service details ----------------------------------------------------- */
+
+/*
+ * What the option IS: its name and its carrier.
+ *
+ * Marked out from the detail below because those two are what the customer reads
+ * on the quotation and what the pricer picks the option by on the cards above -
+ * everything else in this card describes them. The tint is the same one the open
+ * option card wears, so the two read as the same thing seen twice.
+ */
+.identity {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-block-start: 12px;
+  padding: 14px 16px;
+  background: var(--noa-color-accent-subtle);
+  border-inline-start: 3px solid var(--noa-color-accent);
+}
+
+/* On the tint, the labels carry the brand rather than the body colour, which is
+   what makes the block read as the heading of the card. */
+.identity :global(label) { color: var(--noa-color-accent); }
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 12px;
+  margin-block-start: 10px;
+  align-items: start;
+}
+
+/*
+ * A pair of fields under one label - the transit range - and the recommendation
+ * toggle, which is a control rather than a field. Both copy the kit's own field
+ * shell exactly, so their labels sit on the same line as the fields either side.
+ */
+.pairField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--noa-space-1);
+  min-inline-size: 0;
+}
+
+.pairLabel {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+  color: var(--noa-color-text);
+}
+
+/*
+ * DateField is the one control in the kit that labels itself with the global
+ * .noa-label - 12px bold on a 6px gap - where Input, Select, Autocomplete and
+ * Textarea all use Field.module.css's 14px medium on a 4px gap. In a row that
+ * mixes them the labels sit at two different heights, which is what the ragged
+ * look was. Corrected here rather than in the kit, because changing .noa-label
+ * would restyle the customer's own request form; recorded in docs/gaps.md.
+ */
+.fields :global(.noa-label) {
+  margin-block-end: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-medium);
+  line-height: var(--noa-leading-normal);
+}
+
+.pair {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pair > * { flex: 1; min-inline-size: 0; }
+
+.dash {
+  flex: none;
+  color: var(--noa-color-text-muted);
+}
+
+.recommend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  inline-size: 100%;
+  box-sizing: border-box;
+  block-size: var(--noa-control-height-regular);
+  padding-inline: 12px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  text-align: start;
+  cursor: pointer;
+}
+
+.recommend[data-on='true'] {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+}
+
+.recommend:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.recommendBox {
+  flex: none;
+  inline-size: 14px;
+  block-size: 14px;
+  box-sizing: border-box;
+  border-radius: 3px;
+  border: 2px solid var(--noa-color-border);
+  background: var(--surface-card);
+}
+
+.recommend[data-on='true'] .recommendBox {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+}
+
+/* --- charge lines -------------------------------------------------------
+ * The cargo-line grid from the customer's own request form, to the letter: the
+ * same bordered block, the same header band on paper, the same row padding,
+ * hover and last-row rule. A pricer and a customer are filling in the same kind
+ * of table, and two dialects of one grid is how a product stops feeling like one.
+ */
+.lines {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--noa-color-border);
+  background: var(--noa-color-surface);
+  min-inline-size: 0;
+  margin-block-start: 10px;
+}
+
+.lineScroll {
+  overflow-x: auto;
+  min-inline-size: 0;
+}
+
+/*
+ * Ten columns where the cargo grid has six, because a charge line carries the
+ * cost and margin columns as well. Same shape, same minimums.
+ */
+.lineGrid {
+  min-inline-size: 940px;
+}
+
+.lineHead,
+.line {
+  display: grid;
+  grid-template-columns:
+    minmax(108px, 0.7fr) minmax(180px, 1.6fr) minmax(140px, 1fr)
+    minmax(64px, 0.5fr) minmax(88px, 0.7fr) minmax(120px, 0.9fr)
+    minmax(96px, 0.7fr) minmax(88px, 0.7fr) minmax(54px, 0.4fr) 40px;
+  gap: var(--noa-kit-chip-gap);
+  align-items: center;
+  padding-inline: var(--space-3);
+}
+
+/* Without the cost right, the two internal columns are not rendered at all. */
+.lineHead[data-cost='false'],
+.line[data-cost='false'] {
+  grid-template-columns:
+    minmax(108px, 0.7fr) minmax(180px, 1.6fr) minmax(140px, 1fr)
+    minmax(64px, 0.5fr) minmax(88px, 0.7fr) minmax(120px, 0.9fr)
+    minmax(96px, 0.7fr) 40px;
+}
+
+/* The header is a band, not a line of small text. */
+.lineHead {
+  padding-block: 9px;
+  background: var(--noa-paper);
+  border-bottom: 1px solid var(--noa-color-border-strong);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  white-space: nowrap;
+}
+
+/* The internal columns are marked in the header, once, not on every row. */
+.lineHead .internal { color: var(--noa-color-accent); }
+
+.line {
+  padding-block: var(--noa-kit-row-y);
+  border-bottom: 1px solid var(--noa-color-border);
+}
+
+.line:last-child { border-bottom: 0; }
+.line:hover { background: var(--noa-paper); }
+
+/* Calculated, never typed — so it is a figure, not a disabled field. */
+.amount,
+.numeric {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+  white-space: nowrap;
+}
+
+.lineMargin {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+}
+
+.lineMargin[data-tone='low'] { color: var(--noa-color-accent); }
+.lineMargin[data-tone='mid'] { color: var(--noa-kit-attention); }
+.lineMargin[data-tone='ok'] { color: var(--noa-kit-success); }
+.lineMargin[data-tone='none'] { color: var(--noa-color-text-muted); }
+
+.lineRemove {
+  inline-size: 32px;
+  block-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.lineRemove:hover:not(:disabled) {
+  color: var(--noa-color-accent);
+  background: var(--red-050);
+}
+
+.lineRemove:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.lineRemove:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* The foot of the block, inside its border, as the cargo grid closes. */
+.lineActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding: var(--space-3);
+  border-top: 1px solid var(--noa-color-border);
+}
+
+/* The closing band every grid on this platform ends with. */
+.totals {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--surface-section);
+}
+
+.totals > div { min-inline-size: 0; }
+
+.totals dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.totals dd {
+  margin: 5px 0 0;
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.totals dd.sell {
+  font-size: var(--noa-text-lg);
+  color: var(--noa-color-accent);
+}
+
+.totals dd.profit { color: var(--noa-kit-success); }
+.totals dd[data-tone='low'] { color: var(--noa-color-accent); }
+.totals dd[data-tone='mid'] { color: var(--noa-kit-attention); }
+.totals dd[data-tone='ok'] { color: var(--noa-kit-success); }
+
+/* --- where the sell price sits ------------------------------------------- */
+
+.mixBar {
+  display: flex;
+  block-size: 14px;
+  min-inline-size: 0;
+  margin-block-start: 10px;
+}
+
+.mixBar span {
+  min-inline-size: 0;
+  border-inline-end: 1px solid var(--surface-card);
+}
+
+.mixRows {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mixRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 8px;
+  border-block-end: 1px solid var(--noa-ground);
+  min-inline-size: 0;
+}
+
+.swatch {
+  flex: none;
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+.mixLabel {
+  flex: 1;
+  min-inline-size: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mixAmount {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--text-heading);
+  white-space: nowrap;
+}
+
+.mixShare {
+  flex: none;
+  inline-size: 34px;
+  text-align: end;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* The four families, in the kit's order: brand, navy, grey, tint. */
+.family1 { background: var(--noa-color-accent); }
+.family2 { background: var(--color-accent-navy); }
+.family3 { background: var(--noa-scroll-thumb); }
+.family4 { background: var(--noa-action-tint-strong); }
+
+.empty {
+  margin: 10px 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- terms --------------------------------------------------------------- */
+
+/* The payment terms and what the offer is subject to are one column of two
+   stacked fields, so the three cards across the row stay level. */
+.stack { display: grid; gap: 12px; align-content: start; }
+
+.stacked { margin-block-start: 12px; }
+
+.termsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 12px;
+  margin-block-start: 10px;
+}
+

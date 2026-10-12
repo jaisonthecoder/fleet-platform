@@ -1,0 +1,283 @@
+/*
+ * The quotations landing page.
+ *
+ * To REFERENCE/MOCKUP-htmls-page-vice/Noatum Instant Quote.html: a full-bleed
+ * navy hero carrying the strip, and the content rising 52px into its foot.
+ *
+ * No negative page margin: the customer shell puts its gutter on CustomerMeasure,
+ * which this page does not opt into - the hero bleeds and the body lays out its
+ * own container.
+ */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+/* --- hero ----------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  min-inline-size: 0;
+  padding-block: 22px 84px;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+  background-image: var(--noa-hero-hairlines);
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  max-inline-size: var(--noa-public-max);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--noa-public-gutter);
+  min-inline-size: 0;
+}
+
+.headline {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  margin-block: 22px var(--space-5);
+  min-inline-size: 0;
+}
+
+.lede { min-inline-size: 0; }
+
+.title {
+  margin: 0;
+  font-size: var(--noa-text-page);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-page);
+  color: var(--noa-color-hero-text);
+}
+
+.intro {
+  margin: 8px 0 0;
+  max-inline-size: 640px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark);
+}
+
+.heroActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+.ghost {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: 1px solid var(--noa-color-hero-outline);
+  border-radius: var(--radius-btn);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ghost:hover { border-color: var(--noa-color-hero-text); }
+
+.ghost:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: 2px;
+}
+
+.denied {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  font-size: var(--noa-text-sm);
+  color: var(--noa-on-dark);
+}
+
+/* --- the body, risen into the hero ---------------------------------------- */
+
+.rise {
+  position: relative;
+  z-index: 1;
+  margin-block-start: -52px;
+  margin-inline: auto;
+  inline-size: 100%;
+  max-inline-size: var(--noa-public-max);
+  box-sizing: border-box;
+  padding: 0 var(--noa-public-gutter) 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-inline-size: 0;
+}
+
+.card {
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-shadow-modal);
+  min-inline-size: 0;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: 18px 24px;
+  border-block-end: 1px solid var(--noa-color-border);
+  min-inline-size: 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--text-heading);
+}
+
+.cardNote {
+  margin: 3px 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+.cardLink {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  cursor: pointer;
+}
+
+.cardLink:hover { text-decoration: underline; }
+
+.solid {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.solid:hover { background: var(--noa-color-accent-hover); }
+
+.cardLink:focus-visible,
+.solid:focus-visible,
+.lane:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: -2px;
+}
+
+.state,
+.empty {
+  padding: 18px 24px;
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- a recent lane -------------------------------------------------------- */
+
+.lane {
+  inline-size: 100%;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1.2fr) auto;
+  gap: var(--space-4);
+  align-items: center;
+  padding: 14px 24px;
+  border: 0;
+  border-block-end: 1px solid var(--surface-section);
+  background: none;
+  text-align: start;
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+.lane:last-child { border-block-end: 0; }
+.lane:hover { background: var(--surface-page); }
+
+@media (max-width: 720px) {
+  .lane { grid-template-columns: 34px minmax(0, 1fr); }
+  .laneCargo,
+  .laneRef { grid-column: 2; }
+}
+
+.laneMark {
+  inline-size: 34px;
+  block-size: 34px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.laneRoute { min-inline-size: 0; }
+
+.laneCodes {
+  display: block;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--text-heading);
+}
+
+.laneWhen {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-eyebrow);
+  color: var(--text-muted);
+}
+
+.laneCargo {
+  min-inline-size: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.laneRef {
+  flex: none;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+  white-space: nowrap;
+}

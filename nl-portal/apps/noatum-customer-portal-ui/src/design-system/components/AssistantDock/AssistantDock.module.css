@@ -1,0 +1,351 @@
+/*
+ * The assistant's window. Tokens only.
+ *
+ * One dock, one launcher, one thread - shared by every agent in the product, so
+ * a pricer who has used the customer side does not have to learn a second thing.
+ */
+
+.dock {
+  position: fixed;
+  inset-block-end: var(--space-5);
+  inset-inline-end: var(--space-5);
+  z-index: 20;
+  max-inline-size: calc(100vw - 2 * var(--space-5));
+  /* Holds the launcher against the right edge once the dock spans the width. */
+  display: flex;
+  justify-content: flex-end;
+}
+
+.window {
+  inline-size: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-shadow-modal);
+  border-block-start: 3px solid var(--noa-color-accent);
+}
+
+/* --- title bar ------------------------------------------------------------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 24px;
+  block-size: 24px;
+  flex: none;
+  background: var(--color-primary);
+  color: var(--noa-color-text-inverse);
+}
+
+.title {
+  flex: 1;
+  min-inline-size: 0;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.minimise {
+  display: flex;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.minimise:hover {
+  color: var(--noa-color-accent);
+}
+
+/* --- launcher -------------------------------------------------------------- */
+
+.launcher {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  box-shadow: var(--noa-shadow-pill);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.launcher:hover {
+  background: var(--noa-color-accent-hover);
+}
+
+.minimise:focus-visible,
+.launcher:focus-visible,
+.chipRemove:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+/* --- thread ---------------------------------------------------------------- */
+
+/* One scroller, not two: a thread inside a scrolling body is a window you have
+   to scroll to reach the scrollbar of. */
+.thread {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  max-block-size: min(420px, 46vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--surface-section);
+}
+
+.agent,
+.user {
+  margin: 0;
+  max-inline-size: 92%;
+  padding: var(--space-3);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal, 1.5);
+}
+
+.agent {
+  justify-self: start;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-body);
+}
+
+.user {
+  justify-self: end;
+  background: var(--color-primary);
+  color: var(--noa-color-text-inverse);
+  white-space: pre-wrap;
+}
+
+.facts {
+  justify-self: stretch;
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  display: grid;
+  gap: var(--space-2);
+}
+
+.fact {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--noa-text-xs);
+}
+
+.fact dt {
+  color: var(--noa-color-text-muted);
+}
+
+.fact dd {
+  margin: 0;
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+  text-align: right;
+}
+
+.reasoning {
+  justify-self: stretch;
+  padding: var(--space-3);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--color-primary);
+}
+
+.reasoningLabel {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.reasoning ul {
+  margin: 0;
+  padding-left: var(--space-4);
+  display: grid;
+  gap: 4px;
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}
+
+.thinking {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.dots {
+  inline-size: 6px;
+  block-size: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+/* A row of answers to what the agent just asked, inside the thread. */
+.choices {
+  justify-self: start;
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* The bar's verdict: the agent believes there is nothing left to do. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: none;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--noa-success-700);
+}
+
+/* --- composer -------------------------------------------------------------- */
+
+.composer {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+  background: var(--noa-color-surface);
+}
+
+.quick {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* Something the agent can do without being given anything to read first. */
+.quickAction {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  color: var(--text-body);
+  padding: 4px var(--space-3);
+  font: inherit;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  cursor: pointer;
+}
+
+.quickAction:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.quickAction:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quickAction:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.textarea {
+  height: auto;
+  min-block-size: 56px;
+  padding-block: var(--space-2);
+  resize: vertical;
+  font-family: inherit;
+  line-height: var(--noa-leading-normal, 1.5);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.note {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+/* A staged file, for agents that send the document and the sentence together. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-inline-size: 200px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-section);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}
+
+.chipName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chipRemove {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--noa-color-text-muted);
+}
+
+.chipRemove:hover {
+  color: var(--color-primary);
+}
+
+/* A phone has no room beside the work, so the window takes the width it needs. */
+@media (max-width: 520px) {
+  .dock {
+    inset-inline: var(--space-3);
+    inset-block-end: var(--space-3);
+    max-inline-size: none;
+  }
+
+  .window {
+    inline-size: auto;
+    flex: 1;
+  }
+}

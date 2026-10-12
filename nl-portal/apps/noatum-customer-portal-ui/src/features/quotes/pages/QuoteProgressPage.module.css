@@ -1,0 +1,757 @@
+/*
+ * The quotation while we are still working on it.
+ *
+ * To REFERENCE/MOCKUP-htmls-page-vice/Noatum Quotation Progress.html. Full-bleed
+ * navy hero, the body risen 44px into it, a two-column grid that collapses to
+ * one, and a vertical timeline as the largest thing on the page.
+ *
+ * No negative page margin: the customer shell puts its gutter on CustomerMeasure,
+ * which this page does not opt into - the hero bleeds and the body lays out its
+ * own container.
+ */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+/* --- hero ---------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  min-inline-size: 0;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--noa-hero-hairlines);
+}
+
+.heroInner {
+  position: relative;
+  padding-block: 22px 72px;
+}
+
+.container {
+  max-inline-size: var(--noa-public-max);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--noa-public-gutter);
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-block-start: 16px;
+  min-inline-size: 0;
+}
+
+.titleText { min-inline-size: 0; }
+
+.eyebrow {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.reference {
+  margin: 12px 0 0;
+  font-size: var(--noa-text-page);
+  font-weight: var(--noa-weight-black);
+  line-height: 1.1;
+  color: var(--noa-color-hero-text);
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-block-start: 12px;
+}
+
+/* The live state, said once and said loudly: a red pill with a heartbeat. It
+   goes quiet - no pulse, no red - the moment the request stops moving. */
+.statusPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 13px;
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+}
+
+.statusPill[data-stopped] {
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+.statusDot {
+  position: relative;
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-hero-text);
+  flex: none;
+}
+
+.statusHalo {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-hero-text);
+  animation: var(--noa-anim-pulse) 2.2s ease-out infinite;
+}
+
+.statusLine {
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark-muted);
+}
+
+.heroActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+.ghost {
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-hero-outline);
+  border-radius: var(--radius-btn);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ghost:hover:not(:disabled) { border-color: var(--noa-color-hero-text); }
+.ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Reading the request is the one thing a waiting customer actually does here,
+   so it carries the brand rather than the outline. */
+.solid {
+  padding: 12px 20px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  box-shadow: var(--noa-shadow-pill);
+  cursor: pointer;
+}
+
+.solid:hover { background: var(--noa-color-accent-hover); }
+
+.ghost:focus-visible,
+.solid:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: 2px;
+}
+
+.panel {
+  margin-block-start: 22px;
+  padding: 16px 18px;
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 20px;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.laneColumn { min-inline-size: 0; }
+
+.laneCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero-panel);
+  min-inline-size: 0;
+}
+
+.place { min-inline-size: 0; }
+.placeEnd { text-align: end; }
+
+.code {
+  font-size: var(--noa-text-xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+/* How far along the five steps the request is, drawn on the lane. Not a
+   position report - nothing has moved - so the lane carries a fill only. */
+.track {
+  position: relative;
+  flex: 1;
+  min-inline-size: 30px;
+  block-size: 2px;
+  background: var(--noa-color-hero-rule-strong);
+}
+
+.trackFill {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  block-size: 2px;
+  background: var(--noa-color-accent);
+  inline-size: 0;
+}
+
+/* One fifth per completed step. Written out rather than computed inline so the
+   page keeps its colours and its geometry in the stylesheet. */
+.track[data-step='0'] .trackFill { inline-size: 0; }
+.track[data-step='1'] .trackFill { inline-size: 20%; }
+.track[data-step='2'] .trackFill { inline-size: 40%; }
+.track[data-step='3'] .trackFill { inline-size: 60%; }
+.track[data-step='4'] .trackFill { inline-size: 80%; }
+.track[data-step='5'] .trackFill { inline-size: 100%; }
+
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 5px 9px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+.chips li[data-lead='true'] {
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  min-inline-size: 0;
+}
+
+.facts > div { min-inline-size: 0; }
+
+.facts dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.facts dd {
+  margin: 4px 0 0;
+  font-weight: var(--noa-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.facts dd.sub {
+  margin-block-start: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-hero-muted);
+}
+
+/* --- the body, risen into the hero --------------------------------------- */
+
+.rise {
+  position: relative;
+  z-index: 1;
+  margin-block-start: -44px;
+  margin-inline: auto;
+  inline-size: 100%;
+  max-inline-size: var(--noa-public-max);
+  box-sizing: border-box;
+  padding: 0 var(--noa-public-gutter) 64px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: start;
+  min-inline-size: 0;
+}
+
+@media (max-width: 1180px) {
+  .rise { grid-template-columns: minmax(0, 1fr); }
+}
+
+.main,
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-inline-size: 0;
+}
+
+.side { gap: 16px; align-self: stretch; }
+
+/* --- cards --------------------------------------------------------------- */
+
+.card {
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-card-shadow);
+  min-inline-size: 0;
+}
+
+/* The two that sit highest in the navy carry the deeper shadow, as the mockup
+   has them: they are the ones lifted off the hero. */
+.card[data-raised='true'] { box-shadow: var(--noa-shadow-modal); }
+.card[data-capped='true'] { border-block-start: 3px solid var(--noa-color-accent); }
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px 24px;
+  border-block-end: 1px solid var(--noa-color-border);
+  min-inline-size: 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-color-text);
+}
+
+.cardSub {
+  margin: 3px 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--text-muted);
+}
+
+.cardLabel {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cardCount {
+  font-size: var(--noa-text-eyebrow);
+  color: var(--text-muted);
+}
+
+.cardLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.cardLink:hover { text-decoration: underline; }
+
+.cardLink:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.stepPill {
+  padding: 6px 11px;
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent-subtle);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  flex: none;
+}
+
+/* --- the timeline -------------------------------------------------------- */
+
+.timeline {
+  margin: 0;
+  padding: 20px 24px 8px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.stage {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 16px;
+  min-inline-size: 0;
+}
+
+.rail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  inline-size: 26px;
+  block-size: 26px;
+  border-radius: var(--noa-radius-capsule);
+  border: 2px solid var(--noa-color-border-strong);
+  background: var(--noa-color-surface);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--noa-color-text-inverse);
+}
+
+.stage[data-done] .dot {
+  border-color: var(--noa-kit-success);
+  background: var(--noa-kit-success);
+}
+
+.stage[data-live] .dot {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent);
+}
+
+.dotCore {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-surface);
+}
+
+.dotHalo {
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  opacity: 0.4;
+  animation: var(--noa-anim-pulse) 2.4s ease-out infinite;
+}
+
+.line {
+  flex: 1;
+  inline-size: 2px;
+  min-block-size: 22px;
+  background: var(--noa-color-border);
+}
+
+.stage[data-done] .line { background: var(--noa-kit-success); }
+
+.stageBody {
+  padding-block-end: 22px;
+  min-inline-size: 0;
+}
+
+.stageHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.stageLabel {
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  /* Steps still to come are stated, not promised: grey until they happen. */
+  color: var(--text-muted);
+}
+
+.stageTime {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.stageNote {
+  margin: 5px 0 0;
+  max-inline-size: 560px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-relaxed);
+  color: var(--text-muted);
+}
+
+.stage[data-done] .stageLabel,
+.stage[data-live] .stageLabel { color: var(--noa-color-text); }
+
+.stage[data-done] .stageNote,
+.stage[data-live] .stageNote { color: var(--noa-color-text-muted); }
+
+.stage[data-done] .stageTime { color: var(--noa-kit-success); }
+.stage[data-live] .stageTime { color: var(--noa-color-accent); }
+
+.await {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-block-start: 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--noa-color-border-strong);
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text-muted);
+  min-inline-size: 0;
+}
+
+.awaitMark {
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  color: var(--noa-color-accent);
+}
+
+/* --- what you asked for -------------------------------------------------- */
+
+.recap {
+  margin: 0;
+  padding: 6px 24px 18px;
+}
+
+.recapRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(0, 1.4fr);
+  gap: 14px;
+  padding-block: 11px;
+  border-block-end: 1px solid var(--surface-section);
+  min-inline-size: 0;
+}
+
+.recapRow:last-child { border-block-end: 0; }
+
+.recapRow dt {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-muted);
+}
+
+.recapRow dd {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+  overflow-wrap: anywhere;
+  min-inline-size: 0;
+}
+
+/* The three a price turns on read heavier than the rest. */
+.recapRow dd[data-strong] {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text);
+}
+
+.error {
+  margin: 0;
+  padding: 12px 14px;
+  border-inline-start: 3px solid var(--noa-color-accent);
+  background: var(--noa-color-surface);
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-accent);
+  box-shadow: var(--noa-card-shadow);
+}
+
+/* --- your desk ----------------------------------------------------------- */
+
+.deskBody {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desk {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.deskMark {
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.deskText { min-inline-size: 0; }
+
+.deskName {
+  display: block;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-color-text);
+}
+
+.deskRole {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-muted);
+}
+
+.deskState {
+  margin-inline-start: auto;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+  flex: none;
+  color: var(--noa-color-accent);
+}
+
+.deskState[data-stopped] { color: var(--text-muted); }
+
+.deskNote {
+  margin: 0;
+  padding-block-start: 12px;
+  border-block-start: 1px solid var(--surface-section);
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- activity ------------------------------------------------------------ */
+
+.activity {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+}
+
+.activity li {
+  display: flex;
+  gap: 11px;
+  padding: 11px 18px;
+  border-inline-start: 3px solid transparent;
+  min-inline-size: 0;
+}
+
+.activity li[data-lead] { border-inline-start-color: var(--noa-color-accent); }
+
+.activityDot {
+  inline-size: 7px;
+  block-size: 7px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-text-muted);
+  flex: none;
+  margin-block-start: 6px;
+}
+
+.activity li[data-lead] .activityDot { background: var(--noa-color-accent); }
+
+.activityText { min-inline-size: 0; }
+
+.activityLabel {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-color-text);
+}
+
+.activityWhen {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-muted);
+}
+
+/* --- while you wait ------------------------------------------------------ */
+
+.tips {
+  margin: 0;
+  padding: 14px 18px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.tips li {
+  display: flex;
+  gap: 11px;
+  min-inline-size: 0;
+}
+
+.tipNumber {
+  inline-size: 15px;
+  flex: none;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-accent);
+}
+
+.tipText {
+  min-inline-size: 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-body);
+  color: var(--noa-color-text-muted);
+}
+
+.dialogNote {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}

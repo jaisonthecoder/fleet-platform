@@ -1,0 +1,3369 @@
+{
+  "source": "docs/document_type_list.xlsx",
+  "sha256": "ab3272d2182a3a292cd0b8d5886a0c27ce699b381fdc8a5bf8eef5c3481d654c",
+  "extractedAt": "2026-09-12",
+  "categories": [
+    "ACC",
+    "ALL",
+    "BPW",
+    "CSR",
+    "CTR",
+    "HRE",
+    "SCL"
+  ],
+  "items": [
+    {
+      "code": "1RM",
+      "name": "Request for Immediate Payment",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "2RM",
+      "name": "2nd Request For Immediate Payment",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "605",
+      "name": "CF6051D CBP Detentions in ACE including UFLPA",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "A2S",
+      "name": "ANNEX II SOLAR CERTIFICATION",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ABR",
+      "name": "Advance Booking Request",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACD",
+      "name": "STATEMENT DELETIONS",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACH",
+      "name": "Statement Payment Authorization",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACL",
+      "name": "AUDIT CHECK LIST",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACN",
+      "name": "AMS Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACP",
+      "name": "AMS Customs Penalty",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACR",
+      "name": "ACE CARGO RELEASE MESSAGE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ACV",
+      "name": "Account Voucher",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ADD",
+      "name": "Antidumping Duty Case",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ADG",
+      "name": "IATA Dangerous Goods Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AEP",
+      "name": "AES PENALTY",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AES",
+      "name": "AES Transmission",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AFP",
+      "name": "Annual Food Permit",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AFR",
+      "name": "Japan AFR requirements",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AGI",
+      "name": "Agents Invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AGO",
+      "name": "VISA/AGOA",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "AIN",
+      "name": "Agents Instruction",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "AMA",
+      "name": "AMS AMENDMENT REQUEST",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AMD",
+      "name": "Amendment Request",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AME",
+      "name": "JHJ AMETA SHEET",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AMS",
+      "name": "AMS Documents",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "APD",
+      "name": "Packing Declaration",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "APP",
+      "name": "AP APPROVAL",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "APT",
+      "name": "Agent Presentation",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ARA",
+      "name": "Authorized Representative Agreement - TSA",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ARC",
+      "name": "Arrival Notice and Charge Sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ARE",
+      "name": "Authorization Release",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ARN",
+      "name": "Arrival Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ARP",
+      "name": "AR APPROVAL",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ASD",
+      "name": "ASSIST DECLARATION",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ASI",
+      "name": "Agent Shipping Instructions",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ASL",
+      "name": "Approval for Shipment Loss",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ATA",
+      "name": "ATA Carnet",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ATD",
+      "name": "Authority to Deal",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ATR",
+      "name": "Certificate of Circulation ATR-1",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AUF",
+      "name": "AUFTA Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "AUT",
+      "name": "Authorized Carrier Respresentative (TSA)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BAT",
+      "name": "BATTERY STATEMENT",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BCA",
+      "name": "Booking Cartage Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "BCT",
+      "name": "Beneficiary Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "BDR",
+      "name": "Bank Draft",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BKC",
+      "name": "Booking Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BKG",
+      "name": "Booking Request",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BLU",
+      "name": "Bill of Lading Update Results",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BOE",
+      "name": "Bill Of Entry",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "BOL",
+      "name": "VENDOR BOL",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BRC",
+      "name": "Bank Reconciliation",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BRE",
+      "name": "Business Registration Proof",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BRK",
+      "name": "Broker License",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "BVD",
+      "name": "Bank Verification Documents",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "C28",
+      "name": "CBP Form 28",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "C29",
+      "name": "CBP Form 29",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAA",
+      "name": "Carrier Agreement",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAD",
+      "name": "Cartage Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAN",
+      "name": "Carrier Arrival Notice",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAP",
+      "name": "CORRECTIVE ACTION PLAN",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAR",
+      "name": "Cartage Advice With Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAT",
+      "name": "Catalog",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CAU",
+      "name": "Customs Authority",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CB3",
+      "name": "CANADIAN CUSTOMS ENTRY (B3)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CBA",
+      "name": "Continuous Bond Application",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CBC",
+      "name": "Carrier Booking Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CBR",
+      "name": "Carrier Booking Request",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CBT",
+      "name": "Continuous Bond Termination",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CCA",
+      "name": "Client Credit Acceptance",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CCD",
+      "name": "Carrier Charges Dispute Email",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CCP",
+      "name": "Credit Card Payment Authorization",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CCR",
+      "name": "CANADA CUSTOMS RELEASE NOTIFICATION",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CCS",
+      "name": "Cargowise Certified Specialist Certficate",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CDA",
+      "name": "Container Detention Advice",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CDP",
+      "name": "Customs Payment Letter",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CDR",
+      "name": "Container Detention Reminder",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CEM",
+      "name": "CANADIAN E-MANIFEST",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CER",
+      "name": "Customs Error",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CES",
+      "name": "Cargowise Certified Export Specialist",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CEX",
+      "name": "Cexgan",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CHG",
+      "name": "Charge Sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CHK",
+      "name": "Check",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CHN",
+      "name": "Cargo Hold Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CIC",
+      "name": "Cargo Inspection Checklist",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CIR",
+      "name": "CLIENT INBOUND RECEIVING NOTICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CIT",
+      "name": "CITES",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CIV",
+      "name": "Commercial Invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CLA",
+      "name": "HTS Classification Information",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CLD",
+      "name": "Claim Damage",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CLG",
+      "name": "Co-Load Letter of Guarantee",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CLI",
+      "name": "Container List",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CLL",
+      "name": "Claim Log",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CLR",
+      "name": "Clearance",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CLS",
+      "name": "Container Liability Statement",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CMN",
+      "name": "CUSTOMS MARKING NOTICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CMQ",
+      "name": "CBP CARGO MANIFEST QUERY",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CMR",
+      "name": "International Road Waybill - Europe",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CNA",
+      "name": "Credit Note Application",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CNS",
+      "name": "CNS Certificate of Endorsement",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COA",
+      "name": "Consolidation Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COB",
+      "name": "Confirmed On Board",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COC",
+      "name": "Container Inspection Certification",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COI",
+      "name": "Certificate of Liability Insurance",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COL",
+      "name": "Collection Letter",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "COM",
+      "name": "Compliance Tax Report",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CON",
+      "name": "ISF Confirmation Sent",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COO",
+      "name": "Certificate of Origin",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "COR",
+      "name": "Client Correspondence",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COS",
+      "name": "Certificate of Free Sale",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "COT",
+      "name": "Cotton Certificate",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "COU",
+      "name": "COURIER",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CPS",
+      "name": "CPSC - CONFORMITY ASSESSMENT CERTIFICATION",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CRA",
+      "name": "Credit Approval",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CRC",
+      "name": "Carrier Rate Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CRF",
+      "name": "CHARGE CODE REQUEST FORM",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CRL",
+      "name": "Conformity Risk and Legal",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CRP",
+      "name": "Compliance Report",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CRR",
+      "name": "Credit Report",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CSD",
+      "name": "Consignment Security Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CSI",
+      "name": "Consent to Search or Inspection",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CSS",
+      "name": "Container Summary Sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CST",
+      "name": "Customs Status Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "CSU",
+      "name": "CARGO STATUS UPDATE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CTA",
+      "name": "Certificate of Analysis",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CTB",
+      "name": "CONTINUOUS BOND",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CTH",
+      "name": "Certificate of Authenticity",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CTP",
+      "name": "CTPAT Security Questionairre",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CTR",
+      "name": "Container Release",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CUP",
+      "name": "Customs Preliminary",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CUS",
+      "name": "Customs Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "CVD",
+      "name": "Countervailing Duty Case",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DAA",
+      "name": "Administrative Accompanying Document - D-500",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DAE",
+      "name": "DAE Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DAL",
+      "name": "Delay Alert",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DAN",
+      "name": "Documents Available Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DBL",
+      "name": "Draft Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DCC",
+      "name": "DAMAGE CARGO CLAIM",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DCF",
+      "name": "Documentary Collection Form",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DCM",
+      "name": "Defense Contract Management",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DDN",
+      "name": "Delayed Documentation Demand Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DDR",
+      "name": "Direct Debit",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DEC",
+      "name": "Declaration of Compliance",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DEM",
+      "name": "Letter of Demand",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DET",
+      "name": "DETENTION INVOICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DGA",
+      "name": "IATA DG Training Certificate",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DGC",
+      "name": "DAMAGE GOODS CONDITION(REPORT/PICS)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DGF",
+      "name": "Dangerous Goods Form",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DGO",
+      "name": "IMDG Training Certificate",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DIM",
+      "name": "MACYS DIM TOOL",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DIS",
+      "name": "Disbursement Note",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DLA",
+      "name": "Delivery Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DLB",
+      "name": "Delivery Labels",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DLU",
+      "name": "Data Logger upload",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DMN",
+      "name": "DEMURRAGE NOTICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DNO",
+      "name": "Departure Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DOO",
+      "name": "Document of Origin",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DOR",
+      "name": "Delivery Order",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DRC",
+      "name": "Dock Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DTY",
+      "name": "Directory",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DUA",
+      "name": "DUA Customs",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "DUC",
+      "name": "DUA Complementary pages",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DUM",
+      "name": "Customs Import Document Package",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "DVC",
+      "name": "Delivery Verification Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EAD",
+      "name": "Export Accompanying Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EBR",
+      "name": "Established Business Relationship",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "EBW",
+      "name": "Export Billing Worksheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ECA",
+      "name": "Export Cartage Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ECD",
+      "name": "Exchange Control Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ECL",
+      "name": "Export Check List",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ECM",
+      "name": "Export Coload Master Manifest",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ECR",
+      "name": "Export Cartage Advice with Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "EFT",
+      "name": "EFT Request",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EMC",
+      "name": "EMCS - Electronic Administrative Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EML",
+      "name": "E-Mail",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EMN",
+      "name": "eManifest (CN)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ENT",
+      "name": "Entry Documents",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EPA",
+      "name": "EPA DOCUMENT",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EPR",
+      "name": "Entry Print/Customs Declaration Doc",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ERA",
+      "name": "Erasure Request",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ES6",
+      "name": "Exporter Solar Appendix 6",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ESP",
+      "name": "EXPORT SOLAR PRODUCT CERTIFICATION",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "EUR",
+      "name": "EUR.1 Movement Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EXA",
+      "name": "Export Authority",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EXC",
+      "name": "Export Compliance Documents",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EXD",
+      "name": "Exporter Documents",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "EXI",
+      "name": "Exam Invoice/Payment",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EXM",
+      "name": "Examination Result",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "EXV",
+      "name": "VAT/GST Exporter Exemption (AR and AP Invoicing)",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "F&W",
+      "name": "Fish & Wildlife 3177 form",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FAR",
+      "name": "Pharmaceutical Regulatory Authority Documentation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FCR",
+      "name": "Forwarders Cargo Receipt",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "FDA",
+      "name": "FDA Documents",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FDC",
+      "name": "Food Control Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "FFW",
+      "name": "DOS Foreign Flag Waiver",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FIL",
+      "name": "Sample File",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FIN",
+      "name": "Fiscal Invoice",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FLG",
+      "name": "FLEGT Documentation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FQS",
+      "name": "Freight Quote System Interface Document",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FSI",
+      "name": "First Sale Invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "FTZ",
+      "name": "214 Foreign Trade Zone",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "FUM",
+      "name": "Fumigation Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "FWI",
+      "name": "Forwarding Instruction",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "GBL",
+      "name": "Government Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "GCC",
+      "name": "General Conformity Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "GCL",
+      "name": "GDP Check List",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "GLJ",
+      "name": "GL Journal",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "GON",
+      "name": "GENERAL ORDER NOTICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "GPS",
+      "name": "PROFIT SHARE SETUP REQUEST",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "GTP",
+      "name": "Gate Pass",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "HAP",
+      "name": "Housebill Approval",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HAR",
+      "name": "HVLV Archived Data",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HB2",
+      "name": "SECONDARY HOUSE BILL OF LADING",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HBL",
+      "name": "House Waybill/Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "HBR",
+      "name": "House Bill Release",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HCC",
+      "name": "Health Clearance Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "HDT",
+      "name": "Draft Housebill",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HS7",
+      "name": "U.S. (DOT) NHTSA FORM HS7",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HSC",
+      "name": "China Declaration Sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "HXD",
+      "name": "He Xiao Dan",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ICA",
+      "name": "Import Cartage Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ICM",
+      "name": "Import Coload Master Manifest",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ICP",
+      "name": "ISF Customs Penalty",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ICR",
+      "name": "Import Cartage Advice with Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ICT",
+      "name": "Import Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IDC",
+      "name": "Identification Check",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "IDP",
+      "name": "IMPORT DOC POUCH",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IEP",
+      "name": "Import/Export Permit",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IFA",
+      "name": "Interim Footwear Form",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ILF",
+      "name": "Insurance Liability Form",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ILR",
+      "name": "Invoice Lines Report",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IML",
+      "name": "Import License",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IMO",
+      "name": "IMO Dangerous Goods Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "INB",
+      "name": "INBOND (CF7512)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "INL",
+      "name": "INLAND BOL",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "INR",
+      "name": "INLAND TRUCK RATES",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "INS",
+      "name": "Insurance Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "INV",
+      "name": "Invoice",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IRT",
+      "name": "Interim Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "IS6",
+      "name": "Importer Solar Appendix 6",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "ISB",
+      "name": "ISF SINGLE BOND",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ISF",
+      "name": "ISF Documentation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ISO",
+      "name": "ISF SOP",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "ISP",
+      "name": "IMPORT SOLAR PRODUCT CERTIFICATION",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "JAS",
+      "name": "JA Flash Report",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "JRJ",
+      "name": "Job Revenue Journal",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "JVD",
+      "name": "Journal Voucher Document",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "KCA",
+      "name": "Known-party Certificate of Approval",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "KRF",
+      "name": "KOREA FREE TRADE CERTIFICATE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LAD",
+      "name": "LACEY ACT DOCUMENT",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LBL",
+      "name": "Label",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LCC",
+      "name": "LOCAL CLIENT CONTRACT(ADM)",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LCH",
+      "name": "Local Charges",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LCO",
+      "name": "Landed Costing",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LDL",
+      "name": "Load List",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "LEP",
+      "name": "LE PDFC",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "LET",
+      "name": "Letter",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LEV",
+      "name": "LEVANTE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LFD",
+      "name": "LAST FREE DATE NOTICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LIC",
+      "name": "Export License",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LID",
+      "name": "Letter of Indemnity",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "LIT",
+      "name": "Lithium Metal Battery Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LOC",
+      "name": "Letter of Credit",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LOD",
+      "name": "CARTA POR EMISION DE ENDORSO-SSL LETTER OF ENDORSE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LOG",
+      "name": "CARTA GARANTIA - SSL LETTER OF GUARANTEE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "LOI",
+      "name": "DAWB LOI",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MAC",
+      "name": "Macy's BOL",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MAD",
+      "name": "Miscellaneous Shipping Manager Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MAN",
+      "name": "Manifest",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MAP",
+      "name": "Manufacturer Housebill Approval",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MBL",
+      "name": "Airway Bill/Ocean Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MBR",
+      "name": "Master Bill Release",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MCD",
+      "name": "Miscellaneous Customs Document",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MCF",
+      "name": "Miscellaneous CFS Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MDC",
+      "name": "Manufacturer's Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MDT",
+      "name": "Manufacturer Draft Housebill",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MED",
+      "name": "MSC DETENTION INVOICE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MFD",
+      "name": "Miscellaneous Freight Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MOD",
+      "name": "Miscellaneous Order Management Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MOV",
+      "name": "MOVING NOTICE",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MRD",
+      "name": "Material Receipt Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MSA",
+      "name": "MASTER SERVICE AGREEMENT",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MSC",
+      "name": "Miscellaneous Document",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MSD",
+      "name": "Miscellaneous Sales Manager Document",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MSH",
+      "name": "Master House",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MSS",
+      "name": "MSDS Certificate",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "MUL",
+      "name": "Multiple Copies",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "MVC",
+      "name": "Motor Vehicle Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "NAF",
+      "name": "NAFTA Certificate",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "NDA",
+      "name": "NON-DISCLOSURE AGREEMENT",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "NEC",
+      "name": "Customs New Employee Declaration form",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "NIS",
+      "name": "NON-NOATUM ISF Documentation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "NON",
+      "name": "Do not load to eDocs - IT Use Only",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "NOP",
+      "name": "National Organic Program Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "NOT",
+      "name": "Shipment Notes",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "NRA",
+      "name": "NEGOTIATED RATE AGREEMENT",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "OBL",
+      "name": "Original Bill Of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "OCP",
+      "name": "Customs Penalty - Other",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "OOB",
+      "name": "ASUS OTHC Original Billing (Tax) Invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "OOD",
+      "name": "ASUS OTHC Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "OOM",
+      "name": "ASUS OTHC Magnetc Inspection",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "OOT",
+      "name": "ASUS OTHC Others",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "OUT",
+      "name": "Outturn Report",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PAL",
+      "name": "Pre Alert",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PAR",
+      "name": "PARS Documents",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PAY",
+      "name": "Payments",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PBK",
+      "name": "Pre Booking",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PCE",
+      "name": "PENDING CUSTOMS ENTRY",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PCM",
+      "name": "Customer Payment Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PDI",
+      "name": "CUSTOMS PRIOR DISCLOSURE",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PDS",
+      "name": "Product detail sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PER",
+      "name": "Permit",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PFA",
+      "name": "Pro forma invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PHA",
+      "name": "Pharmacy Documents",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PIF",
+      "name": "Punto de Inspeccion Fronterizo",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PIN",
+      "name": "Payables Invoice",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PIX",
+      "name": "CARGO PICTURE",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PKD",
+      "name": "Packing Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PKL",
+      "name": "Packing List",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PKN",
+      "name": "PICK UP NUMBER",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PMI",
+      "name": "Penalty Mitigation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PMP",
+      "name": "Package Manifest by Package",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PMR",
+      "name": "Package Manifest by Product",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "POA",
+      "name": "Power of Attorney",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "POC",
+      "name": "Power of Attorney Customs",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "POD",
+      "name": "Proof Of Delivery",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "POF",
+      "name": "Power of Attorney Forwarding",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "POR",
+      "name": "Purchase Order",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "POV",
+      "name": "POA Validation",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PPL",
+      "name": "Packing Package Label",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PPO",
+      "name": "Payables Purchase Order",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PRD",
+      "name": "PROOF OF RELEASE DOCUMENT",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PRF",
+      "name": "BOL Proof",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PRO",
+      "name": "PROTEST",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PRS",
+      "name": "Profit Share Calculation Worksheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PRV",
+      "name": "Internally Created Private Document",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PSB",
+      "name": "Scan Packing Barcodes",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PTT",
+      "name": "Permit to Transfer",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PUB",
+      "name": "Internally Created Public Document",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "PUN",
+      "name": "PAYER UNIT NUMBER",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "PXC",
+      "name": "Pictures related to Claim",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "QAC",
+      "name": "Quote Acceptance",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "QCR",
+      "name": "Quote Costing Request",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "QPK",
+      "name": "Quarantine Packing Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "QPP",
+      "name": "Quarantine Print Preview",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "QRA",
+      "name": "Quarantine Application/Coversheet",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "QRC",
+      "name": "Quarantine Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "QRP",
+      "name": "Quarantine Remote Print",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "QRR",
+      "name": "QUOTE REQUEST",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "QUO",
+      "name": "Quotation",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "QVE",
+      "name": "Vendor Quote",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RBL",
+      "name": "Rated House Waybill/Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "RBO",
+      "name": "Rated Carrier Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RCV",
+      "name": "RECEIPT BACKUP",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "REG",
+      "name": "Official Registration Support",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "REL",
+      "name": "Border Release Documents",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "REQ",
+      "name": "Request Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "RES",
+      "name": "Resume/CV",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RPC",
+      "name": "Recycled Plastics Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RQS",
+      "name": "Request for Service",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RRA",
+      "name": "Release/Removal Authority",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "RSB",
+      "name": "PTRS Reportable Small Business",
+      "category": "CTR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "RTA",
+      "name": "Route Risk Assessment",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RTG",
+      "name": "ROUTING GUIDE",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "RTM",
+      "name": "Remittance",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SAD",
+      "name": "Shipping Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SAL",
+      "name": "SALES STAFF ASSIGNMENT",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SAN",
+      "name": "Sanitary Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SCA",
+      "name": "SERVICE CONTRACT AGREEMENT",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SCAA",
+      "name": "Competent Authority Approval",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SCLN",
+      "name": "Classification Notes",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SCP",
+      "name": "Customs Penalty (Statement)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SCR",
+      "name": "Security Screening Receipt",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SCTK",
+      "name": "Cargo Tracking Note",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SDN",
+      "name": "Shippers Departure Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SDS",
+      "name": "MSDS- Material Safety Data Sheet",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SEB",
+      "name": "SINGLE ENTRY BOND",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SEBL",
+      "name": "Electronic Original Bill Of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SEC",
+      "name": "Staff / Group Security Documents",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SEHB",
+      "name": "Electronic House Bill",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SEN",
+      "name": "Security Endorsement",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SES",
+      "name": "Software Estimate",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SEXT",
+      "name": "Exit Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SFOL",
+      "name": "Transit Following Note",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SHI",
+      "name": "Shipping Instruction",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SHO",
+      "name": "Shipping Order",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SHP",
+      "name": "Shipment Clearance Documents",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SLI",
+      "name": "Shippers Letter of Instruction",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SOA",
+      "name": "Statement of Account",
+      "category": "ACC",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SOP",
+      "name": "Standard Operating Procedure",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SOR",
+      "name": "Sales Order",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SPMO",
+      "name": "Payment Order Form",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SPO",
+      "name": "Spot Rate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SPOP",
+      "name": "Proof of Pickup",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SQU",
+      "name": "Software Quote",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SREP",
+      "name": "Scheduled Report",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SSS",
+      "name": "Security Survey Service",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "STA",
+      "name": "STA Application",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "STCI",
+      "name": "Enquiry",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "STDC",
+      "name": "Transit Declaration of Commitment",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "STI",
+      "name": "STA Identification",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "STM",
+      "name": "Statement Messages / Misc.",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SUB",
+      "name": "SUB-POA",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SUFO",
+      "name": "Unknown",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SUTB",
+      "name": "NL Customs Duty Payment Notice (UTB)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "SVC",
+      "name": "ISO SEAL VERIFICATION CHECKLIST",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "SVR",
+      "name": "SOIVRE Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "T2F",
+      "name": "T2LF Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TAD",
+      "name": "Transit Accompanying Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TCA",
+      "name": "TSCA Statement",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TCR",
+      "name": "Tank Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TDC",
+      "name": "Training Certificate",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TDM",
+      "name": "Trademark",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TEC",
+      "name": "Technical Document",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TFG",
+      "name": "The Fashion Group",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "THC",
+      "name": "Terminal Handling Payment",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TID",
+      "name": "TSA ID Verification",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TLI",
+      "name": "TLI Rate Filing",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TLR",
+      "name": "TELEX RELEASE LETTER",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TLX",
+      "name": "Telex Release",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TMS",
+      "name": "TM INLAND BOL",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TOC",
+      "name": "TERMS AND CONDITIONS DOCUMENT",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TRK",
+      "name": "Tracking of cargo",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "TSA",
+      "name": "TSA KSMS Known Shipper",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TSC",
+      "name": "Time Slot Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "TSH",
+      "name": "Attachment",
+      "category": "BPW",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TSR",
+      "name": "Time Slot Request",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "TST",
+      "name": "TSA training information",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TTC",
+      "name": "TSA Training Certificate",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TTD",
+      "name": "TSA Training Documents",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "TWD",
+      "name": "Transit Warehouse Dispatch",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "TWR",
+      "name": "Transit Warehouse Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "UCO",
+      "name": "Bonded Warehouse Unloading Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "UMR",
+      "name": "Unique Mandate Reference",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "USA",
+      "name": "US INTERNAL DOCUMENT",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "USG",
+      "name": "US Goods Returned Declaration",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "USM",
+      "name": "USMCA DOCUMENTATION",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VAT",
+      "name": "VAT Certificate Proof",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VCA",
+      "name": "Vendor Compliance Agreement",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "VCL",
+      "name": "VENDOR CHECK LIST",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "VEN",
+      "name": "Vendor Invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VET",
+      "name": "Veterinary Certificate",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "VGM",
+      "name": "Verified Gross Mass Certification",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VIA",
+      "name": "VENDOR INVOICE APPROVAL (Lands End)",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VNE",
+      "name": "VNE DOCUMENT",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VPI",
+      "name": "VPOC Invoice",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "VPO",
+      "name": "Vendor Paid Origin Charge Summary",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "VSF",
+      "name": "VETERINARY SERVICES FORM VS 16-78",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "VTL",
+      "name": "Vehicle Title",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "W-9",
+      "name": "W-9 Request for Taxpayer ID",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WAC",
+      "name": "Warehouse Adjustment Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WAI",
+      "name": "WAIVER OF CONFIDENTIAL RECORDS",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WBL",
+      "name": "Warehouse Bill of Lading",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "WCA",
+      "name": "Warehouse Cartage Advice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "WCI",
+      "name": "WITHDRAWN COMMERCIAL INV",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WDL",
+      "name": "Warehouse Delivery Labels",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WDN",
+      "name": "Customer Delivery to Warehouse Notice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WHR",
+      "name": "Warehouse Receipt",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WIC",
+      "name": "Warehouse Inwards Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WID",
+      "name": "Warehouse Invoice Detail",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WIN",
+      "name": "Warehouse Periodic Invoice",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WMR",
+      "name": "Weight/Measurement Report",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WNP",
+      "name": "Warehouse Non Picked Items",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WPA",
+      "name": "Warehouse Packing Slip",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WPB",
+      "name": "Warehouse Package Labels Basic",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WPL",
+      "name": "Warehouse Package Labels",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WPM",
+      "name": "Wood Packing Material",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "WPO",
+      "name": "Warehouse Pick Order Summary",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": true
+    },
+    {
+      "code": "WPS",
+      "name": "Warehouse Picking Slip",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WPU",
+      "name": "Warehouse Putaway Sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WSH",
+      "name": "Worksheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WSI",
+      "name": "Warehouse Pick Shortfall Items",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WSS",
+      "name": "Warehouse Stocktake Sheet",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WSV",
+      "name": "Warehouse Stocktake Variance",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WTD",
+      "name": "Withholding Tax & Duty Exemption",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WTE",
+      "name": "Withholding Tax Exemption",
+      "category": "CSR",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WTR",
+      "name": "Warehouse Transfer Confirmation",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "WWO",
+      "name": "Warehouse Work Order",
+      "category": "SCL",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "XEC",
+      "name": "Customs Employee Termination Declaration",
+      "category": "HRE",
+      "isActive": true,
+      "isPublished": false
+    },
+    {
+      "code": "XST",
+      "name": "Transmission Status",
+      "category": "ALL",
+      "isActive": true,
+      "isPublished": false
+    }
+  ]
+}

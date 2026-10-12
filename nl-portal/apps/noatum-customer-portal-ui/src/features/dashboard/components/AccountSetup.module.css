@@ -1,0 +1,184 @@
+/* Setup checklist. Measures from "Noatum First Login.html". */
+
+.card {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: var(--space-5) var(--noa-kit-card-pad-x);
+  border-bottom: 1px solid var(--noa-color-border);
+}
+
+.lede {
+  min-inline-size: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.note {
+  margin: 3px 0 0;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-color-text);
+}
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: none;
+}
+
+.track {
+  inline-size: 180px;
+  block-size: 8px;
+  background: var(--noa-ring-track);
+  display: block;
+}
+
+.fill {
+  display: block;
+  block-size: 8px;
+  background: var(--noa-kit-success);
+}
+
+.percent {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Five across on a wide page, wrapping down to one. The hairlines are the
+   dividers; the card's own edge closes the block. */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px 20px;
+  border-inline-end: 1px solid var(--noa-paper);
+  border-block-end: 1px solid var(--noa-paper);
+  min-inline-size: 0;
+}
+
+.step[data-done='true'] {
+  background: var(--noa-kit-success-surface);
+}
+
+.stepHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+}
+
+.badge {
+  inline-size: 30px;
+  block-size: 30px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid var(--noa-color-border-strong);
+  background: var(--surface-card);
+  color: var(--noa-color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-black);
+}
+
+.step[data-done='true'] .badge {
+  border-color: var(--noa-kit-success);
+  background: var(--noa-kit-success);
+  color: var(--noa-color-text-inverse);
+}
+
+.tick {
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+}
+
+.tag {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-badge);
+  text-transform: uppercase;
+  padding: 5px var(--space-2);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.tag[data-state='done'] {
+  color: var(--noa-kit-success);
+  background: var(--noa-kit-success-surface);
+}
+
+.tag[data-state='todo'] {
+  color: var(--noa-color-accent);
+  background: var(--red-050);
+}
+
+/* A step the platform cannot observe yet. Neither done nor outstanding —
+   saying "to do" would be claiming to know something we do not. */
+.tag[data-state='untracked'] {
+  color: var(--noa-color-text-muted);
+  background: var(--noa-paper);
+}
+
+.stepTitle {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.stepNote {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.stepAction {
+  margin-block-start: auto;
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+  cursor: pointer;
+}
+
+.stepAction:hover {
+  text-decoration: underline;
+}
+
+.stepAction:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}

@@ -1,0 +1,47 @@
+/*
+ * The filter row inside a long Select.
+ *
+ * Its own sheet rather than Field.module.css: that one is the chrome AROUND a
+ * field, shared with Input, and this is furniture inside a popover.
+ */
+
+/*
+ * No `position: sticky` and no z-index. This row sits outside the scrolling
+ * Viewport, so it is simply always there - stickiness was an attempt to hold it in
+ * place inside the scroll area, and the Viewport's padding still let rows appear
+ * above it.
+ */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-2) var(--noa-space-3);
+  background: var(--noa-color-surface);
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.glyph {
+  flex: none;
+  color: var(--noa-color-text-muted);
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--noa-color-text);
+  font-family: var(--noa-font-sans);
+  font-size: var(--noa-text-sm);
+}
+
+.input::placeholder {
+  color: var(--noa-color-text-muted);
+}
+
+.empty {
+  padding: var(--noa-space-3);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}

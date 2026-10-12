@@ -1,0 +1,78 @@
+/* Feature management: grouped switch list plus the read-only protected list. */
+
+.groups { display: grid; gap: var(--space-4); }
+
+.group { display: grid; gap: var(--space-2); }
+
+.groupTitle {
+  font-size: var(--noa-text-xs);
+  font-weight: 800;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-body);
+}
+
+.switchRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-card);
+  border-left: 3px solid transparent;
+}
+
+.switchRow + .switchRow { border-top: 1px solid var(--border-subtle); }
+
+/* A capability that is on gets the accent; off stays quiet so the page reads as
+   "what is currently switched on" at a glance. */
+.switchRow[data-enabled='true'] { border-left-color: var(--color-primary); }
+
+.switchText { display: grid; gap: 2px; min-width: 0; }
+.switchName { font-weight: 700; color: var(--text-heading); }
+.switchKey {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.switchDescription { font-size: var(--noa-text-xs); color: var(--text-body); }
+.switchMeta { font-size: 11px; color: var(--text-muted); }
+
+.state { display: flex; align-items: center; gap: var(--space-2); justify-content: flex-end; }
+
+.protectedPanel { display: grid; gap: var(--space-2); }
+
+.protectedIntro { font-size: var(--noa-text-xs); color: var(--text-body); margin: 0; }
+
+.protectedList { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+
+.protectedItem {
+  display: grid;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-section);
+  border-left: 3px solid var(--color-accent-navy);
+}
+
+.protectedLabel { font-weight: 700; color: var(--text-heading); font-size: var(--noa-text-sm, 0.875rem); }
+.protectedReason { font-size: var(--noa-text-xs); color: var(--text-body); }
+
+/* --- drawer --- */
+
+/* Chrome comes from the design system (.noa-drawer-*). */
+
+.consequence {
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-section);
+  border-left: 3px solid var(--color-accent-navy);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}
+
+.error {
+  padding: var(--space-2) var(--space-3);
+  background: var(--red-050);
+  border-left: 3px solid var(--color-primary);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}

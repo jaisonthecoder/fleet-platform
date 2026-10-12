@@ -1,0 +1,70 @@
+/* DT-02 · Day picker. Measures from Noatum UI Kit.dc.html. */
+
+.picker {
+  min-inline-size: 0;
+}
+
+.label {
+  margin: 0 0 var(--noa-kit-heading-gap);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--noa-space-2);
+}
+
+.day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: var(--noa-control-height-full);
+  min-inline-size: 0;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-text);
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.day:hover:not([data-disabled]) {
+  border-color: var(--noa-color-border-strong);
+}
+
+.day:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.day[data-state='on'] {
+  background: var(--noa-color-accent);
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+}
+
+.day[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-chip-gap);
+  margin: var(--noa-kit-card-gap) 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.next {
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-accent);
+  white-space: nowrap;
+}

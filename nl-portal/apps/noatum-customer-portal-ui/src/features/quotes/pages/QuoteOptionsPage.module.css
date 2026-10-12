@@ -1,0 +1,1025 @@
+/*
+ * The quotation, once it has been priced.
+ *
+ * To REFERENCE/MOCKUP-htmls-page-vice/Noatum Quotation Options.html. A different
+ * screen from the one a customer watches while we work: there is a decision to
+ * make here, and the whole page is built around making it - the options are the
+ * largest thing on it, and everything else is context for choosing between them.
+ */
+/*
+ * No negative margin here, unlike the staff workspace: the customer shell puts
+ * its 32px gutter on CustomerMeasure, which a page opts into, and this one does
+ * not - the hero is full bleed and the body lays out its own container.
+ */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  inline-size: 100%;
+}
+
+/* --- hero ---------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  min-inline-size: 0;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--noa-hero-hairlines);
+}
+
+.heroInner {
+  position: relative;
+  padding-block: 22px 72px;
+}
+
+.container {
+  max-inline-size: var(--noa-public-max);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--noa-public-gutter);
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-block-start: 18px;
+  min-inline-size: 0;
+}
+
+.titleText { min-inline-size: 0; }
+
+.titleLine {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.reference {
+  margin: 0;
+  font-size: var(--noa-text-3xl);
+  font-weight: var(--noa-weight-black);
+  line-height: 1.15;
+  color: var(--noa-color-hero-text);
+}
+
+/* The status the whole page turns on, so it sits beside the reference rather
+   than in a corner. Navy while quoted, green once accepted, grey once declined. */
+.status {
+  padding: 6px 11px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--noa-pipe-in-progress-surface);
+  color: var(--color-accent-navy);
+}
+
+.status[data-state='accepted'] {
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+}
+
+.status[data-state='declined'],
+.status[data-state='expired'] {
+  background: var(--surface-section);
+  color: var(--noa-color-text);
+}
+
+.rule {
+  inline-size: 40px;
+  block-size: 3px;
+  margin-block-start: 12px;
+  background: var(--noa-color-accent);
+}
+
+.lede {
+  margin: 12px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark-muted);
+}
+
+.heroActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+.ghost {
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-hero-outline);
+  border-radius: var(--radius-btn);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ghost:hover { border-color: var(--noa-color-hero-text); }
+
+.panel {
+  margin-block-start: 22px;
+  padding: 18px 20px;
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: 22px;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.laneCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-block-start: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero-panel);
+  min-inline-size: 0;
+}
+
+.place { min-inline-size: 0; }
+.placeEnd { text-align: end; }
+
+.code {
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+.city {
+  margin-block-start: 4px;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-hero-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The lane drawn as a journey: a full red line, the mode's mark riding it, and
+   a white dot at the destination. Not a progress bar - nothing has sailed. */
+.track {
+  position: relative;
+  flex: 1;
+  min-inline-size: 40px;
+  block-size: 22px;
+}
+
+.trackLine {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 10px;
+  block-size: 2px;
+  background: var(--noa-color-accent);
+}
+
+.trackMark {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 0;
+  margin-inline-start: -11px;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-hero-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trackEnd {
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: 7px;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-hero-text);
+}
+
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 5px 9px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+.chips li[data-lead='true'] {
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  min-inline-size: 0;
+}
+
+.facts > div { min-inline-size: 0; }
+
+.facts dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.facts dd {
+  margin: 4px 0 0;
+  font-weight: var(--noa-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.facts dd.sub {
+  margin-block-start: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-hero-muted);
+}
+
+.fromColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-inline-size: 0;
+  max-inline-size: 260px;
+}
+
+.fromBox {
+  padding: 14px 16px;
+  border: 1px solid var(--noa-color-hero-track);
+}
+
+.fromLabel {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.fromTotal {
+  margin-block-start: 7px;
+  font-size: var(--noa-text-2xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  white-space: nowrap;
+}
+
+.fromNote {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-hero-muted);
+}
+
+.solid {
+  padding: 13px 18px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  text-align: center;
+  cursor: pointer;
+}
+
+.ghost:focus-visible,
+.solid:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: 2px;
+}
+
+/* --- the body, risen into the hero --------------------------------------- */
+
+.rise {
+  position: relative;
+  z-index: 1;
+  margin-block-start: -44px;
+  margin-inline: auto;
+  inline-size: 100%;
+  max-inline-size: var(--noa-public-max);
+  box-sizing: border-box;
+  padding: 0 var(--noa-public-gutter) 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-inline-size: 0;
+}
+
+/* With a carousel the heading sits on the navy above the cards, so the page has
+   to climb further to leave room for it. */
+.rise[data-carousel='true'] { margin-block-start: -96px; }
+
+/* --- options ------------------------------------------------------------- */
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-inline-size: 0;
+}
+
+.carouselHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-inline-size: 0;
+  /* On the navy: this row is still inside the hero's foot. */
+  color: var(--noa-color-hero-text);
+}
+
+.carouselHeading {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+}
+
+.arrows { display: flex; gap: 8px; flex: none; }
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 36px;
+  block-size: 36px;
+  border-radius: var(--noa-radius-capsule);
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  cursor: pointer;
+}
+
+/* The forward arrow is the one being offered, so it is the filled one. */
+.arrow[data-lead='true'] {
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+}
+
+.arrow:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.cards {
+  display: grid;
+  gap: 18px;
+  min-inline-size: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 24px;
+  border: 2px solid transparent;
+  background: var(--surface-card);
+  box-shadow: 0 10px 34px rgb(0 0 0 / 20%);
+  text-align: start;
+  cursor: pointer;
+  min-inline-size: 0;
+}
+
+.card[data-selected='true'] { border-color: var(--noa-color-accent); }
+
+.card:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cardName {
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.cardSub {
+  margin-block-start: 4px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text);
+}
+
+/* Navy, not green: a recommendation is our opinion, not a good outcome. */
+.recommended {
+  flex: none;
+  padding: 5px 10px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--noa-pipe-in-progress-surface);
+  color: var(--color-accent-navy);
+  white-space: nowrap;
+}
+
+.cardTotal {
+  margin-block-start: 16px;
+  font-size: var(--noa-text-3xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-color-accent);
+}
+
+.cardBasis {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-compact);
+  color: var(--noa-color-text-muted);
+}
+
+.cardChips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cardChips li {
+  padding: 6px 10px;
+  border-radius: var(--radius-btn);
+  background: var(--surface-section);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text);
+}
+
+.cardLines {
+  margin: 16px 0 0;
+  padding: 0;
+  border-block-start: 1px solid var(--noa-color-border);
+  list-style: none;
+}
+
+.cardLines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 9px;
+  border-block-end: 1px solid var(--noa-ground);
+  font-size: var(--noa-text-sm);
+}
+
+.cardLines li span:first-child { min-inline-size: 0; }
+
+.cardLines li strong {
+  color: var(--text-heading);
+  font-weight: var(--noa-weight-bold);
+  white-space: nowrap;
+}
+
+.cardActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-block-start: 18px;
+}
+
+/* The accept on the chosen card is brand red; on the others it is grey, so the
+   page says which one is being decided on without hiding the rest. */
+.accept {
+  flex: 1 1 118px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px;
+  border: 0;
+  border-radius: var(--radius-btn);
+  background: var(--noa-neutral-500);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.accept[data-selected='true'] { background: var(--noa-color-accent); }
+.accept:hover:not(:disabled) { background: var(--noa-color-accent-hover); }
+.accept:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.iconAction {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 40px;
+  block-size: 40px;
+  box-sizing: border-box;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--noa-color-text);
+  cursor: pointer;
+}
+
+.detailsAction {
+  flex: 1 1 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-heading);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.iconAction:hover,
+.detailsAction:hover {
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dot {
+  display: block;
+  inline-size: 7px;
+  block-size: 6px;
+  border: 0;
+  padding: 0;
+  border-radius: 3px;
+  background: var(--noa-color-border);
+  cursor: pointer;
+}
+
+.dot[data-on='true'] {
+  inline-size: 22px;
+  background: var(--noa-color-accent);
+}
+
+/* --- compare ------------------------------------------------------------- */
+
+.compare {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.compareHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 18px 24px;
+  border: 0;
+  background: none;
+  text-align: start;
+  cursor: pointer;
+}
+
+.compareTitle {
+  margin: 0;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.compareNote {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text-muted);
+}
+
+.compareChevron {
+  flex: none;
+  color: var(--noa-color-accent);
+  transition: transform var(--noa-duration-quick, 150ms) ease;
+}
+
+.compareChevron[data-open='true'] { transform: rotate(180deg); }
+
+.compareBody {
+  padding: 0 24px 22px;
+  overflow-x: auto;
+}
+
+.compareGrid {
+  display: grid;
+  font-size: var(--noa-text-sm);
+  min-inline-size: 620px;
+}
+
+.compareCorner { padding-block: 10px; border-block-end: 1px solid var(--noa-color-border); }
+
+.compareOption {
+  padding: 10px 12px;
+  border-block-end: 1px solid var(--noa-color-border);
+  border-inline-start: 3px solid transparent;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.compareOption[data-selected='true'],
+.compareCell[data-selected='true'] { border-inline-start-color: var(--noa-color-accent); }
+
+.compareRecommended {
+  margin-inline-start: 8px;
+  padding: 3px 7px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  background: var(--noa-pipe-in-progress-surface);
+  color: var(--color-accent-navy);
+  white-space: nowrap;
+}
+
+.compareLabel {
+  display: flex;
+  align-items: center;
+  padding-block: 11px;
+  border-block-end: 1px solid var(--noa-ground);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  letter-spacing: 0.07em;
+  color: var(--noa-color-text-muted);
+}
+
+.compareCell {
+  padding: 11px 12px;
+  border-block-end: 1px solid var(--noa-ground);
+  border-inline-start: 3px solid transparent;
+  color: var(--text-heading);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The price row is the one being compared, so it carries the brand. */
+.compareCell[data-lead='true'] {
+  color: var(--noa-color-accent);
+  font-weight: var(--noa-weight-black);
+}
+
+/* --- decision ------------------------------------------------------------ */
+
+.decision {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 20px 24px;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  border-block-start: 3px solid var(--noa-color-accent);
+  min-inline-size: 0;
+}
+
+.decisionTitle {
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.decisionNote {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.decisionActions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.rejectButton {
+  padding: 13px 22px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.rejectButton:hover { background: var(--noa-color-accent-subtle); }
+
+.acceptButton {
+  padding: 13px 24px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.acceptButton:hover:not(:disabled) {
+  background: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent-hover);
+}
+
+.acceptButton:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Once it is settled the bar stops offering and starts stating. */
+.decided {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px 24px;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  border-inline-start: 3px solid var(--noa-kit-success);
+  min-inline-size: 0;
+}
+
+.decided[data-tone='declined'] { border-inline-start-color: var(--noa-color-text-muted); }
+
+.decidedDot {
+  flex: none;
+  inline-size: 10px;
+  block-size: 10px;
+  margin-block-start: 7px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-kit-success);
+}
+
+.decided[data-tone='declined'] .decidedDot { background: var(--noa-color-text-muted); }
+
+/* --- recap and activity -------------------------------------------------- */
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+  min-inline-size: 0;
+}
+
+@media (min-width: 1100px) {
+  .columns { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+}
+
+.cardPanel {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.panelHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 16px 24px;
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.panelLink {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--link);
+  cursor: pointer;
+}
+
+.panelLink:hover { color: var(--link-hover); }
+
+.panelLabel {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.recap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 0 24px;
+  margin: 0;
+  padding: 6px 24px 18px;
+}
+
+.recap > div {
+  padding-block: 12px;
+  border-block-end: 1px solid var(--noa-ground);
+  min-inline-size: 0;
+}
+
+.recap dt {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.recap dd {
+  margin: 5px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+
+.activity {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+}
+
+.activity li {
+  display: flex;
+  gap: 11px;
+  padding: 11px 20px;
+  min-inline-size: 0;
+}
+
+.activityDot {
+  flex: none;
+  inline-size: 7px;
+  block-size: 7px;
+  margin-block-start: 6px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+}
+
+.activityName {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.activityWhen {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+.versions { padding: 14px 20px; border-block-start: 1px solid var(--noa-color-border); }
+
+.versionRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 12px;
+  margin-block-start: 8px;
+  background: var(--noa-color-accent-subtle);
+}
+
+.versionName {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.versionNote {
+  display: block;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+.disclaimer {
+  padding: 14px 20px;
+  border-block-start: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-relaxed);
+  color: var(--noa-color-text-muted);
+}
+
+.message {
+  padding: 16px 24px;
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  border-inline-start: 3px solid var(--color-accent-navy);
+  min-inline-size: 0;
+}
+
+.message p {
+  margin: 6px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-relaxed);
+  color: var(--noa-color-text);
+  white-space: pre-wrap;
+}
+
+.error {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-accent);
+}
+
+/* Said out loud rather than left as a dead button: the document renderer that
+   these three actions need does not exist yet, and a control that swallows a
+   press teaches people to stop trusting the page. */
+.pending {
+  margin: 0;
+  padding: 13px 18px;
+  background: var(--noa-kit-attention-surface);
+  border-inline-start: 4px solid var(--noa-kit-attention);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--text-heading);
+}

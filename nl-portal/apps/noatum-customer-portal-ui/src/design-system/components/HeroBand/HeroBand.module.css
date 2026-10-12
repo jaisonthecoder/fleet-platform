@@ -1,0 +1,200 @@
+/* CH-09 · Hero band, route. Measures from Noatum UI Kit.dc.html. */
+
+.band {
+  position: relative;
+  overflow: hidden;
+  flex: none;
+  min-inline-size: 0;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+/* Hairlines only. The radial rings belong to the sign-in hero, not here: a
+   ring behind a card that rises into the band reads as a printing fault. */
+.pattern {
+  position: absolute;
+  inset: 0;
+  background-image: var(--noa-hero-hairlines);
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  max-inline-size: var(--noa-measure-wide);
+  margin-inline: auto;
+  box-sizing: border-box;
+  padding: var(--noa-hero-pad-block) var(--noa-shell-gutter);
+  min-inline-size: 0;
+}
+
+/* The empty navy the first card climbs into. */
+.band[data-rise='true'] .inner {
+  padding-block-end: var(--noa-hero-foot);
+}
+
+.panel {
+  margin-block-start: var(--space-5);
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+.lane {
+  flex: 1 1 320px;
+  min-inline-size: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-block-start: 14px;
+  min-inline-size: 0;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero-panel);
+  padding: var(--space-3) var(--space-4);
+}
+
+.end {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.endTo {
+  text-align: end;
+}
+
+.code {
+  font-size: var(--noa-text-section);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+.place {
+  margin-block-start: var(--space-1);
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-hero-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The lane. The run stops halfway because the request is halfway made: this is
+   a drawing of the route, not a progress bar, so it never moves. */
+.line {
+  flex: 1;
+  position: relative;
+  block-size: 22px;
+  min-inline-size: 40px;
+}
+
+.track,
+.run {
+  position: absolute;
+  inset-block-start: 10px;
+  block-size: 2px;
+}
+
+.track {
+  inset-inline: 0;
+  background: var(--noa-color-hero-track);
+}
+
+.run {
+  inset-inline-start: 0;
+  inline-size: 50%;
+  background: var(--noa-color-accent);
+}
+
+.marker {
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 0;
+  margin-inline-start: -11px;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: 50%;
+  background: var(--noa-color-accent);
+  color: var(--noa-color-hero-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-end;
+  min-inline-size: 0;
+}
+
+.chips {
+  display: flex;
+  gap: var(--space-1) 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-inline-size: 360px;
+}
+
+.chip {
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  padding: 6px var(--noa-kit-chip-gap);
+  border-radius: var(--radius-btn);
+  white-space: nowrap;
+}
+
+.chip[data-tone='solid'] {
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+}
+
+.chip[data-tone='ghost'] {
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+.chip[data-tone='alert'] {
+  background: var(--noa-color-accent);
+  color: var(--noa-color-hero-text);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+  .inner {
+    padding-inline: var(--noa-shell-gutter-mobile);
+  }
+
+  .side {
+    align-items: flex-start;
+  }
+
+  .chips,
+  .actions {
+    justify-content: flex-start;
+  }
+}

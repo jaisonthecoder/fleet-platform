@@ -1,0 +1,200 @@
+/*
+ * Publication and send, at the head of the side column.
+ *
+ * It was a bar at the foot of the work area, which meant scrolling past every
+ * charge line to find out whether the quote could go at all. Sticky at the top
+ * of the side column instead: the state of the send and the send itself stay on
+ * screen while the price is typed.
+ */
+.panel {
+  background: var(--surface-card);
+  box-shadow: var(--noa-shadow-raised);
+  border-block-start: 3px solid var(--noa-color-accent);
+  min-inline-size: 0;
+}
+
+@media (min-width: 1280px) {
+  .panel {
+    position: sticky;
+    /*
+     * Measured against the shell's scrolling main, not the document. The mockup's
+     * 80px was 64px of header plus a gap; here the header is already outside the
+     * scroll container, so only the gap belongs.
+     */
+    top: var(--space-4);
+    z-index: 9;
+  }
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 12px 18px;
+  border-block-end: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-xs);
+}
+
+.stateRow {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.pill {
+  padding: 4px 9px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--surface-section);
+  color: var(--noa-color-text);
+}
+
+/* Once it is out, the pill says so in green - the single most consequential
+   fact about a quotation is whether the customer has it. */
+.pill[data-sent='true'] {
+  background: var(--noa-kit-success-surface);
+  color: var(--noa-kit-success);
+}
+
+.approval {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  color: var(--noa-color-text);
+  line-height: var(--noa-leading-normal);
+}
+
+.dot {
+  flex: none;
+  inline-size: 8px;
+  block-size: 8px;
+  margin-block-start: 5px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-kit-success);
+}
+
+.dot[data-tone='open'] { background: var(--noa-kit-attention); }
+.dot[data-tone='blocked'] { background: var(--noa-color-accent); }
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.summary {
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--text-heading);
+}
+
+.detail {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+/*
+ * The one act on this screen that the customer can see the result of, so it is
+ * the one solid button: everything else here is an outline.
+ */
+.send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 14px 18px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  text-align: center;
+  cursor: pointer;
+}
+
+.send:hover:not(:disabled) {
+  background: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent-hover);
+}
+
+/* Grey rather than hidden: a pricer needs to see that sending exists and why it
+   is not available yet, which the checks beneath state in words. */
+.send:disabled {
+  background: var(--noa-neutral-400);
+  border-color: var(--noa-neutral-400);
+  cursor: not-allowed;
+}
+
+.secondary {
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding: 12px 18px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-heading);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  text-align: center;
+  cursor: pointer;
+}
+
+.secondary[data-quiet='true'] { color: var(--noa-color-text); }
+
+.secondary:hover:not(:disabled) {
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.secondary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.send:focus-visible,
+.secondary:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.scope {
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}
+
+.saved {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-kit-success);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-accent);
+}
+
+/* The kit's spinner, on a red fill: it inherits the button's own colour. */
+.spinner {
+  flex: none;
+  color: currentColor;
+}

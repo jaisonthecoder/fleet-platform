@@ -1,0 +1,303 @@
+/*
+ * The pricing workspace, to
+ * REFERENCE/MOCKUP-htmls-page-vice/Noatum Quotation Pricing Workspace.html.
+ *
+ * The hero runs full bleed and the page rises 44px into its foot, so this screen
+ * cancels the shell's own padding and lays its own container out instead. That is
+ * the only reason a page here touches the shell's geometry, and it is confined to
+ * these two rules.
+ */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  margin: calc(var(--space-6) * -1);
+}
+
+.rise {
+  position: relative;
+  z-index: 1;
+  /* Into the hero's 72px foot. The two numbers are one decision. */
+  margin-block-start: -44px;
+  margin-inline: auto;
+  inline-size: 100%;
+  max-inline-size: var(--noa-public-max);
+  box-sizing: border-box;
+  padding: 0 var(--noa-public-gutter) 72px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-inline-size: 0;
+}
+
+/* --- banners ------------------------------------------------------------- */
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 13px 18px;
+  background: var(--noa-kit-attention-surface);
+  border-inline-start: 4px solid var(--noa-kit-attention);
+  color: var(--text-heading);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  min-inline-size: 0;
+}
+
+.banner p { margin: 0; flex: 1 1 320px; }
+.banner svg { flex: none; color: var(--noa-kit-attention); }
+
+/* Held by somebody else, or by you: navy, because it is information rather than
+   something the reader has to act on. */
+.banner[data-tone='info'] {
+  background: var(--surface-section);
+  border-inline-start-color: var(--color-accent-navy);
+}
+
+.bannerAction {
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--text-heading);
+  padding: 8px 14px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.bannerAction:hover { border-color: var(--noa-color-accent); color: var(--noa-color-accent); }
+
+/* --- columns ------------------------------------------------------------- */
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  min-inline-size: 0;
+}
+
+@media (min-width: 1280px) {
+  .columns { grid-template-columns: minmax(0, 1fr) 330px; }
+}
+
+.main,
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-inline-size: 0;
+}
+
+.side { align-self: stretch; }
+
+/* --- the priced options card --------------------------------------------- */
+
+.workspace {
+  background: var(--surface-card);
+  box-shadow: var(--noa-shadow-raised);
+  border-block-start: 3px solid var(--noa-color-accent);
+  min-inline-size: 0;
+}
+
+.workspaceHead {
+  padding: 18px 20px 0;
+  min-inline-size: 0;
+}
+
+/*
+ * The heading and the one action that belongs to it, on one line. The
+ * description used to sit between them, which pushed "add option" onto a line of
+ * its own the moment the sentence grew.
+ */
+.workspaceTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+.workspaceText { min-inline-size: 0; }
+
+.workspaceEyebrow {
+  margin: 0 0 8px;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-accent);
+}
+
+.workspaceTitle {
+  margin: 0;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-compact);
+  color: var(--text-heading);
+}
+
+.workspaceLede {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.addOption {
+  flex: none;
+  padding: 11px 16px;
+  border: 1px solid var(--noa-color-accent);
+  border-radius: var(--radius-btn);
+  background: var(--surface-card);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.addOption:hover:not(:disabled) { background: var(--noa-color-accent-subtle); }
+.addOption:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.addOption:focus-visible,
+.bannerAction:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+/* --- the request detail, opened from the hero ---------------------------- */
+
+.request {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+  min-inline-size: 0;
+}
+
+.requestHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tick {
+  display: block;
+  inline-size: 16px;
+  block-size: 3px;
+  margin-block-end: 9px;
+  background: var(--noa-color-accent);
+}
+
+.eyebrow {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 12px;
+  margin: 12px 0 0;
+}
+
+.fact { display: grid; gap: 2px; min-inline-size: 0; }
+
+.fact dt {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.fact dd {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-bold);
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+
+.asks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asks li {
+  padding: 4px 8px;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--surface-section);
+  color: var(--text-heading);
+}
+
+.notes {
+  margin-block-start: 12px;
+  padding: 12px;
+  background: var(--surface-section);
+}
+
+.notesLabel {
+  display: block;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.notes p {
+  margin: 4px 0 0;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+  white-space: pre-wrap;
+}
+
+.cargoPanels { display: flex; flex-direction: column; gap: 16px; margin-block-start: 16px; }
+
+/* --- states -------------------------------------------------------------- */
+
+.hint {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-accent);
+}
+
+.dialogText {
+  margin: 0 0 var(--space-3);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text);
+}
+
+.publishList {
+  margin: 0 0 var(--space-3);
+  padding-inline-start: var(--space-4);
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-relaxed);
+  color: var(--noa-color-text);
+}

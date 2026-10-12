@@ -1,0 +1,94 @@
+/* LD-02 · Container fill, determinate. Measures from Noatum UI Kit.dc.html. */
+
+.fill {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  min-inline-size: 0;
+}
+
+.box {
+  /* Set from TSX when determinate; .water reads it by inheritance. */
+  --fill: 100%;
+  position: relative;
+  flex: none;
+  inline-size: 74px;
+  block-size: 96px;
+  overflow: hidden;
+  background: var(--noa-ground);
+  border: 2px solid var(--noa-color-accent);
+}
+
+/* Determinate: the water line is the value. Indeterminate: it breathes. */
+.water {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  block-size: var(--fill);
+  background: var(--noa-color-accent-subtle);
+}
+
+.fill:not([data-determinate]) .water {
+  inset-block: 0;
+  block-size: auto;
+  transform-origin: bottom;
+  animation: var(--noa-anim-fill) 3.4s ease-in-out infinite;
+}
+
+.post {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 5px;
+  background: var(--noa-color-accent);
+}
+
+.post[data-side='start'] {
+  inset-inline-start: 0;
+}
+
+.post[data-side='end'] {
+  inset-inline-end: 0;
+}
+
+.ribs {
+  position: absolute;
+  inset: 8px 12px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgb(from var(--noa-color-accent) r g b / 0.22) 0 1px,
+    transparent 1px 9px
+  );
+}
+
+.copy {
+  min-inline-size: 0;
+}
+
+.label {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-neutral-900);
+}
+
+/* The count, not the percentage, is what says what is happening. */
+.detail {
+  margin: var(--noa-space-1) 0 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+.percent {
+  margin: var(--noa-space-2) 0 0;
+  font-size: var(--noa-text-card);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill:not([data-determinate]) .water {
+    transform: scaleY(0.92);
+  }
+}

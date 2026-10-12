@@ -1,0 +1,53 @@
+/* LD-04 · Skeleton rows. Measures from Noatum UI Kit.dc.html. */
+
+.table {
+  min-inline-size: 0;
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-card-shadow);
+}
+
+.headings,
+.row {
+  display: grid;
+  --columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: var(--columns);
+  gap: var(--noa-kit-card-gap);
+  align-items: center;
+  padding: var(--noa-kit-chip-gap) 18px;
+  min-inline-size: 0;
+}
+
+.headings {
+  border-block-end: 1px solid var(--noa-color-border);
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: 0.06em;
+  line-height: var(--noa-leading-card);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.row {
+  padding-block: var(--noa-kit-heading-gap);
+  border-block-end: 1px solid var(--noa-ground);
+}
+
+.row:last-child {
+  border-block-end: 0;
+}
+
+/* Each cell is a little short of its column, so the rows read as text that has
+   not arrived rather than as filled blocks. */
+.cell {
+  block-size: 12px;
+  inline-size: 78%;
+  border-radius: var(--noa-radius-tight);
+}
+
+.row:nth-child(odd) .cell:nth-child(2) {
+  inline-size: 92%;
+}
+
+.row:nth-child(even) .cell:nth-child(3) {
+  inline-size: 60%;
+}

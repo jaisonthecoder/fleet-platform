@@ -1,0 +1,54 @@
+.form {
+  display: grid;
+  gap: var(--noa-space-3);
+  margin-top: var(--noa-space-3);
+}
+
+/* The form owns the space between the drawer header and its pinned footer. */
+.drawerForm {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--noa-space-3);
+}
+
+.actions {
+  display: flex;
+  gap: var(--noa-space-2);
+  margin-top: var(--noa-space-2);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-accent);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.code {
+  font-family: var(--noa-font-mono);
+  font-weight: var(--noa-weight-semibold);
+}
+
+.mapping {
+  font-family: var(--noa-font-mono);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}

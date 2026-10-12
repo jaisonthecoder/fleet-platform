@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From an empty portal to the first quote</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--red:#AA272F;--navy:#002C5F;--g900:#333;--g700:#58595B;--g400:#A7A7A6;--g200:#E5E5E5;--g100:#F5F5F3;--green:#2E7D32;--font:'Mulish','Segoe UI',Arial,sans-serif;--shadow:0 2px 14px rgba(0,0,0,.10)}
+*{box-sizing:border-box}
+body{margin:0;font:400 15px/1.5 var(--font);color:var(--g700);background:#fff}
+h1,h2,h3{color:var(--g900);margin:0 0 8px;line-height:1.25}
+h1{font-size:28px;font-weight:800}h2{font-size:20px;font-weight:800}h3{font-size:16px;font-weight:700}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px}
+.rule{display:block;width:40px;height:3px;background:var(--red);margin:10px 0 16px}
+.topbar{background:var(--red);color:#fff;font-size:13px}.topbar .wrap{display:flex;justify-content:space-between;height:32px;align-items:center}
+.logoband{border-bottom:1px solid var(--g200)}.logoband .wrap{display:flex;justify-content:space-between;align-items:center;height:64px}
+.logo{font-weight:800;font-size:19px;color:var(--navy)}.logo span{color:var(--red)}
+section{padding:28px 0}section.alt{background:var(--g100)}
+.lead{font-size:15px;max-width:900px}
+.canvas{background:#fff;border:1px solid var(--g200);box-shadow:var(--shadow);padding:12px;margin-top:14px;overflow-x:auto}
+.canvas svg{width:100%;min-width:900px;height:auto;display:block;font-family:var(--font)}
+.legend{display:flex;flex-wrap:wrap;gap:18px;margin-top:10px;font-size:12.5px}
+.legend span{display:inline-flex;align-items:center;gap:7px}.legend i{display:inline-block;width:16px;height:11px;border:1px solid var(--g400)}
+.legend i.n{background:#F7ECEC;border-color:var(--red)}.legend i.c{background:#fff;border-color:var(--navy);border-width:2px}.legend i.x{background:var(--navy);border-color:var(--navy)}.legend i.g{background:#fff;border:1px dashed var(--green)}
+.stage{background:#fff;box-shadow:var(--shadow);padding:16px 18px;margin-top:14px;display:grid;grid-template-columns:52px 1fr;gap:16px}
+.stage .num{font:800 26px/1 var(--font);color:var(--red);text-align:center}
+.stage .num small{display:block;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--g400);margin-top:3px}
+.stage h3{margin-bottom:3px}
+.stage .who{font-size:11.5px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.03em;margin-bottom:7px}
+.stage ol,.stage ul{margin:0;padding-left:18px;font-size:14px}.stage li{margin-bottom:3px}
+.stage p{margin:0 0 6px;font-size:14px}
+.stage .note{background:#F7ECEC;border-left:3px solid var(--red);padding:8px 12px;margin-top:9px;font-size:13.5px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px;box-shadow:var(--shadow);margin-top:12px}
+th,td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--g200)}
+th{background:var(--g100);color:var(--g900);font-weight:700}
+tr:last-child td{border-bottom:none}
+td.k{width:52px;font-weight:800;color:var(--red)}
+.small{font-size:13px}
+footer{background:var(--red);color:#fff;padding:14px 0;font-size:12.5px;margin-top:26px}
+@page{size:A4 landscape;margin:10mm}
+@media print{
+  html,body{font-size:11px;line-height:1.4}
+  h1{font-size:22px}h2{font-size:17px}h3{font-size:13.5px}
+  section{padding:12px 0!important;break-inside:avoid;page-break-inside:avoid;break-before:page;page-break-before:always}
+  section#top{break-before:avoid;page-break-before:auto}
+  .canvas{box-shadow:none;padding:5px;margin-top:9px}
+  .canvas svg{max-height:116mm;min-width:0}
+  .stage{box-shadow:none;border:1px solid var(--g200);padding:11px 13px;margin-top:9px;grid-template-columns:44px 1fr;gap:12px}
+  .stage .num{font-size:21px}
+  .stage ol,.stage ul,.stage p{font-size:10.5px}
+  .stage .note{font-size:10.5px;padding:6px 10px;margin-top:7px}
+  .stage .who{font-size:10px;margin-bottom:5px}
+  table{box-shadow:none;border:1px solid var(--g200);font-size:10.5px}
+  th,td{padding:6px 9px}
+  .legend{font-size:10px;gap:13px;margin-top:7px}
+  .lead{font-size:11.5px}
+  a{color:inherit;text-decoration:none}
+  footer{break-before:avoid!important;page-break-before:avoid!important;padding:11px 0;margin-top:12px}
+  section:last-of-type{break-inside:auto;page-break-inside:auto}
+}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>AD Ports Group · Noatum Logistics</span><span>Customer Information Platform · 04.09.2026</span></div></div>
+<div class="logoband"><div class="wrap"><div class="logo">Noatum <span>Logistics</span></div><div style="text-align:right;font-size:12.5px">From an empty portal to the first quote<br>the onboarding flow, end to end</div></div></div>
+
+<section id="top"><div class="wrap">
+<h1>From an empty portal to the first quote</h1><span class="rule"></span>
+<p class="lead">Ten stages, in the order they actually happen. Example throughout: the Noatum <b>Dubai branch</b>, customer <b>Gulf Fresh Trading</b> (Dubai office), first administrator <b>Fatima</b>, quoting user <b>Omar</b>.</p>
+
+<div class="canvas">
+<svg viewBox="0 0 1180 660" role="img" aria-label="Onboarding flow from empty portal to first quote">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#AA272F"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#A7A7A6"/></marker>
+    <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#2E7D32"/></marker>
+  </defs>
+
+  <!-- Prepare band -->
+  <rect x="20" y="16" width="1140" height="86" fill="#fff" stroke="#A7A7A6" stroke-dasharray="5 4"/>
+  <text x="34" y="36" font-size="11.5" font-weight="800" fill="#58595B" letter-spacing=".04em">BEFORE ANY CUSTOMER</text>
+  <g font-size="11.5" fill="#58595B">
+    <rect x="150" y="44" width="230" height="46" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <circle cx="150" cy="44" r="12" fill="#58595B"/><text x="150" y="48" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">0</text>
+    <text x="265" y="63" font-size="13" font-weight="800" fill="#333" text-anchor="middle">The portal is ready</text>
+    <text x="265" y="80" text-anchor="middle" font-size="10.5">staff logins · company list · code mapping · roles</text>
+
+    <rect x="430" y="44" width="230" height="46" fill="#F5F5F3" stroke="#E5E5E5"/>
+    <circle cx="430" cy="44" r="12" fill="#58595B"/><text x="430" y="48" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">1</text>
+    <text x="545" y="63" font-size="13" font-weight="800" fill="#333" text-anchor="middle">The branch is ready</text>
+    <text x="545" y="80" text-anchor="middle" font-size="10.5">messages flowing · rates on its lanes · teams informed</text>
+  </g>
+  <text x="700" y="62" font-size="11" fill="#58595B">There is no "region" in the portal — "one region" means one Noatum branch.</text>
+  <text x="700" y="80" font-size="11" fill="#58595B">Stages 0 and 1 happen once; everything after them repeats per customer.</text>
+
+  <!-- CargoWise list -->
+  <rect x="150" y="122" width="430" height="42" fill="#002C5F"/>
+  <text x="365" y="140" font-size="12.5" font-weight="700" fill="#fff" text-anchor="middle">CargoWise — the list of every company we deal with</text>
+  <text x="365" y="156" font-size="10.5" fill="#fff" text-anchor="middle">imported daily · read only · most records are carriers and agents, not customers</text>
+
+  <!-- Noatum lane -->
+  <rect x="20" y="182" width="1140" height="196" fill="#FCF7F7" stroke="#E5E5E5"/>
+  <text x="34" y="202" font-size="11.5" font-weight="800" fill="#AA272F" letter-spacing=".04em">NOATUM</text>
+  <path d="M255 164 V218" fill="none" stroke="#A7A7A6" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ag)"/>
+  <text x="263" y="192" font-size="10" fill="#58595B">searched here</text>
+  <path d="M500 164 V218" fill="none" stroke="#A7A7A6" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#ag)"/>
+
+  <g font-size="11.5" fill="#58595B">
+    <rect x="150" y="220" width="215" height="82" fill="#F7ECEC" stroke="#AA272F" stroke-width="1.5"/>
+    <circle cx="150" cy="220" r="13" fill="#AA272F"/><text x="150" y="224.5" font-size="11.5" font-weight="800" fill="#fff" text-anchor="middle">2</text>
+    <text x="257" y="244" font-size="13" font-weight="800" fill="#333" text-anchor="middle">Create the customer</text>
+    <text x="257" y="263" text-anchor="middle">search "Gulf Fresh"; name and</text>
+    <text x="257" y="278" text-anchor="middle">country pre-filled. Add tier,</text>
+    <text x="257" y="293" text-anchor="middle">email domain, features</text>
+
+    <rect x="395" y="220" width="215" height="82" fill="#F7ECEC" stroke="#AA272F" stroke-width="1.5"/>
+    <circle cx="395" cy="220" r="13" fill="#AA272F"/><text x="395" y="224.5" font-size="11.5" font-weight="800" fill="#fff" text-anchor="middle">3</text>
+    <text x="502" y="244" font-size="13" font-weight="800" fill="#333" text-anchor="middle">Connect their records</text>
+    <text x="502" y="263" text-anchor="middle">tick the Dubai office</text>
+    <text x="502" y="278" text-anchor="middle">(Riyadh left out of the pilot)</text>
+    <text x="502" y="293" text-anchor="middle" font-weight="700" fill="#AA272F">this is what grants access</text>
+
+    <rect x="640" y="220" width="215" height="82" fill="#F7ECEC" stroke="#AA272F" stroke-width="1.5"/>
+    <circle cx="640" cy="220" r="13" fill="#AA272F"/><text x="640" y="224.5" font-size="11.5" font-weight="800" fill="#fff" text-anchor="middle">4</text>
+    <text x="747" y="244" font-size="13" font-weight="800" fill="#333" text-anchor="middle">Invite their admin</text>
+    <text x="747" y="263" text-anchor="middle">Fatima, on the company</text>
+    <text x="747" y="278" text-anchor="middle">email domain · single-use</text>
+    <text x="747" y="293" text-anchor="middle">link that expires</text>
+  </g>
+  <line x1="365" y1="261" x2="393" y2="261" stroke="#AA272F" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="610" y1="261" x2="638" y2="261" stroke="#AA272F" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <rect x="395" y="318" width="215" height="50" fill="#fff" stroke="#2E7D32" stroke-dasharray="5 4"/>
+  <text x="502" y="337" font-size="12" font-weight="700" fill="#2E7D32" text-anchor="middle">The portal does this by itself</text>
+  <text x="502" y="354" font-size="10.5" fill="#58595B" text-anchor="middle">their past shipments and invoices become visible</text>
+  <path d="M502 302 V316" fill="none" stroke="#2E7D32" stroke-width="1.4" marker-end="url(#agr)"/>
+
+  <rect x="880" y="318" width="260" height="50" fill="#fff" stroke="#AA272F"/>
+  <text x="1010" y="337" font-size="12" font-weight="700" fill="#AA272F" text-anchor="middle">Hand over</text>
+  <text x="1010" y="354" font-size="10.5" fill="#58595B" text-anchor="middle">the customer manages its own people from here</text>
+  <path d="M747 302 V392 H255 V438" fill="none" stroke="#AA272F" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- Customer lane -->
+  <rect x="20" y="404" width="1140" height="150" fill="#F5F7FA" stroke="#E5E5E5"/>
+  <text x="34" y="424" font-size="11.5" font-weight="800" fill="#002C5F" letter-spacing=".04em">THE CUSTOMER</text>
+  <g font-size="11.5" fill="#58595B">
+    <rect x="150" y="440" width="215" height="76" fill="#fff" stroke="#002C5F" stroke-width="2"/>
+    <circle cx="150" cy="440" r="13" fill="#002C5F"/><text x="150" y="444.5" font-size="11.5" font-weight="800" fill="#fff" text-anchor="middle">5</text>
+    <text x="257" y="464" font-size="13" font-weight="800" fill="#333" text-anchor="middle">Admin accepts, logs in</text>
+    <text x="257" y="483" text-anchor="middle">Microsoft sign-in; the email</text>
+    <text x="257" y="498" text-anchor="middle">must match the invitation</text>
+
+    <rect x="395" y="440" width="215" height="76" fill="#fff" stroke="#002C5F" stroke-width="2"/>
+    <circle cx="395" cy="440" r="13" fill="#002C5F"/><text x="395" y="444.5" font-size="11.5" font-weight="800" fill="#fff" text-anchor="middle">6</text>
+    <text x="502" y="464" font-size="13" font-weight="800" fill="#333" text-anchor="middle">Builds the team</text>
+    <text x="502" y="483" text-anchor="middle">Omar quoting · Sara finance</text>
+    <text x="502" y="498" text-anchor="middle">Khalid track only</text>
+
+    <rect x="640" y="440" width="215" height="76" fill="#fff" stroke="#002C5F" stroke-width="2"/>
+    <circle cx="640" cy="440" r="13" fill="#002C5F"/><text x="640" y="444.5" font-size="11.5" font-weight="800" fill="#fff" text-anchor="middle">7</text>
+    <text x="747" y="464" font-size="13" font-weight="800" fill="#333" text-anchor="middle">First quote</text>
+    <text x="747" y="483" text-anchor="middle">Shanghai → Jebel Ali LCL</text>
+    <text x="747" y="498" text-anchor="middle">instant price · accepted · PDF</text>
+  </g>
+  <line x1="365" y1="478" x2="393" y2="478" stroke="#AA272F" stroke-width="1.6" marker-end="url(#a)"/>
+  <line x1="610" y1="478" x2="638" y2="478" stroke="#AA272F" stroke-width="1.6" marker-end="url(#a)"/>
+  <rect x="880" y="440" width="260" height="76" fill="#F7ECEC" stroke="#AA272F" stroke-width="1.5"/>
+  <text x="1010" y="464" font-size="13" font-weight="800" fill="#333" text-anchor="middle">Customer is live</text>
+  <text x="1010" y="483" font-size="11.5" fill="#58595B" text-anchor="middle">quotes now; tracking and booking</text>
+  <text x="1010" y="498" font-size="11.5" fill="#58595B" text-anchor="middle">switched on later</text>
+  <line x1="855" y1="478" x2="878" y2="478" stroke="#AA272F" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- After -->
+  <rect x="20" y="574" width="560" height="72" fill="#fff" stroke="#E5E5E5"/>
+  <text x="36" y="596" font-size="12" font-weight="800" fill="#AA272F">8 · It runs by itself</text>
+  <text x="36" y="616" font-size="11.5" fill="#58595B">New shipments, milestones, documents and invoices arrive</text>
+  <text x="36" y="632" font-size="11.5" fill="#58595B">automatically. Each office sees only its own invoices.</text>
+
+  <rect x="600" y="574" width="560" height="72" fill="#fff" stroke="#E5E5E5"/>
+  <text x="616" y="596" font-size="12" font-weight="800" fill="#AA272F">9 · It grows</text>
+  <text x="616" y="616" font-size="11.5" fill="#58595B">Another office, another customer, another branch: the same</text>
+  <text x="616" y="632" font-size="11.5" fill="#58595B">few screens. Features are switched on customer by customer.</text>
+</svg>
+</div>
+<div class="legend">
+  <span><i class="n"></i> Noatum does it</span>
+  <span><i class="c"></i> The customer does it</span>
+  <span><i class="x"></i> CargoWise, read only</span>
+  <span><i class="g"></i> The portal does it automatically</span>
+</div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+<h2>Before any customer exists</h2><span class="rule"></span>
+
+<div class="stage">
+  <div class="num">0<small>ONCE</small></div>
+  <div>
+    <h3>The portal itself is ready</h3>
+    <div class="who">Platform Admin</div>
+    <ol>
+      <li>Noatum staff sign in with their Microsoft work account. The first Platform Admin is created by configuration. Internal users belong to no customer.</li>
+      <li>Internal roles are assigned: Customer Success, Ops, Platform Admin.</li>
+      <li>The portal imports the <b>CargoWise company list</b> daily — every company CargoWise knows, with code, name, country and branch. Nothing is a customer yet; this is only the menu to pick from.</li>
+      <li>Code mapping is loaded: CargoWise status, event, charge and document-type codes become our customer-facing names.</li>
+      <li>Preset customer roles exist: Standard, Quoting and Booking, Finance, Analyst, Claims, Customer Admin.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="num">1<small>ONCE PER BRANCH</small></div>
+  <div>
+    <h3>The branch is ready — Dubai</h3>
+    <div class="who">Noatum, mostly outside the portal</div>
+    <p>There is no region screen and no region in the database. "One region" means one Noatum branch. Preparing it is four checks, three of them outside the portal.</p>
+    <table>
+      <tr><th class="k">#</th><th style="width:150px">Where</th><th>What</th></tr>
+      <tr><td class="k">1a</td><td>CargoWise</td><td>Dubai's company records appear in our imported list; Dubai's outbound messages will reach our endpoint (or the simulator for now)</td></tr>
+      <tr><td class="k">1b</td><td>Rate source</td><td>Dubai's rates for its lanes exist where the instant-quote call looks. Without them, every quote takes the manual route</td></tr>
+      <tr><td class="k">1c</td><td>People</td><td>Dubai pricing knows portal quote requests will arrive in CargoWise; Dubai operations know their milestones become visible to the customer</td></tr>
+      <tr><td class="k">1d</td><td>In the portal</td><td>A news banner targeted to country AE — the only region-specific setting in the portal</td></tr>
+    </table>
+  </div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<h2>What Noatum does per customer</h2><span class="rule"></span>
+
+<div class="stage">
+  <div class="num">2</div>
+  <div>
+    <h3>Create the customer</h3>
+    <div class="who">Customer Success</div>
+    <ol>
+      <li>Noatum Admin → Customers → <b>New customer</b>.</li>
+      <li>Search "Gulf Fresh". The portal searches the imported CargoWise list; legal name and country are pre-filled.</li>
+      <li>Add what CargoWise does not know: tier, email domain <b>gulffresh.ae</b>, and which features are switched on — quotes now, tracking later.</li>
+      <li>Save. Status is <b>Onboarding</b>. Nobody at Gulf Fresh knows yet.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="num">3</div>
+  <div>
+    <h3>Connect the customer to their CargoWise records</h3>
+    <div class="who">Customer Success · one audited action with a confirm dialog</div>
+    <ol>
+      <li>Customer → <b>Accounts</b> → "Add organisation" → search → tick the Dubai office; Riyadh stays out of the pilot → one-line reason → Confirm.</li>
+      <li>The dialog shows company name, code, country and target customer before it saves.</li>
+      <li>On save: the office belongs to Gulf Fresh — one record can belong to only one customer, ever; a background job makes their existing shipments, invoices and staff-created quotes visible to them; anything unassigned for that record is cleared.</li>
+    </ol>
+    <div class="note"><b>This is the most important step in the flow.</b> It is what decides which cargo this customer can see. Open decision: should a second colleague approve it?</div>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="num">4</div>
+  <div>
+    <h3>Invite the customer's administrator</h3>
+    <div class="who">Customer Success</div>
+    <ol>
+      <li>Customer → <b>Users</b> → "Invite Customer Admin" → Fatima, <b>fatima@gulffresh.ae</b>.</li>
+      <li>The portal checks the email domain, generates a single-use link that expires, and sends the branded invitation.</li>
+    </ol>
+    <div class="note">The link goes to one named person, never a shared mailbox: it is tied to that address and the login must match it.</div>
+  </div>
+</div>
+</div></section>
+
+<section class="alt"><div class="wrap">
+<h2>What the customer does</h2><span class="rule"></span>
+
+<div class="stage">
+  <div class="num">5</div>
+  <div>
+    <h3>The administrator accepts</h3>
+    <div class="who">Fatima, at Gulf Fresh</div>
+    <ol>
+      <li>Clicks the link and sees "Gulf Fresh Trading — invited by Noatum Customer Success".</li>
+      <li>Signs in through Microsoft: her company account, Gulf Fresh's own sign-on if they have one, or an email-and-password account with two-step verification that Microsoft creates. <b>We write none of this.</b></li>
+      <li>The portal checks the email matches the invitation, creates her user with the Customer Admin role, and opens the dashboard.</li>
+      <li>Gulf Fresh flips from <b>Onboarding</b> to <b>Active</b> — one linked office, one accepted administrator.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="num">6</div>
+  <div>
+    <h3>The administrator builds the team</h3>
+    <div class="who">Fatima · Noatum is no longer involved</div>
+    <p>Administration → Users → Invite: <b>Omar</b> (Quoting and Booking), <b>Sara</b> (Finance), <b>Khalid</b> (Standard). Same link mechanism, same domain check. Fatima also fills the address book, or imports it, and saves a quote template.</p>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="num">7</div>
+  <div>
+    <h3>The first quote — the pilot moment</h3>
+    <div class="who">Omar, at Gulf Fresh</div>
+    <ol>
+      <li>Request a quote: Sea LCL, FOB, Shanghai → Jebel Ali, 20 pallets, 8 tonnes, 24 CBM.</li>
+      <li>Submit. The portal uses their Dubai office automatically, asks the rate source, finds Dubai's rate, and shows options with charge lines and a validity date in seconds.</li>
+      <li>Omar accepts. The price is frozen, a PDF is generated, and a "Book" button appears — booking itself is Phase 3.</li>
+      <li>In CargoWise a quote record appears for that office carrying our portal reference, so Dubai pricing can see it.</li>
+    </ol>
+    <div class="note">Had Omar asked for a lane with no rate, the request would land with Dubai pricing in CargoWise, and their price would flow back into his screen.</div>
+  </div>
+</div>
+</div></section>
+
+<section><div class="wrap">
+<h2>After that, and how it grows</h2><span class="rule"></span>
+
+<div class="stage">
+  <div class="num">8</div>
+  <div>
+    <h3>It runs by itself</h3>
+    <div class="who">Nobody does anything</div>
+    <ul>
+      <li>Every new shipment Dubai operations create for this customer becomes visible to them, once tracking is switched on.</li>
+      <li>Every milestone, document and invoice for those shipments follows.</li>
+      <li>Each office sees only the invoices addressed to it.</li>
+      <li>Anything arriving with a company record we have not linked is stored but shown to nobody, and listed for Customer Success.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="num">9</div>
+  <div>
+    <h3>It grows — set-up, not development</h3>
+    <div class="who">Customer Success</div>
+    <table>
+      <tr><th>Situation</th><th>What we do</th><th style="width:150px">Development</th></tr>
+      <tr><td>Add the customer's Riyadh office</td><td>Stage 3 again for that office</td><td>None</td></tr>
+      <tr><td>Add a second customer</td><td>Stages 2 to 5 again</td><td>None</td></tr>
+      <tr><td>Bring another branch on</td><td>Stage 1 for that branch, then Stages 2 to 5 for its customers</td><td>None</td></tr>
+      <tr><td>Head office wants all offices in one view</td><td>Parent company with the offices underneath</td><td>None</td></tr>
+      <tr><td>Release tracking</td><td>Feature flags, customer by customer</td><td>None</td></tr>
+    </table>
+  </div>
+</div>
+
+</div></section>
+
+<section class="alt"><div class="wrap">
+<h2>What the sponsor decides in this flow</h2><span class="rule"></span>
+<table>
+  <tr><th class="k">Stage</th><th>Decision</th></tr>
+  <tr><td class="k">1</td><td>Which branch, and whether its lanes have rates in the rate source (the rate source itself is still an open question)</td></tr>
+  <tr><td class="k">2</td><td>Which customer, which tier</td></tr>
+  <tr><td class="k">3</td><td>Which offices to link now; whether a second person should approve the link</td></tr>
+  <tr><td class="k">4</td><td>Who the first administrator is; whether customers may invite people outside their own email domain</td></tr>
+</table>
+<p class="small" style="margin-top:12px">Everything else is the application doing its job.</p>
+</div></section>
+
+<footer><div class="wrap">Noatum Logistics · AD Ports Group · Customer Information Platform · Internal document</div></footer>
+</body>
+</html>

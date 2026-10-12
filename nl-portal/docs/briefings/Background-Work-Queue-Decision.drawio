@@ -1,0 +1,283 @@
+<mxfile host="65bd71144e">
+    <diagram id="p1-decision" name="1. The decision">
+        <mxGraphModel dx="1035" dy="543" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t" value="How the Customer Portal handles background work" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="34" width="1000" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="tr" value="" style="shape=line;strokeColor=#AA272F;strokeWidth=3;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="74" width="40" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="ts" value="Background work means anything the portal does after the customer clicks: send the request to CargoWise, send an email, refresh data overnight. It needs a waiting list, so nothing is forgotten if a system is briefly unavailable." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="92" width="1280" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="aBox" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=3;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="150" width="700" height="430" as="geometry"/>
+                </mxCell>
+                <mxCell id="aHead" value="OPTION A — WHAT WE RECOMMEND" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="150" width="700" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="aSub" value="The waiting list lives inside the database we already have" style="text;html=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontStyle=2;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="200" width="660" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="aApp" value="The Customer Portal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="238" width="320" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="aDb" value="PostgreSQL database&#xa;&lt;br&gt;&lt;br&gt;Customer data  ·  The waiting list&#xa;&lt;br&gt;Login sessions  ·  Security limits" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;strokeWidth=2;fontFamily=Helvetica;fontSize=14;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="340" width="360" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="aCount" value="1 SYSTEM TO RUN" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=16;fontStyle=1;fontColor=#AA272F;" parent="1" vertex="1">
+                    <mxGeometry x="270" y="496" width="240" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="aEdge" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="aApp" target="aDb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="bBox" value="" style="rounded=0;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="150" width="780" height="430" as="geometry"/>
+                </mxCell>
+                <mxCell id="bHead" value="OPTION B — THE ORIGINAL PLAN" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#58595B;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="150" width="780" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="bSub" value="Separate specialist products for the waiting list and for speed" style="text;html=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontStyle=2;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="200" width="740" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="bApp" value="The Customer Portal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1010" y="238" width="320" height="52" as="geometry"/>
+                </mxCell>
+                <mxCell id="bDb" value="PostgreSQL&#xa;&lt;br&gt;&lt;br&gt;Customer data" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="340" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="bMq" value="RabbitMQ&#xa;&lt;br&gt;&lt;br&gt;The waiting list" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="340" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="bRedis" value="Redis&#xa;&lt;br&gt;&lt;br&gt;Speed and limits" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1290" y="340" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="bCount" value="3 SYSTEMS TO RUN" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#58595B;strokeWidth=2;fontFamily=Helvetica;fontSize=16;fontStyle=1;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="496" width="240" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="bE1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="bApp" target="bDb" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="bE2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="bApp" target="bMq" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="bE3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="bApp" target="bRedis" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="verdict" value="BOTH OPTIONS DO THE SAME JOB.  The difference is how many systems we have to buy, secure, back up, monitor and repair — and how much of the team&#39;s time that consumes forever." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#AA272F;align=left;spacingLeft=20;fontFamily=Helvetica;fontSize=15;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="616" width="1520" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="size" value="The volume we actually need: about 2 tasks per second.   What the database handles comfortably: several hundred per second.   We are roughly 100 times below the limit." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;align=left;spacingLeft=20;fontFamily=Helvetica;fontSize=15;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="694" width="1520" height="56" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="p2-howitworks" name="2. How it works with us">
+        <mxGraphModel dx="1035" dy="543" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="ht" value="How it works in our portal — a real example" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="34" width="1000" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="hr" value="" style="shape=line;strokeColor=#AA272F;strokeWidth=3;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="74" width="40" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="hs" value="A customer asks for a price. That request has to reach CargoWise. CargoWise might be busy, restarting, or briefly unreachable — so the portal must never depend on it answering at that exact second." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="92" width="1300" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1" value="1&#xa;&lt;br&gt;&lt;br&gt;&lt;b&gt;Customer clicks Submit&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;They ask for a price on a shipment" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="160" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2" value="2&#xa;&lt;br&gt;&lt;br&gt;&lt;b&gt;The portal saves ONCE&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;The request, and the note saying “send this to CargoWise”, are written together in a single save" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Helvetica;fontSize=13;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="160" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3" value="3&#xa;&lt;br&gt;&lt;br&gt;&lt;b&gt;The customer is told at once&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;“Request received.” They do not wait for CargoWise" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="160" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="s4" value="4&#xa;&lt;br&gt;&lt;br&gt;&lt;b&gt;The portal works through the list&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;It picks up the note and sends the request to CargoWise" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="160" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="s5" value="5&#xa;&lt;br&gt;&lt;br&gt;&lt;b&gt;CargoWise confirms&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;Only now does the customer see a price" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Helvetica;fontSize=13;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1240" y="160" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="he1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="s1" target="s2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="he2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="s2" target="s3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="he3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="s3" target="s4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="he4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#58595B;endArrow=block;endFill=1;" parent="1" source="s4" target="s5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="failHead" value="AND IF CARGOWISE IS DOWN WHEN WE TRY?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="340" width="1470" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="f1" value="The note stays on the waiting list.&#xa;&lt;br&gt;Nothing is lost" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="396" width="340" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="f2" value="The portal tries again automatically,&#xa;&lt;br&gt;waiting a little longer each time" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="396" width="340" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="f3" value="If it still fails, it is parked where&#xa;&lt;br&gt;our team can see it and retry" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="396" width="340" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="f4" value="&lt;b&gt;The customer never sees an error&lt;/b&gt;&#xa;&lt;br&gt;and never loses their request" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Helvetica;fontSize=13;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="396" width="360" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="useHead" value="THE SAME WAITING LIST HANDLES EVERYTHING THE PORTAL DOES IN THE BACKGROUND" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontStyle=1;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="510" width="1470" height="36" as="geometry"/>
+                </mxCell>
+                <mxCell id="u1" value="Send a quote request&#xa;&lt;br&gt;to CargoWise" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="560" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="u2" value="Send the priced quote back&#xa;&lt;br&gt;to CargoWise" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="288" y="560" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="u3" value="Send invitation and&#xa;&lt;br&gt;password emails" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="536" y="560" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="u4" value="Refresh the CargoWise&#xa;&lt;br&gt;customer list overnight" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="784" y="560" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="u5" value="Take in shipment updates&#xa;&lt;br&gt;and milestones" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1032" y="560" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="u6" value="Build PDFs and&#xa;&lt;br&gt;scheduled reports" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=12;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1280" y="560" width="230" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="note2" value="Nothing about this changes if we ever switch to a separate queue product later. The portal asks for “put this on the waiting list” — it does not know or care what is underneath." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#AA272F;align=left;spacingLeft=20;fontFamily=Helvetica;fontSize=14;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="656" width="1470" height="56" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="p3-safety" name="3. Why one system is safer">
+        <mxGraphModel dx="1035" dy="543" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="st" value="The real reason: one save instead of two" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="34" width="1000" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="sr" value="" style="shape=line;strokeColor=#AA272F;strokeWidth=3;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="74" width="40" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="ss" value="This is the point most worth understanding. It is not about speed or cost — it is about whether a customer&#39;s request can quietly go missing." style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="92" width="1300" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="okHead" value="WITH THE WAITING LIST IN THE SAME DATABASE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="150" width="720" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="ok1" value="The customer&#39;s request&#xa;&lt;br&gt;AND&#xa;&lt;br&gt;the note “send it to CargoWise”&#xa;&lt;br&gt;&lt;br&gt;are written in ONE SINGLE SAVE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#AA272F;strokeWidth=2;fontFamily=Helvetica;fontSize=15;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="210" width="720" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="ok2" value="So there are only TWO possible outcomes" style="text;html=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="352" width="720" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="ok3" value="&#xa;&lt;b&gt;Both are saved&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;The request exists, and it will be sent" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#1F8A4C;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontColor=#146536;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="388" width="350" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="ok4" value="&#xa;&lt;b&gt;Neither is saved&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;The customer sees the error and tries again" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#1F8A4C;strokeWidth=2;fontFamily=Helvetica;fontSize=13;fontColor=#146536;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="388" width="350" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="okV" value="NOTHING CAN GO MISSING" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F8A4C;strokeColor=none;fontFamily=Helvetica;fontSize=16;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="496" width="720" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="badHead" value="WITH A SEPARATE QUEUE PRODUCT" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#58595B;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="150" width="760" height="42" as="geometry"/>
+                </mxCell>
+                <mxCell id="bad1" value="The request is saved in the database&#xa;&lt;br&gt;THEN&#xa;&lt;br&gt;the note is sent to the queue product&#xa;&lt;br&gt;&lt;br&gt;TWO SEPARATE SAVES, in two systems" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;strokeWidth=2;fontFamily=Helvetica;fontSize=15;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="210" width="760" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="bad2" value="So there are now THREE possible outcomes" style="text;html=1;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#58595B;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="352" width="760" height="24" as="geometry"/>
+                </mxCell>
+                <mxCell id="bad3" value="&#xa;&lt;b&gt;Both worked&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;Fine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="388" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="bad4" value="&#xa;&lt;b&gt;Neither worked&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;Fine" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#E5E5E5;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="388" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="bad5" value="&#xa;&lt;b&gt;ONE worked, one did not&lt;/b&gt;&#xa;&lt;br&gt;&lt;br&gt;The request exists but is never sent — or is sent twice" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Helvetica;fontSize=13;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1320" y="388" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="badV" value="THAT THIRD CASE HAS TO BE ENGINEERED AWAY — EXTRA CODE, EXTRA TABLE, EXTRA TESTING" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#58595B;strokeColor=none;fontFamily=Helvetica;fontSize=15;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="496" width="760" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="sumup" value="In plain terms: the separate queue product is more powerful, but it makes us build extra safety machinery just to get back to the guarantee the database gives us for nothing. For our volumes, we would be paying for power we cannot use, with a risk we would then have to spend money removing." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#AA272F;align=left;spacingLeft=20;fontFamily=Helvetica;fontSize=15;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="590" width="1520" height="76" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="p4-benefits" name="4. Benefits and when we would change">
+        <mxGraphModel dx="604" dy="543" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="bt" value="What we gain, and when we would change our mind" style="text;html=1;align=left;verticalAlign=middle;fontFamily=Helvetica;fontSize=24;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="34" width="1000" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="br" value="" style="shape=line;strokeColor=#AA272F;strokeWidth=3;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="74" width="40" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="benHead" value="WHAT WE GAIN" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="120" width="740" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="b1" value="&lt;b&gt;Nothing can go missing&lt;/b&gt;  —  the request and the task to send it are saved together, so one cannot survive without the other" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="168" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="b2" value="&lt;b&gt;Two fewer systems to secure&lt;/b&gt;  —  every extra system is another thing to patch, audit and defend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="232" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="b3" value="&lt;b&gt;One backup, one restore&lt;/b&gt;  —  if we ever restore from backup, the data and the pending work come back in step with each other" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="296" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="b4" value="&lt;b&gt;Lower running cost&lt;/b&gt;  —  no extra licences, no extra servers, no extra monitoring" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="360" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="b5" value="&lt;b&gt;Less specialist knowledge needed&lt;/b&gt;  —  the team already knows the database. Nobody has to learn a new product to fix a problem at night" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="424" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="b6" value="&lt;b&gt;Faster to deliver&lt;/b&gt;  —  it is already built and working in the code today" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="488" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="b7" value="&lt;b&gt;We are not locked in&lt;/b&gt;  —  the portal simply asks for “add to the waiting list”. Changing what sits underneath is one component, not a rewrite" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#AA272F;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="552" width="740" height="56" as="geometry"/>
+                </mxCell>
+                <mxCell id="chHead" value="WHEN WE WOULD CHANGE OUR MIND" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#002C5F;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="120" width="740" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="c1" value="&lt;b&gt;Another team needs the same information stream&lt;/b&gt;&#xa;&lt;br&gt;For example a data platform wanting every shipment update as it happens. This is the most likely reason, and it is an organisational need, not a technical limit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="168" width="740" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2" value="&lt;b&gt;We genuinely outgrow it&lt;/b&gt;&#xa;&lt;br&gt;Proved by measurement, not opinion. We are currently about 100 times below the limit" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#002C5F;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="266" width="740" height="76" as="geometry"/>
+                </mxCell>
+                <mxCell id="c3" value="&lt;b&gt;And if that day comes, we use Azure Service Bus — not RabbitMQ&lt;/b&gt;&#xa;&lt;br&gt;Microsoft runs it for us, so we still avoid owning and operating a server. We are already on Azure" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#002C5F;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="350" width="740" height="76" as="geometry"/>
+                </mxCell>
+                <mxCell id="rHead" value="AND REDIS?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#58595B;strokeColor=none;fontFamily=Helvetica;fontSize=14;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="450" width="740" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="r1" value="Redis is normally added for four reasons. Three do not apply to us:&#xa;&lt;br&gt;&lt;br&gt;·  Making slow pages faster — we have no speed problem&#xa;&lt;br&gt;·  Holding login sessions — already in the database, and safer there&#xa;&lt;br&gt;·  Stopping two servers clashing — the database already does this" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E5E5E5;align=left;spacingLeft=16;spacingTop=8;verticalAlign=top;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="498" width="740" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="r2" value="The fourth — limiting repeated wrong password attempts across several servers — is a real need. The tool we already use has a database version built in, so it is a small change and still no new system." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F5F5F3;strokeColor=#58595B;align=left;spacingLeft=16;fontFamily=Helvetica;fontSize=13;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="626" width="740" height="66" as="geometry"/>
+                </mxCell>
+                <mxCell id="ask" value="THE RECOMMENDATION  —  One database. No RabbitMQ, no Redis. Revisit only when a measured need appears, and then choose a managed Azure service rather than a server we run ourselves." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#AA272F;strokeColor=none;align=left;spacingLeft=20;fontFamily=Helvetica;fontSize=15;fontStyle=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="640" width="740" height="76" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

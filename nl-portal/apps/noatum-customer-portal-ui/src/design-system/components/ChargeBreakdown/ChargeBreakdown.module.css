@@ -1,0 +1,152 @@
+/* SP-06 · Charge breakdown. Measures from Noatum UI Kit.dc.html. */
+
+.breakdown {
+  min-inline-size: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-heading-gap);
+}
+
+.total {
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.basis {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text);
+}
+
+/* --- the stacked bar ----------------------------------------------------- */
+
+.bar {
+  display: flex;
+  block-size: 14px;
+  min-inline-size: 0;
+  margin-block-start: var(--noa-kit-card-gap);
+}
+
+.bar > span {
+  --share: 0%;
+  inline-size: var(--share);
+  min-inline-size: 0;
+  border-inline-end: 1px solid var(--noa-color-surface);
+}
+
+.bar > span:last-child {
+  border-inline-end: 0;
+}
+
+/* --- rows ---------------------------------------------------------------- */
+
+.rows {
+  margin: var(--noa-kit-card-gap) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-inline-size: 0;
+  padding-block: var(--noa-kit-chip-gap);
+  border-block-end: 1px solid var(--noa-ground);
+}
+
+.swatch {
+  flex: none;
+  inline-size: 10px;
+  block-size: 10px;
+}
+
+.copy {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.label {
+  display: block;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+.detail {
+  display: block;
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-text-muted);
+}
+
+.amount {
+  white-space: nowrap;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.share {
+  flex: none;
+  inline-size: 38px;
+  text-align: end;
+  font-size: var(--noa-text-eyebrow);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text-muted);
+}
+
+/* --- what the figure does not cover -------------------------------------- */
+
+.excluded {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--noa-kit-heading-gap);
+  margin: var(--noa-kit-heading-gap) 0 0;
+  padding: var(--noa-kit-heading-gap) var(--noa-kit-card-gap);
+  background: var(--noa-paper);
+  font-size: var(--noa-text-xs);
+  line-height: 1.4;
+  color: var(--noa-color-text);
+}
+
+.excluded > span:first-child {
+  font-weight: var(--noa-weight-bold);
+}
+
+.excluded > span:last-child {
+  text-align: end;
+}
+
+/* --- tones ---------------------------------------------------------------
+   Scoped: see LegBreakdown. A bare attribute selector in a CSS Module is
+   global and reaches every data-tone in the application.
+   ------------------------------------------------------------------------ */
+
+.bar > span[data-tone='navy'],
+.swatch[data-tone='navy'] {
+  background: var(--navy-800);
+}
+
+.bar > span[data-tone='action'],
+.swatch[data-tone='action'] {
+  background: var(--noa-color-accent);
+}
+
+.bar > span[data-tone='neutral'],
+.swatch[data-tone='neutral'] {
+  background: var(--noa-neutral-300);
+}
+
+.bar > span[data-tone='tint'],
+.swatch[data-tone='tint'] {
+  background: var(--noa-action-tint-strong);
+}

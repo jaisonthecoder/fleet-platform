@@ -1,0 +1,8 @@
+[data-scroll] { scrollbar-width:thin; scrollbar-color:var(--noa-scroll-thumb) var(--noa-neutral-50); }
+[data-scroll]::-webkit-scrollbar { width:8px; height:8px; }
+[data-scroll]::-webkit-scrollbar-track { background:var(--noa-neutral-50); }
+[data-scroll]::-webkit-scrollbar-thumb { border:2px solid var(--noa-neutral-50); border-radius:var(--noa-radius-sm); background:var(--noa-scroll-thumb); }
+[data-scroll]::-webkit-scrollbar-thumb:hover { background:var(--noa-color-accent); }
+[data-scroll="compact"] { scrollbar-width:thin; }
+[data-scroll="hair"]::-webkit-scrollbar { width:4px; height:4px; }
+[data-scroll="hair"]::-webkit-scrollbar-thumb { border:0; border-radius:var(--noa-radius-tight); }

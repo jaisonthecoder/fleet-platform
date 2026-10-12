@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noatum Customer Information Platform — technical data-flow diagrams</title>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+:root{--red:#AA272F;--red-dark:#8E2027;--navy:#002C5F;--g900:#333;--g700:#58595B;--g400:#A7A7A6;--g200:#E5E5E5;--g100:#F5F5F3;--font:'Mulish','Segoe UI',Arial,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;font:400 15px/1.55 var(--font);color:var(--g700);background:#fff}
+h1,h2,h3{color:var(--g900);margin:0 0 8px;line-height:1.25}
+h1{font-size:34px;font-weight:800}h2{font-size:26px;font-weight:800}h3{font-size:18px;font-weight:700}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.rule{display:block;width:40px;height:3px;background:var(--red);margin:12px 0 18px}
+.topbar{background:var(--red);color:#fff;font-size:13px}.topbar .wrap{display:flex;justify-content:space-between;height:34px;align-items:center}
+.logoband{border-bottom:1px solid var(--g200)}.logoband .wrap{display:flex;justify-content:space-between;align-items:center;height:70px}
+.logo{font-weight:800;font-size:20px;color:var(--navy)}.logo span{color:var(--red)}
+.toc{border-bottom:1px solid var(--g200)}.toc .wrap{display:flex;flex-wrap:wrap;gap:4px 20px;padding:12px 24px;font-weight:700;font-size:14px}.toc a{color:var(--g900);text-decoration:none}.toc a:hover{color:var(--red)}
+section{padding:48px 0}section.alt{background:var(--g100)}
+.lead{font-size:16px;max-width:900px}
+.diagram{background:#fff;border:1px solid var(--g200);box-shadow:0 2px 14px rgba(0,0,0,.08);padding:18px;margin-top:18px;overflow-x:auto}
+.mermaid{min-width:600px}
+.io{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px}
+th,td{padding:9px 11px;text-align:left;vertical-align:top;border-bottom:1px solid var(--g200)}
+th{background:var(--g100);color:var(--g900)}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border:1px solid;line-height:1.5}
+.in{color:#2E7D32;border-color:#2E7D32;background:#EEF6EE}.outt{color:var(--red);border-color:var(--red);background:#F7ECEC}.int{color:var(--navy);border-color:var(--navy);background:#EEF2F7}
+.note{border-left:3px solid var(--red);background:#F7ECEC;padding:10px 16px;margin-top:16px;font-size:14px}
+footer{background:var(--red);color:#fff;padding:20px 0;font-size:13px;margin-top:20px}
+@media print{.toc{display:none}section{padding:24px 0;break-inside:avoid}.diagram{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="wrap"><span>AD Ports Group · Noatum Logistics</span><span>Technical reference · 04.09.2026 · v3 document set</span></div></div>
+<div class="logoband"><div class="wrap"><div class="logo">Noatum <span>Logistics</span></div><div style="text-align:right;font-size:13px">Customer Information Platform<br>End-to-end data-flow diagrams</div></div></div>
+<nav class="toc"><div class="wrap">
+<a href="#d0">0 · Context</a><a href="#d1">1 · Module data flow</a><a href="#d2">2 · Customer onboarding</a><a href="#d3">3 · Login and request pipeline</a><a href="#d4">4 · Quote request</a><a href="#d5">5 · Shipment ingestion</a><a href="#d6">6 · Booking</a><a href="#d7">7 · Documents and invoices</a><a href="#d8">8 · Claims and alerts</a><a href="#d9">9 · States</a><a href="#d10">10 · Data model</a><a href="#d11">11 · Inputs and outputs</a>
+</div></nav>
+
+<!-- 0 -->
+<section id="d0"><div class="wrap">
+<h2>0 · System context — what comes in, what goes out</h2><span class="rule"></span>
+<p class="lead">The platform sits between three kinds of users and five outside systems. Every arrow is a data flow; the label says what travels.</p>
+<div class="diagram"><pre class="mermaid">
+flowchart LR
+  classDef actor fill:#fff,stroke:#58595B,color:#333
+  classDef ext fill:#002C5F,stroke:#002C5F,color:#fff
+  classDef core fill:#F7ECEC,stroke:#AA272F,color:#333,stroke-width:2px
+
+  CU["Customer users"]:::actor
+  PV["Public visitors"]:::actor
+  NS["Noatum staff"]:::actor
+
+  P["Noatum Customer Information Platform<br/>portal web · platform API · integration worker · data stores"]:::core
+
+  CW["CargoWise One<br/>eAdapter"]:::ext
+  RE["Rate engine<br/>CW1 rates or external"]:::ext
+  D3["Dynamics 365<br/>claims"]:::ext
+  CA["Carrier / visibility APIs"]:::ext
+  ID["Microsoft Entra<br/>External ID · Entra ID"]:::ext
+  EM["Email service"]:::ext
+
+  CU -- "quote requests, bookings, documents,<br/>address book, users, preferences" --> P
+  P -- "shipment status, milestones, quotes,<br/>documents, invoices, alerts, reports" --> CU
+  PV -- "reference number, CO2 inputs, schedule search" --> P
+  P -- "critical-path milestones only, CO2 estimate, schedules" --> PV
+  NS -- "customer set-up, org-code mapping, roles,<br/>news, feature flags, mapping tables" --> P
+  P -- "admin views, approvals inbox,<br/>unmapped queue, audit, usage" --> NS
+
+  CW -- "UniversalShipment, UniversalEvent,<br/>UniversalTransaction, eDocs, org list" --> P
+  P -- "quote request / accept / reject,<br/>booking create / update / cancel, eDoc attach" --> CW
+  P -- "price request" --> RE
+  RE -- "quote options, charge lines, validity" --> P
+  P -- "case, attachments, comments" --> D3
+  D3 -- "status, comments" --> P
+  CA -- "container / flight events, predictive data" --> P
+  ID -- "identity tokens" --> P
+  P -- "invitations, notifications, quote PDFs" --> EM
+</pre></div>
+</div></section>
+
+<!-- 1 -->
+<section id="d1" class="alt"><div class="wrap">
+<h2>1 · Module-level data flow — all modules</h2><span class="rule"></span>
+<p class="lead">Inside the platform. Left to right: screens, API modules, data stores, worker adapters, outside systems. Solid arrows are synchronous calls; dashed arrows are queue messages. The only synchronous external call from the API is the rate lookup.</p>
+<div class="diagram"><pre class="mermaid">
+flowchart LR
+  classDef ui fill:#fff,stroke:#A7A7A6,color:#333
+  classDef api fill:#fff,stroke:#AA272F,color:#333
+  classDef db fill:#F5F5F3,stroke:#58595B,color:#333
+  classDef wk fill:#fff,stroke:#8E2027,color:#333,stroke-dasharray:3
+  classDef ext fill:#002C5F,stroke:#002C5F,color:#fff
+
+  subgraph WEB["apps/noatum-customer-portal-ui — React"]
+    direction TB
+    W1["Public pages"]:::ui
+    W2["Customer portal<br/>dashboard · quotes · bookings · tracking · documents · invoices · reports · claims"]:::ui
+    W3["Customer administration<br/>users · roles · address book · alert rules"]:::ui
+    W4["Noatum administration<br/>customers · mapping · flags · news · roles · impersonation · unmapped queue"]:::ui
+  end
+
+  subgraph API["apps/noatum-customer-portal-api — NestJS  (tenant context + permission guard on every request)"]
+    direction TB
+    A1["identity · tenancy · authz · users"]:::api
+    A2["quotes · templates · address-book"]:::api
+    A3["bookings"]:::api
+    A4["shipments · documents · finance"]:::api
+    A5["notifications · news"]:::api
+    A6["reports · dashboard"]:::api
+    A7["claims"]:::api
+    A8["admin · integration console · audit · api-management"]:::api
+    A9["RateEngineAdapter (sync)"]:::api
+  end
+
+  subgraph DATA["Data stores"]
+    direction TB
+    PG[("PostgreSQL<br/>canonical model · RLS · mapping · audit")]:::db
+    BL[("Blob<br/>documents · PDFs · raw message archive")]:::db
+    SB[["Job queue — pg-boss in PostgreSQL<br/>retry · failed jobs table"]]:::db
+  end
+
+  subgraph WK["integration module — job consumers in the API process (system context)"]
+    direction TB
+    K1["Inbound eAdapter handler<br/>idempotency · archive"]:::wk
+    K2["TenantResolver<br/>org code → customer"]:::wk
+    K3["TmsTrackingAdapter<br/>TmsDocumentAdapter<br/>TmsFinanceAdapter"]:::wk
+    K4["TmsQuoteAdapter<br/>TmsBookingAdapter"]:::wk
+    K5["Alert engine"]:::wk
+    K6["Email · PDF renderer"]:::wk
+    K7["D365 client"]:::wk
+    K8["Carrier feed client<br/>data-quality merge"]:::wk
+    K9["Master-data import<br/>visibility re-evaluation"]:::wk
+  end
+
+  CW["CargoWise One"]:::ext
+  RE["Rate engine"]:::ext
+  D3["Dynamics 365"]:::ext
+  CA["Carrier APIs"]:::ext
+  EM["Email service"]:::ext
+  ID["Entra ID"]:::ext
+
+  W1 & W2 & W3 & W4 -- "REST /v1 JSON" --> API
+  A1 -- "OIDC validate" --> ID
+  A1 & A2 & A3 & A4 & A5 & A6 & A7 & A8 -- "SQL (RLS)" --> PG
+  A4 & A2 -- "download / upload" --> BL
+  A2 -- "price request (25 s timeout)" --> A9
+  A9 -- "REST sync" --> RE
+  A2 -. "quote.submit / accept / reject" .-> SB
+  A3 -. "booking.submit / cancel" .-> SB
+  A5 -. "email.send" .-> SB
+  A6 -. "report.run / schedule" .-> SB
+  A7 -. "claim.create / comment" .-> SB
+  A8 -. "message.replay · visibility.reevaluate · masterdata.import" .-> SB
+
+  CW -- "outbound XML push" --> K1
+  K1 -. "queue" .-> SB
+  SB -. "consume" .-> K2 & K3 & K4 & K5 & K6 & K7 & K8 & K9
+  K1 -- "raw archive" --> BL
+  K2 -- "shipment_visibility" --> PG
+  K3 -- "shipments · events · documents · invoices" --> PG
+  K3 -- "eDocs" --> BL
+  K4 -- "inbound XML" --> CW
+  K4 -- "adopt CW1-created quotes / bookings" --> PG
+  K5 -- "notifications" --> PG
+  K6 -- "SMTP / API" --> EM
+  K6 -- "PDFs" --> BL
+  K7 <--> D3
+  CA --> K8
+  K8 -- "events + provenance" --> PG
+  K9 -- "master_org · visibility" --> PG
+</pre></div>
+<div class="note">Rule of thumb for the agent: if an arrow is dashed it is a pg-boss job (enqueued in the same transaction, retried, idempotent); if it points at PostgreSQL from a job consumer it runs in system context with an explicit tenant from <code>TenantResolver</code>; if it points at an outside system it lives behind an adapter interface.</div>
+</div></section>
+
+<!-- 2 -->
+<section id="d2"><div class="wrap">
+<h2>2 · Customer onboarding — end to end</h2><span class="rule"></span>
+<p class="lead">From a company existing in CargoWise to its first user on the dashboard. Linking is one audited action with a confirm dialog (a second-person approval can be added later, ADR-003).</p>
+<div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor CS as Noatum Customer Success
+  participant UI as Noatum Admin UI
+  participant API as platform-api<br/>tenancy · admin
+  participant DB as PostgreSQL
+  participant SB as Job queue (pg-boss)
+  participant WK as integration-worker
+  participant CW as CargoWise (org export)
+  participant EM as Email service
+  actor CA as Customer Admin (Acme)
+  participant ID as Entra External ID
+
+  Note over WK,CW: Daily import (runs before onboarding)
+  WK->>CW: fetch organisation list
+  CW-->>WK: org code, name, country, branch, status
+  WK->>DB: upsert master_org (hash change detection)
+
+  CS->>UI: New customer: name, country, tier, email domains, login method
+  UI->>API: POST /v1/admin/customer-groups
+  API->>DB: insert customer_group (status onboarding), audit group.created
+  API-->>UI: CustomerGroupDto
+
+  CS->>UI: search "Acme"
+  UI->>API: GET /v1/admin/cw1-organisations?q=acme
+  API->>DB: trigram search master_org (+ linked group if any)
+  API-->>UI: ACMEUK001, ACMEAE001 …
+  CS->>UI: link ACMEUK001, ACMEAE001 + justification
+  UI->>API: POST /v1/admin/customer-groups/:id/accounts ×2
+  UI->>UI: confirm dialog: organisation, code, country, customer
+  API->>DB: insert customer_account (org code unique, linked_by) · audit account.linked
+  API-->>SB: visibility.reevaluate {orgCode, toGroup}
+  SB-->>WK: consume
+  WK->>DB: TenantResolver over existing shipments → shipment_visibility · invoices by addressee · unmapped_entity → mapped
+
+  CS->>UI: invite first Customer Admin (name, email)
+  UI->>API: POST /v1/admin/customer-groups/:id/invitations {role: customer_admin}
+  API->>DB: domain check · insert user_invitation (token_hash, expires_at) · audit invitation.sent
+  API-->>SB: email.send invitation
+  SB-->>WK: consume
+  WK->>EM: branded email with link /invite/<token>
+  EM-->>CA: email
+
+  CA->>UI: open link
+  UI->>API: GET /v1/invitations/:token
+  API->>DB: invitation_by_token() → group name, inviter, status
+  CA->>ID: sign in with MSAL (Entra External ID, invitation-only tenant)
+  ID-->>UI: access token
+  UI->>API: POST /v1/invitations/:token/accept (Bearer token)
+  API->>DB: accept_invitation(): email match → insert user (idp subject, office) · user_role · invitation accepted
+  API->>DB: evaluateActivation → customer_group.status = active
+  API-->>UI: 200
+  UI-->>CA: dashboard (empty widgets, news banner)
+
+  Note over CA,API: Customer Admin now invites colleagues the same way (POST /v1/invitations) — Noatum is no longer involved
+</pre></div>
+</div></section>
+
+<!-- 3 -->
+<section id="d3" class="alt"><div class="wrap">
+<h2>3 · Login and request pipeline — how every request is scoped</h2><span class="rule"></span>
+<div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor U as User
+  participant W as noatum-customer-portal-ui
+  participant ID as Entra External ID / Entra ID
+  participant API as platform-api
+  participant DB as PostgreSQL (RLS)
+
+  U->>W: email
+  W->>ID: MSAL sign-in (PKCE) — Entra handles password, MFA, federation
+  ID-->>W: access token for the API
+  Note over W,API: The API has no login endpoints · it only validates tokens
+
+  Note over W,DB: Every subsequent request
+  W->>API: GET /v1/quotes  (Bearer Entra token)
+  API->>API: AuthGuard: validate Entra token
+  API->>DB: user by (idp_issuer, idp_subject) → status active?
+  API->>DB: permissions (user_role → role_permission) · child groups
+  API->>API: TenantMiddleware builds TenantContext
+  API->>API: FeatureFlagGuard · PermissionGuard @RequirePermission('quote.create')
+  API->>DB: BEGIN · set_config app.group_ids, app.is_internal, app.user_id, app.permissions
+  API->>DB: SELECT … WHERE customer_group_id IN (groupIds)   ← app filter
+  Note right of DB: RLS policy re-checks the same condition — second lock
+  DB-->>API: rows of this customer only
+  API-->>W: 200 JSON
+</pre></div>
+</div></section>
+
+<!-- 4 -->
+<section id="d4"><div class="wrap">
+<h2>4 · Quote request — instant and manual paths</h2><span class="rule"></span>
+<div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor C as Customer (Quoting role)
+  participant W as noatum-customer-portal-ui
+  participant Q as platform-api · quotes
+  participant RA as RateEngineAdapter (in API, sync)
+  participant RE as Rate engine
+  participant DB as PostgreSQL
+  participant SB as Job queue (pg-boss)
+  participant WK as worker · TmsQuoteAdapter
+  participant CW as CargoWise One
+  participant EM as Email / PDF
+
+  C->>W: wizard: mode, route, cargo, services, refs (autosave)
+  W->>Q: PATCH /v1/quotes/:id (draft)
+  Q->>DB: quote, quote_version (status Draft)
+  C->>W: Submit
+  W->>Q: POST /v1/quotes/:id/submit
+  Q->>DB: validate · chargeable weight · account org code chosen server-side · status Requested
+  Q->>RA: price(request)  (25 s timeout, circuit breaker)
+  RA->>RE: REST price request
+  alt rates found
+    RE-->>RA: options + charge lines + validity
+    RA-->>Q: options
+    Q->>DB: quote_option, quote_charge_line · status Quoted · notification
+    Q-->>W: 200 Quoted (option cards)
+  else no rate / timeout
+    RA-->>Q: none
+    Q->>DB: status In Progress
+    Q-->>SB: quote.request {quoteId}
+    SB-->>WK: consume
+    WK->>CW: eAdapter inbound quote XML (org code, portal id in AdditionalReference)
+    Note over CW: Branch pricing team prices in CW1
+    CW-->>WK: outbound "quote priced" XML
+    WK->>WK: match AdditionalReference · TenantResolver re-checks org code (quarantine on mismatch)
+    WK->>DB: options + charge lines · status Quoted · notification
+    Q-->>W: 202 In Progress (bell notifies when Quoted)
+  end
+  C->>W: Accept
+  W->>Q: POST /v1/quotes/:id/accept
+  Q->>DB: validity check · freeze version · status Accepted · audit
+  Q-->>SB: quote.accepted · pdf.render
+  SB-->>WK: consume
+  WK->>CW: accept notification XML
+  WK->>EM: render branded PDF → Blob · email "Quote accepted"
+  Q-->>W: Accepted — ready to book
+</pre></div>
+</div></section>
+
+<!-- 5 -->
+<section id="d5" class="alt"><div class="wrap">
+<h2>5 · Shipment update from CargoWise — ingestion, tenant resolution, alerting</h2><span class="rule"></span>
+<div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  participant CW as CargoWise One
+  participant IN as platform-api · /integration/inbound
+  participant SB as Job queue (pg-boss)
+  participant WK as worker · TmsTrackingAdapter
+  participant TR as TenantResolver
+  participant DB as PostgreSQL
+  participant AL as Alert engine
+  participant EM as Email
+  actor C as Customer
+
+  CW->>IN: POST UniversalShipment / UniversalEvent XML (Loaded on board, MSKU1234567)
+  IN->>DB: integration_message (received, source_message_id, correlation_id)
+  IN-->>SB: cw1.inbound {messageId}
+  IN-->>CW: 202 Accepted
+  SB-->>WK: consume (idempotent on source_message_id + portal ref)
+  WK->>WK: parse XML → canonical Shipment, TransportLeg, MilestoneEvent
+  WK->>DB: mapping_event_code: CW1 code → canonical code, internal_flag
+  WK->>TR: parties [(shipper ACMEUK001), (consignee BLUEQA001), (agent XYZ001)]
+  TR->>DB: customer_account by org codes (active)
+  TR-->>WK: grants [(Acme, shipper), (Blue Ocean, consignee)]  — agent ignored by policy
+  WK->>DB: upsert shipment, shipment_party, legs, milestone_event (provenance)
+  WK->>DB: replace shipment_visibility rows (same transaction) · audit visibility.granted
+  alt no grants
+    WK->>DB: unmapped_entity (open)
+  end
+  WK-->>SB: shipment.updated {shipmentId}
+  SB-->>AL: consume
+  AL->>DB: evaluate standard rules + subscriptions (ETA delta → potential delay)
+  AL->>DB: notification rows for users of Acme and Blue Ocean
+  AL-->>SB: email.send (subscribed users)
+  SB-->>EM: send
+  C->>C: timeline shows "Loaded on board, Shanghai" · bell count +1
+</pre></div>
+<div class="note">Invoices (UniversalTransaction) follow the same path but resolve visibility from the <b>addressee org code only</b>, so Acme UK does not see an invoice addressed to Acme Dubai. Documents (eDocs) inherit the shipment's visibility and then apply the <code>internal_only</code> and <code>restricted</code> flags.</div>
+</div></section>
+
+<!-- 6 -->
+<section id="d6"><div class="wrap">
+<h2>6 · Booking — from accepted quote to CargoWise shipment reference</h2><span class="rule"></span>
+<div class="diagram"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor C as Customer (Booking role)
+  participant W as noatum-customer-portal-ui
+  participant B as platform-api · bookings
+  participant DB as PostgreSQL
+  participant BL as Blob (DMS)
+  participant SB as Job queue (pg-boss)
+  participant WK as worker · TmsBookingAdapter
+  participant CW as CargoWise One
+
+  C->>W: "Book" on accepted quote
+  W->>B: POST /v1/bookings {quoteId}
+  B->>DB: booking (Started) with frozen_commercial_terms = snapshot of quote
+  C->>W: addresses, references, cargo confirm, sailing pick, upload docs
+  W->>B: POST /v1/bookings/:id/documents (multipart)
+  B->>B: size limit, virus scan
+  B->>BL: store file
+  B->>DB: booking_document
+  C->>W: Submit
+  W->>B: POST /v1/bookings/:id/submit
+  B->>DB: validate · status Submitted · audit
+  B-->>SB: booking.submit {bookingId}
+  SB-->>WK: consume
+  WK->>BL: fetch documents
+  WK->>CW: UniversalShipment (booking) XML + eDoc attach, org code, portal id
+  CW-->>WK: booking confirmation XML with CW1 shipment reference
+  WK->>DB: booking.cw1_shipment_ref · status Confirmed · notification
+  Note over WK,DB: From here the shipment appears in Tracking (flow 5)
+  C->>W: Cancel?
+  W->>B: POST /v1/bookings/:id/cancel
+  B->>DB: milestone gate check (default: before origin receipt) → allowed / 409
+  B-->>SB: booking.cancel → WK → CW
+</pre></div>
+</div></section>
+
+<!-- 7 -->
+<section id="d7" class="alt"><div class="wrap">
+<h2>7 · Documents and invoices — visibility rules on the way out</h2><span class="rule"></span>
+<div class="diagram"><pre class="mermaid">
+flowchart TB
+  classDef ext fill:#002C5F,stroke:#002C5F,color:#fff
+  classDef step fill:#fff,stroke:#AA272F,color:#333
+  classDef dec fill:#F7ECEC,stroke:#AA272F,color:#333
+  classDef out fill:#F5F5F3,stroke:#58595B,color:#333
+
+  CW["CargoWise eDoc / UniversalTransaction"]:::ext --> W["worker: TmsDocumentAdapter / TmsFinanceAdapter"]:::step
+  W --> T["document_type mapping → internal_only? restricted?"]:::dec
+  W --> V["visibility: document inherits shipment_visibility<br/>invoice: addressee org code → one customer_group"]:::dec
+  T --> DB[("PostgreSQL: document / financial_transaction<br/>Blob: file")]:::out
+  V --> DB
+
+  DB --> R{"request from"}:::dec
+  R -- "customer user" --> C1{"internal_only?"}:::dec
+  C1 -- yes --> H1["hidden"]:::out
+  C1 -- no --> C2{"in customer's visibility<br/>(shipment) / addressee (invoice)?"}:::dec
+  C2 -- no --> H2["404"]:::out
+  C2 -- yes --> C3{"feature flag documents / financials on?"}:::dec
+  C3 -- no --> H3["hidden"]:::out
+  C3 -- yes --> S1["shown · single download · zip"]:::out
+
+  R -- "internal user" --> I1{"restricted?"}:::dec
+  I1 -- "yes, no finance.internal" --> H4["hidden"]:::out
+  I1 -- "no / has permission" --> S2["shown"]:::out
+
+  R -- "public visitor" --> H5["never: documents, invoices, parties"]:::out
+</pre></div>
+</div></section>
+
+<!-- 8 -->
+<section id="d8"><div class="wrap">
+<h2>8 · Claims (Dynamics 365) and notification fan-out</h2><span class="rule"></span>
+<div class="io">
+<div class="diagram" style="margin-top:0"><pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor C as Customer (Claims role)
+  participant API as platform-api · claims
+  participant DB as PostgreSQL
+  participant SB as Job queue (pg-boss)
+  participant WK as worker · D365 client
+  participant D3 as Dynamics 365
+
+  C->>API: POST /v1/claims {shipmentIds, type, description, attachments}
+  API->>DB: claim (open), attachments → Blob
+  API-->>SB: claim.create
+  SB-->>WK: consume
+  WK->>D3: create case + attachments (Dataverse API)
+  D3-->>WK: case id
+  WK->>DB: claim.d365_case_ref
+  D3-->>WK: status / comment webhook or poll
+  WK->>DB: claim_comment, status · notification
+  C->>API: POST /v1/claims/:id/comments
+  API-->>SB: claim.comment → WK → D3
+</pre></div>
+<div class="diagram" style="margin-top:0"><pre class="mermaid">
+flowchart TB
+  classDef step fill:#fff,stroke:#AA272F,color:#333
+  classDef out fill:#F5F5F3,stroke:#58595B,color:#333
+  E["Trigger<br/>milestone · ETA change · status change · document posted · claim update"]:::step
+  E --> R["Alert engine evaluates<br/>standard rules (per user toggle)<br/>advanced rules (per tier)<br/>per-shipment subscriptions<br/>email rules (Customer Admin)"]:::step
+  R --> N["notification rows<br/>(tenant-scoped)"]:::out
+  R --> Q["email.send queue<br/>immediate or digest"]:::out
+  N --> B["bell + banner in portal"]:::out
+  Q --> M["branded email<br/>DD.MM.YYYY · no emoji"]:::out
+  R --> X["news pop-ups / banners<br/>(Noatum authored, targeted by group / country / region)"]:::out
+</pre></div>
+</div>
+</div></section>
+
+<!-- 9 -->
+<section id="d9" class="alt"><div class="wrap">
+<h2>9 · State machines</h2><span class="rule"></span>
+<div class="io">
+<div class="diagram" style="margin-top:0"><h3>Quote</h3><pre class="mermaid">
+stateDiagram-v2
+  [*] --> Draft
+  Draft --> Requested: submit
+  Requested --> Quoted: rate found (instant)
+  Requested --> InProgress: no rate → CW1
+  InProgress --> Quoted: CW1 priced
+  Quoted --> Accepted: accept (within validity)
+  Quoted --> Rejected: reject with reason
+  Rejected --> Requested: new version
+  Quoted --> Expired: validity passed
+  Draft --> Cancelled
+  Requested --> Cancelled
+  InProgress --> Cancelled
+  Quoted --> Cancelled
+  Accepted --> [*]: booked
+</pre></div>
+<div class="diagram" style="margin-top:0"><h3>Booking</h3><pre class="mermaid">
+stateDiagram-v2
+  [*] --> Started
+  Started --> Submitted: submit (complete)
+  Submitted --> Confirmed: CW1 shipment ref
+  Confirmed --> InTransit: departed (from events)
+  InTransit --> Delivered: delivered
+  Started --> Cancelled
+  Submitted --> Cancelled: before milestone gate
+  Confirmed --> Cancelled: before milestone gate
+  Delivered --> [*]
+</pre></div>
+<div class="diagram" style="margin-top:0"><h3>Customer group</h3><pre class="mermaid">
+stateDiagram-v2
+  [*] --> Onboarding
+  Onboarding --> Active: ≥1 active account AND ≥1 Customer Admin accepted
+  Active --> Suspended: suspend
+  Suspended --> Active: reactivate
+  Active --> Closed: close
+  Suspended --> Closed: close
+  Closed --> [*]
+</pre></div>
+<div class="diagram" style="margin-top:0"><h3>User and invitation</h3><pre class="mermaid">
+stateDiagram-v2
+  state Invitation {
+    [*] --> Pending
+    Pending --> Accepted: link used, email matches
+    Pending --> Expired: TTL passed
+    Pending --> Revoked: admin revokes
+  }
+  state User {
+    [*] --> ActiveU: invitation accepted
+    ActiveU --> Locked: failed logins
+    Locked --> ActiveU: timeout / admin unlock
+    ActiveU --> Deactivated: admin
+    Deactivated --> ActiveU: reactivate (re-auth)
+    Deactivated --> Erased: retention passed (Phase 2)
+  }
+</pre></div>
+</div>
+</div></section>
+
+<!-- 10 -->
+<section id="d10"><div class="wrap">
+<h2>10 · Data model — onboarding, tenancy and visibility</h2><span class="rule"></span>
+<div class="diagram"><pre class="mermaid">
+erDiagram
+  MASTER_ORG ||--o{ CUSTOMER_ACCOUNT : "picked from"
+  CUSTOMER_GROUP ||--o{ CUSTOMER_ACCOUNT : has
+  CUSTOMER_GROUP |o--o{ CUSTOMER_GROUP : "parent → children (2 levels)"
+  CUSTOMER_GROUP ||--o{ USER : has
+  CUSTOMER_GROUP ||--o{ USER_INVITATION : has
+  CUSTOMER_GROUP ||--o{ MAPPING_CHANGE_REQUEST : "add / move / suspend"
+  MAPPING_CHANGE_REQUEST ||--o{ CUSTOMER_ACCOUNT : "linked_by"
+  USER ||--o{ USER_IDENTITY : "IdP links"
+  USER ||--o{ USER_ROLE : has
+  ROLE ||--o{ USER_ROLE : ""
+  ROLE ||--o{ ROLE_PERMISSION : ""
+  PERMISSION ||--o{ ROLE_PERMISSION : ""
+  USER ||--o{ USER_SESSION : ""
+  USER ||--o{ IMPERSONATION_SESSION : "admin / target"
+  CUSTOMER_GROUP ||--o{ SHIPMENT_VISIBILITY : "may see"
+  SHIPMENT ||--o{ SHIPMENT_VISIBILITY : ""
+  SHIPMENT ||--o{ SHIPMENT_PARTY : "org codes by role"
+  SHIPMENT ||--o{ MILESTONE_EVENT : ""
+  SHIPMENT ||--o{ DOCUMENT : ""
+  SHIPMENT ||--o{ FINANCIAL_TRANSACTION : "addressee → one group"
+  CUSTOMER_GROUP ||--o{ QUOTE : owns
+  CUSTOMER_ACCOUNT ||--o{ QUOTE : "org code used"
+  QUOTE ||--o{ QUOTE_VERSION : ""
+  QUOTE_VERSION ||--o{ QUOTE_OPTION : ""
+  QUOTE_OPTION ||--o{ QUOTE_CHARGE_LINE : ""
+  QUOTE |o--o| BOOKING : "frozen terms"
+  CUSTOMER_GROUP ||--o{ BOOKING : owns
+  UNMAPPED_ENTITY }o--|| MASTER_ORG : "codes seen"
+  CUSTOMER_GROUP ||--o{ AUDIT_EVENT : ""
+
+  MASTER_ORG { string cw1_org_code PK  string full_name  string country_iso  bool is_client  bool is_active }
+  CUSTOMER_GROUP { uuid id PK  uuid parent_id  string name  string country_iso  enum tier  enum status  enum identity_mode  text_arr email_domains  jsonb feature_flags }
+  CUSTOMER_ACCOUNT { uuid id PK  uuid customer_group_id FK  string cw1_org_code UK  enum status  bool is_default_for_quotes }
+  MAPPING_CHANGE_REQUEST { uuid id PK  enum kind  string cw1_org_code  uuid requested_by  uuid approved_by  enum status }
+  USER { uuid id PK  uuid customer_group_id FK  bool is_internal  string email UK  enum status  int role_version }
+  USER_INVITATION { uuid id PK  string email  char token_hash UK  timestamptz expires_at  enum status }
+  SHIPMENT_VISIBILITY { uuid shipment_id PK  uuid customer_group_id PK  enum_arr roles  string_arr resolved_from_codes }
+  SHIPMENT { uuid id PK  string hbl_hawb  enum mode  jsonb refs  enum status }
+  FINANCIAL_TRANSACTION { uuid id PK  uuid customer_group_id FK  string addressee_org_code  bool restricted }
+</pre></div>
+</div></section>
+
+<!-- 11 -->
+<section id="d11" class="alt"><div class="wrap">
+<h2>11 · Inputs and outputs — the complete register</h2><span class="rule"></span>
+<p class="lead">Every piece of data that crosses the platform boundary, who sends it, the format, and which module owns it.</p>
+<div class="io">
+<div>
+<h3>Inputs</h3>
+<table>
+<tr><th>Data</th><th>From</th><th>Format</th><th>Owning module</th></tr>
+<tr><td>Organisation list</td><td>CargoWise</td><td>CSV / eAdapter / API (request item 4)</td><td>worker · master-data import → <code>master_org</code></td></tr>
+<tr><td>Shipments, consols, containers, legs, milestones</td><td>CargoWise</td><td>UniversalShipment, UniversalEvent XML</td><td>worker · TmsTrackingAdapter → shipments</td></tr>
+<tr><td>Documents</td><td>CargoWise</td><td>eDoc XML + payload</td><td>worker · TmsDocumentAdapter → documents, Blob</td></tr>
+<tr><td>Invoices, credit notes</td><td>CargoWise</td><td>UniversalTransaction XML</td><td>worker · TmsFinanceAdapter → finance</td></tr>
+<tr><td>Priced quotes, staff-created quotes, booking confirmations</td><td>CargoWise</td><td>eAdapter outbound XML</td><td>worker · TmsQuoteAdapter / TmsBookingAdapter</td></tr>
+<tr><td>Quote options and charge lines</td><td>Rate engine</td><td>REST JSON (sync)</td><td>API · RateEngineAdapter → quotes</td></tr>
+<tr><td>Container / flight events, predictive data</td><td>Carrier / visibility providers</td><td>REST / webhooks</td><td>worker · carrier feed → shipments (with provenance)</td></tr>
+<tr><td>Case status, comments</td><td>Dynamics 365</td><td>Dataverse API</td><td>worker · D365 client → claims</td></tr>
+<tr><td>Access tokens</td><td>Entra External ID / Entra ID (via the SPA)</td><td>OAuth 2.0 bearer token</td><td>API · identity (validate only)</td></tr>
+<tr><td>Quote requests, bookings, uploaded documents, address book, templates, preferences, claims, alert rules</td><td>Customer users</td><td>REST JSON / multipart</td><td>API · quotes, bookings, address-book, claims, notifications</td></tr>
+<tr><td>Customer set-up, org-code mapping, roles, feature flags, news, mapping tables, replay</td><td>Noatum staff</td><td>REST JSON</td><td>API · tenancy, admin, news, integration console</td></tr>
+<tr><td>Reference number, CO2 inputs, schedule search</td><td>Public visitors</td><td>REST JSON (rate-limited)</td><td>API · public endpoints</td></tr>
+</table>
+</div>
+<div>
+<h3>Outputs</h3>
+<table>
+<tr><th>Data</th><th>To</th><th>Format</th><th>Owning module</th></tr>
+<tr><td>Quote request / accept / reject / cancel</td><td>CargoWise</td><td>eAdapter inbound XML, portal id in AdditionalReference</td><td>worker · TmsQuoteAdapter</td></tr>
+<tr><td>Booking create / update / cancel + documents</td><td>CargoWise</td><td>UniversalShipment (booking) XML + eDoc attach</td><td>worker · TmsBookingAdapter</td></tr>
+<tr><td>Price request</td><td>Rate engine</td><td>REST JSON (sync)</td><td>API · RateEngineAdapter</td></tr>
+<tr><td>Case, attachments, comments</td><td>Dynamics 365</td><td>Dataverse API</td><td>worker · D365 client</td></tr>
+<tr><td>Invitations, welcome, role change, quote status, alerts, digests, scheduled reports</td><td>Users (email)</td><td>Branded HTML email</td><td>worker · email renderer</td></tr>
+<tr><td>Quote PDFs, report exports (PDF / XLSX / CSV)</td><td>Users (download)</td><td>Files in Blob, signed URLs</td><td>worker · PDF renderer; API · reports</td></tr>
+<tr><td>Shipment status, milestones, documents, invoices, quotes, bookings, notifications, reports, dashboards</td><td>Customer users</td><td>REST JSON (tenant-scoped)</td><td>API · all customer modules</td></tr>
+<tr><td>Critical-path milestones, office contact, CO2 estimate, schedules</td><td>Public visitors</td><td>REST JSON (minimal, identical for any match count)</td><td>API · public endpoints</td></tr>
+<tr><td>Admin views, approvals, unmapped queue, audit, message log, usage analytics</td><td>Noatum staff</td><td>REST JSON</td><td>API · admin, audit, integration console</td></tr>
+<tr><td>Product analytics events</td><td>Analytics store (Phase 4)</td><td>Event stream</td><td>API · audit/analytics</td></tr>
+<tr><td>Customer data feed (Phase 5)</td><td>Customer BI / ERP</td><td>Governed API</td><td>API · api-management</td></tr>
+</table>
+</div>
+</div>
+<div class="note">Never crosses the boundary outward to customers: other customers' data, <code>internal_only</code> events and documents, <code>restricted</code> financial content, organisation codes, party addresses on public pages, predictive data on public pages.</div>
+</div></section>
+
+<footer><div class="wrap">Noatum Logistics · AD Ports Group · Technical reference for the Customer Information Platform · Source: PRD v2.1, LLD v2, KB-CW1-Integration-Multi-Tenant v2</div></footer>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: 'loose',
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'Mulish, Segoe UI, Arial, sans-serif',
+      fontSize: '13px',
+      primaryColor: '#F7ECEC',
+      primaryBorderColor: '#AA272F',
+      primaryTextColor: '#333333',
+      secondaryColor: '#F5F5F3',
+      tertiaryColor: '#FFFFFF',
+      lineColor: '#58595B',
+      actorBkg: '#FFFFFF',
+      actorBorder: '#58595B',
+      actorTextColor: '#333333',
+      signalColor: '#AA272F',
+      signalTextColor: '#333333',
+      noteBkgColor: '#F5F5F3',
+      noteBorderColor: '#A7A7A6',
+      noteTextColor: '#333333',
+      activationBkgColor: '#F7ECEC',
+      activationBorderColor: '#AA272F',
+      sequenceNumberColor: '#FFFFFF',
+      labelBoxBkgColor: '#F5F5F3',
+      labelBoxBorderColor: '#A7A7A6',
+      clusterBkg: '#FAFAF9',
+      clusterBorder: '#A7A7A6',
+      edgeLabelBackground: '#FFFFFF',
+      attributeBackgroundColorOdd: '#FFFFFF',
+      attributeBackgroundColorEven: '#F5F5F3'
+    },
+    sequence: { useMaxWidth: true, mirrorActors: false, wrap: true, width: 170, messageMargin: 40 },
+    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+    er: { useMaxWidth: true }
+  });
+</script>
+</body>
+</html>

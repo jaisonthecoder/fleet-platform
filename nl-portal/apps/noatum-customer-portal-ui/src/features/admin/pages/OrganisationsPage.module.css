@@ -1,0 +1,85 @@
+.codeLink {
+  font-family: var(--noa-font-mono);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-medium);
+  color: inherit;
+}
+
+.unlinked {
+  color: var(--noa-color-text-muted);
+}
+
+.roles {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.role {
+  padding: 1px 5px;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+  border: 1px solid var(--noa-color-border);
+}
+
+.primary {
+  padding: 1px 5px;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--noa-info-700);
+  border: 1px solid var(--noa-info-700);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--noa-space-3);
+  margin: var(--noa-space-3) 0 0;
+}
+
+.fact {
+  display: grid;
+  gap: 2px;
+}
+
+.factLabel {
+  font-size: var(--noa-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--noa-color-text-muted);
+}
+
+.factValue,
+.factValueMono {
+  margin: 0;
+  font-size: var(--noa-text-sm);
+}
+
+.factValueMono {
+  font-family: var(--noa-font-mono);
+}
+
+.factHint {
+  margin: 0;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.tabNote {
+  margin: var(--noa-space-3) 0 var(--noa-space-2);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.runWhen {
+  display: grid;
+  gap: 1px;
+}
+
+.runWhen small {
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}

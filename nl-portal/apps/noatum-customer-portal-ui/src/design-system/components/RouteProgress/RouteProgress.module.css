@@ -1,0 +1,62 @@
+/* DA-03 · Route progress cell. Measures from Noatum UI Kit.dc.html. */
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+}
+
+.port {
+  flex: none;
+  font-size: var(--noa-text-eyebrow);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text);
+  white-space: nowrap;
+}
+
+.track {
+  position: relative;
+  flex: 1;
+  min-inline-size: 3rem;
+  block-size: 12px;
+}
+
+.track svg {
+  inline-size: 100%;
+  block-size: 100%;
+  display: block;
+}
+
+.rest {
+  stroke: var(--noa-ring-track);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.done {
+  stroke: var(--noa-color-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.marker {
+  position: absolute;
+  inset-block-start: 50%;
+  translate: -50% -50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 14px;
+  block-size: 14px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+}
+
+.marker svg {
+  inline-size: 11px;
+  block-size: 11px;
+  stroke-width: 2;
+}

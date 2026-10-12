@@ -1,0 +1,70 @@
+/* LD-11 · Inline text wait. Measures from Noatum UI Kit.dc.html. */
+
+.wait {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-card);
+  color: var(--noa-neutral-900);
+}
+
+/* --- crossing: a marker travelling between two codes ---------------------- */
+
+.track {
+  position: relative;
+  flex: none;
+  inline-size: 64px;
+  block-size: 2px;
+  background: rgb(from var(--noa-color-text) r g b / 0.16);
+}
+
+.marker {
+  position: absolute;
+  inset-block-start: -2px;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  animation: var(--noa-anim-slide) 2s cubic-bezier(0.4, 0.05, 0.6, 0.95) infinite;
+}
+
+/* --- dots: three breathing after the label -------------------------------- */
+
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.dots i {
+  inline-size: 4px;
+  block-size: 4px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  animation: var(--noa-anim-blink) 1.2s ease-in-out infinite;
+}
+
+.dots i:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.dots i:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+/* The point of this component is that nothing moves when the value lands, so
+   the static state keeps the same footprint rather than collapsing. */
+@media (prefers-reduced-motion: reduce) {
+  .marker {
+    inset-inline-start: 50%;
+    animation: none;
+  }
+
+  .dots i {
+    animation: none;
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,167 @@
+/*
+ * Only what a plain field does not already have. The label, hint, error and the
+ * border treatment come from Field.module.css, the same sheet Input and Select
+ * use, so a search field sits in a form without looking like a different kit.
+ */
+
+/*
+ * The shell carries the border so the icons sit INSIDE the control rather than
+ * beside it. The input within is stripped back to nothing for the same reason -
+ * two borders around one field is the usual way this goes wrong.
+ */
+.shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+  min-height: var(--noa-control-height);
+  padding-inline: var(--noa-space-3);
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border-strong);
+  border-radius: var(--noa-radius-sm);
+  transition: border-color var(--noa-duration-fast) var(--noa-ease);
+}
+
+.shell:hover {
+  border-color: var(--noa-color-accent);
+}
+
+/* The ring is drawn on the shell, because the focused thing is the whole field. */
+.shell:focus-within {
+  border-color: var(--noa-color-accent);
+  box-shadow: 0 0 0 3px var(--red-050);
+}
+
+.invalid {
+  border-color: var(--noa-danger-500);
+}
+
+.invalid:hover,
+.invalid:focus-within {
+  border-color: var(--noa-danger-700);
+}
+
+.leading {
+  flex: none;
+  color: var(--noa-color-text-muted);
+}
+
+.control {
+  flex: 1 1 auto;
+  min-width: 0;
+  /* The shell owns the chrome; this owns only the text. */
+  min-height: auto;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--noa-color-text);
+  font-family: var(--noa-font-sans);
+  font-size: var(--noa-text-sm);
+}
+
+.control:hover,
+.control:focus,
+.control:focus-visible {
+  border: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.trailing {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-1);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--noa-space-1);
+  background: none;
+  border: none;
+  border-radius: var(--noa-radius-sm);
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.icon:hover {
+  color: var(--noa-color-accent);
+}
+
+.chevron,
+.chevronOpen {
+  transition: transform var(--noa-duration-fast) var(--noa-ease);
+}
+
+/* The one rotation the brand allows itself: it states which way the panel went. */
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/*
+ * Matching the field's width rather than the content's, so the panel reads as
+ * part of the control instead of a menu that happened to appear near it.
+ */
+.panel {
+  inline-size: var(--radix-popover-trigger-width);
+  padding: 0;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  box-shadow: var(--noa-shadow-raised);
+  overflow: hidden;
+}
+
+.list {
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--noa-space-2);
+  padding: var(--noa-space-2) var(--noa-space-3);
+  /* Reserved so the row does not shift sideways when it becomes the active one. */
+  border-inline-start: 2px solid transparent;
+  font-size: var(--noa-text-sm);
+  color: var(--noa-color-text);
+  cursor: pointer;
+}
+
+.option[data-active='true'],
+.option[data-selected='true'] {
+  background: var(--red-050);
+  border-inline-start-color: var(--noa-color-accent);
+}
+
+.optionLabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.optionHint {
+  flex: none;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}
+
+.tick {
+  flex: none;
+  color: var(--noa-color-accent);
+}
+
+/* "Keep typing" and "nothing matched" are guidance, not choices, so they are
+   quieter than a row and are not selectable. */
+.note {
+  padding: var(--noa-space-3);
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-text-muted);
+}

@@ -1,0 +1,37 @@
+/* The branch's quotation listing. Everything except the margin cell is a
+   design-system component, so this file is one column wide.
+
+   Margin is internal and has no equivalent on the customer's grid, which is why
+   it is not a kit cell: there is no second screen that would use it. */
+
+.margin {
+  display: grid;
+  gap: 2px;
+  justify-items: end;
+  min-width: 0;
+}
+
+.margin > strong {
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-success-700);
+  white-space: nowrap;
+}
+
+/* Under ten per cent is not an error, so it is amber rather than red: brand red
+   on this screen means "act now", and a thin margin is a thing to notice. */
+.margin[data-thin='true'] > strong {
+  color: var(--noa-warning-700);
+}
+
+/* Never costed. Not zero margin - a different fact, and it says so in words. */
+.margin[data-none='true'] > strong {
+  color: var(--text-muted);
+}
+
+.margin > small {
+  font-size: var(--noa-text-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}

@@ -1,0 +1,276 @@
+/*
+ * The request hero, to the measurements in
+ * REFERENCE/MOCKUP-htmls-page-vice/Noatum Quotation Pricing Workspace.html.
+ *
+ * Full bleed navy, with the brand's hairline columns over it. It carries the
+ * breadcrumb, the reference, what the screen is for, the two acts available
+ * before pricing starts, and a framed panel holding the lane and the customer.
+ * The page below rises 44px into its foot, which is why the band pads 72px.
+ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-inline-size: 0;
+  flex: none;
+  background: var(--noa-color-hero);
+  color: var(--noa-color-hero-text);
+}
+
+/* Its own layer, so nothing inside inherits the gradient's stacking context. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--noa-hero-hairlines);
+}
+
+.inner {
+  position: relative;
+  padding-block: 22px 72px;
+}
+
+/* The same container the page below uses, so the lane and the cards line up. */
+.container {
+  max-inline-size: var(--noa-public-max);
+  margin-inline: auto;
+  inline-size: 100%;
+  box-sizing: border-box;
+  padding-inline: var(--noa-public-gutter);
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+/* --- title row ----------------------------------------------------------- */
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-block-start: 16px;
+  min-inline-size: 0;
+}
+
+.titleText { min-inline-size: 0; }
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-hero-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.title {
+  margin: 12px 0 0;
+  font-size: var(--noa-text-3xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-color-hero-text);
+}
+
+.lede {
+  margin: 8px 0 0;
+  max-inline-size: 520px;
+  font-size: var(--noa-text-sm);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-on-dark-muted);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex: none;
+}
+
+/*
+ * On navy, so neither can come from the ordinary button variants: the outline
+ * variant's grey border disappears here and the quiet variant has no edge at all.
+ */
+.secondary,
+.claim {
+  border-radius: var(--radius-btn);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.secondary {
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-hero-outline);
+  background: transparent;
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+}
+
+.claim {
+  padding: 12px 20px;
+  border: 1px solid var(--noa-color-accent);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-hero-text);
+  font-size: var(--noa-text-sm);
+  font-weight: var(--noa-weight-black);
+}
+
+/* Held by you: the fill goes, because the act on offer is now to give it up. */
+.claim[data-held='true'] {
+  background: transparent;
+  border-color: var(--noa-color-hero-border-strong);
+}
+
+.secondary:disabled,
+.claim:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* White, not the usual accent: a red ring is invisible against a red fill, and
+   both of these sit on navy. */
+.secondary:focus-visible,
+.claim:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-hero-text);
+  outline-offset: 2px;
+}
+
+/* --- the framed panel ---------------------------------------------------- */
+
+.panel {
+  margin-block-start: 22px;
+  padding: 16px 18px;
+  border: 1px solid var(--noa-color-hero-border);
+  background: var(--noa-color-hero-raised);
+  min-inline-size: 0;
+}
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 20px;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+/* The lane sits in its own darker tile inside the frame: it is the one fact on
+   this band that decides whether a pricer can quote the job at all. */
+.laneCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid var(--noa-color-hero-border-strong);
+  background: var(--noa-color-hero-panel);
+  min-inline-size: 0;
+}
+
+.place { min-inline-size: 0; }
+.placeEnd { text-align: end; }
+
+.code {
+  font-size: var(--noa-text-xl);
+  font-weight: var(--noa-weight-black);
+  line-height: var(--noa-leading-none);
+}
+
+.city {
+  margin-block-start: 4px;
+  font-size: var(--noa-text-xs);
+  color: var(--noa-color-hero-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Drawn, not typed: an arrow character reads as text to a screen reader and
+   disappears at small sizes. The red half marks the leg already behind us. */
+.rule {
+  position: relative;
+  flex: 1;
+  min-inline-size: 30px;
+  block-size: 2px;
+  background: var(--noa-color-hero-rule-strong);
+}
+
+.rule::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  block-size: 2px;
+  inline-size: 50%;
+  background: var(--noa-color-accent);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chips li {
+  padding: 5px 9px;
+  border-radius: var(--radius-btn);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  background: var(--noa-color-hero-chip);
+  color: var(--noa-color-hero-text);
+}
+
+/* What a per-container charge multiplies by: white, so it is read first. */
+.chips li[data-lead='true'] {
+  background: var(--noa-color-surface);
+  color: var(--noa-color-accent);
+}
+
+/* Something to resolve before quoting. Amber, and the words say what it is. */
+.chips li[data-flag='true'] {
+  background: var(--noa-kit-attention);
+  color: var(--noa-color-hero-text);
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  margin: 0;
+  font-size: var(--noa-text-sm);
+  min-inline-size: 0;
+}
+
+.meta > div { min-inline-size: 0; }
+
+.meta dt {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--noa-color-hero-muted);
+}
+
+.meta dd {
+  margin: 4px 0 0;
+  font-weight: var(--noa-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.meta dd.sub {
+  margin-block-start: 0;
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-regular);
+  color: var(--noa-color-hero-muted);
+}
+
+/* The claim clock. Pink while it is nobody's, green once it is yours — and both
+   name themselves in words above the colour. */
+.meta dd.waiting { color: var(--noa-color-hero-eyebrow); }
+.meta dd.held { color: var(--noa-kit-success-surface); }

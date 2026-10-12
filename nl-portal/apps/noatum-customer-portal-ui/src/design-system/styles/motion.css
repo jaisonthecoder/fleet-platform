@@ -1,0 +1,161 @@
+@keyframes noaPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+@keyframes noaRun {
+  0% {
+    transform: scaleX(0);
+  }
+  92%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes noaWake {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-26px);
+  }
+}
+
+@keyframes noaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes noaShimmer {
+  0% {
+    background-position: -220px 0;
+  }
+  100% {
+    background-position: 280px 0;
+  }
+}
+@keyframes noaFill {
+  0% {
+    transform: scaleY(0.06);
+  }
+  88%,
+  100% {
+    transform: scaleY(0.92);
+  }
+}
+@keyframes noaRise {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes noaBay {
+  0% {
+    transform: scaleY(0);
+  }
+  45%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+@keyframes noaLamp {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  18% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.5;
+  }
+}
+@keyframes noaBoard {
+  0% {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  28%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes noaSweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+@keyframes noaSlide {
+  0% {
+    transform: translateX(-100%);
+  }
+  92%,
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes noaDash {
+  to {
+    background-position: 24px 0;
+  }
+}
+@keyframes noaBlink {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+@keyframes noaCue {
+  0% {
+    opacity: 0;
+  }
+  3%,
+  22% {
+    opacity: 1;
+  }
+  26%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes noaTick {
+  0% {
+    opacity: 0.3;
+  }
+  22%,
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes noaTickText {
+  0% {
+    color: var(--noa-color-hero-muted);
+  }
+  22%,
+  100% {
+    color: var(--noa-color-hero-text);
+  }
+}

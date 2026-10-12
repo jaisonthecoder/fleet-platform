@@ -1,0 +1,485 @@
+.noa-shell {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-section);
+}
+.noa-shell-width {
+  width: 100%;
+  padding-inline: var(--noa-shell-gutter);
+}
+.noa-utility {
+  background: var(--surface-topbar);
+  color: var(--text-on-dark);
+  padding-block: var(--space-1);
+  font-size: var(--noa-text-xs);
+  min-height: 28px;
+  flex-shrink: 0;
+}
+.noa-utility .noa-shell-width {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding-inline: var(--space-5);
+}
+.noa-shell-header {
+  background: var(--surface-page);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  z-index: var(--noa-z-sticky);
+}
+.noa-header-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: 54px;
+  width: 100%;
+  padding: 0 var(--space-5);
+}
+.noa-brand {
+  color: var(--navy-800);
+  font: var(--text-h4);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.noa-brand small {
+  font-size: var(--noa-text-xs);
+  font-weight: 600;
+  margin-left: var(--space-1);
+}
+.noa-global-search {
+  display: flex;
+  flex: 1 1 560px;
+  justify-content: center;
+  min-width: 0;
+  margin-left: var(--noa-space-5);
+}
+.noa-shell-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  font-size: var(--noa-text-xs);
+}
+.noa-module-nav {
+  font-weight: 700;
+  font-size: var(--noa-text-xs);
+  align-self: stretch;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  overflow-x: auto;
+}
+.noa-module-links {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  white-space: nowrap;
+}
+.noa-module-links a {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--noa-space-1);
+  min-width: 56px;
+  min-height: 54px;
+  padding: var(--space-1) var(--space-2) 2px;
+  border-bottom: var(--heading-rule-h) solid transparent;
+  color: var(--text-heading);
+  font-size: 11px;
+  line-height: var(--noa-leading-tight);
+  text-decoration: none;
+}
+.noa-module-links a:hover {
+  background: var(--surface-section);
+  text-decoration: none;
+}
+.noa-module-links a svg {
+  width: 15px;
+  height: 15px;
+  color: currentColor;
+}
+.noa-module-links a[aria-current='page'] {
+  border-bottom-color: var(--color-primary);
+  color: var(--color-primary);
+  background: transparent;
+}
+.noa-shell-layout {
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+}
+.noa-sidebar {
+  position: relative;
+  z-index: 1;
+  background: var(--surface-page);
+  border-right: 1px solid var(--border-subtle);
+  overflow: visible;
+  min-height: 0;
+  padding-bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+}
+.noa-sidebar > nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+.noa-sidebar-context {
+  padding: var(--space-4) var(--space-5) var(--space-2);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}
+.noa-sidebar-context strong {
+  display: block;
+  color: var(--text-heading);
+}
+.noa-nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-5);
+  min-height: 38px;
+  border-left: 3px solid transparent;
+  text-align: left;
+  font: var(--text-small);
+  font-weight: 400;
+  color: var(--text-body);
+  text-decoration: none;
+  position: relative;
+  line-height: var(--noa-leading-tight);
+}
+.noa-nav-item:hover {
+  background: var(--surface-section);
+  text-decoration: none;
+}
+.noa-nav-active {
+  border-left-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--red-050);
+  font-weight: 700;
+}
+.noa-nav-label {
+  overflow-wrap: anywhere;
+}
+.noa-nav-count {
+  margin-left: auto;
+  min-width: var(--space-4);
+  padding-inline: var(--space-1);
+  color: var(--text-on-dark);
+  background: var(--color-primary);
+  font-size: var(--noa-text-xs);
+  border-radius: var(--radius-btn);
+  text-align: center;
+}
+.noa-sidebar-note {
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  line-height: var(--noa-leading-tight);
+}
+.noa-shell-collapsed .noa-sidebar-note {
+  display: none;
+}
+.noa-nav-group {
+  padding: var(--space-5) var(--space-5) var(--space-2);
+  font-size: var(--noa-text-xs);
+  font-weight: 700;
+  color: var(--text-body);
+  text-transform: uppercase;
+}
+.noa-sidebar-toggle {
+  position: absolute;
+  top: var(--noa-space-2);
+  right: -13px;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--noa-radius-sm);
+  background: var(--noa-color-surface);
+  box-shadow: var(--noa-card-shadow);
+  color: var(--noa-color-accent);
+  cursor: pointer;
+  transition:
+    color var(--noa-duration-fast) var(--noa-ease),
+    border-color var(--noa-duration-fast) var(--noa-ease),
+    background-color var(--noa-duration-fast) var(--noa-ease);
+}
+.noa-sidebar-toggle::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+}
+.noa-sidebar-toggle svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+  stroke-width: 2;
+}
+.noa-sidebar-toggle:hover {
+  color: var(--noa-color-accent-hover);
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-accent-subtle);
+}
+.noa-sidebar-toggle:focus-visible {
+  outline: 2px solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+.noa-shell-collapsed .noa-shell-layout {
+  grid-template-columns: 56px minmax(0, 1fr);
+}
+.noa-shell-collapsed .noa-sidebar .noa-nav-label,
+.noa-shell-collapsed .noa-sidebar-context {
+  display: none;
+}
+.noa-shell-collapsed .noa-sidebar .noa-nav-group {
+  font-size: 0;
+  height: var(--space-4);
+  margin: var(--space-2) var(--space-3);
+  padding: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.noa-shell-collapsed .noa-sidebar .noa-nav-item {
+  justify-content: center;
+  padding: var(--space-3) 0;
+  min-height: 44px;
+}
+.noa-shell-collapsed .noa-sidebar .noa-nav-count {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+}
+.noa-nav-item:disabled,
+.noa-nav-item[aria-disabled='true'] {
+  opacity: 0.5;
+  cursor: default;
+}
+.noa-app-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-4);
+  margin-top: var(--space-7);
+  color: var(--text-body);
+  font-size: var(--noa-text-xs);
+}
+.noa-main {
+  min-width: 0;
+  padding: var(--space-6);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* A page that opens with a full-bleed band cancels the shell's padding: the band
+   has to reach the rail and the window edge, and its own measure is what keeps
+   the content off them. The page says so rather than the shell guessing. */
+.noa-main:has(> [data-bleed='true']) {
+  padding: 0;
+}
+.noa-main:focus:not(:focus-visible) {
+  outline: none;
+}
+.noa-main > .noa-page-heading {
+  margin-bottom: var(--space-5);
+}
+.noa-main .noa-page-heading h1 {
+  font: var(--text-h3);
+  font-weight: 800;
+}
+.noa-mobile-navigation {
+  padding: var(--space-5) 0;
+  gap: var(--space-3);
+}
+.noa-mobile-navigation > h2 {
+  padding-left: var(--space-5);
+}
+.noa-mobile-modules {
+  padding-inline: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.noa-mobile-modules .noa-module-links {
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.noa-mobile-modules a {
+  min-height: 44px;
+}
+.noa-utility-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: end;
+}
+.noa-utility-actions [role='combobox'] {
+  background: transparent;
+  border: 0;
+  color: var(--text-on-dark);
+  padding: 0;
+  min-height: 20px;
+  font-size: var(--noa-text-xs);
+}
+.noa-utility-actions option {
+  color: var(--text-heading);
+  background: var(--surface-page);
+}
+.noa-bottom-navigation {
+  display: none;
+  flex-shrink: 0;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  background: var(--surface-page);
+  border-top: 1px solid var(--border-subtle);
+  padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+}
+.noa-bottom-navigation .noa-nav-entry {
+  min-width: 0;
+}
+.noa-bottom-navigation .noa-nav-item,
+.noa-bottom-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+  min-width: 44px;
+  min-height: 64px;
+  height: 100%;
+  padding: var(--space-2) var(--space-1);
+  border: 0;
+  border-top: var(--heading-rule-h) solid transparent;
+  color: var(--text-body);
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-tight);
+  text-align: center;
+  position: relative;
+}
+.noa-bottom-navigation svg {
+  width: var(--space-5);
+  height: var(--space-5);
+  flex-shrink: 0;
+}
+.noa-bottom-navigation .noa-nav-active {
+  border-top-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--surface-page);
+}
+.noa-bottom-navigation .noa-nav-count {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-2);
+}
+.noa-mobile-navigation {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (max-width: 1100px) {
+  .noa-bottom-navigation {
+    display: grid;
+  }
+  .noa-shell-layout,
+  .noa-shell-collapsed .noa-shell-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .noa-sidebar,
+  .noa-module-nav {
+    display: none;
+  }
+  .noa-header-row .noa-mobile-menu {
+    display: block;
+  }
+  .noa-header-row {
+    padding-inline: var(--space-4);
+    gap: var(--space-2);
+  }
+  .noa-global-search {
+    margin-left: 0;
+  }
+  .noa-header-row .noa-icon-button {
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (max-width: 600px) {
+  .noa-utility .noa-shell-width {
+    padding-inline: var(--space-3);
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+  .noa-utility-actions {
+    gap: var(--space-2);
+  }
+  .noa-header-row {
+    padding-inline: var(--space-2);
+  }
+  .noa-shell-actions {
+    gap: var(--space-1);
+  }
+  .noa-global-search {
+    flex-basis: 0;
+  }
+  .noa-workspace-version {
+    display: none;
+  }
+  .noa-brand small {
+    display: block;
+    margin-left: 0;
+    font-size: 10px;
+  }
+  .noa-header-row .noa-brand {
+    font-size: var(--noa-text-md);
+  }
+}
+.noa-skip {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  transform: translateY(-200%);
+  z-index: var(--noa-z-toast);
+  background: var(--surface-page);
+  padding: var(--space-3);
+}
+.noa-skip:focus {
+  transform: none;
+}
+.noa-mobile-menu {
+  display: none;
+}
+@media (max-width: 760px) {
+  .noa-shell-width {
+    width: calc(100% - var(--space-6));
+  }
+  .noa-sidebar {
+    display: none;
+  }
+  .noa-mobile-menu {
+    display: block;
+  }
+  .noa-main {
+    padding: var(--space-5) var(--space-4);
+  }
+  .noa-brand {
+    font: var(--text-h4);
+    font-weight: 800;
+  }
+}

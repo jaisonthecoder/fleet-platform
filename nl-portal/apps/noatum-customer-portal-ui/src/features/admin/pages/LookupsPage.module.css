@@ -1,0 +1,242 @@
+/* Two-pane lookup workbench: a persistent rail of lists beside the values in
+   the selected one. Dense by intent - administration screens are read far more
+   often than they are edited, so rows and chrome stay tight and the panes
+   scroll internally rather than pushing the page down. */
+.workbench {
+  display: grid;
+  grid-template-columns: 244px minmax(0, 1fr);
+  gap: var(--noa-workspace-gap);
+  align-items: start;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .workbench { grid-template-columns: minmax(0, 1fr); }
+  .rail { max-height: 260px; }
+}
+
+/* --- left rail ----------------------------------------------------------- */
+
+.rail {
+  background: var(--noa-color-surface);
+  border: var(--noa-card-border);
+  border-radius: var(--noa-radius-md);
+  box-shadow: var(--noa-card-shadow);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 262px);
+  min-height: 320px;
+  min-width: 0;
+}
+
+.railHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.railTitle {
+  font-size: var(--noa-text-xs);
+  font-weight: 800;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-body);
+}
+
+.railList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.railItem + .railItem { border-top: 1px solid var(--border-subtle); }
+
+.railButton {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: none;
+  border: 0;
+  border-left: 3px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1.25;
+  color: var(--text-body);
+}
+
+.railButton:hover { background: var(--surface-section); }
+.railButton:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }
+
+.railButton[aria-current='true'] {
+  background: var(--surface-section);
+  border-left-color: var(--color-primary);
+}
+
+.railButton > svg { color: var(--text-muted); margin-top: 2px; }
+
+.railName {
+  font-weight: 700;
+  font-size: var(--noa-text-sm, 0.875rem);
+  color: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+
+.railCode {
+  grid-column: 2;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.railFlag {
+  grid-column: 3;
+  grid-row: 1;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* --- right pane ---------------------------------------------------------- */
+
+.pane {
+  background: var(--noa-color-surface);
+  border: var(--noa-card-border);
+  border-radius: var(--noa-radius-md);
+  box-shadow: var(--noa-card-shadow);
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: var(--noa-card-gap);
+  padding: var(--noa-card-padding);
+  min-width: 0;
+  max-height: calc(100vh - 262px);
+}
+
+.paneHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.paneActions { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+
+.paneTitle { display: grid; min-width: 0; }
+.paneTitle h2 { margin: 0; font: var(--text-h5, var(--text-h4)); color: var(--text-heading); }
+.paneTitle p { margin: 0; font-size: 11px; color: var(--text-muted); }
+
+/* The grid takes the leftover height and scrolls on its own, so the toolbar
+   and pagination stay put however many rows are shown. */
+.tableScroll { overflow: auto; min-height: 0; }
+
+/* Administration rows are scanned in bulk, so they sit tighter than the
+   default listing and the badges inside them stop setting the row height. */
+.tableScroll :global(.noa-table) td { line-height: 1.25; }
+.tableScroll :global(.noa-badge) { padding-block: 1px; font-size: 11px; }
+
+/* --- cells --------------------------------------------------------------- */
+
+.codeCell {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+/* Marks a row whose content belongs to a source system or to the code base. */
+.ownerFlag {
+  font-family: var(--noa-font-sans, inherit);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.missing { color: var(--text-muted); font-style: italic; }
+
+/* A default-height button in the last column sets the height of every row, so
+   the row action is sized to the text beside it instead. */
+.rowActions { display: flex; gap: var(--space-2); }
+.rowActions button {
+  height: 24px;
+  min-height: 24px;
+  padding-inline: var(--space-2);
+}
+
+/* --- drawer form --------------------------------------------------------- */
+
+/* Chrome comes from the design system (.noa-drawer-*); only the field rows
+   inside a card are laid out here. */
+
+.formRow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.formRow3 { display: grid; grid-template-columns: 1.4fr 1fr 84px; gap: var(--space-3); }
+.formRowSort { display: grid; grid-template-columns: minmax(0, 1fr) 84px; gap: var(--space-3); }
+
+@media (max-width: 560px) {
+  .formRow, .formRow3, .formRowSort { grid-template-columns: minmax(0, 1fr); }
+}
+
+.fieldset {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface-section);
+}
+
+.fieldsetTitle {
+  font-size: var(--noa-text-xs);
+  font-weight: 800;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-body);
+}
+
+.notes {
+  width: 100%;
+  min-height: 64px;
+  padding: var(--space-2);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm, 4px);
+  resize: vertical;
+}
+
+.notes:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -1px; }
+
+.checks { display: flex; gap: var(--space-5); flex-wrap: wrap; align-items: center; }
+
+.hint { margin: 0; font-size: 11px; color: var(--text-muted); }
+
+.notice {
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-section);
+  border-left: 3px solid var(--color-accent-navy);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}
+
+.error {
+  padding: var(--space-2) var(--space-3);
+  background: var(--red-050);
+  border-left: 3px solid var(--color-primary);
+  font-size: var(--noa-text-xs);
+  color: var(--text-body);
+}

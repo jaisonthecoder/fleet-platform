@@ -1,0 +1,110 @@
+/* SE-05 · Selected summary strip. Measures from Noatum UI Kit.dc.html. */
+
+.strip {
+  min-inline-size: 0;
+  padding: var(--noa-kit-heading-gap) var(--noa-kit-card-gap); /* 12px 14px */
+  background: var(--noa-paper);
+  border: 1px solid var(--noa-color-border);
+}
+
+.label {
+  margin: 0 0 9px;
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  line-height: var(--noa-leading-none);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--noa-space-2);
+  min-inline-size: 0;
+}
+
+.items:focus {
+  outline: none;
+}
+
+.items:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+/* The red left rail is what marks this as a chosen thing rather than a chip. */
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--noa-kit-chip-gap);
+  min-inline-size: 0;
+  padding: 9px var(--noa-kit-heading-gap);
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-inline-start: 3px solid var(--noa-color-accent);
+}
+
+.copy {
+  min-inline-size: 0;
+}
+
+/* A button that has to read as the text it replaced, not as a control. */
+.selectable {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.title {
+  display: block;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-tight);
+  color: var(--noa-neutral-900);
+}
+
+.detail {
+  display: block;
+  margin-block-start: 2px;
+  font-size: var(--noa-text-eyebrow);
+  color: var(--noa-color-text);
+}
+
+.remove {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--noa-color-text-muted);
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: var(--noa-color-accent);
+}
+
+.remove:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.remove svg {
+  inline-size: 14px;
+  block-size: 14px;
+}
+
+.empty {
+  margin: 0;
+  font-size: var(--noa-text-dense);
+  color: var(--noa-color-text-muted);
+}

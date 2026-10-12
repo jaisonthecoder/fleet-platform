@@ -1,0 +1,269 @@
+/* SE-04 · Container selector. Measures from Noatum UI Kit.dc.html. */
+
+.card {
+  box-sizing: border-box;
+  max-inline-size: 14.375rem; /* 230px */
+  padding: var(--noa-kit-card-gap); /* 14px sits between the kit's 12 and 16 */
+  background: var(--noa-color-surface);
+  border: 2px solid var(--noa-color-border);
+}
+
+.card[data-selected] {
+  background: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent);
+}
+
+.card[aria-disabled='true'] {
+  opacity: 0.6;
+}
+
+/* --- the drawn container face ------------------------------------------- */
+
+.face {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 3.25rem; /* 52px */
+  border: 2px solid var(--noa-color-border-strong);
+  background: var(--noa-paper);
+}
+
+.card[data-selected] .face {
+  border-color: var(--noa-color-accent);
+  background: var(--noa-color-surface);
+}
+
+/* The two end posts. */
+.post {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 5px;
+  background: var(--noa-color-border-strong);
+}
+
+.post:first-of-type {
+  inset-inline-start: 0;
+}
+
+.post:last-of-type {
+  inset-inline-end: 0;
+}
+
+.card[data-selected] .post {
+  background: var(--noa-color-accent);
+}
+
+/* Corrugation. */
+.ribs {
+  position: absolute;
+  inset: 6px 12px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--noa-color-border) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+.card[data-selected] .ribs {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--noa-action-tint-strong) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+.code {
+  position: relative;
+  font-size: var(--noa-text-body-kit);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+.card[data-selected] .code {
+  color: var(--noa-color-accent);
+}
+
+/* --- identity ------------------------------------------------------------ */
+
+.dimensions,
+.capacity {
+  margin: 0;
+  text-align: center;
+  color: var(--noa-color-text-muted);
+}
+
+.dimensions {
+  margin-block-start: 7px;
+  font-size: var(--noa-text-eyebrow);
+}
+
+.capacity {
+  margin-block-start: 3px;
+  font-size: var(--noa-text-code);
+}
+
+/* --- count --------------------------------------------------------------- */
+
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--noa-space-2);
+  margin-block-start: var(--noa-kit-heading-gap);
+}
+
+.step {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 0;
+  background: var(--noa-color-surface);
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  color: var(--noa-color-accent);
+  font-size: var(--noa-text-md);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  cursor: pointer;
+}
+
+.step:hover:not(:disabled) {
+  background: var(--noa-color-accent-subtle);
+  border-color: var(--noa-color-accent);
+}
+
+.step:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset);
+}
+
+.step:disabled {
+  color: var(--noa-neutral-400);
+  cursor: not-allowed;
+}
+
+.count {
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-neutral-900);
+}
+
+/* --- payload ------------------------------------------------------------- */
+
+.payload {
+  margin-block-start: var(--noa-kit-heading-gap);
+  padding-block-start: var(--noa-kit-chip-gap);
+  border-block-start: 1px solid var(--noa-color-border);
+}
+
+.payloadHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--noa-space-2);
+  font-size: var(--noa-text-eyebrow);
+  color: var(--noa-color-text);
+}
+
+.payloadHead label {
+  min-inline-size: 0;
+}
+
+/* The field and its unit read as one control, so the border goes round both
+   and the unit sits inside it rather than floating beside it. */
+.entry {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+  flex: none;
+  padding: 3px 6px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: var(--radius-btn);
+  background: var(--noa-color-surface);
+}
+
+.entry:focus-within {
+  border-color: var(--noa-color-accent);
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: var(--noa-focus-offset-inset);
+}
+
+.weight {
+  inline-size: 5ch;
+  min-inline-size: 0;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--noa-color-text);
+  font: inherit;
+  font-weight: var(--noa-weight-bold);
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.weight:focus {
+  outline: none;
+}
+
+.weight:disabled {
+  color: var(--noa-color-text-muted);
+}
+
+.unit {
+  color: var(--noa-color-text-muted);
+}
+
+.card[data-over] .entry {
+  border-color: var(--noa-color-accent);
+}
+
+.card[data-over] .weight {
+  color: var(--noa-color-accent);
+}
+
+.slider {
+  margin-block-start: var(--noa-space-2);
+}
+
+/* The meter repeats the slider's position as a plain proportion, which is what
+   the kit colours: green while there is room, action red past the threshold. */
+.meter {
+  block-size: 5px;
+  margin-block-start: var(--noa-space-2);
+  overflow: hidden;
+  background: var(--noa-color-border);
+  border-radius: 3px;
+}
+
+.meter > span {
+  display: block;
+  block-size: 100%;
+  --fill: 0%;
+  inline-size: var(--fill);
+  background: var(--noa-kit-success);
+}
+
+.card[data-over] .meter > span {
+  background: var(--noa-color-accent);
+}
+
+.note {
+  margin: 0;
+  margin-block-start: 5px;
+  font-size: var(--noa-text-code);
+  color: var(--noa-color-text-muted);
+}
+
+.card[data-over] .note {
+  color: var(--noa-color-accent);
+}
+
+.over {
+  font-weight: var(--noa-weight-bold);
+}

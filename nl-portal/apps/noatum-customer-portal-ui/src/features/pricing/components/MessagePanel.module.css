@@ -1,0 +1,67 @@
+/* The covering note, and the three lines it nearly always contains. */
+
+.panel {
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  min-inline-size: 0;
+}
+
+.head {
+  padding: 14px 18px;
+  border-block-end: 1px solid var(--noa-color-border);
+}
+
+.title {
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  letter-spacing: var(--noa-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--noa-color-text-muted);
+}
+
+.body { padding: 16px 18px; }
+
+/*
+ * Rounded, unlike every other control in this brand. They are the one thing on
+ * the screen that inserts text rather than changing a value, and the shape is
+ * what stops them reading as four more buttons.
+ */
+.snippets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.snippet {
+  padding: 8px 11px;
+  border: 1px solid var(--noa-color-border);
+  border-radius: 16px;
+  background: var(--surface-card);
+  color: var(--text-heading);
+  font-size: var(--noa-text-xs);
+  font-weight: var(--noa-weight-bold);
+  line-height: var(--noa-leading-none);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.snippet:hover {
+  border-color: var(--noa-color-accent);
+  color: var(--noa-color-accent);
+}
+
+.snippet:focus-visible {
+  outline: var(--noa-focus-width) solid var(--noa-color-focus);
+  outline-offset: 2px;
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: var(--noa-text-xs);
+  line-height: var(--noa-leading-normal);
+  color: var(--noa-color-text-muted);
+}

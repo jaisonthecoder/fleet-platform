@@ -1,0 +1,175 @@
+/* LD-01 · Route loader. Measures from Noatum UI Kit.dc.html. */
+
+.loader {
+  padding: 26px var(--noa-kit-block-gap);
+  min-inline-size: 0;
+  background: var(--navy-950);
+  box-shadow: var(--noa-card-shadow);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--noa-kit-card-gap);
+}
+
+.eyebrow {
+  font-size: var(--noa-text-code);
+  font-weight: var(--noa-weight-bold);
+  letter-spacing: 0.11em;
+  line-height: var(--noa-leading-none);
+  text-transform: uppercase;
+  color: var(--noa-color-hero-eyebrow);
+}
+
+.estimate {
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-on-dark-muted);
+}
+
+/* --- the lane ------------------------------------------------------------ */
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-kit-card-gap);
+  margin-block-start: 18px;
+  min-inline-size: 0;
+}
+
+.port {
+  flex: none;
+  min-inline-size: 0;
+}
+
+.port[data-align='end'] {
+  text-align: end;
+}
+
+.code {
+  display: block;
+  font-size: var(--noa-text-lg);
+  font-weight: var(--noa-weight-extrabold);
+  line-height: var(--noa-leading-none);
+  color: var(--noa-color-text-inverse);
+}
+
+.name {
+  display: block;
+  margin-block-start: var(--noa-space-1);
+  font-size: var(--noa-text-eyebrow);
+  line-height: 1.4;
+  color: var(--noa-color-hero-muted);
+}
+
+.track {
+  position: relative;
+  flex: 1;
+  min-inline-size: 3.75rem;
+  block-size: 26px;
+}
+
+.rail {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 12px;
+  block-size: 2px;
+  background: var(--noa-color-hero-ring);
+}
+
+.wake {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 12px;
+  block-size: 2px;
+  inline-size: 100%;
+  background: var(--noa-color-accent);
+  transform-origin: left;
+  animation: var(--noa-anim-run) 2.6s cubic-bezier(0.4, 0.05, 0.6, 0.95) infinite;
+}
+
+.marker {
+  position: absolute;
+  inset-block-start: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 22px;
+  block-size: 22px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-accent);
+  color: var(--noa-color-text-inverse);
+  translate: -50% -50%;
+  animation: var(--noa-anim-slide) 2.6s cubic-bezier(0.4, 0.05, 0.6, 0.95) infinite;
+}
+
+.marker svg {
+  inline-size: 13px;
+  block-size: 13px;
+}
+
+/* --- what is happening --------------------------------------------------- */
+
+.message {
+  margin: 18px 0 0;
+  font-size: var(--noa-text-dense);
+  font-weight: var(--noa-weight-bold);
+  color: var(--noa-color-text-inverse);
+}
+
+.steps {
+  display: grid;
+  gap: var(--noa-space-2);
+  margin: var(--noa-kit-heading-gap) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--noa-text-eyebrow);
+  color: var(--noa-on-dark-muted);
+}
+
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: var(--noa-space-2);
+}
+
+.steps li[data-state='done'] {
+  color: var(--noa-on-dark-strong);
+}
+
+.steps li[data-state='current'] {
+  color: var(--noa-color-text-inverse);
+  font-weight: var(--noa-weight-bold);
+}
+
+.tick {
+  flex: none;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: var(--noa-radius-capsule);
+  background: var(--noa-color-hero-ring);
+}
+
+.steps li[data-state='done'] .tick {
+  background: var(--noa-mint-400);
+}
+
+.steps li[data-state='current'] .tick {
+  background: var(--noa-color-accent);
+  animation: var(--noa-anim-blink) 1.2s ease-in-out infinite;
+}
+
+/* Frozen at 0 the wake is invisible and the marker sits on the origin, which
+   reads as a stalled shipment rather than a static one. */
+@media (prefers-reduced-motion: reduce) {
+  .wake {
+    transform: scaleX(1);
+  }
+
+  .marker {
+    inset-inline-start: 50%;
+  }
+}

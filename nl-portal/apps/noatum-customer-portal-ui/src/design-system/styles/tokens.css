@@ -1,0 +1,592 @@
+:root {
+  --red-600: #aa272f;
+  --red-700: #8e2027;
+  --red-050: #f7ecec;
+  --navy-800: #002c5f;
+  --navy-950: #041c2c;
+  --gray-900: #333333;
+  --gray-700: #58595b;
+  --gray-400: #a7a7a6;
+  --gray-200: #e5e5e5;
+  --gray-100: #f5f5f3;
+  --white: #ffffff;
+  --color-primary: var(--red-600);
+  --color-primary-hover: var(--red-700);
+  --color-accent-navy: var(--navy-800);
+  --text-heading: var(--gray-900);
+  --text-body: var(--gray-700);
+  --text-muted: var(--gray-400);
+  --text-on-dark: var(--white);
+  --surface-page: var(--white);
+  --surface-section: var(--gray-100);
+  --surface-card: var(--white);
+  --surface-footer: var(--red-600);
+  --surface-topbar: var(--red-600);
+  --border-subtle: var(--gray-200);
+  --link: var(--red-600);
+  --link-hover: var(--red-700);
+  --font-sans: 'Mulish', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --text-display: 800 42px/1.25 var(--font-sans);
+  --text-h2: 800 34px/1.25 var(--font-sans);
+  --text-h3: 700 24px/1.3 var(--font-sans);
+  --text-h4: 700 19px/1.35 var(--font-sans);
+  --text-eyebrow: 700 17px/1.3 var(--font-sans);
+  --text-nav: 700 17px/1.2 var(--font-sans);
+  --text-body-f: 400 16px/1.6 var(--font-sans);
+  --text-small: 400 14px/1.5 var(--font-sans);
+  --text-stat: 800 40px/1.1 var(--font-sans);
+  --text-footer-heading: 800 16px/1.3 var(--font-sans);
+  --tracking-caps: 0.02em;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --container-max: 1170px;
+  --radius-btn: 4px;
+  --radius-none: 0;
+  --shadow-card: 0 2px 14px rgba(0, 0, 0, 0.1);
+  --heading-rule-w: 40px;
+  --heading-rule-h: 3px;
+  --background: var(--surface-page);
+  --foreground: var(--text-heading);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--text-on-dark);
+  --muted: var(--surface-section);
+  --muted-foreground: var(--text-body);
+  --border: var(--border-subtle);
+  --input: var(--border-subtle);
+  --ring: var(--color-accent-navy);
+  --radius: var(--radius-btn);
+}
+
+:root {
+  /* --- brand ramp -------------------------------------------------------- */
+  --noa-brand-50: var(--red-050);
+  --noa-brand-100: var(--red-050);
+  --noa-brand-200: var(--red-050);
+  --noa-brand-300: var(--red-600);
+  --noa-brand-400: var(--red-600);
+  --noa-brand-500: var(--red-600);
+  --noa-brand-600: var(--red-700);
+  --noa-brand-700: var(--red-700);
+  --noa-brand-800: var(--red-700);
+  --noa-brand-900: var(--red-700);
+
+  /* --- neutrals ---------------------------------------------------------- */
+  --noa-neutral-0: var(--white);
+  --noa-neutral-50: var(--gray-100);
+  --noa-neutral-100: var(--gray-100);
+  --noa-neutral-200: var(--gray-200);
+  --noa-neutral-300: var(--gray-400);
+  --noa-neutral-400: var(--gray-400);
+  --noa-neutral-500: var(--gray-700);
+  --noa-neutral-600: var(--gray-700);
+  --noa-neutral-700: var(--gray-700);
+  --noa-neutral-800: var(--gray-900);
+  --noa-neutral-900: var(--gray-900);
+
+  /* --- status ------------------------------------------------------------ */
+  --noa-success-100: var(--noa-green-050);
+  --noa-success-500: var(--noa-green-600);
+  --noa-success-700: #146536;
+  --noa-warning-100: var(--noa-amber-050);
+  --noa-warning-500: var(--noa-amber-600);
+  --noa-warning-700: #855804;
+  --noa-danger-100: var(--red-050);
+  --noa-danger-500: var(--red-600);
+  --noa-danger-700: var(--red-700);
+  --noa-info-100: var(--gray-100);
+  --noa-info-500: var(--navy-800);
+  --noa-info-700: var(--navy-800);
+
+  /* Third-party identity mark. Used only by the Microsoft sign-in control. */
+  --noa-microsoft-red: #f25022;
+  --noa-microsoft-green: #7fba00;
+  --noa-microsoft-blue: #00a4ef;
+  --noa-microsoft-yellow: #ffb900;
+
+  /* --- semantic roles ---------------------------------------------------- */
+  --noa-color-bg: var(--noa-ground);
+  --noa-color-surface: var(--noa-neutral-0);
+  --noa-color-surface-raised: var(--noa-neutral-0);
+  --noa-color-border: var(--noa-neutral-200);
+  --noa-color-border-strong: var(--noa-neutral-300);
+  --noa-color-text: var(--text-body);
+  --noa-color-text-muted: var(--noa-neutral-500);
+  --noa-color-text-inverse: var(--noa-neutral-0);
+  --noa-color-accent: var(--noa-brand-500);
+  --noa-color-accent-hover: var(--noa-brand-600);
+  --noa-color-accent-subtle: var(--noa-brand-50);
+  /*
+   * Navy, not brand red. The focus ring sits on top of the primary button, whose
+   * fill IS brand red - a red ring on red reads as no ring at all. The shadcn
+   * layer already names navy as --ring; this makes the two agree.
+   */
+  --noa-color-focus: var(--noa-color-accent);
+
+  /* Guidance surfaces: the brand navy at low alpha, not a new hue. */
+  --noa-color-info-surface: rgba(0, 44, 95, 0.05);
+  --noa-color-info-border: rgba(0, 44, 95, 0.16);
+
+  /* Dark hero band. Semantic aliases so features never name a raw brand colour. */
+  --noa-color-hero: var(--navy-950);
+  --noa-color-hero-text: var(--text-on-dark);
+  --noa-color-hero-muted: rgba(255, 255, 255, 0.64);
+  --noa-color-hero-border: rgba(255, 255, 255, 0.16);
+  --noa-color-hero-raised: rgba(255, 255, 255, 0.08);
+  --noa-color-hero-rule: rgba(255, 255, 255, 0.045);
+  --noa-color-hero-ring: rgba(255, 255, 255, 0.09);
+  --noa-color-hero-ring-soft: rgba(255, 255, 255, 0.07);
+  --noa-color-hero-eyebrow: #f2b8bc;
+  /* CH-04 and CH-09 sit ON the band, so they need a stronger set than the band
+     itself: a visible edge, a raised tile, a hairline and readable label text. */
+  --noa-color-hero-border-strong: rgba(255, 255, 255, 0.2);
+  --noa-color-hero-ring-strong: rgba(255, 255, 255, 0.14);
+  --noa-color-hero-rule-strong: rgba(255, 255, 255, 0.24);
+  --noa-color-hero-dot: rgba(255, 255, 255, 0.5);
+  --noa-color-hero-label: rgba(255, 255, 255, 0.82);
+  --noa-color-hero-panel: rgba(4, 28, 44, 0.55);
+  --noa-color-hero-track: rgba(255, 255, 255, 0.28);
+  --noa-color-hero-chip: rgba(255, 255, 255, 0.13);
+  /* A chosen chip on the dark surface, where the brand green would be too
+     loud as a fill and too quiet as an outline alone. */
+  --noa-color-hero-mint: rgba(126, 212, 160, 0.14);
+  /* A breadcrumb separator on the band, and the edge of a button that has no
+     fill. Both sit between the hairline and the readable label. */
+  --noa-color-hero-faint: rgba(255, 255, 255, 0.4);
+  --noa-color-hero-outline: rgba(255, 255, 255, 0.3);
+  /* Hairlines only. CH-09 on a form page drops the radial rings so the band
+     does not compete with the cards rising into it. */
+  --noa-hero-hairlines:
+    repeating-linear-gradient(90deg, var(--noa-color-hero-rule) 0 1px, transparent 1px 26px);
+  /* The halo under a current marker. */
+  --noa-color-accent-halo: rgba(170, 39, 47, 0.18);
+  /* The red wash across the top of the welcome band. Brand, not a grid: this
+     band opens the product rather than framing one page of it. */
+  --noa-color-hero-wash: rgba(170, 39, 47, 0.42);
+
+  /* CH-09 geometry. `foot` is the empty navy left below the band's content and
+     `rise` is how far the page climbs into it — the two are one decision, so
+     they live together: change one and the overlap stops working. */
+  --noa-hero-pad-block: 20px;
+  --noa-hero-foot: 96px;
+  --noa-hero-rise: 48px;
+
+  /*
+   * The brand canvas: 28px hairline columns with two faint rings sweeping in from
+   * the right. Held as one token so the sign-in panel and every detail hero paint
+   * the identical surface. Pair it with background-color: var(--noa-color-hero).
+   */
+  --noa-hero-pattern:
+    radial-gradient(
+      circle 210px at calc(100% - 90px) 18%,
+      transparent 0 208px,
+      var(--noa-color-hero-ring) 208px 210px,
+      transparent 210px
+    ),
+    radial-gradient(
+      circle 120px at calc(100% - 80px) 88%,
+      transparent 0 118px,
+      var(--noa-color-hero-ring-soft) 118px 120px,
+      transparent 120px
+    ),
+    repeating-linear-gradient(90deg, var(--noa-color-hero-rule) 0 1px, transparent 1px 28px);
+
+  /* --- typography -------------------------------------------------------- */
+  --noa-font-sans: var(--font-sans);
+  /*
+   * A real monospace, not an alias of the sans face. CargoWise organisation
+   * codes, customer slugs, branch codes and feature keys are compared character
+   * by character; NOATVAL01 against NOATVALO1 is unreadable in a proportional
+   * face. System stack only - no font is downloaded for this.
+   */
+  --noa-font-mono:
+    ui-monospace, 'SFMono-Regular', 'Cascadia Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+
+  --noa-text-xs: 0.75rem;
+  --noa-text-sm: 0.875rem;
+  --noa-text-md: 1rem;
+  --noa-text-lg: 1.125rem;
+  --noa-text-xl: 1.375rem;
+  --noa-text-2xl: 1.75rem;
+  --noa-text-3xl: 2.25rem;
+  --noa-text-2xs: 0.5rem;
+  --noa-text-code: 0.625rem;
+
+  --noa-weight-regular: 400;
+  --noa-weight-medium: 500;
+  --noa-weight-semibold: 600;
+  --noa-weight-bold: 700;
+  --noa-weight-extrabold: 800;
+  --noa-weight-black: 800;              /* the kit writes 800 for both bold-most steps */
+
+  --noa-leading-none: 1;
+  --noa-leading-tight: 1.2;
+  --noa-leading-compact: 1.35;
+  --noa-leading-normal: 1.45;
+  --noa-leading-relaxed: 1.55;
+  --noa-tracking-code: 0.04em;
+  --noa-tracking-eyebrow: 0.08em;
+  --noa-tracking-lockup: 0.14em;      /* LOGISTICS beside the wordmark */
+  --noa-tracking-badge: 0.06em;       /* the CUSTOMER stamp on the utility strip */
+  /* CH-09 opens wider than an ordinary eyebrow, so the band reads as a banner. */
+  --noa-tracking-hero-eyebrow: 0.11em;
+
+  /* --- spacing: 4px base ------------------------------------------------- */
+  /*
+   * Application density scale. Deliberately tighter than the marketing site's
+   * --space-* ramp above: these are dense administration screens where the cost of
+   * generous whitespace is a scrollbar, not elegance. Tune HERE, never per page.
+   */
+  --noa-space-0: 0;
+  --noa-space-1: 0.25rem;
+  --noa-space-2: 0.5rem;
+  --noa-space-3: 0.625rem;
+  --noa-space-4: 0.75rem;
+  --noa-space-5: 1rem;
+  --noa-space-6: 1.5rem;
+  --noa-space-7: 2rem;
+  --noa-space-8: 3rem;
+
+  /* --- radii, shadows, motion ------------------------------------------- */
+  --noa-radius-sm: var(--radius-btn);
+  --noa-radius-md: var(--radius-none);
+  --noa-radius-lg: var(--radius-none);
+  --noa-radius-pill: var(--radius-none);
+  --noa-radius-filter-pill: 20px;
+  --noa-radius-tight: 2px;
+  --noa-radius-pagination: 6px;
+  --noa-radius-capsule: 999px;
+
+  --noa-shadow-sm: var(--shadow-card);
+  --noa-shadow-md: var(--noa-shadow-raised);
+  --noa-shadow-lg: var(--noa-shadow-modal);
+  --noa-shadow-pill: 0 3px 12px rgba(170, 39, 47, 0.45);
+  --noa-shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+  /* --- operational workspace ------------------------------------------- */
+  /*
+   * Dense form and data surfaces use the quotation workspace rhythm. Keep
+   * this geometry centralized so cards and controls do not drift by feature.
+   */
+  --noa-workspace-gap: var(--noa-space-3);
+  --noa-card-padding: var(--noa-kit-card-padding);
+  --noa-card-gap: var(--noa-space-3);
+  --noa-card-border: 1px solid var(--noa-color-border);
+  --noa-card-shadow: var(--shadow-card);
+  --noa-control-height: 38px;
+  --noa-control-height-regular: 40px;
+  --noa-control-height-compact: 32px;
+  --noa-touch-target: 44px;
+  --noa-focus-width: 2px;
+  --noa-focus-offset-inset: -2px;
+  --noa-focus-offset: 2px;
+
+  /* UI kit component directory. */
+  --noa-directory-search-width: 20rem;
+  --noa-directory-search-min: 11.25rem;
+  --noa-directory-column-min: 14.375rem;
+  --noa-kit-directory-min: 21.25rem;
+  --noa-kit-copy-max: 46rem;
+  --noa-kit-stat-min: 6.5rem;
+  --noa-kit-preview-min-height: 24rem;
+  --noa-kit-icon-specimen-width: 7rem;
+  --noa-kit-panel-reading-width: 36rem;
+  --noa-dialog-confirm-max: 32.5rem;
+  --noa-dialog-confirm-icon: 46px;
+  --noa-selection-mode-min: 9.375rem;
+  --noa-selection-radio-min: 10rem;
+  --noa-selection-card-padding: 0.875rem;
+  --noa-icon-tile-size: 30px;
+
+  --noa-duration-fast: 120ms;
+  --noa-duration-base: 200ms;
+  --noa-ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /*
+   * --- public surface -----------------------------------------------------
+   *
+   * The customer-facing landing pages sit on the dark brand canvas and need a
+   * palette the administration screens never use: readable greys ON navy, a
+   * mint that reads as "live" or "low emission", and warm ambers. Taken from
+   * the approved landing designs in REFERENCE/, so a value here is a decision
+   * already made, not a new hue invented at build time.
+   */
+  --noa-public-max: 1320px;
+  --noa-public-gutter: 32px;
+
+  /* Text and rules over --navy-950. */
+  --noa-on-dark-strong: #d7dee4;
+  --noa-on-dark: #b9c0c6;
+  --noa-on-dark-muted: #8fa0ad;
+  --noa-on-dark-placeholder: #7c8994;
+
+  /* Mint: live indicators, lowest-emission mode, "open to everyone". */
+  --noa-mint-400: #7ed4a0;
+  --noa-green-600: #2e7d4f;
+  --noa-green-050: #eaf4ee;
+
+  /* Amber: attention without the finality of brand red. */
+  --noa-amber-600: #b7791f;
+  --noa-amber-400: #e3b23c;
+  --noa-amber-050: #fbf3e4;
+
+  /* Exact UI-kit semantic aliases. Existing status aliases remain untouched. */
+  --noa-kit-success: var(--noa-green-600);
+  --noa-kit-success-surface: var(--noa-green-050);
+  --noa-kit-attention: var(--noa-amber-600);
+  --noa-kit-attention-surface: var(--noa-amber-050);
+
+  /* Navy wash: informational chips and locked tiles. */
+  --noa-navy-050: #e8edf4;
+
+  /* Warm neutrals: panel grounds and inactive rings. */
+  --noa-paper: #fbfaf7;
+  --noa-ring-track: #f0efec;
+  --noa-dot-idle: #d8d7d4;
+
+  /*
+   * --- quotation pipeline --------------------------------------------------
+   *
+   * Six states, drawn three ways on the same screen: a segment of the band, the
+   * rail down the left of a row, and the dot in that row's status pill. Each one
+   * therefore needs a mark, the ink its label is written in, and the wash the
+   * pill sits on.
+   *
+   * `mark` and `ink` differ only for `expired`: the band segment is decorative
+   * and may be the muted grey, but the pill's label is text and muted grey on a
+   * grey wash does not pass AA. Colour is never the only signal here anyway -
+   * every segment carries its name.
+   */
+  /* Sent, nobody on it yet: grey, because waiting is not a state to celebrate
+     and not one to warn about. Also the fallback for an unknown segment. */
+  --noa-pipe-requested: var(--noa-neutral-700);
+  --noa-pipe-requested-ink: var(--noa-neutral-700);
+  --noa-pipe-requested-surface: var(--gray-100);
+
+  --noa-pipe-submitted: var(--noa-neutral-700);
+  --noa-pipe-submitted-ink: var(--noa-neutral-700);
+  --noa-pipe-submitted-surface: var(--gray-100);
+
+  /* Somebody is on it. Navy: the platform's colour for "in hand", distinct from
+     the grey of untouched and from the brand red that means "you can act". */
+  --noa-pipe-in-progress: var(--color-accent-navy);
+  --noa-pipe-in-progress-ink: var(--color-accent-navy);
+  /* Solid, not the 5% wash: this tint also carries a badge that sits ON the navy
+     hero, where an alpha of the same navy disappears entirely. */
+  --noa-pipe-in-progress-surface: #e8edf4;
+
+  --noa-pipe-options-ready: var(--color-primary);
+  --noa-pipe-options-ready-ink: var(--color-primary);
+  --noa-pipe-options-ready-surface: var(--red-050);
+
+  --noa-pipe-expiring-soon: var(--noa-amber-600);
+  --noa-pipe-expiring-soon-ink: var(--noa-warning-700);
+  --noa-pipe-expiring-soon-surface: var(--noa-amber-050);
+
+  --noa-pipe-accepted: var(--noa-green-600);
+  --noa-pipe-accepted-ink: var(--noa-success-700);
+  --noa-pipe-accepted-surface: var(--noa-green-050);
+
+  /* The darkest of the three neutrals. Declined, submitted and expired are all
+     "nothing left to do here", so they stay one family - but the band now draws
+     every state at once, and two identical greys in one legend is a legend that
+     has stopped telling you anything. Read as a ramp: decided, waiting, lapsed. */
+  --noa-pipe-declined: var(--noa-neutral-900);
+  --noa-pipe-declined-ink: var(--noa-neutral-900);
+  --noa-pipe-declined-surface: var(--gray-100);
+
+  --noa-pipe-expired: var(--gray-400);
+  --noa-pipe-expired-ink: var(--noa-neutral-700);
+  --noa-pipe-expired-surface: var(--gray-100);
+
+  /* CH-14 geometry: the band's empty foot, and how far the listing climbs into
+     it. One decision in two numbers - change one and the overlap stops working. */
+  --noa-listing-hero-foot: 74px;
+  --noa-listing-hero-rise: 44px;
+  /* The band itself: bar height, and the gap the segments are cut apart by. */
+  --noa-pipe-bar-h: 10px;
+  --noa-pipe-mark: 8px;
+  /* The rail down the left of a listing row, and the validity meter under it. */
+  /* Row geometry, from the mockup: 20px in from the card edge, 14px between
+     columns, and 42px for every control in the toolbar. The gap is halved onto
+     each cell, so it is stated once here rather than twice in the rules. */
+  --noa-listing-pad-x: 20px;
+  --noa-listing-gap: 14px;
+  --noa-listing-row-y: 14px;
+  --noa-listing-control-h: 42px;
+  --noa-listing-rail: 3px;
+  --noa-listing-meter-h: 3px;
+  /* How many days a validity meter draws as a full bar. Two weeks is the longest
+     validity anyone quotes here, so a fortnight is "as good as it gets". */
+  --noa-listing-validity-span: 14;
+
+  /* --- layout ------------------------------------------------------------ */
+  --noa-container-max: var(--container-max);
+  /* A form page runs wider than a reading page: two columns of cards plus the
+     340px sidebar do not fit the 1170 measure without squeezing both. */
+  --noa-measure-wide: 1320px;
+  /* --- charts -------------------------------------------------------------
+   * One palette for every chart on the product, so a mode is the same colour on
+   * the dashboard, the listing and the quote. Ordered: the series you read first
+   * is the darkest. Brand red is reserved — it means air freight here, which is
+   * also the mode that costs most and emits most, so the one alarming colour is
+   * on the one series worth being alarmed about.
+   *
+   * Never the only signal: every series is labelled in a legend AND repeated in
+   * the hidden table each chart carries.
+   */
+  --noa-chart-1: var(--navy-800);      /* sea FCL, and the leading series */
+  --noa-chart-2: #6e8cab;              /* sea LCL */
+  --noa-chart-2-soft: #8fa9c4;         /* a measured range under a quoted one */
+  --noa-chart-3: var(--color-primary); /* air */
+  --noa-chart-4: var(--noa-amber-600); /* money laid over volume */
+  --noa-chart-5: var(--noa-green-600); /* emissions */
+  --noa-chart-grid: var(--noa-neutral-200);
+  --noa-chart-axis: var(--noa-color-text-muted);
+  --noa-chart-target: var(--noa-green-600);
+  --noa-chart-track: #f0f0ee;
+  --noa-chart-bar-radius: 1px;
+
+  /* Where a shipment stands, in the order it stands there. Grey is the one that
+     has not started and amber the one that is stuck; the middle of the journey
+     is the darkest, because that is where most of the fleet is. */
+  --noa-chart-stage-1: var(--gray-400);
+  --noa-chart-stage-2: var(--noa-chart-2-soft);
+  --noa-chart-stage-3: var(--navy-800);
+  --noa-chart-stage-4: var(--noa-chart-2);
+  --noa-chart-stage-5: var(--noa-amber-600);
+
+  /* What a charge is. `action` is brand red and is reserved for cost the
+     customer can usually avoid - demurrage - so the one alarming colour on the
+     split is on the one line worth acting on. */
+  --noa-chart-tone-primary: var(--navy-800);
+  --noa-chart-tone-info: var(--noa-chart-2);
+  --noa-chart-tone-neutral: var(--gray-400);
+  --noa-chart-tone-warning: #e5dccb;
+  --noa-chart-tone-action: var(--color-primary);
+
+  --noa-header-height: 64px;
+  --noa-header-height-mobile: 56px;
+  /* Between the brand, the links and the account in the header row. Named
+     because the brand column measures itself against it to line the first link
+     up with the content below. */
+  --noa-header-gap: 22px;
+
+  /* SH-01/SH-02/SH-04. The content column runs the full window width with
+     32px gutters — no centred measure — so wide screens are used, not framed. */
+  /* The chrome stands on the same edge as the page. It used to run one step
+     tighter at 28, which put the navigation four pixels left of the content
+     directly under it — close enough to read as a mistake rather than as a
+     margin. One value, so the two cannot drift apart again. */
+  --noa-chrome-gutter: var(--noa-shell-gutter);
+  --noa-shell-gutter: 32px;
+  --noa-shell-gutter-mobile: 14px;
+  --noa-utility-height: 32px;
+  --noa-sidebar-width: 248px;
+  /* The request sidebar. Narrower than the staff rail: it holds a ring, a
+     summary and an action, not navigation. */
+  --noa-aside-width: 340px;
+  /* The card width a rail snaps to. SE-04 draws at 230; 210 is the point two
+     still fit a phone-width column. */
+  --noa-rail-card: 210px;
+  /* The icon-only clear beside the pipeline chips. Matches their height so the
+     filter row stays one band rather than two. */
+  --noa-clear-size: 30px;
+
+  /* --- z-index ----------------------------------------------------------- */
+  --noa-z-dropdown: 100;
+  --noa-z-sticky: 200;
+  --noa-z-modal: 300;
+  --noa-z-toast: 400;
+
+  /* ====================================================================== */
+  /* UI-kit measures. Source: REFERENCE/MOCKUP .../Noatum UI Kit.dc.html     */
+  /* and its build metaprompt. These are the kit values; do not round them.  */
+  /* ====================================================================== */
+
+  /* Page ground. Cards are white ON this, never on white. */
+  --noa-ground: var(--gray-100);              /* #f5f5f3 */
+
+  /* Colours the kit names that had no token. */
+  --noa-action-tint-strong: #f2d3d5;          /* spark bars, wake trails, secondary fills */
+  --noa-scroll-thumb: #c9c9c7;
+
+  /* Elevation, three tiers. */
+  --noa-shadow-raised: 0 6px 22px rgba(0, 0, 0, 0.18);   /* dropdowns, panels over dark */
+  --noa-shadow-lifted: 0 10px 34px rgba(0, 0, 0, 0.2);   /* a card that rises into a hero band */
+  --noa-shadow-footer: 0 -2px 14px rgba(0, 0, 0, 0.12);  /* a bar that sticks to the bottom */
+
+  /* Type scale. Kit steps, exact px as designed. */
+  --noa-text-eyebrow: 0.6875rem;              /* 11 · 700 · uppercase · .08em */
+  --noa-text-dense: 0.8125rem;                /* 13 · 700 · dense labels */
+  --noa-text-body-kit: 0.9375rem;             /* 15 · 400 · body copy */
+  --noa-text-card: 1.0625rem;                 /* 17 · 700 · card title */
+  --noa-text-section: 1.375rem;               /* 22 · 800 · section title */
+  --noa-text-page: 1.875rem;                  /* 30 · 800 · page title */
+  --noa-text-hero: 2rem;                      /* 32 · 800 · the welcome band */
+  --noa-leading-page: 1.25;
+  --noa-leading-section: 1.2;
+  --noa-leading-card: 1.3;
+  --noa-leading-body: 1.5;
+
+  /* Spacing the kit uses that the ramp has no step for. */
+  --noa-kit-block-gap: 20px;                  /* between page-level blocks (20-24) */
+  --noa-kit-card-padding: 22px;               /* inside cards (20-26) */
+  --noa-kit-card-gap: 16px;                   /* between items inside a card */
+  /* A numbered card in a long form: the head is one step tighter than the body,
+     and both are wider than they are tall, so the rule sits close to the title. */
+  --noa-kit-card-pad-x: 24px;
+  --noa-kit-card-head-pad-y: 18px;
+  --noa-kit-card-body-pad-y: 20px;
+  --noa-kit-stack-gap: 18px;                  /* between cards, and inside a card body */
+  --noa-kit-chip-gap: 10px;                   /* between chips */
+  --noa-kit-row-y: 12px;                      /* dense table row padding (10-14) */
+  --noa-kit-heading-gap: 12px;                /* FN-04: title to rule, rule to sub */
+  --noa-kit-button-pad: 22px;                 /* AC-01: inline padding at 40 and 44 */
+  --noa-kit-button-pad-lg: 24px;              /* AC-02: the 48 dark search action */
+  /* IN-01 fields. */
+  --noa-kit-control-pad-x: 12px;              /* inside every field */
+  --noa-kit-label-gap: 6px;                   /* label to control */
+  --noa-kit-hint-gap: 4px;                    /* control to hint */
+  --noa-kit-field-gap: 14px;                  /* between fields in a card */
+  --noa-kit-affix-pad-x: 10px;                /* the unit chip beside a field */
+  /* CH-11 pagination. The outlined groups use a slightly darker line than the
+     table rules, and the page rule is its own red, not the action colour. */
+  --noa-kit-group-line: #d8d8d6;
+  --noa-kit-page-rule: #9e2b2b;
+  --noa-kit-page-rule-w: 42px;
+  --noa-kit-page-rule-h: 5px;
+  /* Keyframe names as tokens. A CSS Module rewrites a bare animation-name to a
+     scoped identifier that does not exist, so every component references the
+     keyframe through var() instead. */
+  --noa-anim-pulse: noaPulse;
+  --noa-anim-run: noaRun;
+  --noa-anim-wake: noaWake;
+  --noa-anim-spin: noaSpin;
+  --noa-anim-shimmer: noaShimmer;
+  --noa-anim-fill: noaFill;
+  --noa-anim-rise: noaRise;
+  --noa-anim-bay: noaBay;
+  --noa-anim-lamp: noaLamp;
+  --noa-anim-board: noaBoard;
+  --noa-anim-sweep: noaSweep;
+  --noa-anim-slide: noaSlide;
+  --noa-anim-dash: noaDash;
+  --noa-anim-blink: noaBlink;
+  --noa-anim-cue: noaCue;
+  --noa-anim-tick: noaTick;
+  --noa-anim-tick-text: noaTickText;
+
+  /* Control heights. 40 compact, 44 full form, 48 dark search panel. */
+  --noa-control-height-full: 44px;
+  --noa-control-height-hero: 48px;
+
+  /* Runtime component geometry; Radix overrides this on the positioned content. */
+  --radix-popover-trigger-width: 100%;
+}
